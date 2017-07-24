@@ -4,7 +4,7 @@
 #include "PublishingResource.h"
 #include <fstream>
 
-class Gameboy;
+class CppRed;
 class SoundController;
 
 template <typename T>
@@ -278,7 +278,7 @@ public:
 };
 
 class SoundController{
-	Gameboy *system;
+	CppRed *system;
 	unsigned current_frame_position = 0;
 	QueuedPublishingResource<AudioFrame> publishing_frames;
 	std::uint64_t frame_no = 0;
@@ -334,7 +334,7 @@ public:
 	VoluntaryWaveGenerator wave;
 	NoiseGenerator noise;
 
-	SoundController(Gameboy &);
+	SoundController(CppRed &);
 	void update(double speed_multiplier, bool speed_changed);
 	AudioFrame *get_current_frame();
 	void return_used_frame(AudioFrame *);

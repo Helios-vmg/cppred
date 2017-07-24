@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{17ec8432-c01c-47b1-ade2-38de61698d42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CppRed">
+      <UniqueIdentifier>{ce4da77e-bf9a-4e0b-8d9d-9f4c45e2d82d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CppRed">
+      <UniqueIdentifier>{d2ae3882-4d05-46ca-945e-42c60375e1f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -103,7 +109,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CppRed.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedTitleScreen.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedStructs.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedRam.cpp">
+      <Filter>Source Files\CppRed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +210,22 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CppRed.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedTitleScreen.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedConstants.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedStructs.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryOperations.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedRam.h">
+      <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

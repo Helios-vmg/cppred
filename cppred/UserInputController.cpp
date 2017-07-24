@@ -2,7 +2,7 @@
 #include "Gameboy.h"
 #include <cstring>
 
-UserInputController::UserInputController(Gameboy &system):
+UserInputController::UserInputController(CppRed &system):
 	system(&system),
 	input_state(new InputState){
 }

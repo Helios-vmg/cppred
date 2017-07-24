@@ -5,7 +5,7 @@
 #include <atomic>
 #include <cstring>
 
-class Gameboy;
+class CppRed;
 
 struct InputState{
 	byte_t up, down, left, right, a, b, start, select;
@@ -29,7 +29,7 @@ struct InputState{
 };
 
 class UserInputController{
-	Gameboy *system;
+	CppRed *system;
 	std::atomic<InputState *> input_state;
 	byte_t saved_state = 0;
 	bool state_changed = false;
@@ -42,7 +42,7 @@ class UserInputController{
 	static const byte_t pin14_mask = 1 << 4;
 	static const byte_t pin15_mask = 1 << 5;
 public:
-	UserInputController(Gameboy &system);
+	UserInputController(CppRed &system);
 	~UserInputController();
 	void set_input_state(InputState *state, bool button_down, bool button_up);
 	void request_input_state(byte_t select);

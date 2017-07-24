@@ -29,22 +29,22 @@ HostSystem::HostSystem(
 	this->reinit();
 	if (this->audio_provider)
 		this->audio_provider->set_callbacks(
-			[this](){ return this->gameboy->get_sound_controller().get_current_frame(); },
-			[this](AudioFrame *frame){ this->gameboy->get_sound_controller().return_used_frame(frame); }
+			[this](){ return this->cppred->get_sound_controller().get_current_frame(); },
+			[this](AudioFrame *frame){ this->cppred->get_sound_controller().return_used_frame(frame); }
 		);
 }
 
 HostSystem::~HostSystem(){
 	this->audio_provider->stop_audio();
-	this->gameboy.reset();
+	this->cppred.reset();
 }
 
 void HostSystem::reinit(){
-	this->gameboy.reset(new Gameboy(*this));
+	this->cppred.reset(new CppRed(*this));
 }
 
 void HostSystem::run(){
-	this->gameboy->run();
+	this->cppred->run();
 	try{
 #ifdef BENCHMARKING
 		auto start = SDL_GetTicks();

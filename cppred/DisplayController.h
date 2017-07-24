@@ -9,8 +9,7 @@
 #include "PublishingResource.h"
 #include "utility.h"
 
-class Gameboy;
-class GameboyCpu;
+class CppRed;
 class MemoryController;
 
 #define DECLARE_DISPLAY_RO_CONTROLLER_PROPERTY(x) byte_t get_##x()
@@ -74,7 +73,7 @@ struct PixelDetails{
 };
 
 class DisplayController{
-	Gameboy *system;
+	CppRed *system;
 	MemoryController *memory_controller = nullptr;
 	MemorySection<0x8000> vram;
 	MemorySection<0xFE00> oam;
@@ -101,6 +100,7 @@ class DisplayController{
 
 	PublishingResource<RenderedFrame> publishing_frames;
 
+public:
 	static const byte_t stat_coincidence_interrupt_mask = bit(6);
 	static const byte_t stat_oam_interrupt_mask = bit(5);
 	static const byte_t stat_vblank_interrupt_mask = bit(4);
@@ -119,6 +119,7 @@ class DisplayController{
 	static const byte_t lcdc_tall_sprite_enable_mask = bit(2);
 	static const byte_t lcdc_sprite_enable_mask = bit(1);
 	static const byte_t lcdc_bg_enable_mask = bit(0);
+private:
 
 	int get_row_status();
 	int get_LY();
@@ -148,7 +149,7 @@ class DisplayController{
 	void enable_memories();
 	std::uint64_t get_system_clock() const;
 public:
-	DisplayController(Gameboy &system);
+	DisplayController(CppRed &system);
 	void set_memory_controller(MemoryController &mc){
 		this->memory_controller = &mc;
 	}

@@ -117,7 +117,7 @@ void ClockDivider::reset(){
 	this->last_update = std::numeric_limits<std::uint64_t>::max();
 }
 
-SoundController::SoundController(Gameboy &system):
+SoundController::SoundController(CppRed &system):
 		system(&system),
 #ifdef USE_STD_FUNCTION
 		audio_sample_clock(gb_cpu_frequency_power, sampling_frequency, [this](std::uint64_t n){ this->sample_callback(n); }),

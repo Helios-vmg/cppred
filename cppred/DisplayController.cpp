@@ -35,7 +35,7 @@ struct SpriteDescription{
 	}
 };
 
-DisplayController::DisplayController(Gameboy &system):
+DisplayController::DisplayController(CppRed &system):
 		system(&system),
 		vram(0x2000),
 		oam(0xA0),

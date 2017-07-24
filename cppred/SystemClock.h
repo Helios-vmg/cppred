@@ -2,10 +2,10 @@
 
 #include "CommonTypes.h"
 
-class Gameboy;
+class CppRed;
 
 class SystemClock{
-	Gameboy *system;
+	CppRed *system;
 	//Ticks at a rate of 2^22 cycles per emulation second (2^23 cycles per
 	//emulation second when in double speed mode), regardless of the state of
 	//the CPU, as long as the emulation is running.
@@ -32,7 +32,7 @@ class SystemClock{
 	void handle_tima_overflow_part1();
 	void handle_tima_overflow_part2();
 public:
-	SystemClock(Gameboy &system): system(&system){}
+	SystemClock(CppRed &system): system(&system){}
 
 	std::uint64_t get_realtime_clock_value() const{
 		return this->realtime_clock;

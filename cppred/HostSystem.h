@@ -1,5 +1,5 @@
 #pragma once
-#include "Gameboy.h"
+#include "CppRed.h"
 #include "HostSystemServiceProviders.h"
 #include "threads.h"
 #include "exceptions.h"
@@ -16,7 +16,7 @@ struct InputState;
 
 class HostSystem{
 protected:
-	std::unique_ptr<Gameboy> gameboy;
+	std::unique_ptr<CppRed> cppred;
 	StorageProvider *storage_provider;
 	std::unique_ptr<StorageProvider> owned_storage_provider;
 	TimingProvider *timing_provider;
@@ -40,8 +40,8 @@ public:
 		DateTimeProvider *);
 	~HostSystem();
 	void reinit();
-	Gameboy &get_guest(){
-		return *this->gameboy;
+	CppRed &get_guest(){
+		return *this->cppred;
 	}
 	void throw_exception(const std::shared_ptr<std::exception> &);
 	void run();

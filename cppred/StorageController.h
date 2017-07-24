@@ -5,15 +5,15 @@
 #include "HostSystemServiceProviders.h"
 #include "Cart.h"
 
-class Gameboy;
+class CppRed;
 class HostSystem;
 
 class StorageController{
-	Gameboy *system;
+	CppRed *system;
 	HostSystem *host;
 	std::unique_ptr<Cartridge> cartridge;
 public:
-	StorageController(Gameboy &system, HostSystem &host): system(&system), host(&host){}
+	StorageController(CppRed &system, HostSystem &host): system(&system), host(&host){}
 	bool load_cartridge(const path_t &path);
 	void write8(main_integer_t address, byte_t value){
 		this->cartridge->write8(address, value);
