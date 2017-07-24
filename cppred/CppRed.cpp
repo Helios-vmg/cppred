@@ -7,6 +7,8 @@
 	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
 #define INITIALIZE_HARDWARE_REGISTER(name, controller, function) \
 	,name(nullptr, {[this](byte_t &dst, const void *){ dst = this->controller.get_##function(); }, [this](const byte_t &src, void *){ this->controller.set_##function(src); }})
+#define INITIALIZE_HARDWARE_REGISTER_RO(name, controller, function) \
+	,name(nullptr, {[this](byte_t &dst, const void *){ dst = this->controller.get_##function(); }, [this](const byte_t &src, void *){}})
 
 CppRed::CppRed(HostSystem &host):
 		host(&host),
@@ -32,6 +34,8 @@ CppRed::CppRed(HostSystem &host):
 		INITIALIZE_HARDWARE_REGISTER(SCY, display_controller, scroll_y)
 		INITIALIZE_HARDWARE_REGISTER(WX, display_controller, window_x_position)
 		INITIALIZE_HARDWARE_REGISTER(WY, display_controller, window_y_position)
+		INITIALIZE_HARDWARE_REGISTER_RO(LY, display_controller, y_coordinate)
+		INITIALIZE_HARDWARE_REGISTER(LYC, display_controller, y_coordinate_compare)
 		{
 
 	this->nonemulation_init();
@@ -301,4 +305,48 @@ void CppRed::set_window_position(int x, int y){
 		this->WX = (byte_t)x;
 	if (y >= 0)
 		this->WY = (byte_t)y;
+}
+
+void CppRed::enable_lcd(){
+	this->LCDC |= DisplayController::lcdc_display_enable_mask;
+}
+
+void CppRed::disable_lcd(){
+	this->IF = 0;
+	auto ie = this->IE;
+	this->IE = ie & ~vblank_mask;
+
+	//TODO: Replace spinlock with a wait or something:
+	while (this->LY != lcd_blank);
+	
+	this->LCDC &= ~DisplayController::lcdc_display_enable_mask;
+
+	this->IE = ie;
+}
+
+void CppRed::clear_vram(){
+	this->display_controller.clear_vram();
+}
+
+void CppRed::clear_bg_map(unsigned page){
+	page <<= 8;
+	//TODO: This can be optimized.
+	for (unsigned i = 0; i < 0x400; i++)
+		this->display_controller.access_vram(page + i) = 0;
+}
+
+void CppRed::gb_pal_normal(){
+	this->BGP = 0xE4;
+	this->OBP0 = 0xD0;
+}
+
+void CppRed::gb_pal_whiteout(){
+	this->BGP = 0;
+	this->OBP0 = 0;
+	this->OBP1 = 0;
+}
+
+void CppRed::clear_screen(){
+	for (unsigned i = 0; i < tilemap_width * tilemap_height; i++)
+		this->wram.wTileMap[i] = 0x7F;
 }

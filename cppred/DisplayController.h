@@ -32,6 +32,7 @@ const unsigned lcd_refresh_period = 70224;
 //LCD refresh rate: ~59.7275 Hz (exactly gb_cpu_frequency/lcd_refresh_period Hz)
 const unsigned lcd_width = 160;
 const unsigned lcd_height = 144;
+const unsigned lcd_blank = lcd_height + 1;
 
 template <typename T1, typename T2>
 static bool check_flag(T1 value, T2 mask){
@@ -206,5 +207,8 @@ public:
 	bool update();
 	bool get_display_enabled() const{
 		return this->display_enabled;
+	}
+	void clear_vram(){
+		this->vram.clear();
 	}
 };

@@ -85,6 +85,8 @@ public:
 	DECLARE_HARDWARE_REGISTER(SCY);
 	DECLARE_HARDWARE_REGISTER(WX);
 	DECLARE_HARDWARE_REGISTER(WY);
+	DECLARE_HARDWARE_REGISTER(LY);
+	DECLARE_HARDWARE_REGISTER(LYC);
 
 	CppRed(HostSystem &host);
 	void run();
@@ -97,14 +99,15 @@ public:
 	void clear_vram();
 	void clear_wram();
 	void clear_hram();
-	void fill_memory(unsigned begin, unsigned length, byte_t value);
 	void clear_sprites();
 	void clear_bg_map(unsigned page);
 	void stop_all_sounds();
 	void execute_predef(Predef);
 	void gb_pal_normal();
 	void gb_pal_whiteout();
-	void gb_pal_white_out_with_delay3();
+	void gb_pal_white_out_with_delay3(){
+		this->gb_pal_whiteout();
+	}
 	void set_default_names_before_titlescreen();
 	TitleScreenResult display_titlescreen();
 	void clear_screen();
@@ -114,6 +117,7 @@ public:
 	void load_pokemon_logo();
 	void load_version_graphics();
 	void clear_both_bg_maps();
+	//Note: In the disassembly, the analog to this function is the macro coord.
 	decltype(WRam::wTileMap)::iterator get_tilemap_location(unsigned x, unsigned y);
 	//Loads the PC sprite to tile VRAM.
 	void draw_player_character();
