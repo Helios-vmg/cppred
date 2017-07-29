@@ -59,3 +59,8 @@ template <typename T, size_t N>
 size_t array_size(T (&)[N]){
 	return N;
 }
+
+template <typename T>
+bool check_flag(const T &flag, const T &mask){
+	return (flag & mask) == mask;
+}

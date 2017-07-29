@@ -120,6 +120,9 @@
     <ClCompile Include="CppRedRam.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="..\CodeGeneration\output\gfx.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RegisterStore.h">
@@ -225,6 +228,12 @@
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
     <ClInclude Include="CppRedRam.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticImage.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CodeGeneration\output\gfx.h">
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>

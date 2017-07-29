@@ -591,3 +591,6 @@ const unsigned input_down   = 1 << 7;
 
 const unsigned bag_capacity = 20;
 const unsigned pc_capacity = 50;
+
+const unsigned vChars1 = 0x8800;
+const unsigned vFont = vChars1;

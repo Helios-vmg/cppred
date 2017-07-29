@@ -142,7 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="csv_parser.h" />
+    <ClInclude Include="..\common\csv_parser.h" />
     <ClInclude Include="Type.h" />
   </ItemGroup>
   <ItemGroup>

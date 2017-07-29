@@ -2,6 +2,7 @@
 #include "CppRedTitleScreen.h"
 #include "HostSystem.h"
 #include "timer.h"
+#include "../CodeGeneration/output/gfx.h"
 
 #define INITIALIZE_EMPTY_HARDWARE_REGISTER(name) \
 	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
@@ -349,4 +350,10 @@ void CppRed::gb_pal_whiteout(){
 void CppRed::clear_screen(){
 	for (unsigned i = 0; i < tilemap_width * tilemap_height; i++)
 		this->wram.wTileMap[i] = 0x7F;
+}
+
+void CppRed::load_font_tile_patterns(){
+	auto decoded = decode_image_data(FontGraphics);
+	auto dst = &this->display_controller.access_vram(vFont);
+	memcpy(dst, &decoded[0], decoded.size());
 }

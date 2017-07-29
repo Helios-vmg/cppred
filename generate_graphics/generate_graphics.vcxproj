@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{89C9E90C-A8FF-4B66-AB94-BA6C9AAAD651}</ProjectGuid>
+    <ProjectGuid>{1B3E2E00-791D-40C3-AE7D-D27EBAFAE519}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>pdboy</RootNamespace>
+    <RootNamespace>generate_graphics</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -74,14 +74,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin64\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,14 +87,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImageLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -105,14 +104,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImageLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,23 +121,19 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <OmitFramePointers>true</OmitFramePointers>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ControlFlowGuard>false</ControlFlowGuard>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FreeImageLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,16 +142,11 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
-      <OmitFramePointers>true</OmitFramePointers>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <ControlFlowGuard>false</ControlFlowGuard>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,82 +154,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FreeImageLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\CodeGeneration\output\gfx.cpp" />
-    <ClCompile Include="..\generated_files\cpu.generated.cpp" />
-    <ClCompile Include="BgbProtocol.cpp" />
-    <ClCompile Include="Cart.cpp" />
-    <ClCompile Include="CartMbc1.cpp" />
-    <ClCompile Include="CartMbc2.cpp" />
-    <ClCompile Include="CartMbc3.cpp" />
-    <ClCompile Include="CartMbc5.cpp" />
-    <ClCompile Include="CartRomOnly.cpp" />
-    <ClCompile Include="CppRed.cpp" />
-    <ClCompile Include="CppRedRam.cpp" />
-    <ClCompile Include="CppRedStructs.cpp" />
-    <ClCompile Include="CppRedTitleScreen.cpp" />
-    <ClCompile Include="DisplayController.cpp" />
-    <ClCompile Include="ExternalRamBuffer.cpp" />
-    <ClCompile Include="Gameboy.cpp" />
-    <ClCompile Include="GameboyCpu.cpp" />
-    <ClCompile Include="HostSystem.cpp" />
-    <ClCompile Include="HostSystemServiceProviders.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MemoryController.cpp" />
-    <ClCompile Include="RegisterStore.cpp" />
-    <ClCompile Include="SdlProvider.cpp" />
-    <ClCompile Include="SoundController.cpp" />
-    <ClCompile Include="StorageController.cpp" />
-    <ClCompile Include="SystemClock.cpp" />
-    <ClCompile Include="threads.cpp" />
-    <ClCompile Include="timer.cpp" />
-    <ClCompile Include="UserInputController.cpp" />
-    <ClCompile Include="WinSockNetworking.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\CodeGeneration\output\gfx.h" />
-    <ClInclude Include="BgbProtocol.h" />
-    <ClInclude Include="Cart.h" />
-    <ClInclude Include="CartMbc1.h" />
-    <ClInclude Include="CartMbc2.h" />
-    <ClInclude Include="CartMbc3.h" />
-    <ClInclude Include="CartMbc5.h" />
-    <ClInclude Include="CartRomOnly.h" />
-    <ClInclude Include="CppRed.h" />
-    <ClInclude Include="CppRedConstants.h" />
-    <ClInclude Include="CppRedRam.h" />
-    <ClInclude Include="CppRedStructs.h" />
-    <ClInclude Include="CppRedTitleScreen.h" />
-    <ClInclude Include="ExternalRamBuffer.h" />
-    <ClInclude Include="HostSystemServiceProviders.h" />
-    <ClInclude Include="MemoryOperations.h" />
-    <ClInclude Include="MemorySection.h" />
-    <ClInclude Include="GeneralString.h" />
-    <ClInclude Include="point.h" />
-    <ClInclude Include="PublishingResource.h" />
-    <ClInclude Include="SdlProvider.h" />
-    <ClInclude Include="SoundController.h" />
-    <ClInclude Include="StaticImage.h" />
-    <ClInclude Include="StorageController.h" />
-    <ClInclude Include="SystemClock.h" />
-    <ClInclude Include="CommonTypes.h" />
-    <ClInclude Include="DisplayController.h" />
-    <ClInclude Include="exceptions.h" />
-    <ClInclude Include="Gameboy.h" />
-    <ClInclude Include="GameboyCpu.h" />
-    <ClInclude Include="HostSystem.h" />
-    <ClInclude Include="MemoryController.h" />
-    <ClInclude Include="RegisterStore.h" />
-    <ClInclude Include="threads.h" />
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="UserInputController.h" />
-    <ClInclude Include="utility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="WinSockNetworking.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

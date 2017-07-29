@@ -87,7 +87,7 @@ TitleScreenResult CppRedTitleScreen::display(){
 	this->parent.load_gb_pal();
 
 	const auto mask = input_up | input_select | input_b;
-	return (this->hram.hJoyHeld & mask) == mask ?
+	return check_flag(this->hram.hJoyHeld, mask) ?
 		TitleScreenResult::GoToClearSaveDialog :
 		TitleScreenResult::GoToMainMenu;
 }

@@ -41,3 +41,5 @@ include/
 CodeGeneration/output/*.h
 CodeGeneration/output/*.inl
 *.dll
+CodeGeneration/output/*.cpp
+*.idb
