@@ -211,4 +211,6 @@ public:
 	void clear_vram(){
 		this->vram.clear();
 	}
+	//Blocks until a frame has been rendered and published.
+	void wait_for_vsync();
 };

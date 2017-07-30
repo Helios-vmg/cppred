@@ -1,5 +1,6 @@
 #include "CppRedTitleScreen.h"
 #include "CppRed.h"
+#include "../CodeGeneration/output/gfx.h"
 
 CppRedTitleScreen::CppRedTitleScreen(CppRed &parent):
 	parent(parent),
@@ -24,7 +25,7 @@ TitleScreenResult CppRedTitleScreen::display(){
 	this->parent.load_version_graphics();
 	this->parent.clear_both_bg_maps();
 	this->copy_pokemon_logo_to_wram_tilemap();
-	this->parent.draw_player_character();
+	this->draw_player_character();
 
 	//Put a pokeball in the player's hand.
 	this->wram.wOAMBuffer[0x28] = 0x74;
@@ -159,5 +160,31 @@ void CppRedTitleScreen::mon_scroll_loop(){
 			break;
 		this->animate_ball_if_starter_out();
 		this->pick_new_mon();
+	}
+}
+
+void CppRedTitleScreen::draw_player_character(){
+	auto pc = decode_image_data(PlayerCharacterTitleGraphics);
+	auto dst = &this->parent.get_display_controller().access_vram(vSprites);
+	memcpy(dst, &pc[0], pc.size());
+	this->parent.clear_sprites();
+	this->wram.wPlayerCharacterOAMTile = 0;
+	auto it = this->wram.wOAMBuffer.begin();
+	unsigned coord_y = 96;
+	for (int i = 7; i--;){
+		unsigned coord_x = 90;
+		for (int j = 5; j--;){
+			//y position
+			*(it++) = coord_y;
+			//x position
+			*(it++) = coord_x;
+			//tile
+			*(it++) = this->wram.wPlayerCharacterOAMTile++;
+			//skip attributes
+			it++;
+
+			coord_x = (coord_x + 8) & 0xFF;
+		}
+		coord_y = (coord_y + 8) & 0xFF;
 	}
 }

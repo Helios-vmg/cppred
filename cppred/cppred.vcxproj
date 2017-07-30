@@ -177,6 +177,9 @@
     <ClCompile Include="CartMbc5.cpp" />
     <ClCompile Include="CartRomOnly.cpp" />
     <ClCompile Include="CppRed.cpp" />
+    <ClCompile Include="CppRedAudio.cpp" />
+    <ClCompile Include="CppRedClearSave.cpp" />
+    <ClCompile Include="CppRedData.cpp" />
     <ClCompile Include="CppRedRam.cpp" />
     <ClCompile Include="CppRedStructs.cpp" />
     <ClCompile Include="CppRedTitleScreen.cpp" />
@@ -191,6 +194,7 @@
     <ClCompile Include="RegisterStore.cpp" />
     <ClCompile Include="SdlProvider.cpp" />
     <ClCompile Include="SoundController.cpp" />
+    <ClCompile Include="StaticImage.cpp" />
     <ClCompile Include="StorageController.cpp" />
     <ClCompile Include="SystemClock.cpp" />
     <ClCompile Include="threads.cpp" />
@@ -208,7 +212,10 @@
     <ClInclude Include="CartMbc5.h" />
     <ClInclude Include="CartRomOnly.h" />
     <ClInclude Include="CppRed.h" />
+    <ClInclude Include="CppRedAudio.h" />
+    <ClInclude Include="CppRedClearSave.h" />
     <ClInclude Include="CppRedConstants.h" />
+    <ClInclude Include="CppRedData.h" />
     <ClInclude Include="CppRedRam.h" />
     <ClInclude Include="CppRedStructs.h" />
     <ClInclude Include="CppRedTitleScreen.h" />

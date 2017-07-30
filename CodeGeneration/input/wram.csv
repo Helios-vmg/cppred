@@ -37,8 +37,8 @@ C0E8,2,big_u16,wMusicTempo
 C0EA,2,big_u16,wSfxTempo
 C0EC,2,big_pointer,wSfxHeaderPointer
 C0EE,1,Sound,wNewSoundID
-C0EF,1,u8,wAudioROMBank
-C0F0,1,u8,wAudioSavedROMBank
+C0EF,1,AudioBank,wAudioROMBank
+C0F0,1,AudioBank,wAudioSavedROMBank
 C0F1,1,u8,wFrequencyModifier
 C0F2,14,u8,wTempoModifier
 C100,mark,,wSpriteDataStart
@@ -46,9 +46,9 @@ C100,SpriteStateData1::emulated_size * 16,spritestatedata1[16],wSpriteStateData1
 C200,SpriteStateData2::emulated_size * 16,spritestatedata2[16],wSpriteStateData2
 C300,mark,,wSpriteDataEnd
 C300,160,u8[160],wOAMBuffer
-C3A0,360,u8[360],wTileMap
+C3A0,tilemap_width * tilemap_height,u8[tilemap_width * tilemap_height],wTileMap
 C508,200,u8[200],wSerialPartyMonsPatchList
-C508,200,u8[200],wTileMapBackup
+C508,tilemap_width * tilemap_height,u8[tilemap_width * tilemap_height],wTileMapBackup
 C5D0,200,u8[200],wSerialEnemyMonsPatchList
 C6E8,784,u8[784],wTempPic
 C6E8,1300,u8[1300],wOverworldMap
@@ -194,7 +194,7 @@ CD3D,0,,wUnusedCD3D
 CD3D,0,,wRodResponse
 CD3D,0,,wFallingObjectsMovementData
 CD3D,0,,wCanPlaySlots
-CD3D,0,,wPlayerCharacterOAMTile
+CD3D,1,u8,wPlayerCharacterOAMTile
 CD3D,0,,wCoordIndex
 CD3D,0,,wNumShakes
 CD3D,0,,wBattleTransitionCircleScreenQuadrantY
@@ -326,8 +326,8 @@ CD6C,1,u8,wNumMovesMinusOne
 CD6D,4,,wcd6d
 CD71,7,,wStatusScreenCurrentPP
 CD78,9,,wNormalMaxPPList
-CD81,0,,wTileMapBackup2
-CD81,360,,wSerialOtherGameboyRandomNumberListBlock
+CD81,tilemap_width * tilemap_height,u8[tilemap_width * tilemap_height],wTileMapBackup2
+CD81,360,u8[360],wSerialOtherGameboyRandomNumberListBlock
 CEE9,0,,wBuffer
 CEE9,0,,wLearningMovesFromDayCare
 CEE9,0,,wNamingScreenNameLength
@@ -427,7 +427,7 @@ CFC6,1,u8,wTileInFrontOfPlayer
 CFC7,1,u8,wAudioFadeOutControl
 CFC8,1,u8,wAudioFadeOutCounterReloadValue
 CFC9,1,u8,wAudioFadeOutCounter
-CFCA,1,u8,wLastMusicSoundID
+CFCA,1,Sound,wLastMusicSoundID
 CFCB,1,u8,wUpdateSpritesEnabled
 CFCC,1,u8,wEnemyMoveNum
 CFCD,1,u8,wEnemyMoveEffect
@@ -536,7 +536,7 @@ D07D,1,,wPartyMenuTypeOrMessageID
 D07E,3,,wSavedListScrollOffset
 D081,1,,wBaseCoordX
 D082,1,,wBaseCoordY
-D083,1,,wLowHealthAlarm
+D083,1,u8,wLowHealthAlarm
 D084,1,,wFBTileCounter
 D085,1,,wMovingBGTilesCounter2
 D086,1,,wSubAnimFrameDelay
@@ -855,7 +855,7 @@ D358,1,u8,wLetterPrintingDelayFlags
 D359,2,,wPlayerID
 D35B,1,,wMapMusicSoundID
 D35C,1,,wMapMusicROMBank
-D35D,1,,wMapPalOffset
+D35D,1,u8,wMapPalOffset
 D35E,1,,wCurMap
 D35F,2,,wCurrentTileBlockMapViewPointer
 D361,1,,wYCoord

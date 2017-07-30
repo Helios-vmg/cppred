@@ -29,6 +29,8 @@ class CppRedTitleScreen{
 	void scroll_in_mon();
 	void animate_ball_if_starter_out();
 	void pick_new_mon();
+	//Loads the PC sprite to tile VRAM.
+	void draw_player_character();
 public:
 	CppRedTitleScreen(CppRed &parent);
 	TitleScreenResult display();

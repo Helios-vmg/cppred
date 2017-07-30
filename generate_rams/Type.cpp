@@ -72,6 +72,7 @@ std::unique_ptr<Type> ENUM_TYPE(x)(){ \
 DEFINE_construct_enum_byte(SerialConnectionStatus);
 DEFINE_construct_enum_byte(SpeciesId);
 DEFINE_construct_enum_byte(Sound);
+DEFINE_construct_enum_byte(AudioBank);
 
 #define DECLARE_ENUM_IN_MAP(x) { #x, ENUM_TYPE(x) }
 
@@ -92,6 +93,7 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	DECLARE_ENUM_IN_MAP(SerialConnectionStatus),
 	DECLARE_ENUM_IN_MAP(SpeciesId),
 	DECLARE_ENUM_IN_MAP(Sound),
+	DECLARE_ENUM_IN_MAP(AudioBank),
 };
 
 bool is_number(const std::string &s){

@@ -64,3 +64,19 @@ template <typename T>
 bool check_flag(const T &flag, const T &mask){
 	return (flag & mask) == mask;
 }
+
+template <std::uint32_t N, int M>
+struct bits_from_u32_helper{
+	static const byte_t value = bits_from_u32_helper<N, M + 1>::value |
+		(!!((N >> (4 * M)) & 0xF) << M);
+};
+
+template <std::uint32_t N>
+struct bits_from_u32_helper<N, 8>{
+	static const byte_t value = 0;
+};
+
+template <std::uint32_t N>
+struct bits_from_u32{
+	static const byte_t value = bits_from_u32_helper<N, 0>::value;
+};

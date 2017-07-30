@@ -7,6 +7,7 @@
 #include "CommonTypes.h"
 #include "CppRedConstants.h"
 #include "CppRedRam.h"
+#include "CppRedAudio.h"
 #include "ExternalRamBuffer.h"
 #include "threads.h"
 #include "utility.h"
@@ -24,6 +25,7 @@ class CppRed{
 	StorageController storage_controller;
 	SoundController sound_controller;
 	SystemClock clock;
+	CppRedAudio audio;
 	//std::unique_ptr<byte_t[]> emulated_memory;
 	std::function<void()> predef_functions[(int)Predef::COUNT];
 	std::atomic<bool> continue_running;
@@ -112,18 +114,20 @@ public:
 	TitleScreenResult display_titlescreen();
 	void clear_screen();
 	void load_font_tile_patterns();
+	void load_textbox_tile_patterns();
 	void load_copyright_graphics();
 	void load_gamefreak_logo();
 	void load_pokemon_logo();
 	void load_version_graphics();
 	void clear_both_bg_maps();
 	//Note: In the disassembly, the analog to this function is the macro coord.
-	decltype(WRam::wTileMap)::iterator get_tilemap_location(unsigned x, unsigned y);
-	//Loads the PC sprite to tile VRAM.
-	void draw_player_character();
+	decltype(WRam::wTileMap)::iterator get_tilemap_location(unsigned x, unsigned y){
+		return this->wram.wTileMap.begin() + y * tilemap_width + x;
+	}
 	void save_screen_tiles_to_buffer2();
 	void load_screen_tiles_from_buffer1();
 	void load_screen_tiles_from_buffer2();
+	void load_screen_tiles_from_buffer2_disable_bg_transfer();
 	void save_screen_tiles_to_buffer1();
 	void run_palette_command(PaletteCommand cmd);
 	void play_sound(Sound);
@@ -131,9 +135,15 @@ public:
 	void delay3();
 	void wait_for_sound_to_finish();
 	void play_cry(SpeciesId);
+	Sound get_cry_data(SpeciesId);
 	void load_gb_pal();
 	void display_clear_save_dialog();
 	void display_main_menu();
+	void run_default_palette_command();
+	void print_text(const std::string &);
+	DisplayController &get_display_controller(){
+		return this->display_controller;
+	}
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

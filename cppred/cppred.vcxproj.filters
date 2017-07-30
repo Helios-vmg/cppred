@@ -123,6 +123,18 @@
     <ClCompile Include="..\CodeGeneration\output\gfx.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="StaticImage.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedAudio.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedData.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedClearSave.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RegisterStore.h">
@@ -234,6 +246,15 @@
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
     <ClInclude Include="..\CodeGeneration\output\gfx.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedAudio.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedData.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedClearSave.h">
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>

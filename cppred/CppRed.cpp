@@ -3,6 +3,8 @@
 #include "HostSystem.h"
 #include "timer.h"
 #include "../CodeGeneration/output/gfx.h"
+#include "CppRedData.h"
+#include "CppRedClearSave.h"
 
 #define INITIALIZE_EMPTY_HARDWARE_REGISTER(name) \
 	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
@@ -18,6 +20,7 @@ CppRed::CppRed(HostSystem &host):
 		input_controller(*this),
 		storage_controller(*this, host),
 		clock(*this),
+		audio(*this),
 		continue_running(false)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(SB)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(SC)
@@ -138,8 +141,8 @@ void CppRed::set_default_names_before_titlescreen(){
 	this->wram.wd732 = 0;
 	this->wram.wFlags_D733 = 0;
 	this->wram.wBeatLorelei = 0;
-	this->wram.wAudioROMBank = 0;
-	this->wram.wAudioSavedROMBank = 0;
+	this->wram.wAudioROMBank.value = 0;
+	this->wram.wAudioSavedROMBank.value = 0;
 	//this->display_titlescreen();
 }
 
@@ -195,10 +198,6 @@ void CppRed::load_version_graphics(){
 	 * ld a, BANK(Version_GFX)
 	 * call FarCopyDataDouble
 	 */
-}
-
-decltype(WRam::wTileMap)::iterator CppRed::get_tilemap_location(unsigned x, unsigned y){
-	return this->wram.wTileMap.begin() + y * tilemap_width + x;
 }
 
 void CppRed::run(){
@@ -332,8 +331,8 @@ void CppRed::clear_vram(){
 void CppRed::clear_bg_map(unsigned page){
 	page <<= 8;
 	//TODO: This can be optimized.
-	for (unsigned i = 0; i < 0x400; i++)
-		this->display_controller.access_vram(page + i) = 0;
+	auto vmem = &this->display_controller.access_vram(page);
+	memset(vmem, 0, 0x400);
 }
 
 void CppRed::gb_pal_normal(){
@@ -348,12 +347,157 @@ void CppRed::gb_pal_whiteout(){
 }
 
 void CppRed::clear_screen(){
-	for (unsigned i = 0; i < tilemap_width * tilemap_height; i++)
-		this->wram.wTileMap[i] = 0x7F;
+	auto begin = this->wram.wTileMap.begin();
+	std::fill(begin, begin + this->wram.wTileMap.size, 0x7F);
 }
 
 void CppRed::load_font_tile_patterns(){
-	auto decoded = decode_image_data(FontGraphics);
+	auto font_graphics = decode_image_data(FontGraphics);
 	auto dst = &this->display_controller.access_vram(vFont);
-	memcpy(dst, &decoded[0], decoded.size());
+	memcpy(dst, &font_graphics[0], font_graphics.size());
+}
+
+void CppRed::clear_both_bg_maps(){
+	auto bg = &this->display_controller.access_vram(bg_map0);
+		memset(bg, 0x7F, 0x800);
+}
+
+void CppRed::save_screen_tiles_to_buffer2(){
+	auto src = this->get_tilemap_location(0, 0);
+	const auto size = this->wram.wTileMapBackup2.size;
+	auto dst = this->wram.wTileMapBackup2.begin();
+	std::copy(src, src + size, dst);
+}
+
+void CppRed::load_screen_tiles_from_buffer1(){
+	this->hram.H_AUTOBGTRANSFERENABLED = 0;
+	auto src = this->wram.wTileMapBackup.begin();
+	const auto size = this->wram.wTileMapBackup.size;
+	auto dst = this->get_tilemap_location(0, 0);
+	std::copy(src, src + size, dst);
+	this->hram.H_AUTOBGTRANSFERENABLED = 1;
+}
+
+void CppRed::load_screen_tiles_from_buffer2(){
+	this->load_screen_tiles_from_buffer2_disable_bg_transfer();
+	this->hram.H_AUTOBGTRANSFERENABLED = 1;
+}
+
+void CppRed::load_screen_tiles_from_buffer2_disable_bg_transfer(){
+	this->hram.H_AUTOBGTRANSFERENABLED = 0;
+	auto src = this->wram.wTileMapBackup2.begin();
+	const auto size = this->wram.wTileMapBackup2.size;
+	auto dst = this->get_tilemap_location(0, 0);
+	std::copy(src, src + size, dst);
+}
+
+void CppRed::save_screen_tiles_to_buffer1(){
+	auto src = this->get_tilemap_location(0, 0);
+	const auto size = this->wram.wTileMapBackup2.size;
+	auto dst = this->wram.wTileMapBackup2.begin();
+	std::copy(src, src + size, dst);
+}
+
+void CppRed::run_palette_command(PaletteCommand cmd){
+	if (!this->wram.wOnSGB)
+		return;
+	this->execute_predef(Predef::_RunPaletteCommand);
+}
+
+void CppRed::delay_frames(unsigned count){
+	while (count--)
+		this->display_controller.wait_for_vsync();
+}
+
+void CppRed::stop_all_sounds(){
+	this->wram.wAudioROMBank = AudioBank::Bank1;
+	this->wram.wAudioSavedROMBank = AudioBank::Bank1;
+	this->wram.wAudioFadeOutControl = 0;
+	this->wram.wNewSoundID = Sound::None;
+	this->wram.wLastMusicSoundID = Sound::None;
+	this->play_sound(Sound::Stop);
+}
+
+void CppRed::play_sound(Sound sound){
+	if (this->wram.wNewSoundID.value){
+		auto i = this->wram.wChannelSoundIDs.begin() + 4;
+		std::fill(i, i + 4, 0);
+	}
+	if (this->wram.wAudioFadeOutControl){
+		if (!this->wram.wNewSoundID.value)
+			return;
+		this->wram.wNewSoundID.value = 0;
+		if (this->wram.wLastMusicSoundID.value != 0xFF){
+			this->wram.wLastMusicSoundID = sound;
+
+			this->wram.wAudioFadeOutCounter =
+			this->wram.wAudioFadeOutCounterReloadValue = this->wram.wAudioFadeOutControl;
+
+			//TODO: What does this mean?
+			this->wram.wAudioFadeOutControl = (unsigned)sound;
+			return;
+		}
+		this->wram.wAudioFadeOutControl = 0;
+	}
+	this->wram.wNewSoundID.value = 0;
+	switch (this->wram.wAudioROMBank){
+		case AudioBank::Bank1:
+			this->audio.audio1_play_sound(sound);
+			break;
+		case AudioBank::Bank2:
+			this->audio.audio2_play_sound(sound);
+			break;
+		case AudioBank::Bank3:
+			this->audio.audio3_play_sound(sound);
+			break;
+		default:
+			throw std::runtime_error("Invalid audio bank value.");
+	}
+}
+
+void CppRed::delay3(){
+	this->delay_frames(3);
+}
+
+void CppRed::wait_for_sound_to_finish(){
+	if (check_flag<byte_t>(this->wram.wLowHealthAlarm, 0x80))
+		return;
+	byte_t a;
+	//TODO: Replace spinlock with a wait or something:
+	//TODO: VERY IMPORTANT: This spinlock can never break!
+	do{
+		a = this->wram.wChannelSoundIDs[4];
+		a |= this->wram.wChannelSoundIDs[5];
+		a |= this->wram.wChannelSoundIDs[7];
+	}while (a);
+}
+
+void CppRed::play_cry(SpeciesId species){
+	this->play_sound(this->get_cry_data(species));
+	this->wait_for_sound_to_finish();
+}
+
+Sound CppRed::get_cry_data(SpeciesId species){
+	auto index = (unsigned)species - 1;
+	assert(index < pokemon_cry_data_size);
+	auto &data = pokemon_cry_data[index];
+	this->wram.wFrequencyModifier = data.pitch;
+	this->wram.wTempoModifier = data.length;
+	return (Sound)(data.base_cry + (unsigned)Sound::SFX_Cry00_1);
+}
+
+void CppRed::load_gb_pal(){
+	int offset = this->wram.wMapPalOffset;
+	const byte_t *data = (const byte_t *)fade_palettes;
+	int index = 3 * (int)sizeof(FadePaletteData) - offset;
+	assert(index >= 0 && index < sizeof(fade_palettes) - 3);
+	auto palette = *(const FadePaletteData *)(data + index);
+	this->BGP = palette.background_palette;
+	this->OBP0 = palette.obp0_palette;
+	this->OBP1 = palette.obp1_palette;
+}
+
+void CppRed::display_clear_save_dialog(){
+	CppRedClearSaveDialog dialog(*this);
+	dialog.display();
 }
