@@ -182,6 +182,7 @@
     <ClCompile Include="CppRedData.cpp" />
     <ClCompile Include="CppRedRam.cpp" />
     <ClCompile Include="CppRedStructs.cpp" />
+    <ClCompile Include="CppRedText.cpp" />
     <ClCompile Include="CppRedTitleScreen.cpp" />
     <ClCompile Include="DisplayController.cpp" />
     <ClCompile Include="ExternalRamBuffer.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="CppRedData.h" />
     <ClInclude Include="CppRedRam.h" />
     <ClInclude Include="CppRedStructs.h" />
+    <ClInclude Include="CppRedText.h" />
     <ClInclude Include="CppRedTitleScreen.h" />
     <ClInclude Include="ExternalRamBuffer.h" />
     <ClInclude Include="HostSystemServiceProviders.h" />
