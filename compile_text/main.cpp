@@ -168,20 +168,25 @@ std::string handle_prompt(const std::string &){
 	return " << PROMPT\n";
 }
 
+std::string handle_autocont(const std::string &){
+	return " << AUTOCONT\n";
+}
+
 std::map<std::string, command_handler> command_handlers = {
-	{ ".",      handle_label  },
-	{ "TEXT",   handle_text   },
-	{ "LINE",   handle_line   },
-	{ "CONT",   handle_cont   },
-	{ "DONE",   handle_done   },
-	{ "MEM",    handle_mem    },
-	{ "PROMPT", handle_prompt },
-	{ "PARA",   handle_para   },
-	{ "NUM",    handle_num    },
-	{ "BCD",    handle_bcd    },
-	{ "NEXT",   handle_next   },
-	{ "PAGE",   handle_page   },
-	{ "DEX",    handle_dex    },
+	{ ".",        handle_label    },
+	{ "TEXT",     handle_text     },
+	{ "LINE",     handle_line     },
+	{ "CONT",     handle_cont     },
+	{ "DONE",     handle_done     },
+	{ "MEM",      handle_mem      },
+	{ "PROMPT",   handle_prompt   },
+	{ "PARA",     handle_para     },
+	{ "NUM",      handle_num      },
+	{ "BCD",      handle_bcd      },
+	{ "NEXT",     handle_next     },
+	{ "PAGE",     handle_page     },
+	{ "DEX",      handle_dex      },
+	{ "AUTOCONT", handle_autocont },
 };
 
 struct Result{

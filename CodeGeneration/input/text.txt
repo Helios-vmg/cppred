@@ -4649,7 +4649,8 @@ CONT "creatures called"
 CONT "<POKE>MON!@@"
 
 ._OakSpeechText2B
-TEXT "<$51>For some people,"
+TEXT ""
+PARA "For some people,"
 LINE "<POKE>MON are"
 CONT "pets. Others use"
 CONT "them for fights."
@@ -4715,9 +4716,6 @@ DONE
 NUM hSpriteIndexOrTextID 1 2
 TEXT " ERROR."
 DONE
-
-._Char55Text
-TEXT "<$4B>@@"
 
 ._DiglettsCaveRoute2Text1
 TEXT "I went to ROCK"
@@ -8562,7 +8560,8 @@ MEM wcf4b
 TEXT "@@"
 
 ._GreatlyRoseText
-TEXT "<$4C>greatly@@"
+AUTOCONT
+TEXT "greatly@@"
 
 ._RoseText
 TEXT " rose!"
@@ -8575,7 +8574,8 @@ MEM wcf4b
 TEXT "@@"
 
 ._GreatlyFellText
-TEXT "<$4C>greatly@@"
+AUTOCONT
+TEXT "greatly@@"
 
 ._FellText
 TEXT " fell!"
