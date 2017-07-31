@@ -7,9 +7,12 @@
 #include <stdexcept>
 #include <sstream>
 #include <utility>
+#include <set>
 
 typedef std::uint8_t byte_t;
 typedef std::string (*command_handler)(const std::string &);
+
+std::set<std::string> enum_values;
 
 std::pair<std::string, std::string> charmap[] = {
 	{ "\\\\",       "\\\\01" },
@@ -32,8 +35,10 @@ std::pair<std::string, std::string> charmap[] = {
 std::string handle_mem(const std::string &input){
 	std::string ret;
 	auto space = input.find_first_of(" \t");
+	auto e = input.substr(0, space);
+	enum_values.insert(e);
 	ret += " << MEM(";
-	ret += input.substr(0, space);
+	ret += e;
 	ret += ")";
 	return ret;
 }
@@ -44,6 +49,7 @@ std::string handle_num(const std::string &input){
 	int first = 0, second = 0;
 	temp >> name >> first >> second;
 	std::stringstream ret;
+	enum_values.insert(name);
 	ret << " << NUM(" << name << ", " << first << ", " << second << ")";
 	return ret.str();
 }
@@ -54,6 +60,7 @@ std::string handle_bcd(const std::string &input){
 	int first = 0;
 	temp >> name >> first;
 	std::stringstream ret;
+	enum_values.insert(name);
 	ret << " << BCD(" << name << ", " << first << ")";
 	return ret.str();
 }
@@ -103,6 +110,7 @@ std::string filter_text(const std::string &input){
 			ret += "\\\\x\\x";
 			ret += (char)toupper(a);
 			ret += (char)toupper(b);
+			ret += "\" \"";
 			i += 5;
 			continue;
 		}
@@ -176,8 +184,14 @@ std::map<std::string, command_handler> command_handlers = {
 	{ "DEX",    handle_dex    },
 };
 
-std::string parse_text_format(std::istream &stream){
-	std::string ret;
+struct Result{
+	std::string header_string;
+	std::string source_string;
+	std::string enum_string;
+};
+
+Result parse_text_format(std::istream &stream){
+	Result ret;
 	std::string current_label;
 	unsigned line_no = 0;
 	bool first = true;
@@ -194,9 +208,10 @@ std::string parse_text_format(std::istream &stream){
 			if (first)
 				first = false;
 			else
-				ret += ";\n\n";
+				ret.source_string += ";\n\n";
 			current_label = line.substr(1);
-			ret += command_handlers["."](current_label);
+			ret.header_string += "DECLSEQ(" + current_label + ");\n";
+			ret.source_string += command_handlers["."](current_label);
 			continue;
 		}
 		
@@ -211,13 +226,24 @@ std::string parse_text_format(std::istream &stream){
 		auto first_non_space = line.find_first_not_of(" \t", first_space);
 		if (first_non_space == line.npos)
 			first_non_space = line.size();
-		ret += it->second(line.substr(first_non_space));
+		ret.source_string += it->second(line.substr(first_non_space));
 	}
+
+	ret.source_string += ";\n";
+
+	ret.enum_string += "enum class MemorySources{\n";
+	for (auto &e : enum_values){
+		ret.enum_string += "    ";
+		ret.enum_string += e;
+		ret.enum_string += ",\n";
+	}
+	ret.enum_string += "};\n";
+
 	return ret;
 }
 
 int main(){
-	std::string output;
+	Result output;
 	try{
 		std::ifstream input("input/text.txt");
 		if (!input)
@@ -227,7 +253,11 @@ int main(){
 		std::cerr << e.what() << std::endl;
 		return -1;
 	}
-	std::ofstream file("output/text.cpp");
-	file << output;
+	std::ofstream header("output/text.h");
+	std::ofstream enum_header("output/text_enum.h");
+	std::ofstream source("output/text.inl");
+	header << output.header_string;
+	source << output.source_string;
+	enum_header << output.enum_string;
 	return 0;
 }
