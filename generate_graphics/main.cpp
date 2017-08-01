@@ -1,7 +1,6 @@
 #include "../common/csv_parser.h"
 #define FREEIMAGE_LIB
 #include <FreeImage.h>
-#include "LZMA.h"
 #include <cstdint>
 #include <vector>
 #include <memory>
