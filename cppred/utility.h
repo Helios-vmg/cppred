@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CommonTypes.h"
 #include <vector>
 #include <memory>
 #include <mutex>

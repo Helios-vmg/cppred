@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Storage">
-      <UniqueIdentifier>{9e048356-cbce-427c-a382-d547f80fff50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Storage">
-      <UniqueIdentifier>{cdc1e843-3115-4b7e-a9a2-5ee576ba8705}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Network">
       <UniqueIdentifier>{585bf246-451d-471b-afe2-d5f7d36fef3a}</UniqueIdentifier>
     </Filter>
@@ -75,27 +69,6 @@
     <ClCompile Include="HostSystemServiceProviders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cart.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="CartMbc1.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="CartMbc2.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="CartMbc3.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="CartMbc5.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="CartRomOnly.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="StorageController.cpp">
-      <Filter>Source Files\Storage</Filter>
-    </ClCompile>
     <ClCompile Include="BgbProtocol.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
@@ -136,6 +109,15 @@
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
     <ClCompile Include="CppRedText.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedTextCtor.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMainMenu.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMap.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,27 +176,6 @@
     <ClInclude Include="GeneralString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cart.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="CartMbc1.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="CartMbc2.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="CartMbc3.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="CartMbc5.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="StorageController.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="CartRomOnly.h">
-      <Filter>Header Files\Storage</Filter>
-    </ClInclude>
     <ClInclude Include="BgbProtocol.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
@@ -261,6 +222,12 @@
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
     <ClInclude Include="CppRedText.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMainMenu.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMap.h">
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>

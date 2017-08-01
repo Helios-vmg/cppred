@@ -22,5 +22,5 @@ std::vector<byte_t> decode_image_data(unsigned w, unsigned h, BitmapEncoding enc
 
 template <size_t N>
 std::vector<byte_t> decode_image_data(const StaticImage<N> &img){
-	return decode_image_data(img.w, img.h, img.encoding, img.data, N);
+	return decode_image_data(img.width, img.height, img.encoding, img.data, N);
 }

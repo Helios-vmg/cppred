@@ -6,5 +6,6 @@ class CppRedClearSaveDialog{
 	CppRed *parent;
 public:
 	CppRedClearSaveDialog(CppRed &parent);
-	void display();
+	// Returns true if save must be cleared.
+	bool display();
 };

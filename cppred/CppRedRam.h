@@ -2,6 +2,7 @@
 #include "CppRedStructs.h"
 #include "CommonTypes.h"
 #include "CppRedConstants.h"
+#include "CppRedMap.h"
 #include <memory>
 
 class RamRegion{

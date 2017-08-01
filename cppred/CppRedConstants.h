@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CommonTypes.h"
+
 #define RED 'RED'
 #define BLUE 'BLUE'
 #define GREEN 'GREE'
@@ -623,3 +625,85 @@ const unsigned vChars0 = 0x8000;
 const unsigned vChars1 = 0x8800;
 const unsigned vSprites = vChars0;
 const unsigned vFont = vChars1;
+
+enum class MenuType{
+	YesNo,
+	NorthWest,
+	SouthEast,
+	WideYesNo,
+	NorthEast,
+	TradeCancel,
+	HealCancel,
+	NoYes,
+};
+
+enum class TextBoxId{
+	MessageBox = 0x01,
+	FieldMoveMonMenu = 0x04,
+	JpMochimonoMenuTemplate = 0x05,
+	UseTossMenuTemplate = 0x06,
+	JpSaveMessageMenuTemplate = 0x08,
+	JpSpeedOptionsMenuTemplate = 0x09,
+	BattleMenuTemplate = 0x0b,
+	SwitchStatsCancelMenuTemplate = 0x0c,
+	ListMenuBox = 0x0d,
+	BuySellQuitMenuTemplate = 0x0e,
+	MoneyBoxTemplate = 0x0f,
+	MonSpritePopup = 0x11,
+	JpAhMenuTemplate = 0x12,
+	MoneyBox = 0x13,
+	TwoOptionMenu = 0x14,
+	BuySellQuitMenu = 0x15,
+	JpPokedexMenuTemplate = 0x1a,
+	SafariBattleMenuTemplate = 0x1b,
+};
+
+enum class BattleStyle{
+	Shift = 0,
+	Set = 1,
+};
+
+enum class TextSpeed{
+	Fast     = 1,
+	Medium   = 3,
+	Slow     = 5,
+	Invalid0 = 0,
+	Invalid2 = 2,
+	Invalid4 = 4,
+	Invalid6 = 6,
+	Invalid7 = 7,
+};
+
+enum class LinkState{
+	//not using link
+	None = 0,
+	//in a cable club room(Colosseum or Trade Centre)
+	InCableClub = 1,
+	//pre - trade selection screen initialisation
+	StartTrade = 2,
+	//pre - battle initialisation
+	StartBattle = 3,
+	//in a link battle
+	Battling = 4,
+	//reset game(unused)
+	Reset = 5,
+	//in a link trade
+	Trading = 0x32,
+};
+
+enum class SaveFileStatus{
+	NoSave = 1,
+	SaveExists = 2,
+};
+
+const unsigned player_direction_r_bit = 0;
+const unsigned player_direction_l_bit = 1;
+const unsigned player_direction_d_bit = 2;
+const unsigned player_direction_u_bit = 3;
+
+enum class PlayerDirection{
+	Right = 1 << player_direction_r_bit,
+	Left  = 1 << player_direction_l_bit,
+	Down  = 1 << player_direction_d_bit,
+	Up    = 1 << player_direction_u_bit,
+};

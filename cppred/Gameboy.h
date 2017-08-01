@@ -3,7 +3,6 @@
 #include "DisplayController.h"
 #include "UserInputController.h"
 #include "SystemClock.h"
-#include "StorageController.h"
 #include "SoundController.h"
 #include "threads.h"
 #include "HostSystemServiceProviders.h"
@@ -21,7 +20,6 @@ class Gameboy{
 	GameboyCpu cpu;
 	DisplayController display_controller;
 	UserInputController input_controller;
-	StorageController storage_controller;
 	SoundController sound_controller;
 	SystemClock clock;
 	double accumulated_time = -1;

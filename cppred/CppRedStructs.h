@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonTypes.h"
+#include "CppRedConstants.h"
 #include <limits>
 #include <type_traits>
 #include <algorithm>
@@ -71,6 +72,9 @@ public:
 		this->callbacks.r(ret, this->memory);
 		return ret;
 	}
+	WrappedT value() const{
+		return (WrappedT)*this;
+	}
 #else
 	IntegerWrapper_BINARY_OVERLOAD(+)
 	IntegerWrapper_BINARY_OVERLOAD(-)
@@ -130,7 +134,10 @@ public:
 	WrappedT operator=(const IntegerWrapper &other) const{
 		return basic_IntegerWrapper::operator=(other);
 	}
-	const IntegerWrapper &operator=(IntegerWrapper &&other) = delete;
+	const IntegerWrapper &operator=(IntegerWrapper &&other){
+		*this = (WrappedT)other;
+		return *this;
+	}
 	WrappedT operator=(WrappedT input) const{
 		return basic_IntegerWrapper::operator=(input);
 	}
@@ -145,7 +152,10 @@ public:
 	WrappedT operator=(const ArbitraryIntegerWrapper &other) const{
 		return basic_IntegerWrapper::operator=(other);
 	}
-	const ArbitraryIntegerWrapper &operator=(ArbitraryIntegerWrapper &&other) = delete;
+	const ArbitraryIntegerWrapper &operator=(ArbitraryIntegerWrapper &&other){
+		*this = (WrappedT)other;
+		return *this;
+	}
 	WrappedT operator=(WrappedT input) const{
 		return basic_IntegerWrapper::operator=(input);
 	}
@@ -317,6 +327,11 @@ public:
 		const WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array;
 		size_t index;
 	public:
+		typedef indexed_type value_type;
+		typedef typename std::make_signed<size_t>::type difference_type;
+		typedef value_type *pointer;
+		typedef value_type &reference;
+		typedef std::random_access_iterator_tag iterator_category;
 		Iterator(const WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array, size_t index): array(array), index(index){}
 		Iterator(const Iterator &it) = default;
 		Iterator(Iterator &&it){
@@ -347,24 +362,29 @@ public:
 		indexed_type operator*() const{
 			return (*this->array)[this->index];
 		}
-		indexed_type operator[](int n) const{
+		indexed_type operator[](difference_type n) const{
 			return (*this->array)[this->index + n];
 		}
-		Iterator operator+(int n) const{
+		Iterator operator+(difference_type n) const{
 			auto ret = *this;
 			ret.index += n;
 			return ret;
 		}
-		Iterator operator-(int n) const{
+		Iterator operator-(difference_type n) const{
 			auto ret = *this;
 			ret.index -= n;
 			return ret;
 		}
-		Iterator operator+=(int n){
+		difference_type operator-(Iterator other) const{
+			if (this->array != other.array)
+				throw std::runtime_error("Incorrect iterator usage.");
+			return (difference_type)this->index - (difference_type)other.index;
+		}
+		Iterator operator+=(difference_type n){
 			this->index += n;
 			return *this;
 		}
-		Iterator operator-=(int n){
+		Iterator operator-=(difference_type n){
 			this->index -= n;
 			return *this;
 		}
@@ -375,6 +395,11 @@ public:
 		}
 		bool operator!=(const Iterator &other) const{
 			return !(*this == other);
+		}
+		bool operator<(const Iterator &other) const{
+			if (this->array != other.array)
+				throw std::runtime_error("Incorrect iterator usage.");
+			return this->index < other.index;
 		}
 	};
 	typedef Iterator<WrappedT, Length, ElementSize> iterator;
@@ -534,6 +559,40 @@ public:
 	void operator=(PcBox &&) = delete;
 };
 
+struct OptionsTuple{
+	bool battle_animations_enabled;
+	BattleStyle battle_style;
+	TextSpeed text_speed;
+};
+
+class UserOptions{
+public:
+	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
+	typedef typename member_type::callback_struct callback_struct;
+	static const size_t size = 1;
+private:
+	member_type options;
+public:
+	UserOptions(void *memory, const callback_struct &callbacks):
+		options((char *)memory, callbacks)
+	{}
+	UserOptions(const UserOptions &) = default;
+	UserOptions(UserOptions &&) = delete;
+	void operator=(const UserOptions &) = delete;
+	void operator=(UserOptions &&) = delete;
+
+	bool get_battle_animation_enabled() const;
+	void set_battle_animation_enabled(bool);
+	BattleStyle get_battle_style() const;
+	void set_battle_style(BattleStyle);
+	TextSpeed get_text_speed() const;
+	void set_text_speed(TextSpeed);
+	operator OptionsTuple() const;
+	void operator=(const OptionsTuple &);
+};
+
+#include "../CodeGeneration/output/bitmaps.h"
+
 template <size_t S>
 struct WrapperSelector<SpriteStateData1, S>{
 	typedef SpriteStateData1 type;
@@ -576,5 +635,8 @@ public:
 	}
 	operator WrappedT() const{
 		return (WrappedT)(MemoryT)this->value;
+	}
+	WrappedT enum_value() const{
+		return (WrappedT)*this;
 	}
 };

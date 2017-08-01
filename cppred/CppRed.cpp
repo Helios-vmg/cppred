@@ -5,6 +5,9 @@
 #include "../CodeGeneration/output/gfx.h"
 #include "CppRedData.h"
 #include "CppRedClearSave.h"
+#include "CppRedMainMenu.h"
+#include <cassert>
+#include <stdexcept>
 
 #define INITIALIZE_EMPTY_HARDWARE_REGISTER(name) \
 	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
@@ -18,7 +21,6 @@ CppRed::CppRed(HostSystem &host):
 		display_controller(*this),
 		sound_controller(*this),
 		input_controller(*this),
-		storage_controller(*this, host),
 		clock(*this),
 		audio(*this),
 		continue_running(false)
@@ -138,12 +140,11 @@ void CppRed::set_default_names_before_titlescreen(){
 	this->wram.wRivalName = sony_text;
 	this->set_window_position(-1, 0);
 	this->wram.wLetterPrintingDelayFlags = 0;
-	this->wram.wd732 = 0;
-	this->wram.wFlags_D733 = 0;
-	this->wram.wBeatLorelei = 0;
+	this->wram.wd732.clear();
+	this->wram.wFlags_D733.clear();
+	this->wram.wBeatLorelei.clear();
 	this->wram.wAudioROMBank.value = 0;
 	this->wram.wAudioSavedROMBank.value = 0;
-	//this->display_titlescreen();
 }
 
 TitleScreenResult CppRed::display_titlescreen(){
@@ -276,13 +277,15 @@ void CppRed::run_until_next_frame(){
 #endif
 
 void CppRed::main(){
-	this->init();
+	MainMenuResult main_menu_result;
 	while (true){
+		this->init();
 		bool done = false;
 		while (!done){
 			switch (this->display_titlescreen()){
 				case TitleScreenResult::GoToMainMenu:
-					this->display_main_menu();
+					main_menu_result = this->display_main_menu();
+					done = main_menu_result != MainMenuResult::Cancelled;
 					break;
 				case TitleScreenResult::GoToClearSaveDialog:
 					this->display_clear_save_dialog();
@@ -290,6 +293,19 @@ void CppRed::main(){
 					break;
 			}
 		}
+		if (main_menu_result != MainMenuResult::Cancelled)
+			break;
+	}
+	assert(main_menu_result != MainMenuResult::Cancelled);
+	switch (main_menu_result){
+		case MainMenuResult::NewGame:
+			this->start_new_game();
+			break;
+		case MainMenuResult::ContinueGame:
+			this->start_loaded_game();
+			break;
+		default:
+			throw std::runtime_error("Invalid switch value.");
 	}
 }
 
@@ -499,5 +515,30 @@ void CppRed::load_gb_pal(){
 
 void CppRed::display_clear_save_dialog(){
 	CppRedClearSaveDialog dialog(*this);
-	dialog.display();
+	if (dialog.display())
+		this->clear_save();
+}
+
+MainMenuResult CppRed::display_main_menu(){
+	CppRedMainMenu dialog(*this);
+	return dialog.display();
+}
+
+void CppRed::start_loaded_game(){
+	this->gb_pal_white_out_with_delay3();
+	this->clear_screen();
+	this->wram.wPlayerDirection = PlayerDirection::Right;
+	this->delay_frames(10);
+	if (!this->wram.wNumHoFTeams){
+		this->special_enter_map(MapId::PalletTown);
+		return;
+	}
+	auto current_map = this->wram.wCurMap.enum_value();
+	if (current_map != MapId::HallOfFame){
+		this->special_enter_map(current_map);
+		return;
+	}
+	this->wram.wDestinationMap = MapId::PalletTown;
+	this->wram.wd732.set_fly_warp(true);
+	this->special_enter_map(this->special_warp_in());
 }

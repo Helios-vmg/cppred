@@ -42,6 +42,12 @@ std::unique_ptr<Type> construct_spritestatedata2(){
 	return std::make_unique<spritestatedata2Struct>();
 }
 
+std::unique_ptr<Type> construct_options(){
+	return std::make_unique<PackedBitsWrapper>("UserOptions");
+}
+
+#include "../CodeGeneration/output/bitmaps_rams_constructors.inl"
+
 std::unique_ptr<Type> construct_pointer(){
 	return std::make_unique<DataPointer>();
 }
@@ -73,6 +79,12 @@ DEFINE_construct_enum_byte(SerialConnectionStatus);
 DEFINE_construct_enum_byte(SpeciesId);
 DEFINE_construct_enum_byte(Sound);
 DEFINE_construct_enum_byte(AudioBank);
+DEFINE_construct_enum_byte(MenuType);
+DEFINE_construct_enum_byte(TextBoxId);
+DEFINE_construct_enum_byte(LinkState);
+DEFINE_construct_enum_byte(SaveFileStatus);
+DEFINE_construct_enum_byte(PlayerDirection);
+DEFINE_construct_enum_byte(MapId);
 
 #define DECLARE_ENUM_IN_MAP(x) { #x, ENUM_TYPE(x) }
 
@@ -85,6 +97,8 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	{ "big_u32", construct_big_u32 },
 	{ "spritestatedata1", construct_spritestatedata1 },
 	{ "spritestatedata2", construct_spritestatedata2 },
+	{ "options", construct_options },
+#include "../CodeGeneration/output/bitmaps_rams_declarations.inl"
 	{ "pointer", construct_pointer },
 	{ "big_pointer", construct_big_pointer },
 	{ "code_pointer", construct_code_pointer },
@@ -94,6 +108,12 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	DECLARE_ENUM_IN_MAP(SpeciesId),
 	DECLARE_ENUM_IN_MAP(Sound),
 	DECLARE_ENUM_IN_MAP(AudioBank),
+	DECLARE_ENUM_IN_MAP(MenuType),
+	DECLARE_ENUM_IN_MAP(TextBoxId),
+	DECLARE_ENUM_IN_MAP(LinkState),
+	DECLARE_ENUM_IN_MAP(SaveFileStatus),
+	DECLARE_ENUM_IN_MAP(PlayerDirection),
+	DECLARE_ENUM_IN_MAP(MapId),
 };
 
 bool is_number(const std::string &s){
@@ -265,4 +285,13 @@ std::string Pointer::get_callback_struct() const{
 
 std::string EnumUint::get_actual_type_name() const{
 	return (boost::format("EnumWrapper<%1%, %2%, %3%>") % this->type_name % TypeUint::get_virtual_type_name() % this->N).str();
+}
+
+std::string PackedBitsWrapper::get_callback_struct() const{
+	return (boost::format(
+			"{%1%, %2%}"
+		)
+		% integer_functions[0][0][0]
+		% integer_functions[0][0][1]
+	).str();
 }

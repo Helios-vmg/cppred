@@ -2,12 +2,14 @@
 #include "DisplayController.h"
 #include "UserInputController.h"
 #include "SystemClock.h"
-#include "StorageController.h"
 #include "SoundController.h"
 #include "CommonTypes.h"
 #include "CppRedConstants.h"
 #include "CppRedRam.h"
 #include "CppRedAudio.h"
+#include "CppRedText.h"
+#include "CppRedMainMenu.h"
+#include "CppRedMap.h"
 #include "ExternalRamBuffer.h"
 #include "threads.h"
 #include "utility.h"
@@ -22,7 +24,6 @@ class CppRed{
 	HostSystem *host;
 	DisplayController display_controller;
 	UserInputController input_controller;
-	StorageController storage_controller;
 	SoundController sound_controller;
 	SystemClock clock;
 	CppRedAudio audio;
@@ -53,10 +54,15 @@ class CppRed{
 	double get_real_time();
 	//void execute_pause();
 	void main();
+	void start_new_game();
+	void start_loaded_game();
+	void special_enter_map(MapId);
+	MapId special_warp_in();
 public:
 
 	WRam wram;
 	HRam hram;
+	CppRedText text;
 
 	//Simulated hardware registers:
 #define DECLARE_HARDWARE_REGISTER(name) ArbitraryIntegerWrapper<byte_t, 1> name
@@ -120,8 +126,9 @@ public:
 	void load_pokemon_logo();
 	void load_version_graphics();
 	void clear_both_bg_maps();
+	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
 	//Note: In the disassembly, the analog to this function is the macro coord.
-	decltype(WRam::wTileMap)::iterator get_tilemap_location(unsigned x, unsigned y){
+	tilemap_it get_tilemap_location(unsigned x, unsigned y){
 		return this->wram.wTileMap.begin() + y * tilemap_width + x;
 	}
 	void save_screen_tiles_to_buffer2();
@@ -138,12 +145,23 @@ public:
 	Sound get_cry_data(SpeciesId);
 	void load_gb_pal();
 	void display_clear_save_dialog();
-	void display_main_menu();
+	MainMenuResult display_main_menu();
 	void run_default_palette_command();
-	void print_text(const std::string &);
+	void print_text(const CppRedText::Region &);
+	void display_textbox_id(const tilemap_it &location, unsigned unk0, unsigned unk1);
+	void clear_save();
 	DisplayController &get_display_controller(){
 		return this->display_controller;
 	}
+	void prepare_menu(){
+		this->clear_screen();
+		this->run_default_palette_command();
+		this->load_textbox_tile_patterns();
+		this->load_font_tile_patterns();
+	}
+	void update_sprites();
+	byte_t handle_menu_input();
+	void joypad();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

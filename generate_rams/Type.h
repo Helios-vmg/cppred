@@ -158,6 +158,19 @@ public:
 	std::string get_callback_struct() const override;
 };
 
+class PackedBitsWrapper : public Struct{
+	std::string name;
+public:
+	PackedBitsWrapper(const char *name): name(name){}
+	std::unique_ptr<Number> get_size() override{
+		return std::make_unique<IntegerLiteralNumber>(1);
+	}
+	std::string get_actual_type_name() const override{
+		return this->name;
+	}
+	std::string get_callback_struct() const override;
+};
+
 class Array : public Struct{
 	std::unique_ptr<Type> inner;
 	std::unique_ptr<Number> length;
