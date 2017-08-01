@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4933C4BB-084C-49AF-A724-1813AD4BB5E8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>compile_text</RootNamespace>
+    <RootNamespace>generate_text</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
