@@ -146,7 +146,9 @@ public:
 	void load_gb_pal();
 	void display_clear_save_dialog();
 	MainMenuResult display_main_menu();
-	void run_default_palette_command();
+	void run_default_palette_command(){
+		this->run_palette_command(PaletteCommand::Default);
+	}
 	void print_text(const CppRedText::Region &);
 	void display_textbox_id(const tilemap_it &location, unsigned unk0, unsigned unk1);
 	void clear_save();

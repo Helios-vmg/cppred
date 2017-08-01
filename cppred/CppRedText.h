@@ -161,4 +161,5 @@ public:
 	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
 	void text_box_border(const tilemap_it &it, unsigned w, unsigned h);
 	void place_string(const tilemap_it &it, const Region &text);
+	void print_text(const Region &text);
 };

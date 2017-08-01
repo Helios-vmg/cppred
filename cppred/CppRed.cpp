@@ -542,3 +542,7 @@ void CppRed::start_loaded_game(){
 	this->wram.wd732.set_fly_warp(true);
 	this->special_enter_map(this->special_warp_in());
 }
+
+void CppRed::print_text(const CppRedText::Region &region){
+	this->text.print_text(region);
+}

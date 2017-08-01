@@ -27,13 +27,9 @@ MainMenuResult CppRedMainMenu::display(){
 		wram.wBattleAndStartSavedMenuItem = 0;
 		wram.wPlayerMoveListIndex = 0;
 		wram.wDefaultMap = 0;
-		wram.wd72e &= ~(1 << 6);
+		wram.wd72e.set_using_link_cable(false);
 		this->parent->prepare_menu();
-		{
-			wd730Tuple temp = wram.wd730;
-			temp.no_print_delay = true;
-			wram.wd730 = temp;
-		}
+		wram.wd730.set_no_print_delay(true);
 
 		{
 			unsigned y;
@@ -51,11 +47,7 @@ MainMenuResult CppRedMainMenu::display(){
 			text.place_string(pos, *region);
 		}
 
-		{
-			wd730Tuple temp = wram.wd730;
-			temp.no_print_delay = false;
-			wram.wd730 = temp;
-		}
+		wram.wd730.set_no_print_delay(false);
 		this->parent->update_sprites();
 
 		wram.wCurrentMenuItem = 0;
