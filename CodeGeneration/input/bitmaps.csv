@@ -1,0 +1,81 @@
+ignored,struct,member,comment
+0,wd728,using_strength,Using Strength outside of battle.
+1,wd728,surfing_allowed,"Set by IsSurfingAllowed when surfing's allowed, but the caller resets it after checking the result."
+2,wd728,skip,
+3,wd728,received_old_rod,Received Old Rod.
+4,wd728,received_good_rod,Received Good Rod.
+5,wd728,received_super_rod,Received Super Rod.
+6,wd728,gave_drink_to_saffron_guards,Gave one of the Saffron guards a drink.
+7,wd728,obsolete_used_card_key,"Set by ItemUseCardKey, which is leftover code from a previous implementation of the Card Key."
+0,GymClear,beat_pewter,
+1,GymClear,beat_cerulean,
+2,GymClear,beat_vermilion,
+3,GymClear,beat_celadon,
+4,GymClear,beat_fuchsia,
+5,GymClear,beat_saffron,
+6,GymClear,beat_cinnabar,
+7,GymClear,beat_viridian,
+0,wd72c,random_encounter_too_soon,"If not set, the 3 minimum steps between random battles have passed."
+1,wd72c,no_audio_fade_out,Prevent audio fade out
+2,wd72c,skip,
+3,wd72c,skip,
+4,wd72c,skip,
+5,wd72c,skip,
+6,wd72c,skip,
+7,wd72c,skip,
+0,wd72d,trade_center_directions_initialized,Sprite facing directions have been initialised in the Trade Center.
+1,wd72d,skip,
+2,wd72d,skip,
+3,wd72d,do_scripted_warp,Do scripted warp (used to warp back to Lavender Town from the top of the pokemon tower).
+4,wd72d,do_dungeon_warp,On a dungeon warp.
+5,wd72d,npcs_dont_turn_when_spoken_to,Don't make NPCs face the player when spoken to.
+6,wd72d,unknown1,"Set by scripts when starting major battles in the storyline, but does not appear to affect anything. Reset after all battles."
+7,wd72d,unknown2,"Set by scripts when starting major battles in the storyline, but does not appear to affect anything. Reset after trainer battles (but it's only set before trainer battles anyway)."
+0,wd72e,received_lapras,The player has received Lapras in the Silph Co. building.
+1,wd72e,unknown,"Set in various places, but doesn't appear to have any effect."
+2,wd72e,ever_used_pokemon_center,The player has healed pokemon at a pokemon center at least once.
+3,wd72e,received_starter,The player has a received a pokemon from Prof. Oak.
+4,wd72e,disable_battles,Disable battles.
+5,wd72e,lost_from_poison,Set when a battle ends and when the player blacks out in the overworld due to poison.
+6,wd72e,using_link_cable,Using the link feature.
+7,wd72e,npc_movement_initialized,Set if scripted NPC movement has been initialised.
+0,wd730,sprite_automoved,NPC sprite being moved by script.
+1,wd730,skip,
+2,wd730,skip,
+3,wd730,skip,
+4,wd730,skip,
+5,wd730,ignore_input,Ignore joypad input.
+6,wd730,no_print_delay,Print text with no delay between each letter.
+7,wd730,input_simulated,Set if joypad states are being simulated in the overworld or an NPC's movement is being scripted.
+0,wd732,counting_play_time,Play time being counted.
+1,wd732,unknown,Remnant of debug mode? Not set by the game code.
+2,wd732,fly_warp,The target warp is a fly warp (bit 3 set or blacked out) or a dungeon warp (bit 4 set).
+3,wd732,pad_warp,"Used warp pad, escape rope, dig, teleport, or fly, so the target warp is a ""fly warp""."
+4,wd732,hole_warp,"Jumped into hole (Pokemon Mansion, Seafoam Islands, Victory Road) or went down waterfall (Seafoam Islands), so the target warp is a ""dungeon warp""."
+5,wd732,bike_forced,Currently being forced to ride bike (cycling road).
+6,wd732,special_map_destination,"Map destination is [wLastBlackoutMap] (usually the last used pokemon center, but could be the player's house)."
+7,wd732,skip,
+0,wFlags_D733,test_battle,Running a test battle.
+1,wFlags_D733,no_music_change,Prevent music from changing when entering new map.
+2,wFlags_D733,skip_input_check,Skip the joypad check in CheckWarpsNoCollision (used for the forced warp down the waterfall in the Seafoam Islands).
+3,wFlags_D733,trainer_wants_to_battle,Trainer wants to battle.
+4,wFlags_D733,use_wCurMapScript,Use variable [wCurMapScript] instead of the provided index for next frame's map script (used to start battle when talking to trainers).
+5,wFlags_D733,skip,
+6,wFlags_D733,skip,
+7,wFlags_D733,flew_out_of_battle,Used Fly out of battle.
+0,wBeatLorelei,skip,
+1,wBeatLorelei,beat_lorelei,Set when you beat Lorelei and reset in Indigo Plateau lobby. The game uses this to tell when Elite 4 events need to be reset.
+2,wBeatLorelei,skip,
+3,wBeatLorelei,skip,
+4,wBeatLorelei,skip,
+5,wBeatLorelei,skip,
+6,wBeatLorelei,skip,
+7,wBeatLorelei,skip,
+0,wd736,check_pc_door_position,Check if the player is standing on a door and make him walk down a step if so.
+1,wd736,currently_stepping_down,The player is currently stepping down from a door.
+2,wd736,standing_on_warp,Standing on a warp.
+3,wd736,skip,
+4,wd736,skip,
+5,wd736,skip,
+6,wd736,doing_animation,Jumping down a ledge/Fishing animation.
+7,wd736,pc_spinning,Player sprite spinning due to spin tiles (Rocket hideout/Viridian Gym).
