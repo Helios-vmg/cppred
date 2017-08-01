@@ -644,16 +644,15 @@ void CppRed::update_player_sprite(){
 	sprite2.grass_priority = 0x80 * (this->hram.hTilePlayerStandingOn == this->wram.wGrassTile);
 }
 
+unsigned swap_nibbles(unsigned n){
+	n &= 0xFF;
+	n = (n << 4) | (n >> 4);
+	n &= 0xFF;
+	return n;
+}
+
 void CppRed::update_non_player_sprite(const SpriteStateData2 &sprite){
-	unsigned weird = sprite.sprite_image_base_offset + 1;
-
-	//Swap nibbles of weird:
-	weird &= 0xFF;
-	weird = (weird << 4) | (weird >> 4);
-	weird &= 0xFF;
-	
-	this->hram.hTilePlayerStandingOn = weird;
-
+	this->hram.hTilePlayerStandingOn = swap_nibbles(sprite.sprite_image_base_offset + 1);
 	if (this->wram.wNPCMovementScriptSpriteOffset == this->hram.H_CURRENTSPRITEOFFSET)
 		this->do_scripted_npc_movement();
 	else
@@ -718,4 +717,35 @@ void CppRed::do_scripted_npc_movement(){
 		return;
 	this->wram.wScriptedNPCWalkCounter = 8;
 	this->wram.wNPCMovementDirections2Index++;
+}
+
+void CppRed::initialize_scripted_npc_movement(){
+	this->wram.wNPCMovementDirections2Index = 0;
+	this->wram.wScriptedNPCWalkCounter = 8;
+	this->anim_scripted_npc_movement();
+}
+
+void CppRed::anim_scripted_npc_movement(){
+	{
+		auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+		auto swapped = swap_nibbles(sprite2.sprite_image_base_offset - 1);
+		auto direction = (SpriteFacingDirection)sprite1.facing_direction;
+		switch (direction){
+			case SpriteFacingDirection::Down:
+			case SpriteFacingDirection::Up:
+			case SpriteFacingDirection::Left:
+			case SpriteFacingDirection::Right:
+				break;
+			default:
+				return;
+		}
+		swapped = (swapped + (unsigned)direction) & 0xFF;
+		this->hram.hSpriteVRAMSlotAndFacing = swapped;
+	}
+	this->advance_scripted_npc_anim_frame_counter();
+	{
+		auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		sprite1.sprite_image_idx = this->hram.hSpriteVRAMSlotAndFacing + this->hram.hSpriteAnimFrameCounter;
+	}
 }

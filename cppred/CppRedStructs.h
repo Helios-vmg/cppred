@@ -7,6 +7,8 @@
 #include <string>
 #include <functional>
 
+#define WRAPPER_CONST 
+
 template <typename WrappedT, size_t Size, typename reading_f, typename writing_f>
 class basic_IntegerWrapper{
 public:
@@ -32,13 +34,13 @@ public:
 	basic_IntegerWrapper(const basic_IntegerWrapper &other){
 		this->copy(other);
 	}
-	WrappedT operator=(const basic_IntegerWrapper &other) const{
+	WrappedT operator=(const basic_IntegerWrapper &other) WRAPPER_CONST{
 		auto ret = (WrappedT)other;
 		*this = ret;
 		return ret;
 	}
 	const basic_IntegerWrapper &operator=(basic_IntegerWrapper &&other) = delete;
-	WrappedT operator=(WrappedT input) const{
+	WrappedT operator=(WrappedT input) WRAPPER_CONST{
 		this->callbacks.w(input, this->memory);
 		return input;
 	}
@@ -51,11 +53,11 @@ public:
 	IntegerWrapper_UNARY_OVERLOAD(-)
 	IntegerWrapper_UNARY_OVERLOAD(+)
 #define IntegerWrapper_CREMENT_OVERLOAD(x) \
-	WrappedT operator x() const{ \
+	WrappedT operator x() WRAPPER_CONST{ \
 		auto temp = (WrappedT)*this; \
 		return *this = x temp; \
 	} \
-	WrappedT operator x(int) const{ \
+	WrappedT operator x(int) WRAPPER_CONST{ \
 		auto ret = *this; \
 		x *this; \
 		return ret; \
@@ -97,7 +99,7 @@ public:
 #endif
 
 #define IntegerWrapper_SPECIAL_ASSIGNMENT_OVERLOAD(x) \
-	WrappedT operator x(WrappedT input) const{ \
+	WrappedT operator x(WrappedT input) WRAPPER_CONST{ \
 		auto temp = (WrappedT)*this; \
 		temp x input; \
 		return *this = temp; \
@@ -131,14 +133,14 @@ public:
 	IntegerWrapper(void *memory, const callback_struct &callbacks): basic_IntegerWrapper(memory, callbacks){}
 	IntegerWrapper(IntegerWrapper &&other): basic_IntegerWrapper(std::move(other)){}
 	IntegerWrapper(const IntegerWrapper &other): basic_IntegerWrapper(other){}
-	WrappedT operator=(const IntegerWrapper &other) const{
+	WrappedT operator=(const IntegerWrapper &other) WRAPPER_CONST{
 		return basic_IntegerWrapper::operator=(other);
 	}
 	const IntegerWrapper &operator=(IntegerWrapper &&other){
 		*this = (WrappedT)other;
 		return *this;
 	}
-	WrappedT operator=(WrappedT input) const{
+	WrappedT operator=(WrappedT input) WRAPPER_CONST{
 		return basic_IntegerWrapper::operator=(input);
 	}
 };
@@ -149,14 +151,14 @@ public:
 	ArbitraryIntegerWrapper(void *memory, const callback_struct &callbacks): basic_IntegerWrapper(memory, callbacks){}
 	ArbitraryIntegerWrapper(ArbitraryIntegerWrapper &&other): basic_IntegerWrapper(std::move(other)){}
 	ArbitraryIntegerWrapper(const ArbitraryIntegerWrapper &other): basic_IntegerWrapper(other){}
-	WrappedT operator=(const ArbitraryIntegerWrapper &other) const{
+	WrappedT operator=(const ArbitraryIntegerWrapper &other) WRAPPER_CONST{
 		return basic_IntegerWrapper::operator=(other);
 	}
 	const ArbitraryIntegerWrapper &operator=(ArbitraryIntegerWrapper &&other){
 		*this = (WrappedT)other;
 		return *this;
 	}
-	WrappedT operator=(WrappedT input) const{
+	WrappedT operator=(WrappedT input) WRAPPER_CONST{
 		return basic_IntegerWrapper::operator=(input);
 	}
 };
@@ -291,6 +293,44 @@ WRAP_INTEGER_TYPE(signed long long);
 WRAP_INTEGER_TYPE(unsigned long long);
 WRAP_INTEGER_TYPE(wchar_t);
 
+template <typename WrappedT, typename MemoryT, size_t Size>
+class EnumWrapper{
+public:
+	typedef typename WrapperSelector<MemoryT, Size>::type wrapper_type;
+	typedef typename wrapper_type::callback_struct callback_struct;
+	typedef WrappedT type;
+	static const size_t size = Size;
+
+	wrapper_type value;
+
+	EnumWrapper(void *memory, const callback_struct &callbacks): value(memory, callbacks){}
+	EnumWrapper(EnumWrapper &&other){
+		this->value = std::move(other.value);
+	}
+	EnumWrapper(const EnumWrapper &other) = default;
+	WrappedT operator=(const EnumWrapper &other) WRAPPER_CONST{
+		auto ret = (WrappedT)other;
+		*this = ret;
+		return ret;
+	}
+	const EnumWrapper &operator=(EnumWrapper &&other) = delete;
+	WrappedT operator=(WrappedT input) WRAPPER_CONST{
+		this->value = (MemoryT)input;
+		return input;
+	}
+	operator WrappedT() const{
+		return (WrappedT)(MemoryT)this->value;
+	}
+	WrappedT enum_value() const{
+		return (WrappedT)*this;
+	}
+};
+
+template <size_t S>
+struct WrapperSelector<NpcMovementDirection, S>{
+	typedef EnumWrapper<NpcMovementDirection, byte_t, S> type;
+};
+
 template <typename WrappedT, size_t Length, size_t ElementSize>
 class WrappedArray{
 public:
@@ -317,14 +357,14 @@ public:
 	}
 	void operator=(const WrappedArray &) = delete;
 	void operator=(WrappedArray &&other) = delete;
-	indexed_type operator[](size_t idx) const{
+	indexed_type operator[](size_t idx) WRAPPER_CONST{
 		if (idx >= Length)
 			array_overflow();
 		return indexed_type((char *)this->memory + idx * ElementSize, callbacks);
 	}
 	template <typename WrappedT_it, size_t Length_it, size_t ElementSize_it>
 	class Iterator{
-		const WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array;
+		WRAPPER_CONST WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array;
 		size_t index;
 	public:
 		typedef indexed_type value_type;
@@ -332,7 +372,7 @@ public:
 		typedef value_type *pointer;
 		typedef value_type &reference;
 		typedef std::random_access_iterator_tag iterator_category;
-		Iterator(const WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array, size_t index): array(array), index(index){}
+		Iterator(WRAPPER_CONST WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array, size_t index): array(array), index(index){}
 		Iterator(const Iterator &it) = default;
 		Iterator(Iterator &&it){
 			*this = it;
@@ -359,10 +399,10 @@ public:
 			this->index--;
 			return ret;
 		}
-		indexed_type operator*() const{
+		indexed_type operator*() WRAPPER_CONST{
 			return (*this->array)[this->index];
 		}
-		indexed_type operator[](difference_type n) const{
+		indexed_type operator[](difference_type n) WRAPPER_CONST{
 			return (*this->array)[this->index + n];
 		}
 		Iterator operator+(difference_type n) const{
@@ -403,18 +443,18 @@ public:
 		}
 	};
 	typedef Iterator<WrappedT, Length, ElementSize> iterator;
-	iterator begin() const{
+	iterator begin() WRAPPER_CONST{
 		return iterator(this, 0);
 	}
-	iterator end() const{
+	iterator end() WRAPPER_CONST{
 		return iterator(this, Length);
 	}
-	void fill(const WrappedT &value) const{
+	void fill(const WrappedT &value) WRAPPER_CONST{
 		for (auto &it : *this)
 			it = value;
 	}
 	std::enable_if<std::is_same<WrappedT, byte_t>::value, void>
-	operator=(const std::string &string) const{
+	operator=(const std::string &string) WRAPPER_CONST{
 		auto n = std::min(string.size(), Length);
 		for (size_t i = 0; i < n; i++)
 			(*this)[i] = string[i];
@@ -430,39 +470,6 @@ public:
 			ret.push_back(it);
 		}
 		return ret;
-	}
-};
-
-template <typename WrappedT, typename MemoryT, size_t Size>
-class EnumWrapper{
-public:
-	typedef typename WrapperSelector<MemoryT, Size>::type wrapper_type;
-	typedef typename wrapper_type::callback_struct callback_struct;
-	typedef WrappedT type;
-	static const size_t size = Size;
-
-	wrapper_type value;
-
-	EnumWrapper(void *memory, const callback_struct &callbacks): value(memory, callbacks){}
-	EnumWrapper(EnumWrapper &&other){
-		this->value = std::move(other.value);
-	}
-	EnumWrapper(const EnumWrapper &other) = default;
-	WrappedT operator=(const EnumWrapper &other) const{
-		auto ret = (WrappedT)other;
-		*this = ret;
-		return ret;
-	}
-	const EnumWrapper &operator=(EnumWrapper &&other) = delete;
-	WrappedT operator=(WrappedT input) const{
-		this->value = (MemoryT)input;
-		return input;
-	}
-	operator WrappedT() const{
-		return (WrappedT)(MemoryT)this->value;
-	}
-	WrappedT enum_value() const{
-		return (WrappedT)*this;
 	}
 };
 

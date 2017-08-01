@@ -65,6 +65,7 @@ class CppRed{
 	void update_npc_sprite(const SpriteStateData2 &);
 	void initialize_scripted_npc_movement();
 	void anim_scripted_npc_movement();
+	void advance_scripted_npc_anim_frame_counter();
 public:
 
 	WRam wram;
