@@ -14,8 +14,18 @@ class CsvParser{
 	static std::vector<std::string> split_csv_line(const std::string &line, size_t minimum_size = 0){
 		std::vector<std::string> ret;
 		std::string accum;
+		bool in_string = false;
 		for (auto c : line){
-			if (c == ','){
+			if (c == '"'){
+				if (!in_string){
+					in_string = true;
+					continue;
+				}
+				ret.push_back(accum);
+				accum.clear();
+				continue;
+			}
+			if (c == ',' && !in_string){
 				ret.push_back(accum);
 				accum.clear();
 				continue;
