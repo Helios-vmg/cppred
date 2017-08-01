@@ -749,3 +749,13 @@ void CppRed::anim_scripted_npc_movement(){
 		sprite1.sprite_image_idx = this->hram.hSpriteVRAMSlotAndFacing + this->hram.hSpriteAnimFrameCounter;
 	}
 }
+
+void CppRed::advance_scripted_npc_anim_frame_counter(){
+	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	if (++sprite1.intra_anim_frame_counter != 4)
+		return;
+	sprite1.intra_anim_frame_counter = 0;
+	auto new_value = (sprite1.anim_frame_counter + 1) % 4;
+	sprite1.anim_frame_counter = new_value;
+	this->hram.hSpriteAnimFrameCounter = new_value;
+}
