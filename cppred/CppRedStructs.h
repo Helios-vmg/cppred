@@ -433,10 +433,47 @@ public:
 	}
 };
 
+template <typename WrappedT, typename MemoryT, size_t Size>
+class EnumWrapper{
+public:
+	typedef typename WrapperSelector<MemoryT, Size>::type wrapper_type;
+	typedef typename wrapper_type::callback_struct callback_struct;
+	typedef WrappedT type;
+	static const size_t size = Size;
+
+	wrapper_type value;
+
+	EnumWrapper(void *memory, const callback_struct &callbacks): value(memory, callbacks){}
+	EnumWrapper(EnumWrapper &&other){
+		this->value = std::move(other.value);
+	}
+	EnumWrapper(const EnumWrapper &other) = default;
+	WrappedT operator=(const EnumWrapper &other) const{
+		auto ret = (WrappedT)other;
+		*this = ret;
+		return ret;
+	}
+	const EnumWrapper &operator=(EnumWrapper &&other) = delete;
+	WrappedT operator=(WrappedT input) const{
+		this->value = (MemoryT)input;
+		return input;
+	}
+	operator WrappedT() const{
+		return (WrappedT)(MemoryT)this->value;
+	}
+	WrappedT enum_value() const{
+		return (WrappedT)*this;
+	}
+};
+
 class SpriteStateData1{
 public:
 	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
-	typedef typename member_type::callback_struct callback_struct;
+	typedef typename EnumWrapper<SpriteFacingDirection, byte_t, 1> member2_type;
+	struct callback_struct{
+		typename member_type::callback_struct cb1;
+		typename member2_type::callback_struct cb2;
+	};
 	static const size_t size = 16;
 private:
 public:
@@ -449,20 +486,38 @@ public:
 	member_type x_pixels;
 	member_type intra_anim_frame_counter;
 	member_type anim_frame_counter;
-	member_type facing_direction;
+	member2_type facing_direction;
 
 	SpriteStateData1(void *memory, const callback_struct &callbacks):
-			picture_id              ((char *)memory + 0, callbacks),
-			movement_status         ((char *)memory + 1, callbacks),
-			sprite_image_idx        ((char *)memory + 2, callbacks),
-			y_step_vector           ((char *)memory + 3, callbacks),
-			y_pixels                ((char *)memory + 4, callbacks),
-			x_step_vector           ((char *)memory + 5, callbacks),
-			x_pixels                ((char *)memory + 6, callbacks),
-			intra_anim_frame_counter((char *)memory + 7, callbacks),
-			anim_frame_counter      ((char *)memory + 8, callbacks),
-			facing_direction        ((char *)memory + 9, callbacks)
+			picture_id              ((char *)memory + 0, callbacks.cb1),
+			movement_status         ((char *)memory + 1, callbacks.cb1),
+			sprite_image_idx        ((char *)memory + 2, callbacks.cb1),
+			y_step_vector           ((char *)memory + 3, callbacks.cb1),
+			y_pixels                ((char *)memory + 4, callbacks.cb1),
+			x_step_vector           ((char *)memory + 5, callbacks.cb1),
+			x_pixels                ((char *)memory + 6, callbacks.cb1),
+			intra_anim_frame_counter((char *)memory + 7, callbacks.cb1),
+			anim_frame_counter      ((char *)memory + 8, callbacks.cb1),
+			facing_direction        ((char *)memory + 9, callbacks.cb2)
 	{}
+	SpriteStateData1(const SpriteStateData1 &other):
+			picture_id              (other.picture_id),
+			movement_status         (other.movement_status),
+			sprite_image_idx        (other.sprite_image_idx),
+			y_step_vector           (other.y_step_vector),
+			y_pixels                (other.y_pixels),
+			x_step_vector           (other.x_step_vector),
+			x_pixels                (other.x_pixels),
+			intra_anim_frame_counter(other.intra_anim_frame_counter),
+			anim_frame_counter      (other.anim_frame_counter),
+			facing_direction        (other.facing_direction)
+	{}
+	SpriteStateData1(SpriteStateData1 &&other):
+		SpriteStateData1((const SpriteStateData1 &)other)
+	{}
+	//SpriteStateData1(SpriteStateData1 &&other) = delete;
+	void operator=(const SpriteStateData1 &) = delete;
+	void operator=(SpriteStateData1 &&) = delete;
 };
 
 class SpriteStateData2{
@@ -493,8 +548,21 @@ public:
 		movement_delay          ((char *)memory +  8, callbacks),
 		sprite_image_base_offset((char *)memory + 14, callbacks)
 	{}
-	SpriteStateData2(const SpriteStateData2 &) = default;
-	SpriteStateData2(SpriteStateData2 &&) = delete;
+	SpriteStateData2(const SpriteStateData2 &other):
+		walk_animation_counter  (other.walk_animation_counter),
+		y_displacement          (other.y_displacement),
+		x_displacement          (other.x_displacement),
+		map_y                   (other.map_y),
+		map_x                   (other.map_x),
+		movement_byte1          (other.movement_byte1),
+		grass_priority          (other.grass_priority),
+		movement_delay          (other.movement_delay),
+		sprite_image_base_offset(other.sprite_image_base_offset)
+	{}
+	SpriteStateData2(SpriteStateData2 &&other):
+		SpriteStateData2((const SpriteStateData2 &)other)
+	{}
+	//SpriteStateData2(SpriteStateData2 &&other) = delete;
 	void operator=(const SpriteStateData2 &) = delete;
 	void operator=(SpriteStateData2 &&) = delete;
 };
@@ -606,37 +674,4 @@ struct WrapperSelector<SpriteStateData2, S>{
 template <size_t S>
 struct WrapperSelector<PcBox, S>{
 	typedef PcBox type;
-};
-
-template <typename WrappedT, typename MemoryT, size_t Size>
-class EnumWrapper{
-public:
-	typedef typename WrapperSelector<MemoryT, Size>::type wrapper_type;
-	typedef typename wrapper_type::callback_struct callback_struct;
-	typedef WrappedT type;
-	static const size_t size = Size;
-
-	wrapper_type value;
-
-	EnumWrapper(void *memory, const callback_struct &callbacks): value(memory, callbacks){}
-	EnumWrapper(EnumWrapper &&other){
-		this->value = std::move(other.value);
-	}
-	EnumWrapper(const EnumWrapper &other) = default;
-	WrappedT operator=(const EnumWrapper &other) const{
-		auto ret = (WrappedT)other;
-		*this = ret;
-		return ret;
-	}
-	const EnumWrapper &operator=(EnumWrapper &&other) = delete;
-	WrappedT operator=(WrappedT input) const{
-		this->value = (MemoryT)input;
-		return input;
-	}
-	operator WrappedT() const{
-		return (WrappedT)(MemoryT)this->value;
-	}
-	WrappedT enum_value() const{
-		return (WrappedT)*this;
-	}
 };

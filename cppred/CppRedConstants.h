@@ -702,8 +702,22 @@ const unsigned player_direction_d_bit = 2;
 const unsigned player_direction_u_bit = 3;
 
 enum class PlayerDirection{
+	Right = player_direction_r_bit,
+	Left  = player_direction_l_bit,
+	Down  = player_direction_d_bit,
+	Up    = player_direction_u_bit,
+};
+
+enum class PlayerDirectionBitmap{
 	Right = 1 << player_direction_r_bit,
 	Left  = 1 << player_direction_l_bit,
 	Down  = 1 << player_direction_d_bit,
 	Up    = 1 << player_direction_u_bit,
+};
+
+enum class SpriteFacingDirection{
+	Down  = 4 * 0,
+	Up    = 4 * 1,
+	Left  = 4 * 2,
+	Right = 4 * 3,
 };

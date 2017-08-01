@@ -84,6 +84,7 @@ DEFINE_construct_enum_byte(TextBoxId);
 DEFINE_construct_enum_byte(LinkState);
 DEFINE_construct_enum_byte(SaveFileStatus);
 DEFINE_construct_enum_byte(PlayerDirection);
+DEFINE_construct_enum_byte(PlayerDirectionBitmap);
 DEFINE_construct_enum_byte(MapId);
 
 #define DECLARE_ENUM_IN_MAP(x) { #x, ENUM_TYPE(x) }
@@ -113,6 +114,7 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	DECLARE_ENUM_IN_MAP(LinkState),
 	DECLARE_ENUM_IN_MAP(SaveFileStatus),
 	DECLARE_ENUM_IN_MAP(PlayerDirection),
+	DECLARE_ENUM_IN_MAP(PlayerDirectionBitmap),
 	DECLARE_ENUM_IN_MAP(MapId),
 };
 
@@ -211,7 +213,7 @@ std::string spritestatedata1Struct::get_actual_type_name() const{
 
 std::string spritestatedata1Struct::get_callback_struct() const{
 	return (boost::format(
-			"{%1%, %2%}"
+			"{{%1%, %2%}, {%1%, %2%}}"
 		)
 		% integer_functions[0][0][0]
 		% integer_functions[0][0][1]

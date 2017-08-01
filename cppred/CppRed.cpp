@@ -527,7 +527,7 @@ MainMenuResult CppRed::display_main_menu(){
 void CppRed::start_loaded_game(){
 	this->gb_pal_white_out_with_delay3();
 	this->clear_screen();
-	this->wram.wPlayerDirection = PlayerDirection::Right;
+	this->wram.wPlayerDirection = PlayerDirectionBitmap::Right;
 	this->delay_frames(10);
 	if (!this->wram.wNumHoFTeams){
 		this->special_enter_map(MapId::PalletTown);
@@ -545,4 +545,101 @@ void CppRed::start_loaded_game(){
 
 void CppRed::print_text(const CppRedText::Region &region){
 	this->text.print_text(region);
+}
+
+void CppRed::update_sprites(){
+	if (this->wram.wUpdateSpritesEnabled != 1)
+		return;
+
+	unsigned i = 0;
+	for (const auto &spr : this->wram.wSpriteStateData2){
+		this->hram.H_CURRENTSPRITEOFFSET = i++ * 0x10;
+		if (!spr.sprite_image_base_offset)
+			continue;
+		if (spr.sprite_image_base_offset == 1)
+			this->update_player_sprite();
+		else
+			this->update_non_player_sprite();
+	}
+}
+
+CppRed::tilemap_it CppRed::get_tilemap_location(unsigned x, unsigned y){
+	if (x > tilemap_width || y > tilemap_height){
+		std::stringstream stream;
+		stream << "Invalid coordinates: " << x << ", " << y;
+		throw std::runtime_error(stream.str());
+	}
+	return this->wram.wTileMap.begin() + y * tilemap_width + x;
+}
+
+void CppRed::update_player_sprite(){
+	//wSpriteStateData2[0] is always the PC sprite.
+	auto sprite1 = this->wram.wSpriteStateData1[0];
+	auto sprite2 = this->wram.wSpriteStateData2[0];
+	byte_t counter = sprite2.walk_animation_counter;
+	bool disable_sprite = true;
+	if (!counter){
+		auto p = this->get_tilemap_location(8, 9);
+		byte_t tile = *p;
+		this->hram.hTilePlayerStandingOn = tile;
+		disable_sprite = tile >= 0x60;
+	}else{
+		if (counter != 0xFF){
+			counter--;
+			sprite2.walk_animation_counter = counter;
+		}
+	}
+	if (disable_sprite){
+		sprite1.sprite_image_idx = 0xFF;
+		return;
+	}
+
+	this->detect_sprite_collision();
+
+	bool not_moving = false;
+	if (!this->wram.wWalkCounter){
+		PlayerDirectionBitmap pc_direction = this->wram.wPlayerMovingDirection;
+		SpriteFacingDirection sprite_direction = SpriteFacingDirection::Down;
+		if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Down)){
+			sprite_direction = SpriteFacingDirection::Down;
+		}else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Up)){
+			sprite_direction = SpriteFacingDirection::Up;
+		}else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Left)){
+			sprite_direction = SpriteFacingDirection::Left;
+		}else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Right)){
+			sprite_direction = SpriteFacingDirection::Right;
+		}else
+			not_moving = true;
+
+		if (!not_moving){
+			sprite1.facing_direction = sprite_direction;
+			not_moving = check_flag((byte_t)this->wram.wFontLoaded, 1);
+		}
+	}
+
+	bool skip_sprite_animation = false;
+	if (not_moving){
+		sprite1.intra_anim_frame_counter = 0;
+		sprite1.anim_frame_counter = 0;
+	}else{
+		skip_sprite_animation = this->wram.wd736.get_pc_spinning();
+		if (!skip_sprite_animation){
+			auto sprite = this->wram.wSpriteStateData1[(this->hram.H_CURRENTSPRITEOFFSET >> 4) + 1];
+			if (++sprite.intra_anim_frame_counter != 4)
+				skip_sprite_animation = true;
+			else{
+				sprite.intra_anim_frame_counter = 0;
+				sprite.anim_frame_counter = (sprite.anim_frame_counter + 1) % 4;
+			}
+		}
+	}
+
+	if (!skip_sprite_animation)
+		sprite1.sprite_image_idx = sprite1.anim_frame_counter + (unsigned)(SpriteFacingDirection)sprite1.facing_direction;
+
+	//If the player is standing on a grass tile, make the player's sprite have
+	//lower priority than the background so that it's partially obscured by the
+	//grass.Only the lower half of the sprite is permitted to have the priority
+	//bit set by later logic.
+	sprite2.grass_priority = 0x80 * (this->hram.hTilePlayerStandingOn == this->wram.wGrassTile);
 }

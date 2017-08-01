@@ -58,6 +58,9 @@ class CppRed{
 	void start_loaded_game();
 	void special_enter_map(MapId);
 	MapId special_warp_in();
+	void update_player_sprite();
+	void update_non_player_sprite();
+	void detect_sprite_collision();
 public:
 
 	WRam wram;
@@ -128,9 +131,7 @@ public:
 	void clear_both_bg_maps();
 	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
 	//Note: In the disassembly, the analog to this function is the macro coord.
-	tilemap_it get_tilemap_location(unsigned x, unsigned y){
-		return this->wram.wTileMap.begin() + y * tilemap_width + x;
-	}
+	tilemap_it get_tilemap_location(unsigned x, unsigned y);
 	void save_screen_tiles_to_buffer2();
 	void load_screen_tiles_from_buffer1();
 	void load_screen_tiles_from_buffer2();
