@@ -86,6 +86,7 @@ DEFINE_construct_enum_byte(SaveFileStatus);
 DEFINE_construct_enum_byte(PlayerDirection);
 DEFINE_construct_enum_byte(PlayerDirectionBitmap);
 DEFINE_construct_enum_byte(MapId);
+DEFINE_construct_enum_byte(NpcMovementDirection);
 
 #define DECLARE_ENUM_IN_MAP(x) { #x, ENUM_TYPE(x) }
 
@@ -116,6 +117,7 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	DECLARE_ENUM_IN_MAP(PlayerDirection),
 	DECLARE_ENUM_IN_MAP(PlayerDirectionBitmap),
 	DECLARE_ENUM_IN_MAP(MapId),
+	DECLARE_ENUM_IN_MAP(NpcMovementDirection),
 };
 
 bool is_number(const std::string &s){

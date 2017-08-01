@@ -721,3 +721,10 @@ enum class SpriteFacingDirection{
 	Left  = 4 * 2,
 	Right = 4 * 3,
 };
+
+enum class NpcMovementDirection{
+	Down  = 4 * 0,
+	Up    = 4 * 1,
+	Left  = 4 * 2,
+	Right = 4 * 3,
+};

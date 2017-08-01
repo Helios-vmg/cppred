@@ -74,6 +74,7 @@ void generate_header(const decltype(parse_bitmaps_file()) &bitmaps){
 		auto class_name = bitmap.name + "_wrapper";
 		file << "struct " << struct_name << "{\n";
 		for (auto &member : bitmap.members){
+			file << "    //bit " << member.offset << "\n";
 			if (member.comment.size())
 				file << "    //" << member.comment << "\n";
 			file << "    bool " << member.name << ";\n";

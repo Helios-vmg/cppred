@@ -553,13 +553,13 @@ void CppRed::update_sprites(){
 
 	unsigned i = 0;
 	for (const auto &spr : this->wram.wSpriteStateData2){
-		this->hram.H_CURRENTSPRITEOFFSET = i++ * 0x10;
+		this->hram.H_CURRENTSPRITEOFFSET = i++ * SpriteStateData1::size;
 		if (!spr.sprite_image_base_offset)
 			continue;
 		if (spr.sprite_image_base_offset == 1)
 			this->update_player_sprite();
 		else
-			this->update_non_player_sprite();
+			this->update_non_player_sprite(spr);
 	}
 }
 
@@ -624,7 +624,7 @@ void CppRed::update_player_sprite(){
 	}else{
 		skip_sprite_animation = this->wram.wd736.get_pc_spinning();
 		if (!skip_sprite_animation){
-			auto sprite = this->wram.wSpriteStateData1[(this->hram.H_CURRENTSPRITEOFFSET >> 4) + 1];
+			auto sprite = this->wram.wSpriteStateData1[(this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size) + 1];
 			if (++sprite.intra_anim_frame_counter != 4)
 				skip_sprite_animation = true;
 			else{
@@ -642,4 +642,76 @@ void CppRed::update_player_sprite(){
 	//grass.Only the lower half of the sprite is permitted to have the priority
 	//bit set by later logic.
 	sprite2.grass_priority = 0x80 * (this->hram.hTilePlayerStandingOn == this->wram.wGrassTile);
+}
+
+void CppRed::update_non_player_sprite(const SpriteStateData2 &sprite){
+	unsigned weird = sprite.sprite_image_base_offset + 1;
+
+	//Swap nibbles of weird:
+	weird &= 0xFF;
+	weird = (weird << 4) | (weird >> 4);
+	weird &= 0xFF;
+	
+	this->hram.hTilePlayerStandingOn = weird;
+
+	if (this->wram.wNPCMovementScriptSpriteOffset == this->hram.H_CURRENTSPRITEOFFSET)
+		this->do_scripted_npc_movement();
+	else
+		this->update_npc_sprite(sprite);
+}
+
+void CppRed::do_scripted_npc_movement(){
+	//This is an alternative method of scripting an NPC's movement and is only used
+	//a few times in the game. It is used when the NPC and player must walk together
+	//in sync, such as when the player is following the NPC somewhere. An NPC can't
+	//be moved in sync with the player using the other method.
+
+	if (!this->wram.wd730.get_input_simulated())
+		return;
+
+	bool initialized = this->wram.wd72e.get_npc_movement_initialized();
+	if (!initialized){
+		this->wram.wd72e.set_npc_movement_initialized(true);
+		this->initialize_scripted_npc_movement();
+		return;
+	}
+
+	auto direction = (NpcMovementDirection)this->wram.wNPCMovementDirections2[this->wram.wNPCMovementDirections2Index];
+	std::unique_ptr<SpriteStateData1::member_type> pointer;
+	auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	SpriteFacingDirection sprite_direction = SpriteFacingDirection::Down;
+	int displacement = 0;
+	switch (direction){
+		case NpcMovementDirection::Down:
+			pointer = copy_to_unique(sprite.y_pixels);
+			sprite_direction = SpriteFacingDirection::Down;
+			displacement = 2;
+			break;
+		case NpcMovementDirection::Up:
+			pointer = copy_to_unique(sprite.y_pixels);
+			sprite_direction = SpriteFacingDirection::Up;
+			displacement = -2;
+			break;
+		case NpcMovementDirection::Left:
+			pointer = copy_to_unique(sprite.x_pixels);
+			sprite_direction = SpriteFacingDirection::Left;
+			displacement = -2;
+			break;
+		case NpcMovementDirection::Right:
+			pointer = copy_to_unique(sprite.x_pixels);
+			sprite_direction = SpriteFacingDirection::Right;
+			displacement = 2;
+			break;
+		default:
+			//Is this an error condition?
+			return;
+	}
+
+	*pointer += displacement;
+	sprite.facing_direction = sprite_direction;
+	this->anim_scripted_npc_movement();
+	if (--this->wram.wScriptedNPCWalkCounter)
+		return;
+	this->wram.wScriptedNPCWalkCounter = 8;
+	this->wram.wNPCMovementDirections2Index++;
 }

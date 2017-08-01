@@ -59,8 +59,12 @@ class CppRed{
 	void special_enter_map(MapId);
 	MapId special_warp_in();
 	void update_player_sprite();
-	void update_non_player_sprite();
+	void update_non_player_sprite(const SpriteStateData2 &);
 	void detect_sprite_collision();
+	void do_scripted_npc_movement();
+	void update_npc_sprite(const SpriteStateData2 &);
+	void initialize_scripted_npc_movement();
+	void anim_scripted_npc_movement();
 public:
 
 	WRam wram;

@@ -81,3 +81,8 @@ template <std::uint32_t N>
 struct bits_from_u32{
 	static const byte_t value = bits_from_u32_helper<N, 0>::value;
 };
+
+template <typename T>
+std::unique_ptr<T> copy_to_unique(const T &x){
+	return std::make_unique<T>(x);
+}

@@ -109,7 +109,7 @@ CC5C,2,bcd4,wDexRatingNumMonsOwned
 CC5D,1,u8,wDexRatingText
 CC5E,1,u8,wSlotMachineSavedROMBank
 CC79,1,u8,wAnimPalette
-CC97,256,u8[256],wNPCMovementDirections2
+CC97,256,NpcMovementDirection[256],wNPCMovementDirections2
 CC97,10,,wSwitchPartyMonTempBuffer
 CCA1,49,,wNumStepsToTake
 CCD2,1,u8,wRLEByteCount
@@ -183,7 +183,7 @@ CD32,1,u8,wEnemyMonAccuracyMod
 CD33,1,u8,wEnemyMonEvasionMod
 CD34,3,,wInGameTradeReceiveMonSpecies
 CD37,0,,wUnusedCD37
-CD37,0,,wNPCMovementDirections2Index
+CD37,1,u8,wNPCMovementDirections2Index
 CD37,1,u8,wFilteredBagItemsCount
 CD38,1,u8,wSimulatedJoypadStatesIndex
 CD39,1,u8,wWastedByteCD39
@@ -364,7 +364,7 @@ CF12,1,u8,wPredefParentBank
 CF13,1,u8,wSpriteIndex
 CF14,3,,wCurSpriteMovement2
 CF17,1,u8,wNPCMovementScriptSpriteOffset
-CF18,2,,wScriptedNPCWalkCounter
+CF18,1,u8,wScriptedNPCWalkCounter
 CF1A,1,u8,wGBC
 CF1B,1,u8,wOnSGB
 CF1C,1,u8,wDefaultPaletteCommand
