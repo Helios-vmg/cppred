@@ -677,28 +677,29 @@ void CppRed::do_scripted_npc_movement(){
 	}
 
 	auto direction = (NpcMovementDirection)this->wram.wNPCMovementDirections2[this->wram.wNPCMovementDirections2Index];
-	std::unique_ptr<SpriteStateData1::member_type> pointer;
+	//std::unique_ptr<SpriteStateData1::member_type> pointer;
 	auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
 	SpriteFacingDirection sprite_direction = SpriteFacingDirection::Down;
 	int displacement = 0;
+	bool axis = false;
 	switch (direction){
 		case NpcMovementDirection::Down:
-			pointer = copy_to_unique(sprite.y_pixels);
+			axis = true;
 			sprite_direction = SpriteFacingDirection::Down;
 			displacement = 2;
 			break;
 		case NpcMovementDirection::Up:
-			pointer = copy_to_unique(sprite.y_pixels);
+			axis = true;
 			sprite_direction = SpriteFacingDirection::Up;
 			displacement = -2;
 			break;
 		case NpcMovementDirection::Left:
-			pointer = copy_to_unique(sprite.x_pixels);
+			axis = false;
 			sprite_direction = SpriteFacingDirection::Left;
 			displacement = -2;
 			break;
 		case NpcMovementDirection::Right:
-			pointer = copy_to_unique(sprite.x_pixels);
+			axis = false;
 			sprite_direction = SpriteFacingDirection::Right;
 			displacement = 2;
 			break;
@@ -707,7 +708,10 @@ void CppRed::do_scripted_npc_movement(){
 			return;
 	}
 
-	*pointer += displacement;
+	if (!axis)
+		sprite.x_pixels += displacement;
+	else
+		sprite.y_pixels += displacement;
 	sprite.facing_direction = sprite_direction;
 	this->anim_scripted_npc_movement();
 	if (--this->wram.wScriptedNPCWalkCounter)
