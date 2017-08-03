@@ -271,27 +271,32 @@ public:
 };
 #endif
 
-template <typename T, size_t S>
+template <typename T, size_t S, typename = void>
 struct WrapperSelector{
 };
 
-#define WRAP_INTEGER_TYPE(x) \
-template <size_t S> \
-struct WrapperSelector<x, S>{ \
-	typedef IntegerWrapper<x, S> type; \
-}
+template <typename T, size_t S>
+struct WrapperSelector<T, S, typename std::enable_if<std::is_integral<T>::value>::type>{
+	typedef IntegerWrapper<T, S> type;
+};
 
-WRAP_INTEGER_TYPE(signed char);
-WRAP_INTEGER_TYPE(unsigned char);
-WRAP_INTEGER_TYPE(signed short);
-WRAP_INTEGER_TYPE(unsigned short);
-WRAP_INTEGER_TYPE(signed int);
-WRAP_INTEGER_TYPE(unsigned int);
-WRAP_INTEGER_TYPE(signed long);
-WRAP_INTEGER_TYPE(unsigned long);
-WRAP_INTEGER_TYPE(signed long long);
-WRAP_INTEGER_TYPE(unsigned long long);
-WRAP_INTEGER_TYPE(wchar_t);
+//#define WRAP_INTEGER_TYPE(x) \
+//template <size_t S> \
+//struct WrapperSelector<x, S>{ \
+//	typedef IntegerWrapper<x, S> type; \
+//}
+//
+//WRAP_INTEGER_TYPE(signed char);
+//WRAP_INTEGER_TYPE(unsigned char);
+//WRAP_INTEGER_TYPE(signed short);
+//WRAP_INTEGER_TYPE(unsigned short);
+//WRAP_INTEGER_TYPE(signed int);
+//WRAP_INTEGER_TYPE(unsigned int);
+//WRAP_INTEGER_TYPE(signed long);
+//WRAP_INTEGER_TYPE(unsigned long);
+//WRAP_INTEGER_TYPE(signed long long);
+//WRAP_INTEGER_TYPE(unsigned long long);
+//WRAP_INTEGER_TYPE(wchar_t);
 
 template <typename WrappedT, typename MemoryT, size_t Size>
 class EnumWrapper{
@@ -326,10 +331,15 @@ public:
 	}
 };
 
-template <size_t S>
-struct WrapperSelector<NpcMovementDirection, S>{
-	typedef EnumWrapper<NpcMovementDirection, byte_t, S> type;
+template <typename T, size_t S>
+struct WrapperSelector<T, S, typename std::enable_if<std::is_enum<T>::value>::type>{
+	typedef EnumWrapper<T, byte_t, S> type;
 };
+
+//template <size_t S>
+//struct WrapperSelector<NpcMovementDirection, S>{
+//	typedef EnumWrapper<NpcMovementDirection, byte_t, S> type;
+//};
 
 template <typename WrappedT, size_t Length, size_t ElementSize>
 class WrappedArray{
