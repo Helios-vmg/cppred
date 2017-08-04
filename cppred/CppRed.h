@@ -84,7 +84,7 @@ private:
 	std::uint32_t random();
 	void change_facing_direction();
 	bool try_walking(tilemap_it, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction);
-	bool can_walk_onto_tile(tilemap_it);
+	bool can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
 	void update_sprite_image();
 	void call_predef(Predef);
 	bool is_object_hidden();
@@ -110,6 +110,8 @@ private:
 	bool missable_objects_flag_action(FlagAction action, T &bitmap, unsigned bit){
 		return flag_action(action, bitmap, bit);
 	}
+	SpriteStateData1 get_current_sprite1();
+	SpriteStateData2 get_current_sprite2();
 public:
 
 	WRam wram;

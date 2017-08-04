@@ -983,6 +983,53 @@ bool CppRed::is_object_hidden(){
 	return ret;
 }
 
-//bool CppRed::check_sprite_availability(){
-//	this->call_predef(Predef::IsObjectHidden);
-//}
+SpriteStateData1 CppRed::get_current_sprite1(){
+	return this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+}
+
+SpriteStateData2 CppRed::get_current_sprite2(){
+	return this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+}
+
+bool CppRed::check_sprite_availability(){
+	this->call_predef(Predef::IsObjectHidden);
+	bool ret = true;
+	if (this->hram.hIsObjectHidden)
+		ret = false;
+	
+	unsigned tile_value = 0;
+	if (ret){
+		auto sprite2 = this->get_current_sprite2();
+		if (sprite2.movement_byte1 >= 0xFE){
+			ret &= this->wram.wYCoord <= sprite2.map_y && sprite2.map_y < this->wram.wYCoord + tilemap_height / 2;
+			ret &= this->wram.wXCoord <= sprite2.map_x && sprite2.map_x < this->wram.wXCoord + tilemap_width / 2;
+		}
+		auto tile = this->get_tile_sprite_stands_on();
+		ret = ret &&
+			tile[0] < 0x60 &&
+			tile[1] < 0x60 &&
+			tile[-tilemap_width] < 0x60 &&
+			tile[-tilemap_width + 1] < 0x60;
+		tile_value = tile[-tilemap_width + 1];
+	}
+
+	if (!ret){
+		auto sprite = this->get_current_sprite1();
+		sprite.sprite_image_idx = 0xFF;
+	}else if (!this->wram.wWalkCounter){
+		this->update_sprite_image();
+		auto sprite = this->get_current_sprite2();
+		sprite.grass_priority = this->wram.wGrassTile != tile_value ? 0 : 0x80;
+	}
+	return ret;
+}
+
+bool CppRed::can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay){
+	auto sprite2 = this->get_current_sprite2();
+	if (sprite2.movement_byte1 < 0xFE)
+		//Always allow walking if the movement is scripted.
+		return true;
+	//TODO: Figure out where this pointer is written and where it can point to.
+	/**/
+	//this->wram.wTilesetCollisionPtr
+}
