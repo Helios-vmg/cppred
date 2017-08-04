@@ -40,6 +40,7 @@ FF90,1,u8,hOAMBufferOffset
 FF91,1,u8,hSpriteScreenX
 FF92,1,u8,hSpriteScreenY
 FF93,1,u8,hTilePlayerStandingOn
+FF93,1,u8,hCurrentSpriteOffset2
 FF94,1,u8,hSpritePriority
 FF95,2,big_u16,hSignCoordPointer
 FF95,1,u8,hNPCMovementDirections2Index

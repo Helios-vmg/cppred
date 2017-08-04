@@ -382,12 +382,14 @@ public:
 		typedef value_type *pointer;
 		typedef value_type &reference;
 		typedef std::random_access_iterator_tag iterator_category;
+		Iterator(): array(nullptr), index(0){}
 		Iterator(WRAPPER_CONST WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array, size_t index): array(array), index(index){}
 		Iterator(const Iterator &it) = default;
 		Iterator(Iterator &&it){
 			*this = it;
 		}
 		const Iterator &operator=(const Iterator &it){
+			this->array = it.array;
 			this->index = it.index;
 			return *this;
 		}
@@ -483,19 +485,43 @@ public:
 	}
 };
 
+class MovementFlags{
+public:
+	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
+	typedef member_type::callback_struct callback_struct;
+private:
+	member_type data;
+public:
+	MovementFlags(void *memory, const callback_struct &callbacks):
+		data(memory, callbacks)
+	{}
+	MovementFlags(const MovementFlags &) = default;
+	MovementFlags(MovementFlags &&) = delete;
+	void operator=(const MovementFlags &) = delete;
+	void operator=(MovementFlags &&) = delete;
+	MovementStatus get_movement_status() const;
+	void set_movement_status(MovementStatus);
+	bool get_face_player() const;
+	void set_face_player(bool);
+	void clear(){
+		this->data = 0;
+	}
+};
+
 class SpriteStateData1{
 public:
 	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
-	typedef typename EnumWrapper<SpriteFacingDirection, byte_t, 1> member2_type;
+	typedef typename EnumWrapper<SpriteFacingDirection, byte_t, 1> direction_type;
 	struct callback_struct{
 		typename member_type::callback_struct cb1;
-		typename member2_type::callback_struct cb2;
+		typename direction_type::callback_struct cb2;
+		typename MovementFlags::callback_struct cb3;
 	};
 	static const size_t size = 16;
 private:
 public:
 	member_type picture_id;
-	member_type movement_status;
+	MovementFlags movement_status;
 	member_type sprite_image_idx;
 	member_type y_step_vector;
 	member_type y_pixels;
@@ -503,11 +529,11 @@ public:
 	member_type x_pixels;
 	member_type intra_anim_frame_counter;
 	member_type anim_frame_counter;
-	member2_type facing_direction;
+	direction_type facing_direction;
 
 	SpriteStateData1(void *memory, const callback_struct &callbacks):
 			picture_id              ((char *)memory + 0, callbacks.cb1),
-			movement_status         ((char *)memory + 1, callbacks.cb1),
+			movement_status         ((char *)memory + 1, callbacks.cb3),
 			sprite_image_idx        ((char *)memory + 2, callbacks.cb1),
 			y_step_vector           ((char *)memory + 3, callbacks.cb1),
 			y_pixels                ((char *)memory + 4, callbacks.cb1),
@@ -676,19 +702,46 @@ public:
 	void operator=(const OptionsTuple &);
 };
 
+class MapSpriteData{
+public:
+	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
+	typedef typename member_type::callback_struct callback_struct;
+	static const size_t size = 1;
+private:
+public:
+	member_type movement_byte_2;
+	member_type text_id;
+	MapSpriteData(void *memory, const callback_struct &callbacks):
+		movement_byte_2((char *)memory, callbacks),
+		text_id((char *)memory + 1, callbacks)
+	{}
+	MapSpriteData(const MapSpriteData &other) = default;
+	MapSpriteData(MapSpriteData &&other):
+		movement_byte_2(other.movement_byte_2),
+		text_id(other.text_id)
+	{}
+	void operator=(const MapSpriteData &) = delete;
+	void operator=(MapSpriteData &&) = delete;
+};
+
 #include "../CodeGeneration/output/bitmaps.h"
 
-template <size_t S>
-struct WrapperSelector<SpriteStateData1, S>{
-	typedef SpriteStateData1 type;
+template <typename T, size_t S>
+struct WrapperSelector<T, S, typename std::enable_if<std::is_class<T>::value>::type>{
+	typedef T type;
 };
 
-template <size_t S>
-struct WrapperSelector<SpriteStateData2, S>{
-	typedef SpriteStateData2 type;
-};
-
-template <size_t S>
-struct WrapperSelector<PcBox, S>{
-	typedef PcBox type;
-};
+//template <size_t S>
+//struct WrapperSelector<SpriteStateData1, S>{
+//	typedef SpriteStateData1 type;
+//};
+//
+//template <size_t S>
+//struct WrapperSelector<SpriteStateData2, S>{
+//	typedef SpriteStateData2 type;
+//};
+//
+//template <size_t S>
+//struct WrapperSelector<PcBox, S>{
+//	typedef PcBox type;
+//};

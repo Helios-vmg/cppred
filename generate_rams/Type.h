@@ -144,8 +144,8 @@ public:
 	std::unique_ptr<Number> get_size() override{
 		return std::make_unique<IntegerLiteralNumber>(16);
 	}
-	std::string get_actual_type_name() const override;
-	std::string get_callback_struct() const override;
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
 };
 
 class spritestatedata2Struct : public Struct{
@@ -154,8 +154,17 @@ public:
 	std::unique_ptr<Number> get_size() override{
 		return std::make_unique<IntegerLiteralNumber>(16);
 	}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
+};
+
+class mapspritedataStruct : public spritestatedata2Struct{
+public:
+	virtual ~mapspritedataStruct(){}
+	std::unique_ptr<Number> get_size() override{
+		return std::make_unique<IntegerLiteralNumber>(2);
+	}
 	std::string get_actual_type_name() const override;
-	std::string get_callback_struct() const override;
 };
 
 class PackedBitsWrapper : public Struct{

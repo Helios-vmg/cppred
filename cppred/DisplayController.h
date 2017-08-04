@@ -34,11 +34,6 @@ const unsigned lcd_width = 160;
 const unsigned lcd_height = 144;
 const unsigned lcd_blank = lcd_height + 1;
 
-template <typename T1, typename T2>
-static bool check_flag(T1 value, T2 mask){
-	return ((T2)value & mask) == mask;
-}
-
 struct RGB{
 	byte_t r, g, b, a;
 };

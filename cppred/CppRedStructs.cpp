@@ -75,4 +75,25 @@ void UserOptions::operator=(const OptionsTuple &o){
 
 }
 
+
+MovementStatus MovementFlags::get_movement_status() const{
+	return (MovementStatus)(this->data % 4);
+}
+
+void MovementFlags::set_movement_status(MovementStatus value){
+	auto temp = this->data;
+	temp = temp - temp % 4;
+	this->data |= (unsigned)value % 4;
+}
+
+bool MovementFlags::get_face_player() const{
+	return check_flag((unsigned)this->data, 1 << 7);
+}
+
+void MovementFlags::set_face_player(bool value){
+	auto temp = this->data;
+	temp = temp - temp & (1 << 7);
+	temp |= (1 << 7) * value;
+}
+
 #include "../CodeGeneration/output/bitmaps.inl"

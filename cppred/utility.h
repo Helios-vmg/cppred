@@ -61,8 +61,8 @@ size_t array_size(T (&)[N]){
 	return N;
 }
 
-template <typename T>
-bool check_flag(const T &flag, const T &mask){
+template <typename T1, typename T2>
+bool check_flag(const T1 &flag, const T2 &mask){
 	return (flag & mask) == mask;
 }
 

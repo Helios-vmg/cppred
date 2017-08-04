@@ -46,6 +46,10 @@ std::unique_ptr<Type> construct_options(){
 	return std::make_unique<PackedBitsWrapper>("UserOptions");
 }
 
+std::unique_ptr<Type> construct_mapspritedata(){
+	return std::make_unique<mapspritedataStruct>();
+}
+
 #include "../CodeGeneration/output/bitmaps_rams_constructors.inl"
 
 std::unique_ptr<Type> construct_pointer(){
@@ -100,6 +104,7 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	{ "spritestatedata1", construct_spritestatedata1 },
 	{ "spritestatedata2", construct_spritestatedata2 },
 	{ "options", construct_options },
+	{ "mapspritedata", construct_mapspritedata },
 #include "../CodeGeneration/output/bitmaps_rams_declarations.inl"
 	{ "pointer", construct_pointer },
 	{ "big_pointer", construct_big_pointer },
@@ -215,7 +220,7 @@ std::string spritestatedata1Struct::get_actual_type_name() const{
 
 std::string spritestatedata1Struct::get_callback_struct() const{
 	return (boost::format(
-			"{{%1%, %2%}, {%1%, %2%}}"
+			"{{%1%, %2%}, {%1%, %2%}, {%1%, %2%}}"
 		)
 		% integer_functions[0][0][0]
 		% integer_functions[0][0][1]
@@ -233,6 +238,10 @@ std::string spritestatedata2Struct::get_callback_struct() const{
 
 std::string spritestatedata2Struct::get_actual_type_name() const{
 	return "SpriteStateData2";
+}
+
+std::string mapspritedataStruct::get_actual_type_name() const{
+	return "MapSpriteData";
 }
 
 std::string Array::get_actual_type_name() const{

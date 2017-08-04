@@ -696,23 +696,30 @@ enum class SaveFileStatus{
 	SaveExists = 2,
 };
 
-const unsigned player_direction_r_bit = 0;
-const unsigned player_direction_l_bit = 1;
-const unsigned player_direction_d_bit = 2;
-const unsigned player_direction_u_bit = 3;
+const unsigned direction_r_bit = 0;
+const unsigned direction_l_bit = 1;
+const unsigned direction_d_bit = 2;
+const unsigned direction_u_bit = 3;
 
 enum class PlayerDirection{
-	Right = player_direction_r_bit,
-	Left  = player_direction_l_bit,
-	Down  = player_direction_d_bit,
-	Up    = player_direction_u_bit,
+	Right = direction_r_bit,
+	Left  = direction_l_bit,
+	Down  = direction_d_bit,
+	Up    = direction_u_bit,
+};
+
+enum class DirectionBitmap{
+	Right = 1 << direction_r_bit,
+	Left  = 1 << direction_l_bit,
+	Down  = 1 << direction_d_bit,
+	Up    = 1 << direction_u_bit,
 };
 
 enum class PlayerDirectionBitmap{
-	Right = 1 << player_direction_r_bit,
-	Left  = 1 << player_direction_l_bit,
-	Down  = 1 << player_direction_d_bit,
-	Up    = 1 << player_direction_u_bit,
+	Right = (int)DirectionBitmap::Right,
+	Left  = (int)DirectionBitmap::Left,
+	Down  = (int)DirectionBitmap::Down,
+	Up    = (int)DirectionBitmap::Up,
 };
 
 enum class SpriteFacingDirection{
@@ -727,4 +734,11 @@ enum class NpcMovementDirection{
 	Up    = 4 * 1,
 	Left  = 4 * 2,
 	Right = 4 * 3,
+};
+
+enum class MovementStatus{
+	Uninitialized = 0,
+	Ready = 1,
+	Delayed = 2,
+	Moving = 3,
 };

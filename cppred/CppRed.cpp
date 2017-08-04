@@ -8,6 +8,7 @@
 #include "CppRedMainMenu.h"
 #include <cassert>
 #include <stdexcept>
+#include <random>
 
 #define INITIALIZE_EMPTY_HARDWARE_REGISTER(name) \
 	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
@@ -42,6 +43,7 @@ CppRed::CppRed(HostSystem &host):
 		INITIALIZE_HARDWARE_REGISTER(WY, display_controller, window_y_position)
 		INITIALIZE_HARDWARE_REGISTER_RO(LY, display_controller, y_coordinate)
 		INITIALIZE_HARDWARE_REGISTER(LYC, display_controller, y_coordinate_compare)
+		INITIALIZE_HARDWARE_REGISTER_RO(DIV, clock, DIV_register)
 		{
 
 	this->nonemulation_init();
@@ -50,6 +52,10 @@ CppRed::CppRed(HostSystem &host):
 void CppRed::nonemulation_init(){
 	this->realtime_counter_frequency = get_timer_resolution();
 	//this->emulated_memory.reset(new byte_t[0x10000]);
+
+	std::random_device rnd;
+	for (auto &i : this->xorshift_state)
+		i = rnd();
 }
 
 void CppRed::init(){
@@ -613,7 +619,7 @@ void CppRed::update_player_sprite(){
 
 		if (!not_moving){
 			sprite1.facing_direction = sprite_direction;
-			not_moving = check_flag((byte_t)this->wram.wFontLoaded, 1);
+			not_moving = this->wram.wFontLoaded.get_in_use();
 		}
 	}
 
@@ -652,7 +658,8 @@ unsigned swap_nibbles(unsigned n){
 }
 
 void CppRed::update_non_player_sprite(const SpriteStateData2 &sprite){
-	this->hram.hTilePlayerStandingOn = swap_nibbles(sprite.sprite_image_base_offset + 1);
+	//this->hram.hTilePlayerStandingOn = swap_nibbles(sprite.sprite_image_base_offset + 1);
+	this->hram.hCurrentSpriteOffset2 = (sprite.sprite_image_base_offset + 1) << 4;
 	if (this->wram.wNPCMovementScriptSpriteOffset == this->hram.H_CURRENTSPRITEOFFSET)
 		this->do_scripted_npc_movement();
 	else
@@ -729,7 +736,8 @@ void CppRed::anim_scripted_npc_movement(){
 	{
 		auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
 		auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
-		auto swapped = swap_nibbles(sprite2.sprite_image_base_offset - 1);
+		//auto offset = swap_nibbles(sprite2.sprite_image_base_offset - 1);
+		auto offset = (sprite2.sprite_image_base_offset - 1) << 4;
 		auto direction = (SpriteFacingDirection)sprite1.facing_direction;
 		switch (direction){
 			case SpriteFacingDirection::Down:
@@ -740,8 +748,8 @@ void CppRed::anim_scripted_npc_movement(){
 			default:
 				return;
 		}
-		swapped = (swapped + (unsigned)direction) & 0xFF;
-		this->hram.hSpriteVRAMSlotAndFacing = swapped;
+		offset = (offset + (unsigned)direction) & 0xFF;
+		this->hram.hSpriteVRAMSlotAndFacing = offset;
 	}
 	this->advance_scripted_npc_anim_frame_counter();
 	{
@@ -758,4 +766,182 @@ void CppRed::advance_scripted_npc_anim_frame_counter(){
 	auto new_value = (sprite1.anim_frame_counter + 1) % 4;
 	sprite1.anim_frame_counter = new_value;
 	this->hram.hSpriteAnimFrameCounter = new_value;
+}
+
+unsigned transform_thing(unsigned x, unsigned val){
+	const unsigned down = 0xD0;
+	const unsigned up = 0xD1;
+	const unsigned left = 0xD2;
+	const unsigned right = 0xD3;
+
+	assert((x >> 6) < 0x100);
+	switch (x >> 6){
+		case 0:
+			return val == 2 ? left : down;
+		case 1:
+			return val == 2 ? right : up;
+		case 2:
+			return val == 1 ? up : left;
+		case 3:
+			return val == 1 ? down : right;
+	}
+	assert(false);
+}
+
+void CppRed::update_npc_sprite(const SpriteStateData2 &){
+	unsigned offset = this->hram.H_CURRENTSPRITEOFFSET;
+	//offset = swap_nibbles(offset);
+	offset = (offset >> 4) - 1;
+	this->wram.wCurSpriteMovement2 = this->wram.wMapSpriteData[offset].movement_byte_2;
+	{
+		auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		if (sprite.movement_status.get_movement_status() == MovementStatus::Uninitialized){
+			this->initialize_sprite_status();
+			return;
+		}
+	}
+	if (!this->check_sprite_availability())
+		return;
+	{
+		auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		auto status = sprite.movement_status;
+		if (status.get_face_player()){
+			this->make_npc_face_player();
+			return;
+		}
+		if (this->wram.wFontLoaded.get_in_use()){
+			this->not_yet_moving();
+			return;
+		}
+		switch (status.get_movement_status()){
+			case MovementStatus::Uninitialized:
+				this->initialize_sprite_screen_position();
+				break;
+			case MovementStatus::Delayed:
+				this->update_sprite_movement_delay();
+				return;
+			case MovementStatus::Moving:
+				this->update_sprite_in_walking_animation();
+				return;
+			default:
+				return;
+		}
+		if (this->wram.wWalkCounter)
+			return;
+		this->initialize_sprite_screen_position();
+	}
+	{
+		auto sprite = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+		auto movement = (unsigned)sprite.movement_byte1;
+		std::uint32_t x;
+		auto tile = this->get_tilemap_location(0, 0);
+		if (movement == 0xFF || movement == 0xFE){
+			tile = this->get_tile_sprite_stands_on();
+			x = this->random() & 0xFF;
+		}else{
+			sprite.movement_byte1 = movement + 1;
+			this->wram.wNPCNumScriptedSteps--;
+			auto direction = (std::uint32_t)this->wram.wNPCMovementDirections[movement];
+			if (direction == 0xE0){ //Turn?
+				this->change_facing_direction();
+				return;
+			}
+			if (direction == 0xFF){ //== STAY
+				sprite.movement_byte1 = 0xFF;
+				this->wram.wd730.set_sprite_automoved(false);
+				this->wram.wSimulatedJoypadStatesIndex = 0;
+				this->wram.wWastedByteCD3A = 0;
+				return;
+			}
+			if (direction == 0xFE){ //== WALK
+				sprite.movement_byte1 = 1;
+				x = this->wram.wNPCMovementDirections[direction];
+			}else
+				x = direction;
+		}
+		auto test = (unsigned)this->wram.wCurSpriteMovement2;
+		const auto break_loop = std::numeric_limits<unsigned>::max();
+
+		const unsigned down = 0xD0;
+		const unsigned up = 0xD1;
+		const unsigned left = 0xD2;
+		const unsigned right = 0xD3;
+
+		while (true){
+			switch (test){
+				case down:
+					tile += 2 * tilemap_width;
+					this->try_walking(tile, 0, 1, DirectionBitmap::Down, SpriteFacingDirection::Down);
+					return;
+				case up:
+					tile -= 2 * tilemap_width;
+					this->try_walking(tile, 0, -1, DirectionBitmap::Up, SpriteFacingDirection::Up);
+					return;
+				case left:
+					tile -= 2;
+					this->try_walking(tile, -1, 0, DirectionBitmap::Left, SpriteFacingDirection::Left);
+					return;
+				case right:
+					tile += 2;
+					this->try_walking(tile, 1, 0, DirectionBitmap::Right, SpriteFacingDirection::Right);
+				default:
+					test = transform_thing(x, this->wram.wCurSpriteMovement2);
+					continue;
+			}
+		}
+	}
+}
+
+CppRed::tilemap_it CppRed::get_tile_sprite_stands_on(){
+	auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	unsigned y = sprite.y_pixels;
+	y = (y + 4) % 256;
+	y = (y - y % 16) / 8;
+	unsigned x = sprite.x_pixels;
+	x = x / 8;
+	return this->get_tilemap_location(x, y + 1);
+}
+
+std::uint32_t xorshift128(std::uint32_t state[4]){
+	auto x = state[3];
+	x ^= x << 11;
+	x ^= x >> 8;
+	state[3] = state[2];
+	state[2] = state[1];
+	state[1] = state[0];
+	x ^= state[0];
+	x ^= state[0] >> 19;
+	state[0] = x;
+	return x;
+}
+
+unsigned CppRed::random(){
+	return xorshift128(this->xorshift_state);
+}
+
+void CppRed::change_facing_direction(){
+	//TODO
+	this->try_walking(this->get_tilemap_location(0, 0), 0, 0, (DirectionBitmap)0, (SpriteFacingDirection)0);
+}
+
+bool CppRed::try_walking(tilemap_it dst, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction){
+	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	sprite1.facing_direction = facing_sprite_direction;
+	sprite1.x_step_vector = deltax;
+	sprite1.y_step_vector = deltay;
+	if (!this->can_walk_onto_tile(dst))
+		return false;
+	auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	sprite2.map_x += deltax;
+	sprite2.map_y -= deltay;
+	sprite2.walk_animation_counter = 10;
+	sprite1.movement_status.clear();
+	sprite1.movement_status.set_movement_status(MovementStatus::Moving);
+	this->update_sprite_image();
+	return true;
+}
+
+void CppRed::update_sprite_image(){
+	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	sprite1.sprite_image_idx = sprite1.anim_frame_counter + (unsigned)(SpriteFacingDirection)sprite1.facing_direction + this->hram.hCurrentSpriteOffset2;
 }

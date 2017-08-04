@@ -21,6 +21,9 @@ enum class TitleScreenResult;
 class HostSystem;
 
 class CppRed{
+public:
+	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
+private:
 	HostSystem *host;
 	DisplayController display_controller;
 	UserInputController input_controller;
@@ -46,6 +49,7 @@ class CppRed{
 	bool speed_changed = false;
 	byte_t interrupt_flag = 0;
 	byte_t interrupt_enable_flag = 0;
+	std::uint32_t xorshift_state[4];
 
 	void interpreter_thread_function();
 	void init();
@@ -66,6 +70,20 @@ class CppRed{
 	void initialize_scripted_npc_movement();
 	void anim_scripted_npc_movement();
 	void advance_scripted_npc_anim_frame_counter();
+	void initialize_sprite_status();
+	void initialize_sprite_screen_position();
+	//Returns false if invisible
+	bool check_sprite_availability();
+	void make_npc_face_player();
+	void not_yet_moving();
+	void update_sprite_movement_delay();
+	void update_sprite_in_walking_animation();
+	tilemap_it get_tile_sprite_stands_on();
+	std::uint32_t random();
+	void change_facing_direction();
+	bool try_walking(tilemap_it, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction);
+	bool can_walk_onto_tile(tilemap_it);
+	void update_sprite_image();
 public:
 
 	WRam wram;
@@ -103,6 +121,7 @@ public:
 	DECLARE_HARDWARE_REGISTER(WY);
 	DECLARE_HARDWARE_REGISTER(LY);
 	DECLARE_HARDWARE_REGISTER(LYC);
+	DECLARE_HARDWARE_REGISTER(DIV);
 
 	CppRed(HostSystem &host);
 	void run();
@@ -134,7 +153,6 @@ public:
 	void load_pokemon_logo();
 	void load_version_graphics();
 	void clear_both_bg_maps();
-	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
 	//Note: In the disassembly, the analog to this function is the macro coord.
 	tilemap_it get_tilemap_location(unsigned x, unsigned y);
 	void save_screen_tiles_to_buffer2();

@@ -79,3 +79,11 @@ ignored,struct,member,comment
 5,wd736,skip,
 6,wd736,doing_animation,Jumping down a ledge/Fishing animation.
 7,wd736,pc_spinning,Player sprite spinning due to spin tiles (Rocket hideout/Viridian Gym).
+0,FontLoadState,in_use,The space in VRAM that is used to store walk animation tile patterns for the player and NPCs is in use for font tile patterns. This means that NPC movement must be disabled.
+1,FontLoadState,skip,
+2,FontLoadState,skip,
+3,FontLoadState,skip,
+4,FontLoadState,skip,
+5,FontLoadState,skip,
+6,FontLoadState,skip,
+7,FontLoadState,skip,
