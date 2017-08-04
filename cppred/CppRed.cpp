@@ -796,7 +796,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 	{
 		auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
 		if (sprite.movement_status.get_movement_status() == MovementStatus::Uninitialized){
-			this->initialize_sprite_status();
+			this->initialize_sprite_status(sprite);
 			return;
 		}
 	}
@@ -814,16 +814,11 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 			return;
 		}
 		switch (status.get_movement_status()){
-			case MovementStatus::Uninitialized:
-				this->initialize_sprite_screen_position();
-				break;
 			case MovementStatus::Delayed:
 				this->update_sprite_movement_delay();
 				return;
 			case MovementStatus::Moving:
 				this->update_sprite_in_walking_animation();
-				return;
-			default:
 				return;
 		}
 		if (this->wram.wWalkCounter)
@@ -944,4 +939,23 @@ bool CppRed::try_walking(tilemap_it dst, int deltax, int deltay, DirectionBitmap
 void CppRed::update_sprite_image(){
 	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
 	sprite1.sprite_image_idx = sprite1.anim_frame_counter + (unsigned)(SpriteFacingDirection)sprite1.facing_direction + this->hram.hCurrentSpriteOffset2;
+}
+
+void CppRed::initialize_sprite_status(){
+	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	sprite1.movement_status.clear();
+	sprite1.movement_status.set_movement_status(MovementStatus::Ready);
+	sprite1.sprite_image_idx = 0xFF;
+	auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	sprite2.y_displacement = 8;
+	sprite2.x_displacement = 8;
+}
+
+void CppRed::initialize_sprite_screen_position(){
+	auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	auto y = (sprite2.map_y - this->wram.wYCoord) * 16 - 4;
+	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	sprite1.y_pixels = y;
+	auto x = (sprite2.map_x - this->wram.wXCoord) * 16;
+	sprite1.x_pixels = x;
 }
