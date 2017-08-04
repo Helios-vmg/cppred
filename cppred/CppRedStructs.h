@@ -706,7 +706,7 @@ class MapSpriteData{
 public:
 	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
 	typedef typename member_type::callback_struct callback_struct;
-	static const size_t size = 1;
+	static const size_t size = 2;
 private:
 public:
 	member_type movement_byte_2;
