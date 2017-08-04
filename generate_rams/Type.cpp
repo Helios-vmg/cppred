@@ -50,6 +50,10 @@ std::unique_ptr<Type> construct_mapspritedata(){
 	return std::make_unique<mapspritedataStruct>();
 }
 
+std::unique_ptr<Type> construct_missableobject(){
+	return std::make_unique<missableobjectStruct>();
+}
+
 #include "../CodeGeneration/output/bitmaps_rams_constructors.inl"
 
 std::unique_ptr<Type> construct_pointer(){
@@ -105,6 +109,7 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	{ "spritestatedata2", construct_spritestatedata2 },
 	{ "options", construct_options },
 	{ "mapspritedata", construct_mapspritedata },
+	{ "missableobject", construct_missableobject },
 #include "../CodeGeneration/output/bitmaps_rams_declarations.inl"
 	{ "pointer", construct_pointer },
 	{ "big_pointer", construct_big_pointer },
@@ -242,6 +247,10 @@ std::string spritestatedata2Struct::get_actual_type_name() const{
 
 std::string mapspritedataStruct::get_actual_type_name() const{
 	return "MapSpriteData";
+}
+
+std::string missableobjectStruct::get_actual_type_name() const{
+	return "MissableObject";
 }
 
 std::string Array::get_actual_type_name() const{

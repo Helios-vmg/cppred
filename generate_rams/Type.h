@@ -167,6 +167,12 @@ public:
 	std::string get_actual_type_name() const override;
 };
 
+class missableobjectStruct : public mapspritedataStruct{
+public:
+	virtual ~missableobjectStruct(){}
+	std::string get_actual_type_name() const override;
+};
+
 class PackedBitsWrapper : public Struct{
 	std::string name;
 public:

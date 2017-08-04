@@ -742,3 +742,9 @@ enum class MovementStatus{
 	Delayed = 2,
 	Moving = 3,
 };
+
+enum class FlagAction{
+	Reset,
+	Set,
+	Test,
+};

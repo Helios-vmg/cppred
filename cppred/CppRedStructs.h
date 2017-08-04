@@ -520,15 +520,25 @@ public:
 	static const size_t size = 16;
 private:
 public:
+	//Offset: 0
 	member_type picture_id;
+	//Offset: 1
 	MovementFlags movement_status;
+	//Offset: 2
 	member_type sprite_image_idx;
+	//Offset: 3
 	member_type y_step_vector;
+	//Offset: 4
 	member_type y_pixels;
+	//Offset: 5
 	member_type x_step_vector;
+	//Offset: 6
 	member_type x_pixels;
+	//Offset: 7
 	member_type intra_anim_frame_counter;
+	//Offset: 8
 	member_type anim_frame_counter;
+	//Offset: 9
 	direction_type facing_direction;
 
 	SpriteStateData1(void *memory, const callback_struct &callbacks):
@@ -570,14 +580,23 @@ public:
 	static const size_t size = 16;
 private:
 public:
+	//Offset: 0
 	member_type walk_animation_counter;
+	//Offset: 2
 	member_type y_displacement;
+	//Offset: 3
 	member_type x_displacement;
+	//Offset: 4
 	member_type map_y;
+	//Offset: 5
 	member_type map_x;
+	//Offset: 6
 	member_type movement_byte1;
+	//Offset: 7
 	member_type grass_priority;
+	//Offset: 8
 	member_type movement_delay;
+	//Offset: 14 (0x0E)
 	member_type sprite_image_base_offset;
 
 	SpriteStateData2(void *memory, const callback_struct &callbacks):
@@ -623,23 +642,40 @@ public:
 	static const size_t size = 16;
 private:
 public:
+	//Offset: 0
 	u8_type species;
+	//Offset: 1
 	u16_type hp;
+	//Offset: 3
 	u8_type box_level;
 	//u8_type party_pos;
+	//Offset: 4
 	u8_type status;
+	//Offset: 5
 	u8_type type1;
+	//Offset: 6
 	u8_type type2;
+	//Offset: 7
 	u8_type catch_rate;
+	//Offset: 8
 	WrappedArray<typename u8_type::type, 4, u8_type::size> moves;
+	//Offset: 12 (0x0C)
 	u16_type original_trainer_id;
+	//Offset: 14 (0x0E)
 	u24_type experience;
+	//Offset: 17 (0x11)
 	u16_type hp_xp;
+	//Offset: 19 (0x13)
 	u16_type attack_xp;
+	//Offset: 21 (0x15)
 	u16_type defense_xp;
+	//Offset: 23 (0x17)
 	u16_type speed_xp;
+	//Offset: 25 (0x19)
 	u16_type special_xp;
+	//Offset: 27 (0x1B)
 	WrappedArray<typename u8_type::type, 2, u8_type::size> dvs;
+	//Offset: 29 (0x1D)
 	WrappedArray<typename u8_type::type, 4, u8_type::size> pp;
 
 	PcBox(void *memory, const callback_structs &callbacks):
@@ -709,17 +745,37 @@ public:
 	static const size_t size = 2;
 private:
 public:
+	//Offset: 0
 	member_type movement_byte_2;
+	//Offset: 1
 	member_type text_id;
 	MapSpriteData(void *memory, const callback_struct &callbacks):
 		movement_byte_2((char *)memory, callbacks),
 		text_id((char *)memory + 1, callbacks)
 	{}
 	MapSpriteData(const MapSpriteData &other) = default;
-	MapSpriteData(MapSpriteData &&other):
-		movement_byte_2(other.movement_byte_2),
-		text_id(other.text_id)
+	MapSpriteData(MapSpriteData &&other): MapSpriteData((const MapSpriteData &)other){}
+	void operator=(const MapSpriteData &) = delete;
+	void operator=(MapSpriteData &&) = delete;
+};
+
+class MissableObject{
+public:
+	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
+	typedef typename member_type::callback_struct callback_struct;
+	static const size_t size = 2;
+private:
+public:
+	//Offset: 0
+	member_type sprite_id;
+	//Offset: 1
+	member_type missable_object_index;
+	MissableObject(void *memory, const callback_struct &callbacks):
+		sprite_id((char *)memory, callbacks),
+		missable_object_index((char *)memory + 1, callbacks)
 	{}
+	MissableObject(const MissableObject &other) = default;
+	MissableObject(MissableObject &&other): MissableObject((const MissableObject &)other){}
 	void operator=(const MapSpriteData &) = delete;
 	void operator=(MapSpriteData &&) = delete;
 };

@@ -56,6 +56,9 @@ void CppRed::nonemulation_init(){
 	std::random_device rnd;
 	for (auto &i : this->xorshift_state)
 		i = rnd();
+
+	this->predefs.resize((int)Predef::COUNT);
+	this->predefs[(int)Predef::IsObjectHidden] = [this](){ this->is_object_hidden(); };
 }
 
 void CppRed::init(){
@@ -791,12 +794,12 @@ unsigned transform_thing(unsigned x, unsigned val){
 void CppRed::update_npc_sprite(const SpriteStateData2 &){
 	unsigned offset = this->hram.H_CURRENTSPRITEOFFSET;
 	//offset = swap_nibbles(offset);
-	offset = (offset >> 4) - 1;
+	offset = (offset / 16) - 1;
 	this->wram.wCurSpriteMovement2 = this->wram.wMapSpriteData[offset].movement_byte_2;
 	{
 		auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
 		if (sprite.movement_status.get_movement_status() == MovementStatus::Uninitialized){
-			this->initialize_sprite_status(sprite);
+			this->initialize_sprite_status();
 			return;
 		}
 	}
@@ -959,3 +962,27 @@ void CppRed::initialize_sprite_screen_position(){
 	auto x = (sprite2.map_x - this->wram.wXCoord) * 16;
 	sprite1.x_pixels = x;
 }
+
+void CppRed::call_predef(Predef f){
+	this->predefs[(int)f]();
+}
+
+bool CppRed::is_object_hidden(){
+	auto b = this->hram.H_CURRENTSPRITEOFFSET / 16;
+	bool ret = false;
+	for (auto &it : this->wram.wMissableObjectList){
+		unsigned sprite_id = it.sprite_id;
+		if (sprite_id == 0xFF)
+			break;
+		if (sprite_id != b)
+			continue;
+		ret = this->missable_objects_flag_action(FlagAction::Test, this->wram.wMissableObjectFlags, it.missable_object_index);
+		break;
+	}
+	this->hram.hIsObjectHidden = ret;
+	return ret;
+}
+
+//bool CppRed::check_sprite_availability(){
+//	this->call_predef(Predef::IsObjectHidden);
+//}

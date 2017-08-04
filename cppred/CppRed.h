@@ -50,7 +50,9 @@ private:
 	byte_t interrupt_flag = 0;
 	byte_t interrupt_enable_flag = 0;
 	std::uint32_t xorshift_state[4];
+	std::vector<std::function<void()>> predefs;
 
+	void nonemulation_init();
 	void interpreter_thread_function();
 	void init();
 	//void run_until_next_frame();
@@ -84,6 +86,30 @@ private:
 	bool try_walking(tilemap_it, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction);
 	bool can_walk_onto_tile(tilemap_it);
 	void update_sprite_image();
+	void call_predef(Predef);
+	bool is_object_hidden();
+	template <typename T>
+	bool flag_action(FlagAction action, T &bitmap, unsigned bit){
+		assert(bit < 0x100);
+		auto index = bit / 8;
+		bit &= 7;
+		switch (action){
+			case FlagAction::Reset:
+				bitmap[index] &= ~(byte_t)(1 << bit);
+				return true;
+			case FlagAction::Set:
+				bitmap[index] |= (byte_t)(1 << bit);
+				return true;
+			case FlagAction::Test:
+				return check_flag(bitmap[index], (byte_t)(1 << bit));
+			default:
+				throw std::runtime_error("Internal error: Invalid switch.");
+		}
+	}
+	template <typename T>
+	bool missable_objects_flag_action(FlagAction action, T &bitmap, unsigned bit){
+		return flag_action(action, bitmap, bit);
+	}
 public:
 
 	WRam wram;
@@ -127,7 +153,6 @@ public:
 	void run();
 	void set_bg_scroll(int x = -1, int y = -1);
 	void set_window_position(int x = -1, int y = -1);
-	void nonemulation_init();
 	void enable_lcd();
 	//Disables the LCD causing a screen clear. Blocks until vsync.
 	void disable_lcd();

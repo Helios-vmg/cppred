@@ -128,6 +128,7 @@ FFDD,1,u8,hOaksAideNumMonsOwned
 FFE1,1,u8,hStartTileID
 FFE4,1,u8,hNewPartyLength
 FFE5,1,u8,hDividend2
+FFE5,1,u8,hIsObjectHidden
 FFE6,1,u8,hDivisor2
 FFE7,1,u8,hQuotient2
 FFE9,1,u8,hSpriteVRAMSlotAndFacing
