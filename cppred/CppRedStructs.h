@@ -326,6 +326,10 @@ public:
 	operator WrappedT() const{
 		return (WrappedT)(MemoryT)this->value;
 	}
+	template <typename T>
+	explicit operator T() const{
+		return (T)(MemoryT)this->value;
+	}
 	WrappedT enum_value() const{
 		return (WrappedT)*this;
 	}

@@ -188,3 +188,52 @@ void CppRedTitleScreen::draw_player_character(){
 		coord_y = (coord_y + 8) & 0xFF;
 	}
 }
+
+void CppRedTitleScreen::load_copyright_graphics(){
+	//TODO:
+	/*
+	* ld hl, NintendoCopyrightLogoGraphics
+	* ld de, vTitleLogo2 + $100
+	* ld bc, $50
+	* ld a, BANK(NintendoCopyrightLogoGraphics)
+	* call FarCopyData2
+	*/
+}
+
+void CppRedTitleScreen::load_gamefreak_logo(){
+	//TODO:
+	/*
+	* ld hl, GamefreakLogoGraphics
+	* ld de, vTitleLogo2 + $100 + $50
+	* ld bc, $90
+	* ld a, BANK(GamefreakLogoGraphics)
+	* call FarCopyData2
+	*/
+}
+
+void CppRedTitleScreen::load_pokemon_logo(){
+	//TODO:
+	/*
+	* ld hl, PokemonLogoGraphics
+	* ld de, vTitleLogo
+	* ld bc, $600
+	* ld a, BANK(PokemonLogoGraphics)
+	* call FarCopyData2          ; first chunk
+	* ld hl, PokemonLogoGraphics+$600
+	* ld de, vTitleLogo2
+	* ld bc, $100
+	* ld a, BANK(PokemonLogoGraphics)
+	* call FarCopyData2          ; second chunk
+	*/
+}
+
+void CppRedTitleScreen::load_version_graphics(){
+	//TODO:
+	/*
+	* ld hl, Version_GFX
+	* ld de,vChars2 + $600 - (Version_GFXEnd - Version_GFX - $50)
+	* ld bc, Version_GFXEnd - Version_GFX
+	* ld a, BANK(Version_GFX)
+	* call FarCopyDataDouble
+	*/
+}

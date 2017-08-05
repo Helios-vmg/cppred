@@ -76,8 +76,8 @@ private:
 	void initialize_sprite_screen_position();
 	//Returns false if invisible
 	bool check_sprite_availability();
-	void make_npc_face_player();
-	void not_yet_moving();
+	void make_npc_face_player(SpriteStateData1 &);
+	void not_yet_moving(SpriteStateData1 &);
 	void update_sprite_movement_delay();
 	void update_sprite_in_walking_animation();
 	tilemap_it get_tile_sprite_stands_on();
@@ -86,7 +86,7 @@ private:
 	bool try_walking(tilemap_it, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction);
 	bool can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
 	bool can_walk_onto_tile_helper(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
-	void update_sprite_image();
+	void update_sprite_image(SpriteStateData1 &);
 	void call_predef(Predef);
 	bool is_object_hidden();
 	template <typename T>
@@ -177,10 +177,6 @@ public:
 	void clear_screen();
 	void load_font_tile_patterns();
 	void load_textbox_tile_patterns();
-	void load_copyright_graphics();
-	void load_gamefreak_logo();
-	void load_pokemon_logo();
-	void load_version_graphics();
 	void clear_both_bg_maps();
 	//Note: In the disassembly, the analog to this function is the macro coord.
 	tilemap_it get_tilemap_location(unsigned x, unsigned y);

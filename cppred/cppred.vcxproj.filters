@@ -120,6 +120,9 @@
     <ClCompile Include="CppRedMap.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="CppRedMovement.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RegisterStore.h">

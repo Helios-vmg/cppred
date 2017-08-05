@@ -31,6 +31,11 @@ class CppRedTitleScreen{
 	void pick_new_mon();
 	//Loads the PC sprite to tile VRAM.
 	void draw_player_character();
+	void load_copyright_graphics();
+	void load_gamefreak_logo();
+	void load_pokemon_logo();
+	void load_version_graphics();
+	void clear_both_bg_maps();
 public:
 	CppRedTitleScreen(CppRed &parent);
 	TitleScreenResult display();
