@@ -540,31 +540,29 @@ public:
 	member_type anim_frame_counter;
 	//Offset: 9
 	direction_type facing_direction;
+	//Offset: 10 (0x0A)
+	member_type tile_position_y;
+	//Offset: 11 (0x0B)
+	member_type tile_position_x;
+	//Offset: 12 (0x0C)
+	member_type collision_bits;
 
 	SpriteStateData1(void *memory, const callback_struct &callbacks):
-			picture_id              ((char *)memory + 0, callbacks.cb1),
-			movement_status         ((char *)memory + 1, callbacks.cb3),
-			sprite_image_idx        ((char *)memory + 2, callbacks.cb1),
-			y_step_vector           ((char *)memory + 3, callbacks.cb1),
-			y_pixels                ((char *)memory + 4, callbacks.cb1),
-			x_step_vector           ((char *)memory + 5, callbacks.cb1),
-			x_pixels                ((char *)memory + 6, callbacks.cb1),
-			intra_anim_frame_counter((char *)memory + 7, callbacks.cb1),
-			anim_frame_counter      ((char *)memory + 8, callbacks.cb1),
-			facing_direction        ((char *)memory + 9, callbacks.cb2)
+			picture_id              ((char *)memory +  0, callbacks.cb1),
+			movement_status         ((char *)memory +  1, callbacks.cb3),
+			sprite_image_idx        ((char *)memory +  2, callbacks.cb1),
+			y_step_vector           ((char *)memory +  3, callbacks.cb1),
+			y_pixels                ((char *)memory +  4, callbacks.cb1),
+			x_step_vector           ((char *)memory +  5, callbacks.cb1),
+			x_pixels                ((char *)memory +  6, callbacks.cb1),
+			intra_anim_frame_counter((char *)memory +  7, callbacks.cb1),
+			anim_frame_counter      ((char *)memory +  8, callbacks.cb1),
+			facing_direction        ((char *)memory +  9, callbacks.cb2),
+			tile_position_y         ((char *)memory + 10, callbacks.cb1),
+			tile_position_x         ((char *)memory + 11, callbacks.cb1),
+			collision_bits          ((char *)memory + 12, callbacks.cb1)
 	{}
-	SpriteStateData1(const SpriteStateData1 &other):
-			picture_id              (other.picture_id),
-			movement_status         (other.movement_status),
-			sprite_image_idx        (other.sprite_image_idx),
-			y_step_vector           (other.y_step_vector),
-			y_pixels                (other.y_pixels),
-			x_step_vector           (other.x_step_vector),
-			x_pixels                (other.x_pixels),
-			intra_anim_frame_counter(other.intra_anim_frame_counter),
-			anim_frame_counter      (other.anim_frame_counter),
-			facing_direction        (other.facing_direction)
-	{}
+	SpriteStateData1(const SpriteStateData1 &other) = default;
 	SpriteStateData1(SpriteStateData1 &&other):
 		SpriteStateData1((const SpriteStateData1 &)other)
 	{}

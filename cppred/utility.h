@@ -86,3 +86,21 @@ template <typename T>
 std::unique_ptr<T> copy_to_unique(const T &x){
 	return std::make_unique<T>(x);
 }
+
+inline int sign_extend(byte_t n){
+	if (n < 0x80)
+		return n;
+	return 0x100 - (int)n;
+}
+
+inline byte_t reduce_sign(int n){
+	while (n < 0)
+		n += 0x100;
+	return n % 256;
+}
+
+template <typename T>
+typename std::enable_if<!std::is_unsigned<T>::value, int>::type
+sign_extend(T n){
+	return n;
+}

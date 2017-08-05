@@ -687,7 +687,7 @@ void CppRed::do_scripted_npc_movement(){
 
 	auto direction = (NpcMovementDirection)this->wram.wNPCMovementDirections2[this->wram.wNPCMovementDirections2Index];
 	//std::unique_ptr<SpriteStateData1::member_type> pointer;
-	auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite = this->get_current_sprite1();
 	SpriteFacingDirection sprite_direction = SpriteFacingDirection::Down;
 	int displacement = 0;
 	bool axis = false;
@@ -737,8 +737,8 @@ void CppRed::initialize_scripted_npc_movement(){
 
 void CppRed::anim_scripted_npc_movement(){
 	{
-		auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
-		auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+		auto sprite1 = this->get_current_sprite1();
+		auto sprite2 = this->get_current_sprite2();
 		//auto offset = swap_nibbles(sprite2.sprite_image_base_offset - 1);
 		auto offset = (sprite2.sprite_image_base_offset - 1) << 4;
 		auto direction = (SpriteFacingDirection)sprite1.facing_direction;
@@ -756,13 +756,13 @@ void CppRed::anim_scripted_npc_movement(){
 	}
 	this->advance_scripted_npc_anim_frame_counter();
 	{
-		auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		auto sprite1 = this->get_current_sprite1();
 		sprite1.sprite_image_idx = this->hram.hSpriteVRAMSlotAndFacing + this->hram.hSpriteAnimFrameCounter;
 	}
 }
 
 void CppRed::advance_scripted_npc_anim_frame_counter(){
-	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite1 = this->get_current_sprite1();
 	if (++sprite1.intra_anim_frame_counter != 4)
 		return;
 	sprite1.intra_anim_frame_counter = 0;
@@ -797,7 +797,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 	offset = (offset / 16) - 1;
 	this->wram.wCurSpriteMovement2 = this->wram.wMapSpriteData[offset].movement_byte_2;
 	{
-		auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		auto sprite = this->get_current_sprite1();
 		if (sprite.movement_status.get_movement_status() == MovementStatus::Uninitialized){
 			this->initialize_sprite_status();
 			return;
@@ -806,7 +806,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 	if (!this->check_sprite_availability())
 		return;
 	{
-		auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+		auto sprite = this->get_current_sprite1();
 		auto status = sprite.movement_status;
 		if (status.get_face_player()){
 			this->make_npc_face_player();
@@ -829,7 +829,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 		this->initialize_sprite_screen_position();
 	}
 	{
-		auto sprite = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+		auto sprite = this->get_current_sprite2();
 		auto movement = (unsigned)sprite.movement_byte1;
 		std::uint32_t x;
 		auto tile = this->get_tilemap_location(0, 0);
@@ -891,7 +891,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 }
 
 CppRed::tilemap_it CppRed::get_tile_sprite_stands_on(){
-	auto sprite = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite = this->get_current_sprite1();
 	unsigned y = sprite.y_pixels;
 	y = (y + 4) % 256;
 	y = (y - y % 16) / 8;
@@ -923,13 +923,13 @@ void CppRed::change_facing_direction(){
 }
 
 bool CppRed::try_walking(tilemap_it dst, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction){
-	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite1 = this->get_current_sprite1();
 	sprite1.facing_direction = facing_sprite_direction;
 	sprite1.x_step_vector = deltax;
 	sprite1.y_step_vector = deltay;
 	if (!this->can_walk_onto_tile(dst))
 		return false;
-	auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	auto sprite2 = this->get_current_sprite2();
 	sprite2.map_x += deltax;
 	sprite2.map_y -= deltay;
 	sprite2.walk_animation_counter = 10;
@@ -940,24 +940,24 @@ bool CppRed::try_walking(tilemap_it dst, int deltax, int deltay, DirectionBitmap
 }
 
 void CppRed::update_sprite_image(){
-	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite1 = this->get_current_sprite1();
 	sprite1.sprite_image_idx = sprite1.anim_frame_counter + (unsigned)(SpriteFacingDirection)sprite1.facing_direction + this->hram.hCurrentSpriteOffset2;
 }
 
 void CppRed::initialize_sprite_status(){
-	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite1 = this->get_current_sprite1();
 	sprite1.movement_status.clear();
 	sprite1.movement_status.set_movement_status(MovementStatus::Ready);
 	sprite1.sprite_image_idx = 0xFF;
-	auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	auto sprite2 = this->get_current_sprite2();
 	sprite2.y_displacement = 8;
 	sprite2.x_displacement = 8;
 }
 
 void CppRed::initialize_sprite_screen_position(){
-	auto sprite2 = this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	auto sprite2 = this->get_current_sprite2();
 	auto y = (sprite2.map_y - this->wram.wYCoord) * 16 - 4;
-	auto sprite1 = this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	auto sprite1 = this->get_current_sprite1();
 	sprite1.y_pixels = y;
 	auto x = (sprite2.map_x - this->wram.wXCoord) * 16;
 	sprite1.x_pixels = x;
@@ -1024,12 +1024,79 @@ bool CppRed::check_sprite_availability(){
 	return ret;
 }
 
-bool CppRed::can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay){
+bool CppRed::can_walk_onto_tile_helper(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay){
+	auto collision = (const byte_t *)this->map_pointer(this->wram.wTilesetCollisionPtr);
+	while (true){
+		auto value = *(collision++);
+		if (value == 0xFF)
+			return false;
+		if (value == tile_id)
+			break;
+	}
+	{
+		auto sprite2 = this->get_current_sprite2();
+		if (sprite2.movement_byte1 == 0xFF)
+			return false;
+	}
+	{
+		auto sprite1 = this->get_current_sprite1();
+		//Explanation: The sprite location is at the top left, and every sprite is
+		//2x2 tiles big, and every tile is 8x8 pixels big. So take the size of the
+		//tilemap in dimension Q, subtract the size of the sprite in that
+		//dimension, and multiply by 8.
+		if (sprite1.y_pixels + 4 + deltay >= (tilemap_height - 2) * 8)
+			return false;
+		if (sprite1.x_pixels + deltax >= (tilemap_width - 2) * 8)
+			return false;
+	}
+
+	this->detect_sprite_collision();
+
+	auto sprite1 = this->get_current_sprite1();
+	if (sprite1.collision_bits & (unsigned)direction)
+		return false;
 	auto sprite2 = this->get_current_sprite2();
-	if (sprite2.movement_byte1 < 0xFE)
-		//Always allow walking if the movement is scripted.
+	int x = sprite2.x_displacement;
+	int y = sprite2.y_displacement;
+	if (deltay >= 0){
+		y += deltay;
+		if (y < 5)
+			//Bug: this tests probably were supposed to prevent sprites
+			//from walking out too far, but this line makes sprites get stuck
+			//whenever they walked upwards 5 steps
+			//on the other hand, the amount a sprite can walk out to the
+			//right or bottom is not limited (until the counter overflows)
+			return false;
+	}else if (--y < 0)
+		return false;
+	if (deltax >= 0){
+		x += deltax;
+		if (x < 5)
+			//Same as above.
+			return false;
+	}else if (--x < 0)
+		return false;
+	sprite2.x_displacement = reduce_sign(x);
+	sprite2.y_displacement = reduce_sign(y);
+	return true;
+}
+
+bool CppRed::can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay){
+	{
+		auto sprite2 = this->get_current_sprite2();
+		if (sprite2.movement_byte1 < 0xFE)
+			//Always allow walking if the movement is scripted.
+			return true;
+	}
+	if (this->can_walk_onto_tile_helper(tile_id, direction, deltax, deltay))
 		return true;
-	//TODO: Figure out where this pointer is written and where it can point to.
-	/**/
-	//this->wram.wTilesetCollisionPtr
+
+	auto sprite1 = this->get_current_sprite1();
+	sprite1.movement_status.clear();
+	sprite1.movement_status.set_movement_status(MovementStatus::Delayed);
+	sprite1.y_step_vector = 0;
+	sprite1.x_step_vector = 0;
+	auto sprite2 = this->get_current_sprite2();
+	sprite2.movement_delay = this->random() % 128;
+	return false;
 }

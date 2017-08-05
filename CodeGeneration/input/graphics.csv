@@ -349,7 +349,7 @@ RedFishingRodTiles,graphics/gfx/red_fishingrod_tiles.png
 RedFishingTilesBack,graphics/gfx/red_fishing_tile_back.png
 RedFishingTilesFront,graphics/gfx/red_fishing_tile_front.png
 RedFishingTilesSide,graphics/gfx/red_fishing_tile_side.png
-RedsHouse2_GFX,graphics/gfx/tilesets/reds_house.t7.png
+RedsHouse_GFX,graphics/gfx/tilesets/reds_house.t7.png
 RedSprite,graphics/gfx/sprites/red.png
 RhydonPicBack,graphics/pic/monback/rhydonb.png
 RhydonPicFront,graphics/pic/bmon/rhydon.png

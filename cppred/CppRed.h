@@ -85,6 +85,7 @@ private:
 	void change_facing_direction();
 	bool try_walking(tilemap_it, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction);
 	bool can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
+	bool can_walk_onto_tile_helper(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
 	void update_sprite_image();
 	void call_predef(Predef);
 	bool is_object_hidden();
@@ -112,6 +113,7 @@ private:
 	}
 	SpriteStateData1 get_current_sprite1();
 	SpriteStateData2 get_current_sprite2();
+	void *map_pointer(unsigned pointer);
 public:
 
 	WRam wram;
