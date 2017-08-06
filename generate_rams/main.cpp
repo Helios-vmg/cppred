@@ -50,7 +50,9 @@ void generate_xram(const char *file_name, const char *class_name, unsigned base_
 
 			type->class_name = class_name;
 
-			output_h << type->generate_declarations(name);
+			output_h
+				<< "//Address: " << row[0] << std::endl
+				<< type->generate_declarations(name);
 			if (first)
 				first = false;
 			else

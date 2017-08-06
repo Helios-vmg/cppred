@@ -550,6 +550,12 @@ public:
 	member_type tile_position_x;
 	//Offset: 12 (0x0C)
 	member_type collision_bits;
+	//Offset: 13 (0x0D)
+	member_type unknown1;
+	//Offset: 13 (0x0E)
+	member_type collision_bits2;
+	//Offset: 13 (0x0E)
+	member_type collision_bits3;
 
 	SpriteStateData1(void *memory, const callback_struct &callbacks):
 			picture_id              ((char *)memory +  0, callbacks.cb1),
@@ -564,7 +570,10 @@ public:
 			facing_direction        ((char *)memory +  9, callbacks.cb2),
 			tile_position_y         ((char *)memory + 10, callbacks.cb1),
 			tile_position_x         ((char *)memory + 11, callbacks.cb1),
-			collision_bits          ((char *)memory + 12, callbacks.cb1)
+			collision_bits          ((char *)memory + 12, callbacks.cb1),
+			unknown1                ((char *)memory + 13, callbacks.cb1),
+			collision_bits2         ((char *)memory + 14, callbacks.cb1),
+			collision_bits3         ((char *)memory + 15, callbacks.cb1)
 	{}
 	SpriteStateData1(const SpriteStateData1 &other) = default;
 	SpriteStateData1(SpriteStateData1 &&other):

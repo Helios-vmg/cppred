@@ -36,9 +36,13 @@ FF8E,1,u8,hFourTileSpriteCount
 FF8E,1,u8,hLoadSpriteTemp2
 FF8E,1,u8,hHalveItemPrices
 FF8F,1,u8,hSpriteOffset2
+FF8F,1,u8,hCollisionLoopCounter
 FF90,1,u8,hOAMBufferOffset
+FF90,1,u8,hCollisionAdjustedY
 FF91,1,u8,hSpriteScreenX
+FF91,1,u8,hCollisionAdjustedX
 FF92,1,u8,hSpriteScreenY
+FF92,1,u8,hShiftedAdjustment
 FF93,1,u8,hTilePlayerStandingOn
 FF93,1,u8,hCurrentSpriteOffset2
 FF94,1,u8,hSpritePriority

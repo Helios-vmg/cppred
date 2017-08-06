@@ -411,9 +411,9 @@ bool CppRed::check_sprite_availability(){
 		ret = ret &&
 			tile[0] < 0x60 &&
 			tile[1] < 0x60 &&
-			tile[-tilemap_width] < 0x60 &&
-			tile[-tilemap_width + 1] < 0x60;
-		tile_value = tile[-tilemap_width + 1];
+			tile[-(int)tilemap_width] < 0x60 &&
+			tile[-(int)tilemap_width + 1] < 0x60;
+		tile_value = tile[-(int)tilemap_width + 1];
 	}
 
 	auto sprite = this->get_current_sprite1();
@@ -565,4 +565,113 @@ void CppRed::update_sprite_in_walking_animation(){
 	sprite1.movement_status.set_movement_status(MovementStatus::Delayed);
 	sprite1.y_step_vector = 0;
 	sprite1.x_step_vector = 0;
+}
+
+int round_integer(int n, unsigned modulo){
+	if (!n)
+		return n;
+	if (n > 0)
+		return n - n % modulo;
+	return n - (modulo - (-n % modulo)) % modulo;
+}
+
+struct SpriteCollisionParameters{
+	int b;
+	int c;
+};
+
+SpriteCollisionParameters set_sprite_collision_values(int x){
+	SpriteCollisionParameters ret;
+	ret.b = x;
+	if (!x)
+		ret.c = 0;
+	else if (x == -1)
+		ret.c = 9;
+	else{
+		ret.b = 0;
+		ret.c = 7;
+	}
+	return ret;
+}
+
+void CppRed::detect_sprite_collision(){
+	auto sprite1 = this->get_current_sprite1();
+	if (!sprite1.picture_id)
+		return;
+	const auto scp_y = set_sprite_collision_values(sprite1.y_step_vector);
+	const auto rounded_y = round_integer(sprite1.y_pixels + 4 + scp_y.b, 16) + scp_y.c;
+	this->hram.hCollisionAdjustedY = reduce_sign(rounded_y);
+
+	const auto scp_x = set_sprite_collision_values(sprite1.x_step_vector);
+	const auto rounded_x = round_integer(sprite1.x_pixels + scp_x.b, 16) + scp_x.c;
+	this->hram.hCollisionAdjustedX = reduce_sign(rounded_x);
+
+	sprite1.unknown1 = 0;
+	sprite1.collision_bits = 0;
+	sprite1.tile_position_x = reduce_sign(rounded_x);
+	sprite1.tile_position_y = reduce_sign(rounded_y);
+
+	for (int i = 0; i < 16; i++){
+		this->hram.hCollisionLoopCounter = i;
+		if (i == this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size)
+			continue;
+		auto compared_sprite = this->wram.wSpriteStateData1[i];
+		//          is unused?                           is off-screen?
+		if (!compared_sprite.picture_id || compared_sprite.sprite_image_idx == 0xFF)
+			continue;
+
+		//Weird routine, y dimension:
+
+		const auto scp_y2 = set_sprite_collision_values(compared_sprite.y_step_vector);
+		const auto rounded_y2 = round_integer(compared_sprite.y_pixels + 4 + scp_y2.b, 16) + scp_y2.c;
+		const int distance_y = abs(rounded_y2 - rounded_y);
+		this->hram.hCollisionAdjustedY = distance_y;
+
+		assert(rounded_y2 != rounded_y);
+		const unsigned sign_y = rounded_y2 < rounded_y ? 2 : 1;
+
+		const int shift_amount_y = !(rounded_y % 16) ? 7 : 9;
+		const int difference_y = distance_y - shift_amount_y;
+		this->hram.hShiftedAdjustment = reduce_sign(difference_y);
+		this->hram.hCollisionAdjustedY = shift_amount_y;
+
+		if (difference_y >= 0 && difference_y > !compared_sprite.y_step_vector ? 7 : 9)
+			continue;
+
+		//Weird routine, x dimension:
+
+		const auto scp_x2 = set_sprite_collision_values(compared_sprite.x_step_vector);
+		const auto rounded_x2 = round_integer(compared_sprite.x_pixels + scp_x2.b, 16) + scp_x2.c;
+		const int distance_x = abs(rounded_x2 - rounded_x);
+		this->hram.hCollisionAdjustedX = distance_x;
+
+		assert(rounded_x2 != rounded_x);
+		const unsigned sign_x = rounded_x2 < rounded_x ? 2 : 1;
+
+		int shift_amount_x = !(rounded_x % 16) ? 7 : 9;
+		const int difference_x = distance_x - shift_amount_x;
+		this->hram.hShiftedAdjustment = reduce_sign(difference_x);
+		this->hram.hCollisionAdjustedX = shift_amount_x;
+
+		if (difference_x >= 0 && difference_x > !compared_sprite.x_step_vector ? 7 : 9)
+			continue;
+
+		//End of weird routines.
+
+		const auto mask =
+			shift_amount_x >= shift_amount_y ?
+				bits_from_u32<0x1100>::value
+			:
+				bits_from_u32<0x0011>::value;
+
+		const unsigned combined = (sign_x << 2) | sign_y;
+		const unsigned selected = combined & mask;
+		sprite1.collision_bits |= selected;
+
+		std::uint8_t collision_bitsA = (1 << i) >> 8;
+		std::uint8_t collision_bitsB = (1 << i) & 0xFF;
+
+		sprite1.collision_bits2 |= collision_bitsA;
+		sprite1.collision_bits3 |= collision_bitsB;
+	}
 }
