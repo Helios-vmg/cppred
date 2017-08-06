@@ -270,10 +270,10 @@ NidokingPicBack,graphics/pic/monback/nidokingb.png
 NidokingPicFront,graphics/pic/bmon/nidoking.png
 NidoqueenPicBack,graphics/pic/monback/nidoqueenb.png
 NidoqueenPicFront,graphics/pic/bmon/nidoqueen.png
-NidoranFPicBack,graphics/pic/monback/nidoranfb.png
-NidoranFPicFront,graphics/pic/bmon/nidoranf.png
-NidoranMPicBack,graphics/pic/monback/nidoranmb.png
-NidoranMPicFront,graphics/pic/bmon/nidoranm.png
+NidoranFemalePicBack,graphics/pic/monback/nidoranfb.png
+NidoranFemalePicFront,graphics/pic/bmon/nidoranf.png
+NidoranMalePicBack,graphics/pic/monback/nidoranmb.png
+NidoranMalePicFront,graphics/pic/bmon/nidoranm.png
 NidorinaPicBack,graphics/pic/monback/nidorinab.png
 NidorinaPicFront,graphics/pic/bmon/nidorina.png
 NidorinoPicBack,graphics/pic/monback/nidorinob.png
