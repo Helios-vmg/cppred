@@ -237,8 +237,8 @@ void CppRed::run_until_next_frame(){
 #endif
 
 void CppRed::main(){
-	MainMenuResult main_menu_result;
-	while (true){
+	MainMenuResult main_menu_result = MainMenuResult::Cancelled;
+	while (main_menu_result == MainMenuResult::Cancelled){
 		this->init();
 		bool done = false;
 		while (!done){
@@ -253,10 +253,7 @@ void CppRed::main(){
 					break;
 			}
 		}
-		if (main_menu_result != MainMenuResult::Cancelled)
-			break;
 	}
-	assert(main_menu_result != MainMenuResult::Cancelled);
 	switch (main_menu_result){
 		case MainMenuResult::NewGame:
 			this->start_new_game();
