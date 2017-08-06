@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonTypes.h"
 #include <vector>
+#include <array>
 
 enum class BitmapEncoding{
 	Bit1,
@@ -8,19 +9,57 @@ enum class BitmapEncoding{
 	Rgb,
 };
 
-template <size_t N>
-struct StaticImage{
+class BaseStaticImage{
+protected:
 	std::uint8_t width;
 	std::uint8_t height;
 	BitmapEncoding encoding;
-	//Encoded row major. LSB is left-most pixel.
-	byte_t data[N];
-	static const size_t data_size = N;
+	const byte_t *data;
+	size_t size;
+public:
+	BaseStaticImage(std::uint8_t w, std::uint8_t h, BitmapEncoding e, size_t s):
+		width(w),
+		height(h),
+		encoding(e),
+		size(s){}
+	BaseStaticImage(const BaseStaticImage &) = delete;
+	BaseStaticImage(BaseStaticImage &&) = delete;
+	void operator=(const BaseStaticImage &) = delete;
+	void operator=(BaseStaticImage &&) = delete;
+	
+	unsigned get_width() const{
+		return this->width;
+	}
+	unsigned get_height() const{
+		return this->height;
+	}
+	BitmapEncoding get_encoding() const{
+		return this->encoding;
+	}
+	const byte_t *get_data() const{
+		return this->data;
+	}
+	size_t get_data_size() const{
+		return this->size;
+	}
 };
 
-std::vector<byte_t> decode_image_data(unsigned w, unsigned h, BitmapEncoding encoding, const byte_t *data, size_t size);
-
 template <size_t N>
-std::vector<byte_t> decode_image_data(const StaticImage<N> &img){
-	return decode_image_data(img.width, img.height, img.encoding, img.data, N);
-}
+class StaticImage : public BaseStaticImage{
+	//Encoded row major. LSB of every byte is left-most pixel. For 2-bit
+	//bitmaps, the value of the left-most is stored in the least
+	//significant half nibble.
+	const std::array<byte_t, N> static_data;
+public:
+	static const size_t static_size = N;
+
+	StaticImage(std::uint8_t w, std::uint8_t h, BitmapEncoding e, std::array<byte_t, N> &&d): BaseStaticImage(w, h, e, N), static_data(std::move(d)){
+		this->data = this->static_data.data();
+	}
+	StaticImage(const StaticImage &) = delete;
+	StaticImage(StaticImage &&) = delete;
+	void operator=(const StaticImage &) = delete;
+	void operator=(StaticImage &&) = delete;
+};
+
+std::vector<byte_t> decode_image_data(const BaseStaticImage &img);

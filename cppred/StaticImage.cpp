@@ -30,3 +30,7 @@ std::vector<byte_t> decode_image_data(unsigned w, unsigned h, BitmapEncoding enc
 	}
 	return ret;
 }
+
+std::vector<byte_t> decode_image_data(const BaseStaticImage &img){
+	return decode_image_data(img.get_width(), img.get_height(), img.get_encoding(), img.get_data(), img.get_data_size());
+}
