@@ -132,18 +132,20 @@ public:
 	~CodePointer(){}
 };
 
+//------------------------------------------------------------------------------
+
 class Struct : public Type{
 public:
 	virtual ~Struct(){}
 	virtual std::string generate_initializer(unsigned address, unsigned base_address, const std::unique_ptr<Number> &size, const std::string &name) const override;
+	virtual std::unique_ptr<Number> get_size() override{
+		return std::make_unique<CompoundNumber>(this->get_actual_type_name() + "::size");
+	}
 };
 
 class spritestatedata1Struct : public Struct{
 public:
 	virtual ~spritestatedata1Struct(){}
-	std::unique_ptr<Number> get_size() override{
-		return std::make_unique<IntegerLiteralNumber>(16);
-	}
 	virtual std::string get_actual_type_name() const override;
 	virtual std::string get_callback_struct() const override;
 };
@@ -151,9 +153,6 @@ public:
 class spritestatedata2Struct : public Struct{
 public:
 	virtual ~spritestatedata2Struct(){}
-	std::unique_ptr<Number> get_size() override{
-		return std::make_unique<IntegerLiteralNumber>(16);
-	}
 	virtual std::string get_actual_type_name() const override;
 	virtual std::string get_callback_struct() const override;
 };
@@ -161,9 +160,6 @@ public:
 class mapspritedataStruct : public spritestatedata2Struct{
 public:
 	virtual ~mapspritedataStruct(){}
-	std::unique_ptr<Number> get_size() override{
-		return std::make_unique<IntegerLiteralNumber>(2);
-	}
 	std::string get_actual_type_name() const override;
 };
 
@@ -185,6 +181,27 @@ public:
 	}
 	std::string get_callback_struct() const override;
 };
+
+class pcboxmemberStruct : public Struct{
+public:
+	virtual ~pcboxmemberStruct(){}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
+};
+
+class partymemberStruct : public pcboxmemberStruct{
+public:
+	virtual ~partymemberStruct(){}
+	std::string get_actual_type_name() const override;
+};
+
+class pcboxStruct : public pcboxmemberStruct{
+public:
+	virtual ~pcboxStruct(){}
+	virtual std::string get_actual_type_name() const override;
+};
+
+//------------------------------------------------------------------------------
 
 class Array : public Struct{
 	std::unique_ptr<Type> inner;

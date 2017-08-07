@@ -63,7 +63,6 @@ private:
 	void start_new_game();
 	void start_loaded_game();
 	void special_enter_map(MapId);
-	MapId special_warp_in();
 	void update_player_sprite();
 	void update_non_player_sprite(const SpriteStateData2 &);
 	void detect_sprite_collision();
@@ -87,7 +86,6 @@ private:
 	bool can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
 	bool can_walk_onto_tile_helper(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
 	void update_sprite_image(SpriteStateData1 &);
-	void call_predef(Predef);
 	bool is_object_hidden();
 	template <typename T>
 	bool flag_action(FlagAction action, T &bitmap, unsigned bit){
@@ -114,6 +112,7 @@ private:
 	SpriteStateData1 get_current_sprite1();
 	SpriteStateData2 get_current_sprite2();
 	void *map_pointer(unsigned pointer);
+	void mass_initialization();
 public:
 
 	WRam wram;
@@ -213,6 +212,20 @@ public:
 	void update_sprites();
 	byte_t handle_menu_input();
 	void joypad();
+	void initialize_player_data();
+	void initialize_options();
+	void call_predef(Predef);
+	void add_item_to_inventory(unsigned position, ItemId, unsigned quantity);
+	MapId special_warp_in();
+	void gb_fadeout_to_white();
+	void gb_fadein_from_white();
+	void get_mon_header();
+	void load_front_sprite(SpeciesId, bool flipped, const tilemap_it &destination);
+	void move_pic_left();
+	//Waits until vsync and copies tiles to VRAM.
+	void copy_video_data(unsigned tiles, const BaseStaticImage &image, unsigned src_offset, unsigned destination);
+	void reset_player_sprite_data();
+	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

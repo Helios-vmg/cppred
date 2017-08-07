@@ -123,6 +123,9 @@
     <ClCompile Include="CppRedMovement.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="CppRedScripts.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RegisterStore.h">
@@ -231,6 +234,9 @@
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
     <ClInclude Include="CppRedMap.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedScripts.h">
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>

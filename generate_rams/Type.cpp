@@ -54,6 +54,17 @@ std::unique_ptr<Type> construct_missableobject(){
 	return std::make_unique<missableobjectStruct>();
 }
 
+std::unique_ptr<Type> construct_pcboxmember(){
+	return std::make_unique<pcboxmemberStruct>();
+}
+
+std::unique_ptr<Type> construct_partymember(){
+	return std::make_unique<partymemberStruct>();
+}
+std::unique_ptr<Type> construct_pcbox(){
+	return std::make_unique<pcboxStruct>();
+}
+
 #include "../CodeGeneration/output/bitmaps_rams_constructors.inl"
 
 std::unique_ptr<Type> construct_pointer(){
@@ -110,6 +121,9 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	{ "options", construct_options },
 	{ "mapspritedata", construct_mapspritedata },
 	{ "missableobject", construct_missableobject },
+	{ "pcboxmember", construct_pcboxmember },
+	{ "partymember", construct_partymember },
+	{ "pcbox", construct_pcbox },
 #include "../CodeGeneration/output/bitmaps_rams_declarations.inl"
 	{ "pointer", construct_pointer },
 	{ "big_pointer", construct_big_pointer },
@@ -316,4 +330,29 @@ std::string PackedBitsWrapper::get_callback_struct() const{
 		% integer_functions[0][0][0]
 		% integer_functions[0][0][1]
 	).str();
+}
+
+std::string pcboxmemberStruct::get_actual_type_name() const{
+	return "PcBoxMember";
+}
+
+std::string pcboxmemberStruct::get_callback_struct() const{
+	return (boost::format(
+			"{{%1%, %2%},{%3%, %4%},{%5%, %6%}}"
+		)
+		% integer_functions[0][1][0]
+		% integer_functions[0][1][1]
+		% integer_functions[0][2][0]
+		% integer_functions[0][2][1]
+		% integer_functions[0][3][0]
+		% integer_functions[0][3][1]
+	).str();
+}
+
+std::string partymemberStruct::get_actual_type_name() const{
+	return "PartyMember";
+}
+
+std::string pcboxStruct::get_actual_type_name() const{
+	return "PcBox";
 }

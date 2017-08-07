@@ -104,6 +104,12 @@ void generate_header(const decltype(parse_bitmaps_file()) &bitmaps){
 			"    void clear(){\n"
 			"        this->wrapped_value = 0;\n"
 			"    }\n"
+			"    byte_t get_raw_value() const{\n"
+			"        return this->wrapped_value;\n"
+			"    }\n"
+			"    void set_raw_value(byte_t value){\n"
+			"        this->wrapped_value = value;\n"
+			"    }\n"
 		;
 
 		for (auto &member : bitmap.members)

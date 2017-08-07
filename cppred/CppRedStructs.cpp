@@ -97,3 +97,28 @@ void MovementFlags::set_face_player(bool value){
 }
 
 #include "../CodeGeneration/output/bitmaps.inl"
+
+void PcBoxMember::clear(){
+	this->species = 0;
+	this->hp = 0;
+	this->box_level = 0;
+	this->status = 0;
+	this->type1 = 0;
+	this->type2 = 0;
+	this->catch_rate = 0;
+	this->moves.fill_bytes(0);
+	this->original_trainer_id = 0;
+	this->experience = 0;
+	this->hp_xp = 0;
+	this->attack_xp = 0;
+	this->defense_xp = 0;
+	this->speed_xp = 0;
+	this->special_xp = 0;
+	this->dvs.fill_bytes(0);
+	this->pp.fill_bytes(0);
+}
+
+void PcBox::clear(){
+	for (auto &i : this->mons)
+		i.clear();
+}

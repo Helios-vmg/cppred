@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonTypes.h"
 #include "CppRedConstants.h"
+#include "StaticImage.h"
 #include <limits>
 #include <type_traits>
 #include <algorithm>
@@ -8,6 +9,8 @@
 #include <functional>
 
 #define WRAPPER_CONST 
+
+void array_overflow();
 
 template <typename WrappedT, size_t Size, typename reading_f, typename writing_f>
 class basic_IntegerWrapper{
@@ -356,19 +359,10 @@ private:
 	void *memory;
 	callback_struct callbacks;
 
-	void copy(const WrappedArray &other){
-		this->memory = other.memory;
-		this->read = other.read;
-		this->write = other.write;
-	}
 public:
 	WrappedArray(void *memory, const callback_struct &callbacks): memory(memory), callbacks(callbacks){}
-	WrappedArray(WrappedArray &&other){
-		this->copy(other);
-	}
-	WrappedArray(const WrappedArray &other){
-		this->copy(other);
-	}
+	WrappedArray(const WrappedArray &other) = default;
+	WrappedArray(WrappedArray &&other): WrappedArray((const WrappedArray &)other){}
 	void operator=(const WrappedArray &) = delete;
 	void operator=(WrappedArray &&other) = delete;
 	indexed_type operator[](size_t idx) WRAPPER_CONST{
@@ -468,6 +462,9 @@ public:
 	void fill(const WrappedT &value) WRAPPER_CONST{
 		for (auto &it : *this)
 			it = value;
+	}
+	void fill_bytes(byte_t value) WRAPPER_CONST{
+		memset(this->memory, value, this->size);
 	}
 	std::enable_if<std::is_same<WrappedT, byte_t>::value, void>
 	operator=(const std::string &string) WRAPPER_CONST{
@@ -640,17 +637,17 @@ public:
 	void operator=(SpriteStateData2 &&) = delete;
 };
 
-class PcBox{
+class PcBoxMember{
 public:
 	typedef typename WrapperSelector<std::uint8_t, 1>::type u8_type;
 	typedef typename WrapperSelector<std::uint16_t, 2>::type u16_type;
 	typedef typename WrapperSelector<std::uint32_t, 3>::type u24_type;
-	struct callback_structs{
+	struct callback_struct{
 		u8_type::callback_struct cb8;
 		u16_type::callback_struct cb16;
 		u24_type::callback_struct cb24;
 	};
-	static const size_t size = 16;
+	static const size_t size = 33;
 private:
 public:
 	//Offset: 0
@@ -689,7 +686,7 @@ public:
 	//Offset: 29 (0x1D)
 	WrappedArray<typename u8_type::type, 4, u8_type::size> pp;
 
-	PcBox(void *memory, const callback_structs &callbacks):
+	PcBoxMember(void *memory, const callback_struct &callbacks):
 		species            ((char *)memory +  0, callbacks.cb8),
 		hp                 ((char *)memory +  1, callbacks.cb16),
 		box_level          ((char *)memory +  3, callbacks.cb8),
@@ -711,10 +708,67 @@ public:
 		dvs                ((char *)memory + 27, callbacks.cb8),
 		pp                 ((char *)memory + 29, callbacks.cb8)
 	{}
+	PcBoxMember(const PcBoxMember &) = default;
+	PcBoxMember(PcBoxMember &&other): PcBoxMember((const PcBoxMember &)other){}
+	void operator=(const PcBoxMember &) = delete;
+	void operator=(PcBoxMember &&) = delete;
+	void clear();
+};
+
+class PartyMember : public PcBoxMember{
+public:
+	typedef PcBoxMember::u8_type u8_type;
+	typedef PcBoxMember::u16_type u16_type;
+	typedef PcBoxMember::u24_type u24_type;
+	typedef PcBoxMember::callback_struct callback_struct;
+	static const size_t size = PcBoxMember::size + 11;
+private:
+public:
+	//Offset: 33 (0x21)
+	u8_type level;
+	//Offset: 34 (0x22)
+	u16_type max_hp;
+	//Offset: 36 (0x24)
+	u16_type attack;
+	//Offset: 38 (0x26)
+	u16_type defense;
+	//Offset: 40 (0x28)
+	u16_type speed;
+	//Offset: 42 (0x2A)
+	u16_type special;
+
+	PartyMember(void *memory, const callback_struct &callbacks):
+		PcBoxMember(memory, callbacks),
+		level  ((char *)memory + 33, callbacks.cb8),
+		max_hp ((char *)memory + 34, callbacks.cb16),
+		attack ((char *)memory + 36, callbacks.cb16),
+		defense((char *)memory + 38, callbacks.cb16),
+		speed  ((char *)memory + 40, callbacks.cb16),
+		special((char *)memory + 42, callbacks.cb16)
+	{}
+	PartyMember(const PartyMember &) = default;
+	PartyMember(PartyMember &&other): PartyMember((const PartyMember &)other){}
+	void operator=(const PartyMember &) = delete;
+	void operator=(PartyMember &&) = delete;
+};
+
+template <typename T, size_t S>
+struct WrapperSelector<T, S, typename std::enable_if<std::is_class<T>::value>::type>{
+	typedef T type;
+};
+
+class PcBox{
+public:
+	WrappedArray<PcBoxMember, mons_per_box, PcBoxMember::size> mons;
+	typedef decltype(mons)::callback_struct callback_struct;
+	static const size_t size = decltype(mons)::size;
+
+	PcBox(void *memory, const callback_struct &cb): mons(memory, cb){}
 	PcBox(const PcBox &) = default;
-	PcBox(PcBox &&) = delete;
+	PcBox(PcBox &&other): PcBox((const PcBox &)other){}
 	void operator=(const PcBox &) = delete;
 	void operator=(PcBox &&) = delete;
+	void clear();
 };
 
 struct OptionsTuple{
@@ -747,6 +801,15 @@ public:
 	void set_text_speed(TextSpeed);
 	operator OptionsTuple() const;
 	void operator=(const OptionsTuple &);
+	void clear(){
+		this->options = 0;
+	}
+	byte_t get_raw_value() const{
+		return this->options;
+	}
+	void set_raw_value(byte_t value){
+		this->options = value;
+	}
 };
 
 class MapSpriteData{
@@ -793,22 +856,143 @@ public:
 
 #include "../CodeGeneration/output/bitmaps.h"
 
-template <typename T, size_t S>
-struct WrapperSelector<T, S, typename std::enable_if<std::is_class<T>::value>::type>{
-	typedef T type;
+struct PokemonCryData{
+	byte_t base_cry;
+	byte_t pitch;
+	byte_t length;
 };
 
-//template <size_t S>
-//struct WrapperSelector<SpriteStateData1, S>{
-//	typedef SpriteStateData1 type;
-//};
-//
-//template <size_t S>
-//struct WrapperSelector<SpriteStateData2, S>{
-//	typedef SpriteStateData2 type;
-//};
-//
-//template <size_t S>
-//struct WrapperSelector<PcBox, S>{
-//	typedef PcBox type;
-//};
+enum class EvolutionTriggerType{
+	None,
+	Level,
+	Item,
+	Trade,
+};
+
+struct EvolutionTrigger{
+	EvolutionTriggerType type;
+	byte_t minimum_level;
+	SpeciesId next_form;
+	ItemId trigger_item;
+};
+
+struct LearnedMove{
+	byte_t level;
+	MoveId move;
+};
+
+struct BasePokemonInfo{
+	PokedexId pokedex_id;
+	SpeciesId species_id;
+	byte_t base_hp;
+	byte_t base_attack;
+	byte_t base_defense;
+	byte_t base_speed;
+	byte_t base_special;
+	std::array<PokemonTypeId, 2> type;
+	byte_t catch_rate;
+	byte_t base_xp_yield;
+	byte_t growth_rate;
+	std::array<byte_t, 7> learnable_tms_bitmap;
+	const char * const display_name;
+	const BaseStaticImage * const front;
+	const BaseStaticImage * const back;
+	PokemonCryData cry_data;
+
+	BasePokemonInfo(
+		PokedexId pokedex_id,
+		SpeciesId species_id,
+		byte_t base_hp,
+		byte_t base_attack,
+		byte_t base_defense,
+		byte_t base_speed,
+		byte_t base_special,
+		std::array<PokemonTypeId, 2> &&type,
+		byte_t catch_rate,
+		byte_t base_xp_yield,
+		byte_t growth_rate,
+		std::array<byte_t, 7> &&learnable_tms_bitmap,
+		const char * const display_name,
+		const BaseStaticImage * const front,
+		const BaseStaticImage * const back,
+		PokemonCryData &&cry_data
+	):
+		pokedex_id(pokedex_id),
+		species_id(species_id),
+		base_hp(base_hp),
+		base_attack(base_attack),
+		base_defense(base_defense),
+		base_speed(base_speed),
+		base_special(base_special),
+		type(std::move(type)),
+		catch_rate(catch_rate),
+		base_xp_yield(base_xp_yield),
+		growth_rate(growth_rate),
+		learnable_tms_bitmap(std::move(learnable_tms_bitmap)),
+		display_name(display_name),
+		front(front),
+		back(back),
+		cry_data(cry_data)
+	{}
+	BasePokemonInfo(const BasePokemonInfo &) = delete;
+	BasePokemonInfo(BasePokemonInfo &&) = delete;
+	void operator=(const BasePokemonInfo &) = delete;
+	void operator=(BasePokemonInfo &&) = delete;
+	virtual std::vector<MoveId> get_initial_moves() const = 0;
+	virtual std::vector<EvolutionTrigger> get_evolution_triggers() const = 0;
+	virtual std::vector<LearnedMove> get_learned_moves() const = 0;
+};
+
+template <size_t N1, size_t N2, size_t N3>
+struct PokemonInfo : public BasePokemonInfo{
+private:
+	template <typename T, size_t N>
+	static std::vector<T> to_vector(const std::array<T, N> &a){
+		std::vector<T> ret;
+		ret.reserve(N);
+		for (auto &i : a)
+			ret.push_back(i);
+		return ret;
+	}
+public:
+	std::array<MoveId, N1> initial_attacks;
+	std::array<EvolutionTrigger, N2> evolution_triggers;
+	std::array<LearnedMove, N3> learned_moves;
+
+	PokemonInfo(
+		PokedexId pokedex_id,
+		SpeciesId species_id,
+		byte_t base_hp,
+		byte_t base_attack,
+		byte_t base_defense,
+		byte_t base_speed,
+		byte_t base_special,
+		std::array<PokemonTypeId, 2> &&type,
+		byte_t catch_rate,
+		byte_t base_xp_yield,
+		byte_t growth_rate,
+		std::array<byte_t, 7> &&learnable_tms_bitmap,
+		const char * const display_name,
+		const BaseStaticImage * const front,
+		const BaseStaticImage * const back,
+		PokemonCryData &&cry_data,
+		std::array<MoveId, N1> &&initial_attacks,
+		std::array<EvolutionTrigger, N2> &&evolution_triggers,
+		std::array<LearnedMove, N3> &&learned_moves
+	):
+		BasePokemonInfo(pokedex_id, species_id, base_hp, base_attack, base_defense, base_speed, base_special, std::move(type), catch_rate, base_xp_yield, growth_rate, std::move(learnable_tms_bitmap), display_name, front, back, std::move(cry_data)),
+		initial_attacks(std::move(initial_attacks)),
+		evolution_triggers(std::move(evolution_triggers)),
+		learned_moves(std::move(learned_moves))
+	{}
+
+	std::vector<MoveId> get_initial_moves() const override{
+		return to_vector(this->initial_attacks);
+	}
+	std::vector<EvolutionTrigger> get_evolution_triggers() const override{
+		return to_vector(this->evolution_triggers);
+	}
+	std::vector<LearnedMove> get_learned_moves() const override{
+		return to_vector(this->learned_moves);
+	}
+};

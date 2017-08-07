@@ -1,3 +1,4 @@
+#pragma once
 #include "CommonTypes.h"
 #include "CppRedRam.h"
 #include <iostream>
