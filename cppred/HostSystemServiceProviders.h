@@ -83,8 +83,6 @@ public:
 	void set_host(HostSystem &host){
 		this->host = &host;
 	}
-	void toggle_fastforward(bool);
-	void toggle_slowdown(bool);
 	void toggle_pause(int);
 };
 

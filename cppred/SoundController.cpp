@@ -1,5 +1,6 @@
 #include "SoundController.h"
-#include "Gameboy.h"
+#include "SystemClock.h"
+#include "CppRed.h"
 #include "timer.h"
 #define _USE_MATH_DEFINES
 #include <cmath>

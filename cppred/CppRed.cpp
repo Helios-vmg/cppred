@@ -452,9 +452,9 @@ void CppRed::play_cry(SpeciesId species){
 }
 
 Sound CppRed::get_cry_data(SpeciesId species){
-	auto index = (unsigned)species - 1;
-	assert(index < pokemon_cry_data_size);
-	auto &data = pokemon_cry_data[index];
+	auto index = (unsigned)species;
+	assert(index < array_length(pokemon_by_species_id));
+	auto &data = pokemon_by_species_id[index]->cry_data;
 	this->wram.wFrequencyModifier = data.pitch;
 	this->wram.wTempoModifier = data.length;
 	return (Sound)(data.base_cry + (unsigned)Sound::SFX_Cry00_1);
@@ -536,9 +536,13 @@ void CppRed::call_predef(Predef f){
 }
 
 void CppRed::start_new_game(){
-	CppRedScripts::oak_speech(*this, this->text);
+	//Do not skip name selection.
+	this->wram.wd732.set_unknown(false);
+	CppRedScripts::oak_speech(*this);
 	this->delay_frames(20);
-	//this->special_enter_map(MapId::RedsHouse2f);
+	//TODO: Confirm this. StartNewGame falls through to SpecialEnterMap, but I
+	//don't know the state of the registers. I'm assuming this is what happens.
+	this->special_enter_map(MapId::RedsHouse2f);
 }
 
 void CppRed::mass_initialization(){

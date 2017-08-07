@@ -20,9 +20,9 @@ TitleScreenResult CppRedTitleScreen::display(){
 	//Note: this call makes little sense here, as most of the characters get
 	//overwritten by the Pokemon logo.
 	this->parent.load_font_tile_patterns();
-	this->parent.load_copyright_graphics();
-	this->parent.load_pokemon_logo();
-	this->parent.load_version_graphics();
+	this->load_copyright_graphics();
+	this->load_pokemon_logo();
+	this->load_version_graphics();
 	this->parent.clear_both_bg_maps();
 	this->copy_pokemon_logo_to_wram_tilemap();
 	this->draw_player_character();

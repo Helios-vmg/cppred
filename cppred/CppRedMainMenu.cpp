@@ -26,7 +26,7 @@ MainMenuResult CppRedMainMenu::display(){
 		wram.wBagSavedMenuItem = 0;
 		wram.wBattleAndStartSavedMenuItem = 0;
 		wram.wPlayerMoveListIndex = 0;
-		wram.wDefaultMap = 0;
+		wram.wDefaultMap = MapId::PalletTown;
 		wram.wd72e.set_using_link_cable(false);
 		this->parent->prepare_menu();
 		wram.wd730.set_no_print_delay(true);

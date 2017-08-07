@@ -104,3 +104,8 @@ typename std::enable_if<!std::is_unsigned<T>::value, int>::type
 sign_extend(T n){
 	return n;
 }
+
+template <typename T, size_t N>
+size_t array_length(const T (&)[N]){
+	return N;
+}

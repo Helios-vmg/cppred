@@ -47,29 +47,8 @@ bool StorageProvider::save_file(const path_t &path, const void *buffer, size_t s
 	return true;
 }
 
-path_t StorageProvider::get_save_location(Cartridge &cart, SaveFileType type){
-	auto ret = cart.get_path()->get_directory();
-	auto name = cart.get_path()->get_filename()->remove_extension();
-	const char *extension = nullptr;
-	switch (type){
-		case SaveFileType::Ram:
-			extension = ".sav";
-			break;
-		case SaveFileType::Rtc:
-			extension = ".rtc";
-			break;
-	}
-	assert(extension);
-	*name += extension;
-	return ret->append_path_part(name);
-}
-
-void EventProvider::toggle_fastforward(bool on){
-	this->host->toggle_fastforward(on);
-}
-
-void EventProvider::toggle_slowdown(bool on){
-	this->host->toggle_slowdown(on);
+path_t StorageProvider::get_save_location(Cartridge &, SaveFileType type){
+	return path_t(new StdBasicString<char>("./red.sav"));
 }
 
 void EventProvider::toggle_pause(int pause){

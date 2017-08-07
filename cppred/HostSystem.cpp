@@ -1,7 +1,5 @@
 #include "HostSystem.h"
 #include "DisplayController.h"
-#include "Gameboy.h"
-#include "StorageController.h"
 #include <iostream>
 #include <iomanip>
 #include <SDL.h>
@@ -64,7 +62,7 @@ void HostSystem::run(){
 
 
 void HostSystem::stop_and_dump_vram(){
-	this->gameboy->stop_and_dump_vram("vram.bin");
+	//this->cppred->stop_and_dump_vram("vram.bin");
 }
 
 void HostSystem::check_exceptions(){
@@ -81,10 +79,10 @@ void HostSystem::throw_exception(const std::shared_ptr<std::exception> &ex){
 void HostSystem::render(){
 	if (!this->graphics_provider)
 		return;
-	auto frame = this->gameboy->get_current_frame();
+	auto frame = this->cppred->get_current_frame();
 	this->graphics_provider->render(frame);
 	if (frame)
-		this->gameboy->return_used_frame(frame);
+		this->cppred->return_used_frame(frame);
 }
 
 bool HostSystem::handle_events(){
@@ -93,7 +91,7 @@ bool HostSystem::handle_events(){
 	EventProvider::HandleEventsResult result;
 	auto ret = this->event_provider->handle_events(result);
 	if (result.input_state)
-		this->gameboy->get_input_controller().set_input_state(result.input_state, result.button_down, result.button_up);
+		this->cppred->get_input_controller().set_input_state(result.input_state, result.button_down, result.button_up);
 	return ret;
 }
 
@@ -150,24 +148,8 @@ posix_time_t HostSystem::load_rtc(Cartridge &cart){
 	return this->datetime_provider->double_timestamp_to_posix(timestamp);
 }
 
-void HostSystem::toggle_fastforward(bool on) NOEXCEPT{
-	if (!this->gameboy->toggle_pause(true))
-		return;
-	double speed = on ? 5.0 : 1.0;
-	this->gameboy->set_speed_multiplier(speed);
-	this->gameboy->toggle_pause(false);
-}
-
-void HostSystem::toggle_slowdown(bool on) NOEXCEPT{
-	if (!this->gameboy->toggle_pause(true))
-		return;
-	double speed = on ? 0.1 : 1.0;
-	this->gameboy->set_speed_multiplier(speed);
-	this->gameboy->toggle_pause(false);
-}
-
 void HostSystem::toggle_pause(int pause){
-	this->gameboy->toggle_pause(pause);
+	this->cppred->toggle_pause(pause);
 }
 
 void HostSystem::write_frame_to_disk(std::string &path, const RenderedFrame &frame){

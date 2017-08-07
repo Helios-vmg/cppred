@@ -4,6 +4,11 @@
 
 class CppRed;
 
+const unsigned gb_cpu_frequency_power = 22;
+const unsigned gb_cpu_frequency = 1 << gb_cpu_frequency_power; //4194304
+const double gb_cpu_clock_period_us = 1.0 / ((double)gb_cpu_frequency * 1e-6);
+const int dmg_dma_transfer_length_clocks = 640;
+
 class SystemClock{
 	CppRed *system;
 	//Ticks at a rate of 2^22 cycles per emulation second (2^23 cycles per

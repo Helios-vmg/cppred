@@ -1,5 +1,4 @@
 #include "DisplayController.h"
-#include "Gameboy.h"
 #include "MemoryController.h"
 #include "HostSystem.h"
 #include "exceptions.h"
@@ -279,13 +278,11 @@ bool DisplayController::update(){
 void DisplayController::switch_to_row_state_0(unsigned row){
 	this->memory_controller->toggle_oam_access(false);
 	if (check_flag(this->lcd_status, stat_oam_interrupt_mask))
-		this->system->get_cpu().lcd_stat_irq();
+		this->system->lcd_stat_irq();
 }
 
 void DisplayController::switch_to_row_state_1(unsigned row){
 	this->memory_controller->toggle_vram_access(false);
-	if (this->system->get_mode() == GameboyMode::CGB)
-		this->memory_controller->toggle_palette_access(false);
 }
 
 void DisplayController::switch_to_row_state_2(unsigned row){
@@ -293,14 +290,12 @@ void DisplayController::switch_to_row_state_2(unsigned row){
 		this->render_current_scanline(row);
 	this->enable_memories();
 	if (check_flag(this->lcd_status, stat_hblank_interrupt_mask))
-		this->system->get_cpu().lcd_stat_irq();
+		this->system->lcd_stat_irq();
 }
 
 void DisplayController::enable_memories(){
 	this->memory_controller->toggle_oam_access(true);
 	this->memory_controller->toggle_vram_access(true);
-	if (this->system->get_mode() == GameboyMode::CGB)
-		this->memory_controller->toggle_palette_access(true);
 }
 
 void DisplayController::switch_to_row_state_3(unsigned row){
@@ -317,19 +312,15 @@ void DisplayController::switch_to_row_state_3(unsigned row){
 	}else
 		this->swallow_frames--;
 	if (check_flag(this->lcd_status, stat_vblank_interrupt_mask))
-		this->system->get_cpu().lcd_stat_irq();
-	this->system->get_cpu().vblank_irq();
+		this->system->lcd_stat_irq();
+	this->system->vblank_irq();
 }
 
 struct FullSprite{
 	int sprite_number;
 	SpriteDescription sprite_description;
-	GameboyMode operation_mode;
 	//Returns true if *this has less priority than other.
 	bool operator<(const FullSprite &other) const{
-		if (operation_mode == GameboyMode::CGB)
-			return this->sprite_number > other.sprite_number;
-
 		if (this->sprite_description.x > other.sprite_description.x)
 			return true;
 		if (this->sprite_description.x < other.sprite_description.x)
@@ -370,7 +361,6 @@ void DisplayController::render_current_scanline(unsigned y){
 
 	FullSprite sprites_for_scanline[40];
 	unsigned sprites_for_scanline_size = 0;
-	auto operation_mode = this->system->get_mode();
 	if (sprites_enabled){
 		for (unsigned i = 40; i--;){
 			auto &sprite = *(SpriteDescription *)(oam + i * 4);
@@ -378,7 +368,6 @@ void DisplayController::render_current_scanline(unsigned y){
 			if ((int)y >= spry && (int)y < spry + sprite_height){
 				sprites_for_scanline[sprites_for_scanline_size].sprite_number = i;
 				sprites_for_scanline[sprites_for_scanline_size].sprite_description = sprite;
-				sprites_for_scanline[sprites_for_scanline_size].operation_mode = operation_mode;
 				sprites_for_scanline_size++;
 			}
 		}

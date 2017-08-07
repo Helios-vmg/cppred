@@ -1,6 +1,4 @@
 #include "SystemClock.h"
-#include "Gameboy.h"
-#include "GameboyCpu.h"
 #include <cassert>
 #include <limits>
 
@@ -30,11 +28,6 @@ void SystemClock::advance_clock(std::uint32_t clocks){
 }
 
 void SystemClock::cascade_timer_behavior(std::uint32_t old_tac, std::uint32_t new_tac){
-	auto changed_bits = old_tac ^ new_tac;
-
-	if ((this->system->get_mode() == GameboyMode::CGB) & (changed_bits == 4))
-		// If in Game Boy Color mode and only the timer enable bit has changed, do nothing.
-		return;
 	this->cascade_timer_behavior_no_check();
 }
 

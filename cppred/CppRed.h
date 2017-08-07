@@ -152,6 +152,16 @@ public:
 	DECLARE_HARDWARE_REGISTER(LYC);
 	DECLARE_HARDWARE_REGISTER(DIV);
 
+	SystemClock &get_system_clock(){
+		return this->clock;
+	}
+	SoundController &get_sound_controller(){
+		return this->sound_controller;
+	}
+	UserInputController &get_input_controller(){
+		return this->input_controller;
+	}
+
 	CppRed(HostSystem &host);
 	void run();
 	void set_bg_scroll(int x = -1, int y = -1);
@@ -226,6 +236,11 @@ public:
 	void copy_video_data(unsigned tiles, const BaseStaticImage &image, unsigned src_offset, unsigned destination);
 	void reset_player_sprite_data();
 	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
+	void lcd_stat_irq();
+	void vblank_irq();
+	const RenderedFrame *get_current_frame();
+	void return_used_frame(const RenderedFrame *);
+	void toggle_pause(int);
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

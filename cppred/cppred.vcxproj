@@ -168,7 +168,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\CodeGeneration\output\gfx.cpp" />
-    <ClCompile Include="..\generated_files\cpu.generated.cpp" />
     <ClCompile Include="BgbProtocol.cpp" />
     <ClCompile Include="CppRed.cpp" />
     <ClCompile Include="CppRedAudio.cpp" />
@@ -185,8 +184,6 @@
     <ClCompile Include="CppRedTitleScreen.cpp" />
     <ClCompile Include="DisplayController.cpp" />
     <ClCompile Include="ExternalRamBuffer.cpp" />
-    <ClCompile Include="Gameboy.cpp" />
-    <ClCompile Include="GameboyCpu.cpp" />
     <ClCompile Include="HostSystem.cpp" />
     <ClCompile Include="HostSystemServiceProviders.cpp" />
     <ClCompile Include="main.cpp" />
@@ -230,8 +227,6 @@
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="DisplayController.h" />
     <ClInclude Include="exceptions.h" />
-    <ClInclude Include="Gameboy.h" />
-    <ClInclude Include="GameboyCpu.h" />
     <ClInclude Include="HostSystem.h" />
     <ClInclude Include="MemoryController.h" />
     <ClInclude Include="RegisterStore.h" />

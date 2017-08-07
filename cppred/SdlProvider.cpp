@@ -254,12 +254,6 @@ bool SdlProvider::handle_events(HandleEventsResult &result){
 							case SDLK_p:
 								this->toggle_pause(-1);
 								break;
-							case SDLK_SPACE:
-								this->toggle_fastforward(true);
-								break;
-							case SDLK_LCTRL:
-								this->toggle_slowdown(true);
-								break;
 						}
 					}
 				}
@@ -267,16 +261,6 @@ bool SdlProvider::handle_events(HandleEventsResult &result){
 			case SDL_KEYUP:
 				if (!event.key.repeat){
 					handle_event<false>(state, event, 0x00, button_up);
-					{
-						switch (event.key.keysym.sym){
-							case SDLK_SPACE:
-								this->toggle_fastforward(false);
-								break;
-							case SDLK_LCTRL:
-								this->toggle_slowdown(false);
-								break;
-						}
-					}
 				}
 				break;
 			default:
