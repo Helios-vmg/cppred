@@ -340,12 +340,12 @@ std::string pcboxmemberStruct::get_callback_struct() const{
 	return (boost::format(
 			"{{%1%, %2%},{%3%, %4%},{%5%, %6%}}"
 		)
+		% integer_functions[0][0][0]
+		% integer_functions[0][0][1]
 		% integer_functions[0][1][0]
 		% integer_functions[0][1][1]
 		% integer_functions[0][2][0]
 		% integer_functions[0][2][1]
-		% integer_functions[0][3][0]
-		% integer_functions[0][3][1]
 	).str();
 }
 
