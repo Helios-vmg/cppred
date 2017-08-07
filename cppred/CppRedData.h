@@ -2,14 +2,7 @@
 
 #include "CommonTypes.h"
 
-struct PokemonCryData{
-	byte_t base_cry;
-	byte_t pitch;
-	byte_t length;
-};
-
-extern const PokemonCryData pokemon_cry_data[];
-extern const size_t pokemon_cry_data_size;
+#include "../CodeGeneration/output/pokemon_declarations.h"
 
 #pragma pack(push)
 #pragma pack(1)
