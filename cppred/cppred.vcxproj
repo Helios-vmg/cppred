@@ -187,8 +187,6 @@
     <ClCompile Include="HostSystem.cpp" />
     <ClCompile Include="HostSystemServiceProviders.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MemoryController.cpp" />
-    <ClCompile Include="RegisterStore.cpp" />
     <ClCompile Include="SdlProvider.cpp" />
     <ClCompile Include="SoundController.cpp" />
     <ClCompile Include="StaticImage.cpp" />
@@ -228,8 +226,6 @@
     <ClInclude Include="DisplayController.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="HostSystem.h" />
-    <ClInclude Include="MemoryController.h" />
-    <ClInclude Include="RegisterStore.h" />
     <ClInclude Include="threads.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="UserInputController.h" />

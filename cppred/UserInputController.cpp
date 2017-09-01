@@ -1,5 +1,4 @@
 #include "UserInputController.h"
-#include "Gameboy.h"
 #include <cstring>
 
 UserInputController::UserInputController(CppRed &system):
