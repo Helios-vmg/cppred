@@ -109,3 +109,8 @@ template <typename T, size_t N>
 size_t array_length(const T (&)[N]){
 	return N;
 }
+
+template <typename T, size_t N>
+void fill_array(T (&array)[N], byte_t value = 0){
+	memset(array, value, sizeof(array));
+}

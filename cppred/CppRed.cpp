@@ -45,6 +45,8 @@ CppRed::CppRed(HostSystem &host):
 		INITIALIZE_HARDWARE_REGISTER_RO(LY, display_controller, y_coordinate)
 		INITIALIZE_HARDWARE_REGISTER(LYC, display_controller, y_coordinate_compare)
 		INITIALIZE_HARDWARE_REGISTER_RO(DIV, clock, DIV_register)
+		,
+		text(*this)
 		{
 
 	this->nonemulation_init();
@@ -149,7 +151,7 @@ void CppRed::set_default_names_before_titlescreen(){
 	this->wram.wPlayerName = ninten_text;
 	this->wram.wRivalName = sony_text;
 	this->set_window_position(-1, 0);
-	this->wram.wLetterPrintingDelayFlags = 0;
+	this->wram.wLetterPrintingDelayFlags.clear();
 	this->wram.wd732.clear();
 	this->wram.wFlags_D733.clear();
 	this->wram.wBeatLorelei.clear();
@@ -561,7 +563,7 @@ void CppRed::mass_initialization(){
 	this->wram.wRivalName.fill_bytes(0);
 	this->wram.wOptions.clear();
 	this->wram.wObtainedBadges.fill_bytes(0);
-	this->wram.wLetterPrintingDelayFlags = 0;
+	this->wram.wLetterPrintingDelayFlags.clear();
 	this->wram.wPlayerID = 0;
 	this->wram.wMapMusicSoundID = 0;
 	this->wram.wMapMusicROMBank = 0;
@@ -572,7 +574,7 @@ void CppRed::mass_initialization(){
 	this->wram.wXCoord = 0;
 	this->wram.wYBlockCoord = 0;
 	this->wram.wXBlockCoord = 0;
-	this->wram.wLastMap = 0;
+	this->wram.wLastMap = MapId::PalletTown;
 	this->wram.wUnusedD366 = 0;
 	this->wram.wCurMapTileset = 0;
 	this->wram.wCurMapHeight = 0;
@@ -771,7 +773,7 @@ void CppRed::mass_initialization(){
 	this->wram.wd728.clear();
 	this->wram.wBeatGymFlags.clear();
 	this->wram.wd72c.clear();
-	this->wram.wd72d_destinationMap = 0;
+	this->wram.wd72d_destinationMap = MapId::PalletTown;
 	this->wram.wd72d.clear();
 	this->wram.wd72e.clear();
 	this->wram.wd730.clear();
@@ -825,7 +827,7 @@ void CppRed::mass_initialization(){
 void CppRed::initialize_player_data(){
 	auto wd732 = this->wram.wd732.get_raw_value();
 	auto wOptions = this->wram.wOptions.get_raw_value();
-	auto wLetterPrintingDelayFlags = +this->wram.wLetterPrintingDelayFlags;
+	auto wLetterPrintingDelayFlags = this->wram.wLetterPrintingDelayFlags.get_raw_value();
 
 	this->mass_initialization();
 	this->wram.wSpriteStateData1.fill_bytes(0);
@@ -833,7 +835,7 @@ void CppRed::initialize_player_data(){
 
 	this->wram.wd732.set_raw_value(wd732);
 	this->wram.wOptions.set_raw_value(wOptions);
-	this->wram.wLetterPrintingDelayFlags = wLetterPrintingDelayFlags;
+	this->wram.wLetterPrintingDelayFlags.set_raw_value(wLetterPrintingDelayFlags);
 
 	if (!this->wram.wOptionsInitialized)
 		this->initialize_options();
@@ -843,7 +845,7 @@ void CppRed::initialize_player_data(){
 }
 
 void CppRed::initialize_options(){
-	this->wram.wLetterPrintingDelayFlags = 1;
+	this->wram.wLetterPrintingDelayFlags.set_raw_value(1);
 	this->wram.wOptions.clear();
 	this->wram.wOptions.set_text_speed(TextSpeed::Medium);
 }
@@ -852,4 +854,77 @@ void CppRed::add_item_to_inventory(unsigned position, ItemId item, unsigned quan
 	this->wram.wcf91 = (unsigned)item;
 	this->wram.wItemQuantity = quantity;
 	//TODO: complete me.
+}
+
+MapId CppRed::special_warp_in(){
+	this->load_special_warp_data();
+	this->call_predef(Predef::LoadTilesetHeader);
+	bool fly_warp = this->wram.wd732.get_fly_warp();
+	this->wram.wd732.set_fly_warp(false);
+	MapId destination = MapId::PalletTown;
+	if (fly_warp)
+		destination = this->wram.wDestinationMap;
+	else
+		destination = MapId::PalletTown;
+	auto destination_map = this->wram.wd72d_destinationMap.enum_value();
+	if ((unsigned)destination_map)
+		destination = destination_map;
+	if (!this->wram.wd732.get_hole_warp())
+		this->wram.wLastMap = destination;
+	return destination;
+}
+
+void CppRed::load_special_warp_data(){
+	//TODO
+}
+
+void CppRed::clear_save(){
+	fill_array(this->sram, 0xFF);
+	this->save_sram();
+}
+
+void CppRed::save_sram() const{
+	std::ofstream file("pokered.sav", std::ios::binary);
+	file.write((const char *)this->sram, sizeof(this->sram));
+}
+
+void CppRed::special_enter_map(MapId id){
+	this->hram.hJoyPressed = 0;
+	this->hram.hJoyHeld.clear();
+	this->hram.hJoy5 = 0;
+	this->wram.wd72d.clear();
+	this->wram.wd732.set_counting_play_time(true);
+	this->reset_player_sprite_data();
+	this->delay_frames(20);
+	if (this->wram.wEnteringCableClub)
+		return;
+	this->enter_map(id);
+}
+
+void CppRed::enter_map(MapId){
+	//TODO
+}
+
+void CppRed::reset_player_sprite_data(){
+	{
+		auto player = this->wram.wSpriteStateData1[0];
+		player.picture_id = 1;
+		player.movement_status.clear();
+		player.sprite_image_idx = 0;
+		player.y_step_vector = 0;
+		player.y_pixels = 60;
+		player.x_step_vector = 0;
+		player.x_pixels = 64;
+		player.intra_anim_frame_counter = 0;
+		player.anim_frame_counter = 0;
+		player.facing_direction.value = 0;
+		player.tile_position_y = 0;
+		player.tile_position_x = 0;
+		player.collision_bits = 0;
+		player.unknown1 = 0;
+		player.collision_bits2 = 0;
+		player.collision_bits3 = 0;
+	}
+	this->wram.wSpriteStateData2[0].clear();
+	this->wram.wSpriteStateData2[0].sprite_image_base_offset = 1;
 }

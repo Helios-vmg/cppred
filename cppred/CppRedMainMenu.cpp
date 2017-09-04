@@ -8,7 +8,7 @@ MainMenuResult CppRedMainMenu::display(){
 	auto &wram = this->parent->wram;
 	auto &hram = this->parent->hram;
 
-	wram.wLetterPrintingDelayFlags = 1;
+	wram.wLetterPrintingDelayFlags.set_raw_value(1);
 	wram.wOptions = { true, BattleStyle::Shift, TextSpeed::Medium };
 
 	wram.wOptionsInitialized = 0;
@@ -84,9 +84,9 @@ MainMenuResult CppRedMainMenu::display(){
 		do{
 			hram.hJoyPressed = 0;
 			hram.hJoyReleased = 0;
-			hram.hJoyHeld = 0;
+			hram.hJoyHeld.clear();
 			this->parent->joypad();
-			held = hram.hJoyHeld;
+			held = hram.hJoyHeld.get_raw_value();
 			if (check_flag(held, input_a))
 				return MainMenuResult::ContinueGame;
 		}while (!check_flag(held, input_b));

@@ -51,6 +51,7 @@ private:
 	byte_t interrupt_enable_flag = 0;
 	std::uint32_t xorshift_state[4];
 	std::vector<std::function<void()>> predefs;
+	byte_t sram[0x8000];
 
 	void nonemulation_init();
 	void interpreter_thread_function();
@@ -63,6 +64,7 @@ private:
 	void start_new_game();
 	void start_loaded_game();
 	void special_enter_map(MapId);
+	void enter_map(MapId);
 	void update_player_sprite();
 	void update_non_player_sprite(const SpriteStateData2 &);
 	void detect_sprite_collision();
@@ -113,6 +115,7 @@ private:
 	SpriteStateData2 get_current_sprite2();
 	void *map_pointer(unsigned pointer);
 	void mass_initialization();
+	void save_sram() const;
 public:
 
 	WRam wram;
@@ -208,7 +211,7 @@ public:
 		this->run_palette_command(PaletteCommand::Default);
 	}
 	void print_text(const CppRedText::Region &);
-	void display_textbox_id(const tilemap_it &location, unsigned unk0, unsigned unk1);
+	void display_textbox_id(unsigned x = 0, unsigned y = 0);
 	void clear_save();
 	DisplayController &get_display_controller(){
 		return this->display_controller;
@@ -227,6 +230,7 @@ public:
 	void call_predef(Predef);
 	void add_item_to_inventory(unsigned position, ItemId, unsigned quantity);
 	MapId special_warp_in();
+	void load_special_warp_data();
 	void gb_fadeout_to_white();
 	void gb_fadein_from_white();
 	void get_mon_header();
@@ -241,6 +245,10 @@ public:
 	const RenderedFrame *get_current_frame();
 	void return_used_frame(const RenderedFrame *);
 	void toggle_pause(int);
+	void protected_delay3();
+	//Blocks until the next v-blank.
+	void delay_frame();
+	void wait_for_text_scroll_button_press();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

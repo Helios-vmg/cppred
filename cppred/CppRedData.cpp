@@ -1,6 +1,7 @@
 #pragma once
 #include "CppRedData.h"
 #include "utility.h"
+#include "CppRedText.h"
 
 #define AT_LEVEL(level, next_form) EvolutionTriggerType::Level, level, SpeciesId::next_form
 #define WITH_ITEM(item, level, next_form) EvolutionTriggerType::Item, level, SpeciesId::next_form, ItemId::item

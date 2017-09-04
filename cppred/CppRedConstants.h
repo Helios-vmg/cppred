@@ -718,6 +718,9 @@ enum class FlagAction{
 
 const unsigned party_length = 6;
 const unsigned character_name_length = 11;
+const unsigned trainer_name_length = 13;
+const unsigned item_name_length = 13;
+const unsigned move_name_length = 11; //TODO: Confirm this value.
 const unsigned species_count = 151;
 const unsigned player_inventory_size = 40;
 const unsigned pc_inventory_size = 100;

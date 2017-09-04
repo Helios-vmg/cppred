@@ -13,7 +13,7 @@ LINE "CARD KEY!"
 DONE
 
 .TrainerNameText
-MEM wcd6d
+MEM wcd6d_TrainerName
 TEXT ": @@"
 
 .NoNibbleText
@@ -58,7 +58,7 @@ DONE
 .FoundItemText
 TEXT "<PLAYER> found"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_FoundItemName
 TEXT "!@@"
 
 .NoMoreRoomForItemText
@@ -392,7 +392,7 @@ DONE
 .MtMoon3Text_49f6f
 TEXT "<PLAYER> got the"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_MtMoonFossilItemName
 TEXT "!@@"
 
 .MtMoon3Text_49f7f
@@ -721,7 +721,7 @@ PROMPT
 .ReceivedHM01Text
 TEXT "<PLAYER> got"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .SSAnne7Text_61932
@@ -1352,7 +1352,7 @@ PROMPT
 .ReceivedTM36Text
 TEXT "<PLAYER> got"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM36ExplanationText
@@ -2127,7 +2127,7 @@ PROMPT
 .ReceivedSilphCoMasterBallText
 TEXT "<PLAYER> got a"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .SilphCo10Text_6231c
@@ -2463,7 +2463,7 @@ PROMPT
 .ReceivedHM03Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .HM03ExplanationText
@@ -2741,7 +2741,7 @@ PARA "You've grown up so"
 LINE "much since you"
 CONT "first left with"
 CONT "@"
-MEM wcd6d
+MEM wcd6d_StarterName
 TEXT "!"
 PARA "<PLAYER>, you have"
 LINE "come of age!"
@@ -3047,7 +3047,7 @@ PROMPT
 MEM wTrainerName
 TEXT ""
 LINE "used @"
-MEM wcd6d
+MEM wcd6d_ItemUsedInBattleName
 TEXT ""
 CONT "on @"
 MEM wEnemyMonNick
@@ -3055,36 +3055,36 @@ TEXT "!"
 PROMPT
 
 .TradeWentToText
-MEM wcf4b
+MEM wcf4b_LinkTradePlayerMonName
 TEXT " went"
 LINE "to @"
-MEM wGrassRate
+MEM wLinkEnemyTrainerName
 TEXT "."
 DONE
 
 .TradeForText
 TEXT "For <PLAYER>'s"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_LinkTradePlayerMonName
 TEXT ","
 DONE
 
 .TradeSendsText
-MEM wGrassRate
+MEM wLinkEnemyTrainerName
 TEXT " sends"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_LinkTradePartnerMonName
 TEXT "."
 DONE
 
 .TradeWavesFarewellText
-MEM wGrassRate
+MEM wLinkEnemyTrainerName
 TEXT " waves"
 LINE "farewell as"
 DONE
 
 .TradeTransferredText
-MEM wcd6d
+MEM wcd6d_LinkTradePartnerMonName
 TEXT " is"
 LINE "transferred."
 DONE
@@ -3092,22 +3092,22 @@ DONE
 .TradeTakeCareText
 TEXT "Take good care of"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_LinkTradePartnerMonName
 TEXT "."
 DONE
 
 .TradeWillTradeText
-MEM wGrassRate
+MEM wLinkEnemyTrainerName
 TEXT " will"
 LINE "trade @"
-MEM wcd6d
+MEM wcd6d_LinkTradePartnerMonName
 TEXT ""
 DONE
 
 .TradeforText
 TEXT "for <PLAYER>'s"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_LinkTradePlayerMonName
 TEXT "."
 DONE
 
@@ -3143,7 +3143,7 @@ DONE
 .LinedUpText
 TEXT " lined up!"
 LINE "Scored @"
-MEM wcf4b
+MEM wcf4b_SlotMachineCoinPrize
 TEXT " coins!"
 DONE
 
@@ -3726,7 +3726,7 @@ CONT "locks were reset!@@"
 .FoundHiddenItemText
 TEXT "<PLAYER> found"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_FoundHiddenItemName
 TEXT "!@@"
 
 .HiddenItemBagFullText
@@ -3738,13 +3738,13 @@ DONE
 .FoundHiddenCoinsText
 TEXT "<PLAYER> found"
 LINE "@"
-BCD hCoins 194
+BCD hCoins 2
 TEXT " coins!@@"
 
 .FoundHiddenCoins2Text
 TEXT "<PLAYER> found"
 LINE "@"
-BCD hCoins 194
+BCD hCoins 2
 TEXT " coins!@@"
 
 .DroppedHiddenCoinsText
@@ -3836,7 +3836,7 @@ PROMPT
 
 .MoneyForWinningText
 TEXT "<PLAYER> got <CURRENCY>@"
-BCD wAmountMoneyWon 195
+BCD wAmountMoneyWon 3
 TEXT ""
 LINE "for winning!"
 PROMPT
@@ -4038,7 +4038,7 @@ PROMPT
 .MoveIsDisabledText
 TEXT "<USER>'s"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_DisabledMoveName
 TEXT " is"
 CONT "disabled!"
 PROMPT
@@ -4059,7 +4059,7 @@ TEXT "instead,"
 CONT "@@"
 
 .CF4BText
-MEM wcf4b
+MEM wcf4b_UsedMoveName
 TEXT "@"
 
 .ExclamationPoint1Text
@@ -4169,7 +4169,7 @@ TEXT " times!"
 PROMPT
 
 .GainedText
-MEM wcd6d
+MEM wcd6d_ExpAllGainerMonName
 TEXT " gained"
 LINE "@@"
 
@@ -4187,7 +4187,7 @@ TEXT " EXP. Points!"
 PROMPT
 
 .GrewLevelText
-MEM wcd6d
+MEM wcd6d_LevelledUpMonName
 TEXT " grew"
 LINE "to level @"
 NUM wCurEnemyLVL 1 3
@@ -4294,7 +4294,7 @@ PROMPT
 .PickUpPayDayMoneyText
 TEXT "<PLAYER> picked up"
 LINE "<CURRENCY>@"
-BCD wTotalPayDayMoney 195
+BCD wTotalPayDayMoney 3
 TEXT "!"
 PROMPT
 
@@ -4333,7 +4333,7 @@ LINE "where?"
 DONE
 
 .PotionText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT ""
 LINE "recovered by @"
 NUM wHPBarHPDifference 2 3
@@ -4341,49 +4341,49 @@ TEXT "!"
 DONE
 
 .AntidoteText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT " was"
 LINE "cured of poison!"
 DONE
 
 .ParlyzHealText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT "'s"
 LINE "rid of paralysis!"
 DONE
 
 .BurnHealText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT "'s"
 LINE "burn was healed!"
 DONE
 
 .IceHealText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT " was"
 LINE "defrosted!"
 DONE
 
 .AwakeningText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT ""
 LINE "woke up!"
 DONE
 
 .FullHealText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT "'s"
 LINE "health returned!"
 DONE
 
 .ReviveText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT ""
 LINE "is revitalized!"
 DONE
 
 .RareCandyText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT " grew"
 LINE "to level @"
 NUM wCurEnemyLVL 1 3
@@ -4434,7 +4434,7 @@ TEXT "How many?"
 DONE
 
 .ItemWasStoredText
-MEM wcd6d
+MEM wcd6d_StoredInPcItemName
 TEXT " was"
 LINE "stored via PC."
 PROMPT
@@ -4461,7 +4461,7 @@ DONE
 .WithdrewItemText
 TEXT "Withdrew"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT "."
 PROMPT
 
@@ -4505,7 +4505,7 @@ LINE "<POKE>MON?"
 DONE
 
 .MonWasStoredText
-MEM wcf4b
+MEM wcf4b_StoredMonName
 TEXT " was"
 LINE "stored in Box @"
 MEM wBoxNumString
@@ -4523,11 +4523,11 @@ LINE "full of <POKE>MON."
 PROMPT
 
 .MonIsTakenOutText
-MEM wcf4b
+MEM wcf4b_ExtractedMonName
 TEXT " is"
 LINE "taken out."
 CONT "Got @"
-MEM wcf4b
+MEM wcf4b_ExtractedMonName
 TEXT "."
 PROMPT
 
@@ -4551,19 +4551,19 @@ DONE
 .OnceReleasedText
 TEXT "Once released,"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReleasedMonName
 TEXT " is"
 CONT "gone forever. OK?"
 DONE
 
 .MonWasReleasedText
-MEM wcf4b
+MEM wcf4b_ReleasedMonName
 TEXT " was"
 LINE "released outside."
 CONT "Bye @"
 
 .CF4BExclamationText
-MEM wcf4b
+MEM wcf4b_ReleasedMonName
 TEXT "!"
 PROMPT
 
@@ -4587,7 +4587,7 @@ TEXT "Here you go!@@"
 .SoYouWantPrizeText
 TEXT "So, you want"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_PrizeName
 TEXT "?"
 DONE
 
@@ -4688,7 +4688,7 @@ DONE
 TEXT "Do you want to"
 LINE "give a nickname"
 CONT "to @"
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT "?"
 DONE
 
@@ -4707,7 +4707,7 @@ PROMPT
 MEM wNameOfPlayerMonToBeTraded
 TEXT " and"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_LinkTradePartnerMonName
 TEXT " will"
 CONT "be traded."
 DONE
@@ -4875,7 +4875,7 @@ PROMPT
 .DayCareWillLookAfterMonText
 TEXT "Fine, I'll look"
 LINE "after @"
-MEM wcd6d
+MEM wcd6d_DaycareMonName
 TEXT ""
 CONT "for a while."
 PROMPT
@@ -4887,7 +4887,7 @@ DONE
 
 .DayCareMonHasGrownText
 TEXT "Your @"
-MEM wcd6d
+MEM wcd6d_DaycareMonName
 TEXT ""
 LINE "has grown a lot!"
 PARA "By level, it's"
@@ -4899,7 +4899,7 @@ PROMPT
 
 .DayCareOweMoneyText
 TEXT "You owe me <CURRENCY>@"
-BCD wDayCareTotalCost 194
+BCD wDayCareTotalCost 2
 TEXT ""
 LINE "for the return"
 CONT "of this <POKE>MON."
@@ -4915,7 +4915,7 @@ DONE
 .DayCareMonNeedsMoreTimeText
 TEXT "Back already?"
 LINE "Your @"
-MEM wcd6d
+MEM wcd6d_DaycareMonName
 TEXT ""
 CONT "needs some more"
 CONT "time with me."
@@ -5260,7 +5260,7 @@ PARA "Take this and"
 LINE "fish, young one!"
 PARA "<PLAYER> received"
 LINE "a @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .Route12HouseText_564ca
@@ -5590,7 +5590,7 @@ PROMPT
 .SSTicketReceivedText
 TEXT "<PLAYER> received"
 LINE "an @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .SSTicketNoRoomText
@@ -5634,7 +5634,7 @@ PROMPT
 .Route1Text_1cae8
 TEXT "<PLAYER> got"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .Route1Text_1caee
@@ -8123,11 +8123,11 @@ DONE
 TEXT "You can pass here"
 LINE "only if you have"
 CONT "the @"
-MEM wcd6d
+MEM wcd6d_RequiredBadge
 TEXT "!"
 PARA "You don't have the"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_RequiredBadge
 TEXT " yet!"
 PARA "You have to have"
 LINE "it to get to"
@@ -8137,11 +8137,11 @@ CONT "<POKE>MON LEAGUE!@@"
 TEXT "You can pass here"
 LINE "only if you have"
 CONT "the @"
-MEM wcd6d
+MEM wcd6d_RequiredBadge
 TEXT "!"
 PARA "Oh! That is the"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_RequiredBadge
 TEXT "!@@"
 
 .VictoryRoadGuardText_513a3
@@ -8169,7 +8169,7 @@ PROMPT
 .Route24Text_5151a
 TEXT "<PLAYER> received"
 LINE "a @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .Route24Text_51521
@@ -8493,27 +8493,27 @@ TEXT "Choose a"
 LINE "<pkmn> BOX.@@"
 
 .EvolvedText
-MEM wcf4b
+MEM wcf4b_UnevolvedFormMonName
 TEXT " evolved"
 DONE
 
 .IntoText
 TEXT ""
 LINE "into @"
-MEM wcd6d
+MEM wcd6d_EvolvedFormMonName
 TEXT "!"
 DONE
 
 .StoppedEvolvingText
 TEXT "Huh? @"
-MEM wcf4b
+MEM wcf4b_UnevolvedFormMonName
 TEXT ""
 LINE "stopped evolving!"
 PROMPT
 
 .IsEvolvingText
 TEXT "What? @"
-MEM wcf4b
+MEM wcf4b_UnevolvedFormMonName
 TEXT ""
 LINE "is evolving!"
 DONE
@@ -8556,7 +8556,7 @@ PROMPT
 .MonsStatsRoseText
 TEXT "<USER>'s"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_StatChangedMonName
 TEXT "@@"
 
 .GreatlyRoseText
@@ -8570,7 +8570,7 @@ PROMPT
 .MonsStatsFellText
 TEXT "<TARGET>'s"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_StatChangedMonName
 TEXT "@@"
 
 .GreatlyFellText
@@ -8638,14 +8638,14 @@ PROMPT
 TEXT "<USER>"
 LINE "learned"
 CONT "@"
-MEM wcd6d
+MEM wcd6d_LearnedFromMimicMoveName
 TEXT "!"
 PROMPT
 
 .MoveWasDisabledText
 TEXT "<TARGET>'s"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_DisabledMoveName
 TEXT " was"
 CONT "disabled!"
 PROMPT
@@ -8748,7 +8748,7 @@ PROMPT
 TEXT "<USER>"
 LINE "transformed into"
 CONT "@"
-MEM wcd6d
+MEM wcd6d_TransformFinalFormMonName
 TEXT "!"
 PROMPT
 
@@ -8838,7 +8838,7 @@ PROMPT
 .GotMapText
 TEXT "<PLAYER> got a"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .DaisyBagFullText
@@ -8916,7 +8916,7 @@ PROMPT
 .OaksLabReceivedMonText
 TEXT "<PLAYER> received"
 LINE "a @"
-MEM wcd6d
+MEM wcd6d_ReceivedItemName
 TEXT "!@@"
 
 .OaksLabLastMonText
@@ -9086,7 +9086,7 @@ DONE
 .OaksLabRivalReceivedMonText
 TEXT "<RIVAL> received"
 LINE "a @"
-MEM wcd6d
+MEM wcd6d_ReceivedItemName
 TEXT "!@@"
 
 .OaksLabRivalChallengeText
@@ -10755,7 +10755,7 @@ PROMPT
 .ReceivedFluteText
 TEXT "<PLAYER> received"
 LINE "a @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .FluteExplanationText
@@ -10853,7 +10853,7 @@ LINE "should I look at?"
 PROMPT
 
 .NameRaterText_1dabd
-MEM wcd6d
+MEM wcd6d_NameRaterOriginalNickname
 TEXT ", is it?"
 LINE "That is a decent"
 CONT "nickname!"
@@ -10884,13 +10884,13 @@ LINE "time you like!"
 DONE
 
 .NameRaterText_1dad1
-MEM wcd6d
+MEM wcd6d_NameRaterOriginalNickname
 TEXT ", is it?"
 LINE "That is a truly"
 CONT "impeccable name!"
 PARA "Take good care of"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_NameRaterOriginalNickname
 TEXT "!"
 DONE
 
@@ -10990,7 +10990,7 @@ PROMPT
 .ReceivedBikeVoucherText
 TEXT "<PLAYER> received"
 LINE "a @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .ExplainBikeVoucherText
@@ -11106,7 +11106,7 @@ DONE
 .ReceivedTM24Text
 TEXT "<PLAYER> received "
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM24ExplanationText
@@ -11251,7 +11251,7 @@ PARA "Take this and"
 LINE "fish, young one!"
 PARA "<PLAYER> received"
 LINE "an @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .VermilionHouse2Text_560bb
@@ -11340,7 +11340,7 @@ PROMPT
 .ReceivedTM18Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM18ExplanationText
@@ -11462,13 +11462,13 @@ LINE "from me!@@"
 .CeladonMartRoofText_484f9
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .CeladonMartRoofText_484fe
 TEXT ""
 PARA "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT " contains"
 LINE "ICE BEAM!"
 PARA "It can freeze the"
@@ -11484,13 +11484,13 @@ LINE "from me!@@"
 .CeladonMartRoofText_4850a
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .CeladonMartRoofText_4850f
 TEXT ""
 PARA "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT " contains"
 LINE "ROCK SLIDE!"
 PARA "It can spook the"
@@ -11559,7 +11559,7 @@ LINE "money!"
 DONE
 
 .VendingMachineText5
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT ""
 LINE "popped out!"
 DONE
@@ -11746,7 +11746,7 @@ DONE
 .ReceivedTM21Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM21ExplanationText
@@ -12148,7 +12148,7 @@ PROMPT
 .ReceivedCoinCaseText
 TEXT "<PLAYER> received"
 LINE "a @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .CoinCaseNoRoomText
@@ -12304,7 +12304,7 @@ PROMPT
 .ReceivedHM04Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .HM04ExplanationText
@@ -12475,7 +12475,7 @@ DONE
 .ReceivedTM06Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM06ExplanationText
@@ -12670,7 +12670,7 @@ PARA "Take this and"
 LINE "fish, young one!"
 PARA "<PLAYER> received"
 LINE "a @"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .FuchsiaHouse3Text_56212
@@ -12759,7 +12759,7 @@ DONE
 .ReceivedTM38Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM38ExplanationText
@@ -12964,7 +12964,7 @@ PROMPT
 .ReceivedTM35Text
 TEXT "<PLAYER> received "
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM35ExplanationText
@@ -13036,7 +13036,7 @@ TEXT "Where were you?"
 PARA "Your fossil is"
 LINE "back to life!"
 PARA "It was @"
-MEM wcf4b
+MEM wcf4b_FossilizedMonName
 TEXT ""
 LINE "like I think!"
 PROMPT
@@ -13044,11 +13044,11 @@ PROMPT
 .Lab4Text_610ae
 TEXT "Oh! That is"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_FossilItemName
 TEXT "!"
 PARA "It is fossil of"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_FossilizedMonName
 TEXT ", a"
 CONT "<POKE>MON that is"
 CONT "already extinct!"
@@ -13063,7 +13063,7 @@ TEXT "So! You hurry and"
 LINE "give me that!"
 PARA "<PLAYER> handed"
 LINE "over @"
-MEM wcd6d
+MEM wcd6d_FossilItemName
 TEXT "!"
 PROMPT
 
@@ -13177,7 +13177,7 @@ PROMPT
 .ReceivedTM31Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM31ExplanationText1
@@ -13645,7 +13645,7 @@ PROMPT
 .ReceivedTM29Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM29ExplanationText
@@ -13666,7 +13666,7 @@ NEXT "May I help you?"
 DONE
 
 .PokemonFaintedText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT ""
 LINE "fainted!"
 DONE
@@ -13688,11 +13688,11 @@ TEXT "Take your time."
 DONE
 
 .PokemartTellBuyPriceText
-MEM wcf4b
+MEM wcf4b_BuyingItemName
 TEXT "?"
 LINE "That will be"
 CONT "<CURRENCY>@"
-BCD hMoney 195
+BCD hMoney 3
 TEXT ". OK?"
 DONE
 
@@ -13719,7 +13719,7 @@ DONE
 .PokemartTellSellPriceText
 TEXT "I can pay you"
 LINE "<CURRENCY>@"
-BCD hMoney 195
+BCD hMoney 3
 TEXT " for that."
 DONE
 
@@ -13746,7 +13746,7 @@ DONE
 MEM wLearnMoveMonName
 TEXT " learned"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_LearningMoveName
 TEXT "!@@"
 
 .WhichMoveToForgetText
@@ -13757,7 +13757,7 @@ DONE
 .AbandonLearningText
 TEXT "Abandon learning"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_LearningMoveName
 TEXT "?"
 DONE
 
@@ -13766,7 +13766,7 @@ MEM wLearnMoveMonName
 TEXT ""
 LINE "did not learn"
 CONT "@"
-MEM wcf4b
+MEM wcf4b_LearningMoveName
 TEXT "!"
 PROMPT
 
@@ -13775,7 +13775,7 @@ MEM wLearnMoveMonName
 TEXT " is"
 LINE "trying to learn"
 CONT "@"
-MEM wcf4b
+MEM wcf4b_LearningMoveName
 TEXT "!"
 PARA "But, @"
 MEM wLearnMoveMonName
@@ -13785,7 +13785,7 @@ CONT "than 4 moves!"
 PARA "Delete an older"
 LINE "move to make room"
 CONT "for @"
-MEM wcf4b
+MEM wcf4b_LearningMoveName
 TEXT "?"
 DONE
 
@@ -13801,7 +13801,7 @@ PARA "@"
 MEM wLearnMoveMonName
 TEXT " forgot"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_ForgottenMoveName
 TEXT "!"
 PARA "And..."
 PROMPT
@@ -13882,12 +13882,12 @@ CONT "Please wait."
 DONE
 
 .UsedStrengthText
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT " used"
 LINE "STRENGTH.@@"
 
 .CanMoveBouldersText
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT " can"
 LINE "move boulders."
 PROMPT
@@ -13913,13 +13913,13 @@ LINE "<POKE>MON CENTER."
 DONE
 
 .CannotUseTeleportNowText
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT " can't"
 LINE "use TELEPORT now."
 PROMPT
 
 .CannotFlyHereText
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT " can't"
 LINE "FLY here."
 PROMPT
@@ -13947,7 +13947,7 @@ PROMPT
 .GotMonText
 TEXT "<PLAYER> got"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_ObtainedMonName
 TEXT "!@@"
 
 .SetToBoxText
@@ -13958,7 +13958,7 @@ MEM wBoxMonNicks
 TEXT " was"
 CONT "sent to <POKE>MON"
 CONT "BOX @"
-MEM wcf4b
+MEM wcf4b_DestinationPcBox
 TEXT " on PC!"
 DONE
 
@@ -14731,7 +14731,7 @@ PROMPT
 .ReceivedTM41Text
 TEXT "<PLAYER> received"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ReceivedItemName
 TEXT "!@@"
 
 .TM41ExplanationText
@@ -15180,7 +15180,7 @@ TEXT "!@@"
 .SurfingGotOnText
 TEXT "<PLAYER> got on"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT "!"
 PROMPT
 
@@ -15190,10 +15190,10 @@ LINE "to get off!"
 PROMPT
 
 .VitaminStatRoseText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT "'s"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_StatChangeAmountFromVitamin
 TEXT " rose."
 PROMPT
 
@@ -15231,7 +15231,7 @@ LINE "<POKE> FLUTE.@@"
 .CoinCaseNumCoinsText
 TEXT "Coins"
 LINE "@"
-BCD wPlayerCoins 194
+BCD wPlayerCoins 2
 TEXT " "
 PROMPT
 
@@ -15257,13 +15257,13 @@ LINE "which technique?"
 DONE
 
 .PPMaxedOutText
-MEM wcf4b
+MEM wcf4b_PpIncreasingMonName
 TEXT "'s PP"
 LINE "is maxed out."
 PROMPT
 
 .PPIncreasedText
-MEM wcf4b
+MEM wcf4b_PpIncreasingMonName
 TEXT "'s PP"
 LINE "increased."
 PROMPT
@@ -15283,24 +15283,24 @@ PROMPT
 .TeachMachineMoveText
 TEXT "It contained"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_TmMoveName
 TEXT "!"
 PARA "Teach @"
-MEM wcf4b
+MEM wcf4b_TmMoveName
 TEXT ""
 LINE "to a <POKE>MON?"
 DONE
 
 .MonCannotLearnMachineMoveText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT " is not"
 LINE "compatible with"
 CONT "@"
-MEM wcf4b
+MEM wcf4b_TmMoveName
 TEXT "."
 PARA "It can't learn"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_TmMoveName
 TEXT "."
 PROMPT
 
@@ -15337,7 +15337,7 @@ PROMPT
 .NoSurfingHereText
 TEXT "No SURFing on"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT " here!"
 PROMPT
 
@@ -15351,38 +15351,35 @@ PROMPT
 TEXT "<PLAYER> used@@"
 
 .ItemUseText002
-MEM wcf4b
+MEM wcf4b_UsedItemName
 TEXT "!"
 DONE
 
-.GotOnBicycleText1
-TEXT "<PLAYER> got on the@@"
-
-.GotOnBicycleText2
-MEM wcf4b
+.GotOnBicycleText
+TEXT "<PLAYER> got on the"
+LINE ""
+MEM wcf4b_UsedItemName
 TEXT "!"
 PROMPT
 
-.GotOffBicycleText1
-TEXT "<PLAYER> got off@@"
-
-.GotOffBicycleText2
-TEXT "the @"
-MEM wcf4b
+.GotOffBicycleText
+TEXT "<PLAYER> got off"
+LINE "the "
+MEM wcf4b_UsedItemName
 TEXT "."
 PROMPT
 
 .ThrewAwayItemText
 TEXT "Threw away"
 LINE "@"
-MEM wcd6d
+MEM wcd6d_ThrownAwayItemName
 TEXT "."
 PROMPT
 
 .IsItOKToTossItemText
 TEXT "Is it OK to toss"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_ThrowingAwayItemName
 TEXT "?"
 PROMPT
 
@@ -15392,10 +15389,10 @@ LINE "tant to toss!"
 PROMPT
 
 .AlreadyKnowsText
-MEM wcd6d
+MEM wcd6d_ActionTargetMonName
 TEXT " knows"
 LINE "@"
-MEM wcf4b
+MEM wcf4b_LearningMoveName
 TEXT "!"
 PROMPT
 
@@ -15531,7 +15528,7 @@ LINE "anything to CUT!"
 PROMPT
 
 .UsedCutText
-MEM wcd6d
+MEM wcd6d_HmUserName
 TEXT " hacked"
 LINE "away with CUT!"
 PROMPT

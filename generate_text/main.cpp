@@ -12,7 +12,9 @@
 typedef std::uint8_t byte_t;
 typedef std::string (*command_handler)(const std::string &);
 
-std::set<std::string> enum_values;
+std::set<std::string> mem_enum_values;
+std::set<std::string> num_enum_values;
+std::set<std::string> bcd_enum_values;
 
 std::pair<std::string, std::string> charmap[] = {
 	{ "\\\\",       "\\\\01" },
@@ -30,13 +32,15 @@ std::pair<std::string, std::string> charmap[] = {
 	{ "'v",         "\\\\0D" },
 	{ "'r",         "\\\\0E" },
 	{ "'m",         "\\\\0F" },
+	{ "<FEMALE>",   "\\\\10" },
+	{ "<MALE>",     "\\\\11" },
 };
 
 std::string handle_mem(const std::string &input){
 	std::string ret;
 	auto space = input.find_first_of(" \t");
 	auto e = input.substr(0, space);
-	enum_values.insert(e);
+	mem_enum_values.insert(e);
 	ret += " << MEM(";
 	ret += e;
 	ret += ")";
@@ -49,7 +53,7 @@ std::string handle_num(const std::string &input){
 	int first = 0, second = 0;
 	temp >> name >> first >> second;
 	std::stringstream ret;
-	enum_values.insert(name);
+	num_enum_values.insert(name);
 	ret << " << NUM(" << name << ", " << first << ", " << second << ")";
 	return ret.str();
 }
@@ -60,7 +64,7 @@ std::string handle_bcd(const std::string &input){
 	int first = 0;
 	temp >> name >> first;
 	std::stringstream ret;
-	enum_values.insert(name);
+	bcd_enum_values.insert(name);
 	ret << " << BCD(" << name << ", " << first << ")";
 	return ret.str();
 }
@@ -236,8 +240,20 @@ Result parse_text_format(std::istream &stream){
 
 	ret.source_string += ";\n";
 
-	ret.enum_string += "enum class MemorySources{\n";
-	for (auto &e : enum_values){
+	ret.enum_string += "enum class MemSource{\n";
+	for (auto &e : mem_enum_values){
+		ret.enum_string += "    ";
+		ret.enum_string += e;
+		ret.enum_string += ",\n";
+	}
+	ret.enum_string += "};\n\nenum class NumSource{\n";
+	for (auto &e : num_enum_values){
+		ret.enum_string += "    ";
+		ret.enum_string += e;
+		ret.enum_string += ",\n";
+	}
+	ret.enum_string += "};\n\nenum class BcdSource{\n";
+	for (auto &e : bcd_enum_values){
 		ret.enum_string += "    ";
 		ret.enum_string += e;
 		ret.enum_string += ",\n";

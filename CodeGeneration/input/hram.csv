@@ -88,7 +88,7 @@ FFB0,1,u8,hWY
 FFB1,1,u8,hJoyLast
 FFB2,1,u8,hJoyReleased
 FFB3,1,u8,hJoyPressed
-FFB4,1,u8,hJoyHeld
+FFB4,1,InputBitmap_t,hJoyHeld
 FFB5,1,u8,hJoy5
 FFB6,1,u8,hJoy6
 FFB7,1,u8,hJoy7
@@ -139,7 +139,8 @@ FFE9,1,u8,hSpriteVRAMSlotAndFacing
 FFEA,1,u8,hCoordsInFrontOfPlayerMatch
 FFEA,1,u8,hSpriteAnimFrameCounter
 FFF3,1,u8,H_WHOSETURN
-FFF6,1,u8,hFlags_0xFFF6
+FFF4,1,wLetterPrintingDelayFlags_t,hPokedexTextFlags
+FFF6,1,hFlags_FFF6_t,hFlags_0xFFF6
 FFF7,1,u8,hFieldMoveMonMenuTopMenuItemX
 FFF8,1,u8,hJoyInput
 FFF9,1,u8,hDisableJoypadPolling

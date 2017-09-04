@@ -409,10 +409,10 @@ public:
 			this->index--;
 			return ret;
 		}
-		indexed_type operator*() WRAPPER_CONST{
+		indexed_type operator*() const{
 			return (*this->array)[this->index];
 		}
-		indexed_type operator[](difference_type n) WRAPPER_CONST{
+		indexed_type operator[](difference_type n) const{
 			return (*this->array)[this->index + n];
 		}
 		Iterator operator+(difference_type n) const{
@@ -451,6 +451,9 @@ public:
 				throw std::runtime_error("Incorrect iterator usage.");
 			return this->index < other.index;
 		}
+		uint16_t address() const{
+			return 0;
+		}
 	};
 	typedef Iterator<WrappedT, Length, ElementSize> iterator;
 	iterator begin() WRAPPER_CONST{
@@ -466,15 +469,15 @@ public:
 	void fill_bytes(byte_t value) WRAPPER_CONST{
 		memset(this->memory, value, this->size);
 	}
-	std::enable_if<std::is_same<WrappedT, byte_t>::value, void>
-	operator=(const std::string &string) WRAPPER_CONST{
+	template <typename = typename std::enable_if<std::is_same<WrappedT, byte_t>::value>::type>
+	void operator=(const std::string &string) WRAPPER_CONST{
 		auto n = std::min(string.size(), Length);
 		for (size_t i = 0; i < n; i++)
 			(*this)[i] = string[i];
-		return std::enable_if<std::is_same<WrappedT, byte_t>::value, void>();
 	}
-	std::enable_if<std::is_same<WrappedT, byte_t>::value, std::string>
-	to_string() const{
+	//typename std::enable_if<std::is_same<WrappedT, byte_t>::value, std::string>::type
+	template <typename = typename std::enable_if<std::is_same<WrappedT, byte_t>::value>::type>
+	std::string to_string() WRAPPER_CONST{
 		std::string ret;
 		ret.reserve(Length);
 		for (auto &it : *this){
@@ -549,9 +552,9 @@ public:
 	member_type collision_bits;
 	//Offset: 13 (0x0D)
 	member_type unknown1;
-	//Offset: 13 (0x0E)
+	//Offset: 14 (0x0E)
 	member_type collision_bits2;
-	//Offset: 13 (0x0E)
+	//Offset: 15 (0x0F)
 	member_type collision_bits3;
 
 	SpriteStateData1(void *memory, const callback_struct &callbacks):
@@ -587,6 +590,7 @@ public:
 	typedef typename member_type::callback_struct callback_struct;
 	static const size_t size = 16;
 private:
+	WrappedArray<byte_t, size, 1> raw_memory;
 public:
 	//Offset: 0
 	member_type walk_animation_counter;
@@ -608,6 +612,7 @@ public:
 	member_type sprite_image_base_offset;
 
 	SpriteStateData2(void *memory, const callback_struct &callbacks):
+		raw_memory              ((char *)memory +  0, callbacks),
 		walk_animation_counter  ((char *)memory +  0, callbacks),
 		y_displacement          ((char *)memory +  2, callbacks),
 		x_displacement          ((char *)memory +  3, callbacks),
@@ -619,6 +624,7 @@ public:
 		sprite_image_base_offset((char *)memory + 14, callbacks)
 	{}
 	SpriteStateData2(const SpriteStateData2 &other):
+		raw_memory              (other.raw_memory),
 		walk_animation_counter  (other.walk_animation_counter),
 		y_displacement          (other.y_displacement),
 		x_displacement          (other.x_displacement),
@@ -635,6 +641,9 @@ public:
 	//SpriteStateData2(SpriteStateData2 &&other) = delete;
 	void operator=(const SpriteStateData2 &) = delete;
 	void operator=(SpriteStateData2 &&) = delete;
+	void clear(){
+		this->raw_memory.fill(0);
+	}
 };
 
 class PcBoxMember{
@@ -894,7 +903,7 @@ struct BasePokemonInfo{
 	byte_t base_xp_yield;
 	byte_t growth_rate;
 	std::array<byte_t, 7> learnable_tms_bitmap;
-	const char * const display_name;
+	std::string display_name;
 	const BaseStaticImage * const front;
 	const BaseStaticImage * const back;
 	PokemonCryData cry_data;
@@ -912,7 +921,7 @@ struct BasePokemonInfo{
 		byte_t base_xp_yield,
 		byte_t growth_rate,
 		std::array<byte_t, 7> &&learnable_tms_bitmap,
-		const char * const display_name,
+		std::string &&display_name,
 		const BaseStaticImage * const front,
 		const BaseStaticImage * const back,
 		PokemonCryData &&cry_data
@@ -929,7 +938,7 @@ struct BasePokemonInfo{
 		base_xp_yield(base_xp_yield),
 		growth_rate(growth_rate),
 		learnable_tms_bitmap(std::move(learnable_tms_bitmap)),
-		display_name(display_name),
+		display_name(std::move(display_name)),
 		front(front),
 		back(back),
 		cry_data(cry_data)
@@ -972,7 +981,7 @@ public:
 		byte_t base_xp_yield,
 		byte_t growth_rate,
 		std::array<byte_t, 7> &&learnable_tms_bitmap,
-		const char * const display_name,
+		std::string &&display_name,
 		const BaseStaticImage * const front,
 		const BaseStaticImage * const back,
 		PokemonCryData &&cry_data,
@@ -980,7 +989,7 @@ public:
 		std::array<EvolutionTrigger, N2> &&evolution_triggers,
 		std::array<LearnedMove, N3> &&learned_moves
 	):
-		BasePokemonInfo(pokedex_id, species_id, base_hp, base_attack, base_defense, base_speed, base_special, std::move(type), catch_rate, base_xp_yield, growth_rate, std::move(learnable_tms_bitmap), display_name, front, back, std::move(cry_data)),
+		BasePokemonInfo(pokedex_id, species_id, base_hp, base_attack, base_defense, base_speed, base_special, std::move(type), catch_rate, base_xp_yield, growth_rate, std::move(learnable_tms_bitmap), std::move(display_name), front, back, std::move(cry_data)),
 		initial_attacks(std::move(initial_attacks)),
 		evolution_triggers(std::move(evolution_triggers)),
 		learned_moves(std::move(learned_moves))

@@ -1,5 +1,4 @@
 #include "DisplayController.h"
-#include "MemoryController.h"
 #include "HostSystem.h"
 #include "exceptions.h"
 #include <memory>
@@ -276,13 +275,13 @@ bool DisplayController::update(){
 }
 
 void DisplayController::switch_to_row_state_0(unsigned row){
-	this->memory_controller->toggle_oam_access(false);
+	//this->memory_controller->toggle_oam_access(false);
 	if (check_flag(this->lcd_status, stat_oam_interrupt_mask))
 		this->system->lcd_stat_irq();
 }
 
 void DisplayController::switch_to_row_state_1(unsigned row){
-	this->memory_controller->toggle_vram_access(false);
+	//this->memory_controller->toggle_vram_access(false);
 }
 
 void DisplayController::switch_to_row_state_2(unsigned row){
@@ -294,8 +293,8 @@ void DisplayController::switch_to_row_state_2(unsigned row){
 }
 
 void DisplayController::enable_memories(){
-	this->memory_controller->toggle_oam_access(true);
-	this->memory_controller->toggle_vram_access(true);
+	//this->memory_controller->toggle_oam_access(true);
+	//this->memory_controller->toggle_vram_access(true);
 }
 
 void DisplayController::switch_to_row_state_3(unsigned row){
