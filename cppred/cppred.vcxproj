@@ -187,6 +187,7 @@
     <ClCompile Include="HostSystem.cpp" />
     <ClCompile Include="HostSystemServiceProviders.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MemoryOperations.cpp" />
     <ClCompile Include="SdlProvider.cpp" />
     <ClCompile Include="SoundController.cpp" />
     <ClCompile Include="StaticImage.cpp" />

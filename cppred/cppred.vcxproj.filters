@@ -111,6 +111,9 @@
     <ClCompile Include="CppRedScripts.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="MemoryOperations.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="timer.h">
