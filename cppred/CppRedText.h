@@ -18,6 +18,8 @@ static const byte_t box_vertical     = 0x7C;
 static const byte_t box_bottom_left  = 0x7D;
 static const byte_t box_bottom_right = 0x7E;
 
+static const byte_t blank = 0x7F;
+
 static const byte_t arrow_white_right = 0xEC;
 static const byte_t arrow_black_right = 0xED;
 static const byte_t arrow_black_up    = 0xED;

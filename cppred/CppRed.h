@@ -117,6 +117,8 @@ private:
 	void *map_pointer(unsigned pointer);
 	void mass_initialization();
 	void save_sram(const sram_t &) const;
+	void animate_party_mon();
+	void handle_down_arrow_blink_timing(const tilemap_it &);
 public:
 
 	WRam wram;
@@ -224,7 +226,8 @@ public:
 		this->load_font_tile_patterns();
 	}
 	void update_sprites();
-	byte_t handle_menu_input();
+	InputBitmap_struct handle_menu_input();
+	InputBitmap_struct handle_menu_input2();
 	void joypad();
 	void initialize_player_data();
 	void initialize_options();
@@ -238,6 +241,7 @@ public:
 	void load_front_sprite(SpeciesId, bool flipped, const tilemap_it &destination);
 	void move_pic_left();
 	//Waits until vsync and copies tiles to VRAM.
+	//src_offset is the index of the first tile to copy.
 	void copy_video_data(unsigned tiles, const BaseStaticImage &image, unsigned src_offset, unsigned destination);
 	void reset_player_sprite_data();
 	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
@@ -253,7 +257,8 @@ public:
 	sram_t load_sram();
 	void load_save();
 	void place_menu_cursor();
-	void joypad_low_sensitivity();
+	InputBitmap_struct joypad_low_sensitivity();
+	void write_character_at_menu_cursor(byte_t character);
 	void erase_menu_cursor();
 	void place_unfilled_arrow_menu_cursor();
 

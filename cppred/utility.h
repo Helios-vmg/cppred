@@ -7,6 +7,8 @@
 #include <atomic>
 #include <array>
 
+struct InputBitmap_struct;
+
 template <typename T>
 class Maybe{
 	bool initialized;
@@ -121,3 +123,6 @@ typedef std::array<std::uint32_t, 4> xorshift128_state;
 std::uint32_t xorshift128(xorshift128_state &state);
 byte_t calculate_checksum(const void *data, size_t size);
 unsigned count_set_bits(const byte_t *src, size_t size);
+
+InputBitmap_struct operator&(const InputBitmap_struct &a, const InputBitmap_struct &b);
+bool any_button_pressed(const InputBitmap_struct &bitmap);

@@ -111,3 +111,11 @@ ignored,struct,member,comment
 5,InputBitmap,button_left,
 6,InputBitmap,button_up,
 7,InputBitmap,button_down,
+0,wFlags_0xcd60,player_engaged,Is player engaged by trainer? (To avoid being engaged by multiple trainers simultaneously.)
+1,wFlags_0xcd60,dust_animation_pending,Boulder dust animation (from using Strength) pending.
+2,wFlags_0xcd60,skip,
+3,wFlags_0xcd60,using_generic_pc,
+4,wFlags_0xcd60,skip,
+5,wFlags_0xcd60,no_menu_sound,Don't play sound when A or B is pressed in menu.
+6,wFlags_0xcd60,pushed_boulder_once,Tried pushing against boulder once. (You need to push twice before it will move.)
+7,wFlags_0xcd60,skip,

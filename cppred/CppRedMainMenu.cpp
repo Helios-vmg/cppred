@@ -58,11 +58,14 @@ MainMenuResult CppRedMainMenu::display(){
 		wram.wMenuJoypadPollCount = 0;
 		wram.wTopMenuItemX = 1;
 		wram.wTopMenuItemY = 2;
-		wram.wMenuWatchedKeys = input_a | input_b | input_start;
+		wram.wMenuWatchedKeys.clear();
+		wram.wMenuWatchedKeys.set_button_a(true);
+		wram.wMenuWatchedKeys.set_button_b(true);
+		wram.wMenuWatchedKeys.set_button_start(true);
 		wram.wMaxMenuItem = wram.wSaveFileStatus.value;
 
 		auto input = this->parent->handle_menu_input();
-		if (check_flag(input, input_b))
+		if (input.button_b)
 			return MainMenuResult::Cancelled;
 
 		this->parent->delay_frames(20);
@@ -204,8 +207,7 @@ void CppRedMainMenu::display_options_menu(){
 		this->set_options_from_cursor_positions();
 		InputBitmap_struct input;
 		do{
-			parent.joypad_low_sensitivity();
-			input = parent.hram.hJoy5;
+			input = parent.joypad_low_sensitivity();
 			//TODO: Is this a spinlock?
 		}while (!input.button_a & !input.button_b & !input.button_start & !input.button_down & !input.button_up & !input.button_left & !input.button_right);
 		if (input.button_b || input.button_start)

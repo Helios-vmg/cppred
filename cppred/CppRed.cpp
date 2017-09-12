@@ -973,8 +973,100 @@ void CppRed::load_save(){
 	}
 }
 
+void CppRed::clear_screen_area(unsigned w, unsigned h, const tilemap_it &location){
+	for (unsigned y = 0; y < h; y++){
+		auto i = location + y * tilemap_width;
+		std::fill(i, i + w, SpecialCharacters::blank);
+	}
+}
+
+void CppRed::copy_video_data(unsigned tiles, const BaseStaticImage &image, unsigned src_offset, unsigned destination){
+	auto data = decode_image_data(image);
+	auto w = image.get_width();
+	auto h = image.get_height();
+
+	this->delay_frame();
+	auto d = &this->display_controller.access_vram(destination);
+	memcpy(d, &data[0] + src_offset * 16, tiles * 16);
+}
+
 void CppRed::place_unfilled_arrow_menu_cursor(){
+	this->write_character_at_menu_cursor(SpecialCharacters::arrow_white_right);
+}
+
+void CppRed::erase_menu_cursor(){
+	this->write_character_at_menu_cursor(SpecialCharacters::blank);
+}
+
+void CppRed::write_character_at_menu_cursor(byte_t character){
 	int x = this->wram.wMenuCursorLocationX;
 	int y = this->wram.wMenuCursorLocationY;
-	*this->get_tilemap_location(x, y) = SpecialCharacters::arrow_white_right;
+	*this->get_tilemap_location(x, y) = character;
+}
+
+InputBitmap_struct CppRed::handle_menu_input(){
+	this->wram.wPartyMenuAnimMonEnabled = 0;
+	return this->handle_menu_input2();
+}
+
+InputBitmap_struct CppRed::handle_menu_input2(){
+	//TODO: This whole function looks like a spinlock.
+
+	auto counter1 = +this->hram.H_DOWNARROWBLINKCNT1;
+	auto counter2 = +this->hram.H_DOWNARROWBLINKCNT2;
+	this->hram.H_DOWNARROWBLINKCNT1 = 0;
+	this->hram.H_DOWNARROWBLINKCNT2 = 6;
+
+	InputBitmap_struct input;
+	while (true){
+		this->wram.wAnimCounter = 0;
+		this->place_menu_cursor();
+		this->delay3();
+
+		while (true){
+			if (this->wram.wPartyMenuAnimMonEnabled)
+				this->animate_party_mon();
+			input = this->joypad_low_sensitivity();
+			if (any_button_pressed(input))
+				break;
+			
+			this->handle_down_arrow_blink_timing(this->get_tilemap_location(18, 11));
+			if (this->wram.wMenuJoypadPollCount == 1)
+				break;
+		}
+
+		this->wram.wCheckFor180DegreeTurn = 0;
+		auto &menu_item = this->wram.wCurrentMenuItem;
+		auto &max_menu_item = this->wram.wMaxMenuItem;
+		auto &menu_wrapping = this->wram.wMenuWrappingEnabled;
+		bool skip_checking_other_buttons = false;
+		if (input.button_up){
+			if (!menu_item){
+				if (!menu_wrapping)
+					skip_checking_other_buttons = !!this->wram.wMenuWatchMovingOutOfBounds;
+				else
+					menu_item = +max_menu_item;
+			}else
+				menu_item--;
+		}else if (input.button_down){
+			if (menu_item >= max_menu_item){
+				if (!menu_wrapping)
+					skip_checking_other_buttons = !!this->wram.wMenuWatchMovingOutOfBounds;
+				else
+					menu_item = 0;
+			}else
+				menu_item++;
+		}
+
+		if (!skip_checking_other_buttons && !any_button_pressed(input & this->wram.wMenuWatchedKeys))
+			continue;
+
+		if ((input.button_a || input.button_b) && !this->wram.wFlags_0xcd60.get_no_menu_sound())
+			this->play_sound(Sound::SFX_Press_AB_1);
+		break;
+	}
+	this->hram.H_DOWNARROWBLINKCNT1 = counter1;
+	this->hram.H_DOWNARROWBLINKCNT2 = counter2;
+	this->wram.wMenuWrappingEnabled = 0;
+	return input;
 }
