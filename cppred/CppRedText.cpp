@@ -287,6 +287,12 @@ void CppRedText::text_command_processor(const Region &text, const tilemap_it &it
 	wram.wMainData.wLetterPrintingDelayFlags.set_raw_value(old_flags);
 }
 
+void CppRedText::place_string(const tilemap_it &it, const std::string &text){
+	Region region;
+	region << text.c_str();
+	this->place_string(it, region);
+}
+
 void CppRedText::place_string(const tilemap_it &it, const Region &text){
 	auto &wram = this->parent->wram;
 	auto writing_location = it;

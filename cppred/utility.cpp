@@ -20,3 +20,15 @@ byte_t calculate_checksum(const void *void_data, size_t size){
 		ret += data[i];
 	return (byte_t)(~ret & 0xFF);
 }
+
+unsigned count_set_bits(const byte_t *src, size_t size){
+	unsigned ret = 0;
+	for (size_t i = size; i--; src++){
+		auto byte = *src;
+		for (int j = 8; j--;){
+			ret += !!(byte & 1);
+			byte >>= 1;
+		}
+	}
+	return ret;
+}

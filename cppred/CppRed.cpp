@@ -558,7 +558,7 @@ void CppRed::mass_initialization(){
 	this->wram.wMainData.wPlayerMoney = 0;
 	this->wram.wMainData.wRivalName.fill_bytes(0);
 	this->wram.wMainData.wOptions.clear();
-	this->wram.wMainData.wObtainedBadges.fill_bytes(0);
+	this->wram.wMainData.wObtainedBadges = 0;
 	this->wram.wMainData.wLetterPrintingDelayFlags.clear();
 	this->wram.wMainData.wPlayerID = 0;
 	this->wram.wMainData.wMapMusicSoundID = 0;

@@ -120,3 +120,4 @@ typedef std::array<std::uint32_t, 4> xorshift128_state;
 
 std::uint32_t xorshift128(xorshift128_state &state);
 byte_t calculate_checksum(const void *data, size_t size);
+unsigned count_set_bits(const byte_t *src, size_t size);

@@ -103,3 +103,44 @@ bool CppRedMainMenu::check_for_player_name_in_sram(){
 			return true;
 	return false;
 }
+
+void CppRedMainMenu::display_continue_game_info(){
+	this->parent->hram.H_AUTOBGTRANSFERENABLED = 0;
+	auto &text = this->parent->text;
+	text.text_box_border(this->parent->get_tilemap_location(4, 7), 14, 8);
+	text.place_string(this->parent->get_tilemap_location(5, 9), text.SaveScreenInfoText);
+	text.place_string(this->parent->get_tilemap_location(12, 9), this->parent->wram.wPlayerName.to_string());
+	this->print_num_badges(this->parent->get_tilemap_location(18, 11));
+	this->print_num_owned_mons(this->parent->get_tilemap_location(16, 13));
+	this->print_play_time(this->parent->get_tilemap_location(13, 15));
+	this->parent->hram.H_AUTOBGTRANSFERENABLED = 1;
+	this->parent->delay_frames(30);
+}
+
+void CppRedMainMenu::print_num_badges(const tilemap_it &location){
+	byte_t badge_bitmap = this->parent->wram.wMainData.wObtainedBadges;
+	unsigned badge_count = count_set_bits(&badge_bitmap, 1);
+	std::stringstream stream;
+	stream << badge_count;
+	this->parent->text.place_string(location, stream.str());
+}
+
+void CppRedMainMenu::print_num_owned_mons(const tilemap_it &location){
+	auto &wPokedexOwned = this->parent->wram.wMainData.wPokedexOwned;
+	byte_t owned[std::remove_reference<decltype(wPokedexOwned)>::type::size];
+	std::copy(wPokedexOwned.begin(), wPokedexOwned.end(), owned);
+	unsigned pokedex_count = count_set_bits(owned, array_length(owned));
+	std::stringstream stream;
+	stream << std::setw(3) << std::setfill(' ') << pokedex_count;
+	this->parent->text.place_string(location, stream.str());
+}
+
+void CppRedMainMenu::print_play_time(const tilemap_it &location){
+	int hours = this->parent->wram.wMainData.wPlayTimeHours;
+	int minutes = this->parent->wram.wMainData.wPlayTimeMinutes;
+	std::stringstream stream;
+	stream
+		<< std::setw(3) << std::setfill(' ') << hours << ':'
+		<< std::setw(2) << std::setfill('0') << minutes;
+	this->parent->text.place_string(location, stream.str());
+}
