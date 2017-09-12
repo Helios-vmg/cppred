@@ -16906,3 +16906,18 @@ TEXT "PLAYER"
 NEXT "BADGES"
 NEXT "#DEX"
 NEXT "TIME"
+
+.TextSpeedOptionText
+TEXT "TEXT SPEED"
+NEXT " FAST  MEDIUM SLOW"
+
+.BattleAnimationOptionText
+TEXT "BATTLE ANIMATION"
+NEXT " ON       OFF"
+
+.BattleStyleOptionText
+TEXT "BATTLE STYLE"
+NEXT " SHIFT    SET"
+
+.OptionMenuCancelText
+TEXT "CANCEL"

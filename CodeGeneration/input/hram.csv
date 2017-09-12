@@ -89,7 +89,7 @@ FFB1,1,u8,hJoyLast
 FFB2,1,u8,hJoyReleased
 FFB3,1,u8,hJoyPressed
 FFB4,1,InputBitmap_t,hJoyHeld
-FFB5,1,u8,hJoy5
+FFB5,1,InputBitmap_t,hJoy5
 FFB6,1,u8,hJoy6
 FFB7,1,u8,hJoy7
 FFB8,1,u8,H_LOADEDROMBANK

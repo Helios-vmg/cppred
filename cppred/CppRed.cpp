@@ -907,7 +907,7 @@ CppRed::sram_t CppRed::load_sram(){
 void CppRed::special_enter_map(MapId id){
 	this->hram.hJoyPressed = 0;
 	this->hram.hJoyHeld.clear();
-	this->hram.hJoy5 = 0;
+	this->hram.hJoy5.clear();
 	this->wram.wMainData.wd72d.clear();
 	this->wram.wMainData.wd732.set_counting_play_time(true);
 	this->reset_player_sprite_data();
@@ -971,4 +971,10 @@ void CppRed::load_save(){
 		this->wram.wMainData.wCurMapTileset |= 1 << 7;
 		this->wram.wSaveFileStatus = SaveFileStatus::SaveExists;
 	}
+}
+
+void CppRed::place_unfilled_arrow_menu_cursor(){
+	int x = this->wram.wMenuCursorLocationX;
+	int y = this->wram.wMenuCursorLocationY;
+	*this->get_tilemap_location(x, y) = SpecialCharacters::arrow_white_right;
 }

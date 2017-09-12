@@ -252,6 +252,10 @@ public:
 	void wait_for_text_scroll_button_press();
 	sram_t load_sram();
 	void load_save();
+	void place_menu_cursor();
+	void joypad_low_sensitivity();
+	void erase_menu_cursor();
+	void place_unfilled_arrow_menu_cursor();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

@@ -20,6 +20,8 @@ class CppRedMainMenu{
 	void print_num_badges(const tilemap_it &);
 	void print_num_owned_mons(const tilemap_it &);
 	void print_play_time(const tilemap_it &);
+	void set_cursor_positions_from_options();
+	void set_options_from_cursor_positions();
 public:
 	CppRedMainMenu(CppRed &);
 	MainMenuResult display();
