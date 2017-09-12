@@ -47,6 +47,10 @@ public:
 		this->callbacks.w(input, this->memory);
 		return input;
 	}
+	byte_t *get_memory() const{
+		return (byte_t *)this->memory;
+	}
+
 #define IntegerWrapper_UNARY_OVERLOAD(x) \
 	WrappedT operator x() const{ \
 		return x (WrappedT)*this; \
@@ -370,6 +374,11 @@ public:
 			array_overflow();
 		return indexed_type((char *)this->memory + idx * ElementSize, callbacks);
 	}
+	indexed_type operator[](size_t idx) const{
+		if (idx >= Length)
+			array_overflow();
+		return indexed_type((char *)this->memory + idx * ElementSize, callbacks);
+	}
 	template <typename WrappedT_it, size_t Length_it, size_t ElementSize_it>
 	class Iterator{
 		WRAPPER_CONST WrappedArray<WrappedT_it, Length_it, ElementSize_it> *array;
@@ -469,6 +478,11 @@ public:
 	void fill_bytes(byte_t value) WRAPPER_CONST{
 		memset(this->memory, value, this->size);
 	}
+	void copy_from(const WrappedArray<WrappedT, Length, ElementSize> &src){
+		size_t j = 0;
+		for (auto &i : *this)
+			i = src[j++];
+	}
 	template <typename = typename std::enable_if<std::is_same<WrappedT, byte_t>::value>::type>
 	void operator=(const std::string &string) WRAPPER_CONST{
 		auto n = std::min(string.size(), Length);
@@ -486,6 +500,9 @@ public:
 			ret.push_back(it);
 		}
 		return ret;
+	}
+	byte_t *get_memory() const{
+		return (byte_t *)this->memory;
 	}
 };
 

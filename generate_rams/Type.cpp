@@ -61,8 +61,25 @@ std::unique_ptr<Type> construct_pcboxmember(){
 std::unique_ptr<Type> construct_partymember(){
 	return std::make_unique<partymemberStruct>();
 }
+
 std::unique_ptr<Type> construct_pcbox(){
 	return std::make_unique<pcboxStruct>();
+}
+
+std::unique_ptr<Type> construct_maindata(){
+	return std::make_unique<maindataStruct>();
+}
+
+std::unique_ptr<Type> construct_spritedata(){
+	return std::make_unique<spritedataStruct>();
+}
+
+std::unique_ptr<Type> construct_partydata(){
+	return std::make_unique<partydataStruct>();
+}
+
+std::unique_ptr<Type> construct_boxdata(){
+	return std::make_unique<boxdataStruct>();
 }
 
 #include "../CodeGeneration/output/bitmaps_rams_constructors.inl"
@@ -124,6 +141,10 @@ const std::map<std::string, basic_type_constructor> normal_types = {
 	{ "pcboxmember", construct_pcboxmember },
 	{ "partymember", construct_partymember },
 	{ "pcbox", construct_pcbox },
+	{ "maindata", construct_maindata },
+	{ "spritedata", construct_spritedata },
+	{ "partydata", construct_partydata },
+	{ "boxdata", construct_boxdata },
 #include "../CodeGeneration/output/bitmaps_rams_declarations.inl"
 	{ "pointer", construct_pointer },
 	{ "big_pointer", construct_big_pointer },
@@ -355,4 +376,45 @@ std::string partymemberStruct::get_actual_type_name() const{
 
 std::string pcboxStruct::get_actual_type_name() const{
 	return "PcBox";
+}
+
+std::string maindataStruct::get_actual_type_name() const{
+	return "MainData";
+}
+
+std::string maindataStruct::get_callback_struct() const{
+	return std::string();
+}
+
+std::string spritedataStruct::get_actual_type_name() const{
+	return "SpriteData";
+}
+
+std::string spritedataStruct::get_callback_struct() const{
+	return std::string();
+}
+
+std::string partydataStruct::get_actual_type_name() const{
+	return "PartyData";
+}
+
+std::string partydataStruct::get_callback_struct() const{
+	return std::string();
+}
+
+std::string boxdataStruct::get_actual_type_name() const{
+	return "BoxData";
+}
+
+std::string boxdataStruct::get_callback_struct() const{
+	return std::string();
+}
+
+std::string SpecialStruct::generate_initializer(unsigned address, unsigned base_address, const std::unique_ptr<Number> &size, const std::string &name) const{
+	return (boost::format(
+			"%1%(this->memory + %2%)"
+		)
+		% name
+		% (address - base_address)
+	).str();
 }

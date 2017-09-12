@@ -725,6 +725,9 @@ const unsigned species_count = 151;
 const unsigned player_inventory_size = 40;
 const unsigned pc_inventory_size = 100;
 const unsigned mons_per_box = 20;
+const unsigned hall_of_fame_mon = 16;
+const unsigned hall_of_fame_team = hall_of_fame_mon * party_length;
+const unsigned hall_of_fame_capacity = 50;
 
 enum class PokemonTypeId{
 	Normal = 0,

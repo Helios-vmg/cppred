@@ -7,6 +7,8 @@
 #include "CppRedClearSave.h"
 #include "CppRedMainMenu.h"
 #include "CppRedScripts.h"
+#include "CppRedSRam.h"
+#include "MemoryOperations.h"
 #include <cassert>
 #include <stdexcept>
 #include <random>
@@ -57,11 +59,12 @@ void CppRed::nonemulation_init(){
 	//this->emulated_memory.reset(new byte_t[0x10000]);
 
 	std::random_device rnd;
-	for (auto &i : this->xorshift_state)
+	for (auto &i : this->random_state)
 		i = rnd();
 
 	this->predefs.resize((int)Predef::COUNT);
 	this->predefs[(int)Predef::IsObjectHidden] = [this](){ this->is_object_hidden(); };
+	this->predefs[(int)Predef::LoadSAV] = [this](){ this->load_save(); };
 }
 
 void CppRed::init(){
@@ -149,12 +152,12 @@ const std::string sony_text = "SONY";
 
 void CppRed::set_default_names_before_titlescreen(){
 	this->wram.wPlayerName = ninten_text;
-	this->wram.wRivalName = sony_text;
+	this->wram.wMainData.wRivalName = sony_text;
 	this->set_window_position(-1, 0);
-	this->wram.wLetterPrintingDelayFlags.clear();
-	this->wram.wd732.clear();
-	this->wram.wFlags_D733.clear();
-	this->wram.wBeatLorelei.clear();
+	this->wram.wMainData.wLetterPrintingDelayFlags.clear();
+	this->wram.wMainData.wd732.clear();
+	this->wram.wMainData.wFlags_D733.clear();
+	this->wram.wMainData.wBeatLorelei.clear();
 	this->wram.wAudioROMBank.value = 0;
 	this->wram.wAudioSavedROMBank.value = 0;
 }
@@ -463,7 +466,7 @@ Sound CppRed::get_cry_data(SpeciesId species){
 }
 
 void CppRed::load_gb_pal(){
-	int offset = this->wram.wMapPalOffset;
+	int offset = this->wram.wMainData.wMapPalOffset;
 	const byte_t *data = (const byte_t *)fade_palettes;
 	int index = 3 * (int)sizeof(FadePaletteData) - offset;
 	assert(index >= 0 && index < sizeof(fade_palettes) - 3);
@@ -487,19 +490,19 @@ MainMenuResult CppRed::display_main_menu(){
 void CppRed::start_loaded_game(){
 	this->gb_pal_white_out_with_delay3();
 	this->clear_screen();
-	this->wram.wPlayerDirection = PlayerDirectionBitmap::Right;
+	this->wram.wMainData.wPlayerDirection = PlayerDirectionBitmap::Right;
 	this->delay_frames(10);
-	if (!this->wram.wNumHoFTeams){
+	if (!this->wram.wMainData.wNumHoFTeams){
 		this->special_enter_map(MapId::PalletTown);
 		return;
 	}
-	auto current_map = this->wram.wCurMap.enum_value();
+	auto current_map = this->wram.wMainData.wCurMap.enum_value();
 	if (current_map != MapId::HallOfFame){
 		this->special_enter_map(current_map);
 		return;
 	}
-	this->wram.wDestinationMap = MapId::PalletTown;
-	this->wram.wd732.set_fly_warp(true);
+	this->wram.wMainData.wDestinationMap = MapId::PalletTown;
+	this->wram.wMainData.wd732.set_fly_warp(true);
 	this->special_enter_map(this->special_warp_in());
 }
 
@@ -516,30 +519,23 @@ CppRed::tilemap_it CppRed::get_tilemap_location(unsigned x, unsigned y){
 	return this->wram.wTileMap.begin() + y * tilemap_width + x;
 }
 
-std::uint32_t xorshift128(std::uint32_t state[4]){
-	auto x = state[3];
-	x ^= x << 11;
-	x ^= x >> 8;
-	state[3] = state[2];
-	state[2] = state[1];
-	state[1] = state[0];
-	x ^= state[0];
-	x ^= state[0] >> 19;
-	state[0] = x;
-	return x;
-}
-
 unsigned CppRed::random(){
-	return xorshift128(this->xorshift_state);
+	return xorshift128(this->random_state);
 }
 
 void CppRed::call_predef(Predef f){
-	this->predefs[(int)f]();
+	auto index = (int)f;
+	if (index < 0 || index >= this->predefs.size()){
+		std::stringstream stream;
+		stream << "CppRed::call_predef(): Invalid predef value: " << index;
+		throw std::runtime_error(stream.str());
+	}
+	this->predefs[index]();
 }
 
 void CppRed::start_new_game(){
 	//Do not skip name selection.
-	this->wram.wd732.set_unknown(false);
+	this->wram.wMainData.wd732.set_unknown(false);
 	CppRedScripts::oak_speech(*this);
 	this->delay_frames(20);
 	//TODO: Confirm this. StartNewGame falls through to SpecialEnterMap, but I
@@ -549,305 +545,305 @@ void CppRed::start_new_game(){
 
 void CppRed::mass_initialization(){
 	this->wram.wPlayerName.fill_bytes(0);
-	this->wram.wPartyCount = 0;
-	this->wram.wPartySpecies.fill_bytes(0);
-	this->wram.wPartyMons.fill_bytes(0);
-	this->wram.wPartyMonOT.fill_bytes(0);
-	this->wram.wPartyMonNicks.fill_bytes(0);
-	this->wram.wPokedexOwned.fill_bytes(0);
-	this->wram.wPokedexSeen.fill_bytes(0);
-	this->wram.wNumBagItems = 0;
-	this->wram.wBagItems.fill_bytes(0);
-	this->wram.wBagItemsTerminator = 0;
-	this->wram.wPlayerMoney = 0;
-	this->wram.wRivalName.fill_bytes(0);
-	this->wram.wOptions.clear();
-	this->wram.wObtainedBadges.fill_bytes(0);
-	this->wram.wLetterPrintingDelayFlags.clear();
-	this->wram.wPlayerID = 0;
-	this->wram.wMapMusicSoundID = 0;
-	this->wram.wMapMusicROMBank = 0;
-	this->wram.wMapPalOffset = 0;
-	this->wram.wCurMap = MapId::PalletTown;
-	this->wram.wCurrentTileBlockMapViewPointer = 0;
-	this->wram.wYCoord = 0;
-	this->wram.wXCoord = 0;
-	this->wram.wYBlockCoord = 0;
-	this->wram.wXBlockCoord = 0;
-	this->wram.wLastMap = MapId::PalletTown;
-	this->wram.wUnusedD366 = 0;
-	this->wram.wCurMapTileset = 0;
-	this->wram.wCurMapHeight = 0;
-	this->wram.wCurMapWidth = 0;
-	this->wram.wMapDataPtr = 0;
-	this->wram.wMapTextPtr = 0;
-	this->wram.wMapScriptPtr = 0;
-	this->wram.wMapConnections = 0;
-	this->wram.wMapConn1Ptr = 0;
-	this->wram.wNorthConnectionStripSrc = 0;
-	this->wram.wNorthConnectionStripDest = 0;
-	this->wram.wNorthConnectionStripWidth = 0;
-	this->wram.wNorthConnectedMapWidth = 0;
-	this->wram.wNorthConnectedMapYAlignment = 0;
-	this->wram.wNorthConnectedMapXAlignment = 0;
-	this->wram.wNorthConnectedMapViewPointer = 0;
-	this->wram.wMapConn2Ptr = 0;
-	this->wram.wSouthConnectionStripSrc = 0;
-	this->wram.wSouthConnectionStripDest = 0;
-	this->wram.wSouthConnectionStripWidth = 0;
-	this->wram.wSouthConnectedMapWidth = 0;
-	this->wram.wSouthConnectedMapYAlignment = 0;
-	this->wram.wSouthConnectedMapXAlignment = 0;
-	this->wram.wSouthConnectedMapViewPointer = 0;
-	this->wram.wMapConn3Ptr = 0;
-	this->wram.wWestConnectionStripSrc = 0;
-	this->wram.wWestConnectionStripDest = 0;
-	this->wram.wWestConnectionStripHeight = 0;
-	this->wram.wWestConnectedMapWidth = 0;
-	this->wram.wWestConnectedMapYAlignment = 0;
-	this->wram.wWestConnectedMapXAlignment = 0;
-	this->wram.wWestConnectedMapViewPointer = 0;
-	this->wram.wMapConn4Ptr = 0;
-	this->wram.wEastConnectionStripSrc = 0;
-	this->wram.wEastConnectionStripDest = 0;
-	this->wram.wEastConnectionStripHeight = 0;
-	this->wram.wEastConnectedMapWidth = 0;
-	this->wram.wEastConnectedMapYAlignment = 0;
-	this->wram.wEastConnectedMapXAlignment = 0;
-	this->wram.wEastConnectedMapViewPointer = 0;
-	this->wram.wSpriteSet.fill_bytes(0);
-	this->wram.wSpriteSetID = 0;
-	this->wram.wObjectDataPointerTemp.fill_bytes(0);
-	this->wram.wMapBackgroundTile = 0;
-	this->wram.wNumberOfWarps = 0;
-	this->wram.wWarpEntries.fill_bytes(0);
-	this->wram.wDestinationWarpID = 0;
-	this->wram.wNumSigns = 0;
-	this->wram.wSignCoords.fill_bytes(0);
-	this->wram.wSignTextIDs.fill_bytes(0);
-	this->wram.wNumSprites = 0;
-	this->wram.wYOffsetSinceLastSpecialWarp = 0;
-	this->wram.wXOffsetSinceLastSpecialWarp = 0;
-	this->wram.wMapSpriteData.fill_bytes(0);
-	this->wram.wMapSpriteExtraData.fill_bytes(0);
-	this->wram.wCurrentMapHeight2 = 0;
-	this->wram.wCurrentMapWidth2 = 0;
-	this->wram.wMapViewVRAMPointer = 0;
-	this->wram.wPlayerMovingDirection = PlayerDirectionBitmap::Null;
-	this->wram.wPlayerLastStopDirection = 0;
-	this->wram.wPlayerDirection = PlayerDirectionBitmap::Null;
-	this->wram.wTilesetBank = 0;
-	this->wram.wTilesetBlocksPtr = 0;
-	this->wram.wTilesetGfxPtr = 0;
-	this->wram.wTilesetCollisionPtr = 0;
-	this->wram.wTilesetTalkingOverTiles.fill_bytes(0);
-	this->wram.wGrassTile = 0;
-	this->wram.wNumBoxItems = 0;
-	this->wram.wBoxItems.fill_bytes(0);
-	this->wram.wBoxItemsTerminator = 0;
-	this->wram.wCurrentBoxNum = 0;
-	this->wram.wNumHoFTeams = 0;
-	this->wram.wUnusedD5A3 = 0;
-	this->wram.wPlayerCoins = 0;
-	this->wram.wMissableObjectFlags.fill_bytes(0);
-	this->wram.wd5cd = 0;
-	this->wram.wMissableObjectList.fill_bytes(0);
-	this->wram.wOaksLabCurScript = 0;
-	this->wram.wGameProgressFlags.fill_bytes(0);
-	this->wram.wPalletTownCurScript = 0;
-	this->wram.wBluesHouseCurScript = 0;
-	this->wram.wViridianCityCurScript = 0;
-	this->wram.wPewterCityCurScript = 0;
-	this->wram.wRoute3CurScript = 0;
-	this->wram.wRoute4CurScript = 0;
-	this->wram.wViridianGymCurScript = 0;
-	this->wram.wPewterGymCurScript = 0;
-	this->wram.wCeruleanGymCurScript = 0;
-	this->wram.wVermilionGymCurScript = 0;
-	this->wram.wCeladonGymCurScript = 0;
-	this->wram.wRoute6CurScript = 0;
-	this->wram.wRoute8CurScript = 0;
-	this->wram.wRoute24CurScript = 0;
-	this->wram.wRoute25CurScript = 0;
-	this->wram.wRoute9CurScript = 0;
-	this->wram.wRoute10CurScript = 0;
-	this->wram.wMtMoon1CurScript = 0;
-	this->wram.wMtMoon3CurScript = 0;
-	this->wram.wSSAnne8CurScript = 0;
-	this->wram.wSSAnne9CurScript = 0;
-	this->wram.wRoute22CurScript = 0;
-	this->wram.wRedsHouse2CurScript = 0;
-	this->wram.wViridianMarketCurScript = 0;
-	this->wram.wRoute22GateCurScript = 0;
-	this->wram.wCeruleanCityCurScript = 0;
-	this->wram.wSSAnne5CurScript = 0;
-	this->wram.wViridianForestCurScript = 0;
-	this->wram.wMuseum1fCurScript = 0;
-	this->wram.wRoute13CurScript = 0;
-	this->wram.wRoute14CurScript = 0;
-	this->wram.wRoute17CurScript = 0;
-	this->wram.wRoute19CurScript = 0;
-	this->wram.wRoute21CurScript = 0;
-	this->wram.wSafariZoneEntranceCurScript = 0;
-	this->wram.wRockTunnel2CurScript = 0;
-	this->wram.wRockTunnel1CurScript = 0;
-	this->wram.wRoute11CurScript = 0;
-	this->wram.wRoute12CurScript = 0;
-	this->wram.wRoute15CurScript = 0;
-	this->wram.wRoute16CurScript = 0;
-	this->wram.wRoute18CurScript = 0;
-	this->wram.wRoute20CurScript = 0;
-	this->wram.wSSAnne10CurScript = 0;
-	this->wram.wVermilionCityCurScript = 0;
-	this->wram.wPokemonTower2CurScript = 0;
-	this->wram.wPokemonTower3CurScript = 0;
-	this->wram.wPokemonTower4CurScript = 0;
-	this->wram.wPokemonTower5CurScript = 0;
-	this->wram.wPokemonTower6CurScript = 0;
-	this->wram.wPokemonTower7CurScript = 0;
-	this->wram.wRocketHideout1CurScript = 0;
-	this->wram.wRocketHideout2CurScript = 0;
-	this->wram.wRocketHideout3CurScript = 0;
-	this->wram.wRocketHideout4CurScript = 0;
-	this->wram.wRoute6GateCurScript = 0;
-	this->wram.wRoute8GateCurScript = 0;
-	this->wram.wCinnabarIslandCurScript = 0;
-	this->wram.wMansion1CurScript = 0;
-	this->wram.wMansion2CurScript = 0;
-	this->wram.wMansion3CurScript = 0;
-	this->wram.wMansion4CurScript = 0;
-	this->wram.wVictoryRoad2CurScript = 0;
-	this->wram.wVictoryRoad3CurScript = 0;
-	this->wram.wFightingDojoCurScript = 0;
-	this->wram.wSilphCo2CurScript = 0;
-	this->wram.wSilphCo3CurScript = 0;
-	this->wram.wSilphCo4CurScript = 0;
-	this->wram.wSilphCo5CurScript = 0;
-	this->wram.wSilphCo6CurScript = 0;
-	this->wram.wSilphCo7CurScript = 0;
-	this->wram.wSilphCo8CurScript = 0;
-	this->wram.wSilphCo9CurScript = 0;
-	this->wram.wHallOfFameRoomCurScript = 0;
-	this->wram.wGaryCurScript = 0;
-	this->wram.wLoreleiCurScript = 0;
-	this->wram.wBrunoCurScript = 0;
-	this->wram.wAgathaCurScript = 0;
-	this->wram.wUnknownDungeon3CurScript = 0;
-	this->wram.wVictoryRoad1CurScript = 0;
-	this->wram.wLanceCurScript = 0;
-	this->wram.wSilphCo10CurScript = 0;
-	this->wram.wSilphCo11CurScript = 0;
-	this->wram.wFuchsiaGymCurScript = 0;
-	this->wram.wSaffronGymCurScript = 0;
-	this->wram.wCinnabarGymCurScript = 0;
-	this->wram.wCeladonGameCornerCurScript = 0;
-	this->wram.wRoute16GateCurScript = 0;
-	this->wram.wBillsHouseCurScript = 0;
-	this->wram.wRoute5GateCurScript = 0;
-	this->wram.wRoute7GateCurScript = 0;
-	this->wram.wPowerPlantCurScript = 0;
-	this->wram.wSSAnne2CurScript = 0;
-	this->wram.wSeafoamIslands4CurScript = 0;
-	this->wram.wRoute23CurScript = 0;
-	this->wram.wSeafoamIslands5CurScript = 0;
-	this->wram.wRoute18GateCurScript = 0;
-	this->wram.wObtainedHiddenItemsFlags.fill_bytes(0);
-	this->wram.wObtainedHiddenCoinsFlags.fill_bytes(0);
-	this->wram.wWalkBikeSurfState = 0;
-	this->wram.wTownVisitedFlag = 0;
-	this->wram.wSafariSteps = 0;
-	this->wram.wFossilItem = 0;
-	this->wram.wFossilMon = 0;
-	this->wram.wEnemyMonOrTrainerClass = 0;
-	this->wram.wPlayerJumpingYScreenCoordsIndex = 0;
-	this->wram.wRivalStarter = 0;
-	this->wram.wPlayerStarter = 0;
-	this->wram.wBoulderSpriteIndex = 0;
-	this->wram.wLastBlackoutMap = 0;
-	this->wram.wDestinationMap = MapId::PalletTown;
-	this->wram.wUnusedD71B = 0;
-	this->wram.wTileInFrontOfBoulderAndBoulderCollisionResult = 0;
-	this->wram.wDungeonWarpDestinationMap = 0;
-	this->wram.wWhichDungeonWarp = 0;
-	this->wram.wUnusedD71F = 0;
-	this->wram.wd728.clear();
-	this->wram.wBeatGymFlags.clear();
-	this->wram.wd72c.clear();
-	this->wram.wd72d_destinationMap = MapId::PalletTown;
-	this->wram.wd72d.clear();
-	this->wram.wd72e.clear();
-	this->wram.wd730.clear();
-	this->wram.wd732.clear();
-	this->wram.wFlags_D733.clear();
-	this->wram.wBeatLorelei.clear();
-	this->wram.wd736.clear();
-	this->wram.wCompletedInGameTradeFlags.fill_bytes(0);
-	this->wram.wWarpedFromWhichWarp = 0;
-	this->wram.wWarpedFromWhichMap = 0;
-	this->wram.wCardKeyDoorY = 0;
-	this->wram.wCardKeyDoorX = 0;
-	this->wram.wFirstLockTrashCanIndex = 0;
-	this->wram.wSecondLockTrashCanIndex = 0;
-	this->wram.wEventFlags.fill_bytes(0);
-	this->wram.wGrassRate = 0;
-	this->wram.wLinkEnemyTrainerName.fill_bytes(0);
-	this->wram.wGrassMons.fill_bytes(0);
-	this->wram.wSerialEnemyDataBlock.fill_bytes(0);
-	this->wram.wEnemyPartyCount = 0;
-	this->wram.wEnemyPartyMons.fill_bytes(0);
-	this->wram.wEnemyPartyMonsTerminator = 0;
-	this->wram.wEnemyMons.fill_bytes(0);
-	this->wram.wWaterRate = 0;
-	this->wram.wWaterMons = 0;
-	this->wram.wEnemyMonOT.fill_bytes(0);
-	this->wram.wEnemyMonNicks.fill_bytes(0);
-	this->wram.wTrainerHeaderPtr = 0;
-	this->wram.wUnusedDA38 = 0;
-	this->wram.wOpponentAfterWrongAnswer = 0;
-	this->wram.wCurMapScript = 0;
-	this->wram.wPlayTimeHours = 0;
-	this->wram.wPlayTimeMaxed = 0;
-	this->wram.wPlayTimeMinutes = 0;
-	this->wram.wPlayTimeSeconds = 0;
-	this->wram.wPlayTimeFrames = 0;
-	this->wram.wSafariZoneGameOver = 0;
-	this->wram.wNumSafariBalls = 0;
-	this->wram.wDayCareInUse = 0;
-	this->wram.wDayCareMonName.fill_bytes(0);
-	this->wram.wDayCareMonOT.fill_bytes(0);
-	this->wram.wDayCareMon.clear();
-	this->wram.wNumInBox = 0;
-	this->wram.wBoxSpecies.fill_bytes(0);
-	this->wram.wBoxSpeciesTerminator = 0;
-	this->wram.wBoxMons.clear();
-	this->wram.wBoxMonOT.fill_bytes(0);
-	this->wram.wBoxMonNicks.fill_bytes(0);
+	this->wram.wPartyData.wPartyCount = 0;
+	this->wram.wPartyData.wPartySpecies.fill_bytes(0);
+	this->wram.wPartyData.wPartyMons.fill_bytes(0);
+	this->wram.wPartyData.wPartyMonOT.fill_bytes(0);
+	this->wram.wPartyData.wPartyMonNicks.fill_bytes(0);
+	this->wram.wMainData.wPokedexOwned.fill_bytes(0);
+	this->wram.wMainData.wPokedexSeen.fill_bytes(0);
+	this->wram.wMainData.wNumBagItems = 0;
+	this->wram.wMainData.wBagItems.fill_bytes(0);
+	this->wram.wMainData.wBagItemsTerminator = 0;
+	this->wram.wMainData.wPlayerMoney = 0;
+	this->wram.wMainData.wRivalName.fill_bytes(0);
+	this->wram.wMainData.wOptions.clear();
+	this->wram.wMainData.wObtainedBadges.fill_bytes(0);
+	this->wram.wMainData.wLetterPrintingDelayFlags.clear();
+	this->wram.wMainData.wPlayerID = 0;
+	this->wram.wMainData.wMapMusicSoundID = 0;
+	this->wram.wMainData.wMapMusicROMBank = 0;
+	this->wram.wMainData.wMapPalOffset = 0;
+	this->wram.wMainData.wCurMap = MapId::PalletTown;
+	this->wram.wMainData.wCurrentTileBlockMapViewPointer = 0;
+	this->wram.wMainData.wYCoord = 0;
+	this->wram.wMainData.wXCoord = 0;
+	this->wram.wMainData.wYBlockCoord = 0;
+	this->wram.wMainData.wXBlockCoord = 0;
+	this->wram.wMainData.wLastMap = MapId::PalletTown;
+	this->wram.wMainData.wUnusedD366 = 0;
+	this->wram.wMainData.wCurMapTileset = 0;
+	this->wram.wMainData.wCurMapHeight = 0;
+	this->wram.wMainData.wCurMapWidth = 0;
+	this->wram.wMainData.wMapDataPtr = 0;
+	this->wram.wMainData.wMapTextPtr = 0;
+	this->wram.wMainData.wMapScriptPtr = 0;
+	this->wram.wMainData.wMapConnections = 0;
+	this->wram.wMainData.wMapConn1Ptr = 0;
+	this->wram.wMainData.wNorthConnectionStripSrc = 0;
+	this->wram.wMainData.wNorthConnectionStripDest = 0;
+	this->wram.wMainData.wNorthConnectionStripWidth = 0;
+	this->wram.wMainData.wNorthConnectedMapWidth = 0;
+	this->wram.wMainData.wNorthConnectedMapYAlignment = 0;
+	this->wram.wMainData.wNorthConnectedMapXAlignment = 0;
+	this->wram.wMainData.wNorthConnectedMapViewPointer = 0;
+	this->wram.wMainData.wMapConn2Ptr = 0;
+	this->wram.wMainData.wSouthConnectionStripSrc = 0;
+	this->wram.wMainData.wSouthConnectionStripDest = 0;
+	this->wram.wMainData.wSouthConnectionStripWidth = 0;
+	this->wram.wMainData.wSouthConnectedMapWidth = 0;
+	this->wram.wMainData.wSouthConnectedMapYAlignment = 0;
+	this->wram.wMainData.wSouthConnectedMapXAlignment = 0;
+	this->wram.wMainData.wSouthConnectedMapViewPointer = 0;
+	this->wram.wMainData.wMapConn3Ptr = 0;
+	this->wram.wMainData.wWestConnectionStripSrc = 0;
+	this->wram.wMainData.wWestConnectionStripDest = 0;
+	this->wram.wMainData.wWestConnectionStripHeight = 0;
+	this->wram.wMainData.wWestConnectedMapWidth = 0;
+	this->wram.wMainData.wWestConnectedMapYAlignment = 0;
+	this->wram.wMainData.wWestConnectedMapXAlignment = 0;
+	this->wram.wMainData.wWestConnectedMapViewPointer = 0;
+	this->wram.wMainData.wMapConn4Ptr = 0;
+	this->wram.wMainData.wEastConnectionStripSrc = 0;
+	this->wram.wMainData.wEastConnectionStripDest = 0;
+	this->wram.wMainData.wEastConnectionStripHeight = 0;
+	this->wram.wMainData.wEastConnectedMapWidth = 0;
+	this->wram.wMainData.wEastConnectedMapYAlignment = 0;
+	this->wram.wMainData.wEastConnectedMapXAlignment = 0;
+	this->wram.wMainData.wEastConnectedMapViewPointer = 0;
+	this->wram.wMainData.wSpriteSet.fill_bytes(0);
+	this->wram.wMainData.wSpriteSetID = 0;
+	this->wram.wMainData.wObjectDataPointerTemp.fill_bytes(0);
+	this->wram.wMainData.wMapBackgroundTile = 0;
+	this->wram.wMainData.wNumberOfWarps = 0;
+	this->wram.wMainData.wWarpEntries.fill_bytes(0);
+	this->wram.wMainData.wDestinationWarpID = 0;
+	this->wram.wMainData.wNumSigns = 0;
+	this->wram.wMainData.wSignCoords.fill_bytes(0);
+	this->wram.wMainData.wSignTextIDs.fill_bytes(0);
+	this->wram.wMainData.wNumSprites = 0;
+	this->wram.wMainData.wYOffsetSinceLastSpecialWarp = 0;
+	this->wram.wMainData.wXOffsetSinceLastSpecialWarp = 0;
+	this->wram.wMainData.wMapSpriteData.fill_bytes(0);
+	this->wram.wMainData.wMapSpriteExtraData.fill_bytes(0);
+	this->wram.wMainData.wCurrentMapHeight2 = 0;
+	this->wram.wMainData.wCurrentMapWidth2 = 0;
+	this->wram.wMainData.wMapViewVRAMPointer = 0;
+	this->wram.wMainData.wPlayerMovingDirection = PlayerDirectionBitmap::Null;
+	this->wram.wMainData.wPlayerLastStopDirection = 0;
+	this->wram.wMainData.wPlayerDirection = PlayerDirectionBitmap::Null;
+	this->wram.wMainData.wTilesetBank = 0;
+	this->wram.wMainData.wTilesetBlocksPtr = 0;
+	this->wram.wMainData.wTilesetGfxPtr = 0;
+	this->wram.wMainData.wTilesetCollisionPtr = 0;
+	this->wram.wMainData.wTilesetTalkingOverTiles.fill_bytes(0);
+	this->wram.wMainData.wGrassTile = 0;
+	this->wram.wMainData.wNumBoxItems = 0;
+	this->wram.wMainData.wBoxItems.fill_bytes(0);
+	this->wram.wMainData.wBoxItemsTerminator = 0;
+	this->wram.wMainData.wCurrentBoxNum = 0;
+	this->wram.wMainData.wNumHoFTeams = 0;
+	this->wram.wMainData.wUnusedD5A3 = 0;
+	this->wram.wMainData.wPlayerCoins = 0;
+	this->wram.wMainData.wMissableObjectFlags.fill_bytes(0);
+	this->wram.wMainData.wd5cd = 0;
+	this->wram.wMainData.wMissableObjectList.fill_bytes(0);
+	this->wram.wMainData.wOaksLabCurScript = 0;
+	this->wram.wMainData.wGameProgressFlags.fill_bytes(0);
+	this->wram.wMainData.wPalletTownCurScript = 0;
+	this->wram.wMainData.wBluesHouseCurScript = 0;
+	this->wram.wMainData.wViridianCityCurScript = 0;
+	this->wram.wMainData.wPewterCityCurScript = 0;
+	this->wram.wMainData.wRoute3CurScript = 0;
+	this->wram.wMainData.wRoute4CurScript = 0;
+	this->wram.wMainData.wViridianGymCurScript = 0;
+	this->wram.wMainData.wPewterGymCurScript = 0;
+	this->wram.wMainData.wCeruleanGymCurScript = 0;
+	this->wram.wMainData.wVermilionGymCurScript = 0;
+	this->wram.wMainData.wCeladonGymCurScript = 0;
+	this->wram.wMainData.wRoute6CurScript = 0;
+	this->wram.wMainData.wRoute8CurScript = 0;
+	this->wram.wMainData.wRoute24CurScript = 0;
+	this->wram.wMainData.wRoute25CurScript = 0;
+	this->wram.wMainData.wRoute9CurScript = 0;
+	this->wram.wMainData.wRoute10CurScript = 0;
+	this->wram.wMainData.wMtMoon1CurScript = 0;
+	this->wram.wMainData.wMtMoon3CurScript = 0;
+	this->wram.wMainData.wSSAnne8CurScript = 0;
+	this->wram.wMainData.wSSAnne9CurScript = 0;
+	this->wram.wMainData.wRoute22CurScript = 0;
+	this->wram.wMainData.wRedsHouse2CurScript = 0;
+	this->wram.wMainData.wViridianMarketCurScript = 0;
+	this->wram.wMainData.wRoute22GateCurScript = 0;
+	this->wram.wMainData.wCeruleanCityCurScript = 0;
+	this->wram.wMainData.wSSAnne5CurScript = 0;
+	this->wram.wMainData.wViridianForestCurScript = 0;
+	this->wram.wMainData.wMuseum1fCurScript = 0;
+	this->wram.wMainData.wRoute13CurScript = 0;
+	this->wram.wMainData.wRoute14CurScript = 0;
+	this->wram.wMainData.wRoute17CurScript = 0;
+	this->wram.wMainData.wRoute19CurScript = 0;
+	this->wram.wMainData.wRoute21CurScript = 0;
+	this->wram.wMainData.wSafariZoneEntranceCurScript = 0;
+	this->wram.wMainData.wRockTunnel2CurScript = 0;
+	this->wram.wMainData.wRockTunnel1CurScript = 0;
+	this->wram.wMainData.wRoute11CurScript = 0;
+	this->wram.wMainData.wRoute12CurScript = 0;
+	this->wram.wMainData.wRoute15CurScript = 0;
+	this->wram.wMainData.wRoute16CurScript = 0;
+	this->wram.wMainData.wRoute18CurScript = 0;
+	this->wram.wMainData.wRoute20CurScript = 0;
+	this->wram.wMainData.wSSAnne10CurScript = 0;
+	this->wram.wMainData.wVermilionCityCurScript = 0;
+	this->wram.wMainData.wPokemonTower2CurScript = 0;
+	this->wram.wMainData.wPokemonTower3CurScript = 0;
+	this->wram.wMainData.wPokemonTower4CurScript = 0;
+	this->wram.wMainData.wPokemonTower5CurScript = 0;
+	this->wram.wMainData.wPokemonTower6CurScript = 0;
+	this->wram.wMainData.wPokemonTower7CurScript = 0;
+	this->wram.wMainData.wRocketHideout1CurScript = 0;
+	this->wram.wMainData.wRocketHideout2CurScript = 0;
+	this->wram.wMainData.wRocketHideout3CurScript = 0;
+	this->wram.wMainData.wRocketHideout4CurScript = 0;
+	this->wram.wMainData.wRoute6GateCurScript = 0;
+	this->wram.wMainData.wRoute8GateCurScript = 0;
+	this->wram.wMainData.wCinnabarIslandCurScript = 0;
+	this->wram.wMainData.wMansion1CurScript = 0;
+	this->wram.wMainData.wMansion2CurScript = 0;
+	this->wram.wMainData.wMansion3CurScript = 0;
+	this->wram.wMainData.wMansion4CurScript = 0;
+	this->wram.wMainData.wVictoryRoad2CurScript = 0;
+	this->wram.wMainData.wVictoryRoad3CurScript = 0;
+	this->wram.wMainData.wFightingDojoCurScript = 0;
+	this->wram.wMainData.wSilphCo2CurScript = 0;
+	this->wram.wMainData.wSilphCo3CurScript = 0;
+	this->wram.wMainData.wSilphCo4CurScript = 0;
+	this->wram.wMainData.wSilphCo5CurScript = 0;
+	this->wram.wMainData.wSilphCo6CurScript = 0;
+	this->wram.wMainData.wSilphCo7CurScript = 0;
+	this->wram.wMainData.wSilphCo8CurScript = 0;
+	this->wram.wMainData.wSilphCo9CurScript = 0;
+	this->wram.wMainData.wHallOfFameRoomCurScript = 0;
+	this->wram.wMainData.wGaryCurScript = 0;
+	this->wram.wMainData.wLoreleiCurScript = 0;
+	this->wram.wMainData.wBrunoCurScript = 0;
+	this->wram.wMainData.wAgathaCurScript = 0;
+	this->wram.wMainData.wUnknownDungeon3CurScript = 0;
+	this->wram.wMainData.wVictoryRoad1CurScript = 0;
+	this->wram.wMainData.wLanceCurScript = 0;
+	this->wram.wMainData.wSilphCo10CurScript = 0;
+	this->wram.wMainData.wSilphCo11CurScript = 0;
+	this->wram.wMainData.wFuchsiaGymCurScript = 0;
+	this->wram.wMainData.wSaffronGymCurScript = 0;
+	this->wram.wMainData.wCinnabarGymCurScript = 0;
+	this->wram.wMainData.wCeladonGameCornerCurScript = 0;
+	this->wram.wMainData.wRoute16GateCurScript = 0;
+	this->wram.wMainData.wBillsHouseCurScript = 0;
+	this->wram.wMainData.wRoute5GateCurScript = 0;
+	this->wram.wMainData.wRoute7GateCurScript = 0;
+	this->wram.wMainData.wPowerPlantCurScript = 0;
+	this->wram.wMainData.wSSAnne2CurScript = 0;
+	this->wram.wMainData.wSeafoamIslands4CurScript = 0;
+	this->wram.wMainData.wRoute23CurScript = 0;
+	this->wram.wMainData.wSeafoamIslands5CurScript = 0;
+	this->wram.wMainData.wRoute18GateCurScript = 0;
+	this->wram.wMainData.wObtainedHiddenItemsFlags.fill_bytes(0);
+	this->wram.wMainData.wObtainedHiddenCoinsFlags.fill_bytes(0);
+	this->wram.wMainData.wWalkBikeSurfState = 0;
+	this->wram.wMainData.wTownVisitedFlag = 0;
+	this->wram.wMainData.wSafariSteps = 0;
+	this->wram.wMainData.wFossilItem = 0;
+	this->wram.wMainData.wFossilMon = 0;
+	this->wram.wMainData.wEnemyMonOrTrainerClass = 0;
+	this->wram.wMainData.wPlayerJumpingYScreenCoordsIndex = 0;
+	this->wram.wMainData.wRivalStarter = 0;
+	this->wram.wMainData.wPlayerStarter = 0;
+	this->wram.wMainData.wBoulderSpriteIndex = 0;
+	this->wram.wMainData.wLastBlackoutMap = 0;
+	this->wram.wMainData.wDestinationMap = MapId::PalletTown;
+	this->wram.wMainData.wUnusedD71B = 0;
+	this->wram.wMainData.wTileInFrontOfBoulderAndBoulderCollisionResult = 0;
+	this->wram.wMainData.wDungeonWarpDestinationMap = 0;
+	this->wram.wMainData.wWhichDungeonWarp = 0;
+	this->wram.wMainData.wUnusedD71F = 0;
+	this->wram.wMainData.wd728.clear();
+	this->wram.wMainData.wBeatGymFlags.clear();
+	this->wram.wMainData.wd72c.clear();
+	this->wram.wMainData.wd72d_destinationMap = MapId::PalletTown;
+	this->wram.wMainData.wd72d.clear();
+	this->wram.wMainData.wd72e.clear();
+	this->wram.wMainData.wd730.clear();
+	this->wram.wMainData.wd732.clear();
+	this->wram.wMainData.wFlags_D733.clear();
+	this->wram.wMainData.wBeatLorelei.clear();
+	this->wram.wMainData.wd736.clear();
+	this->wram.wMainData.wCompletedInGameTradeFlags.fill_bytes(0);
+	this->wram.wMainData.wWarpedFromWhichWarp = 0;
+	this->wram.wMainData.wWarpedFromWhichMap = 0;
+	this->wram.wMainData.wCardKeyDoorY = 0;
+	this->wram.wMainData.wCardKeyDoorX = 0;
+	this->wram.wMainData.wFirstLockTrashCanIndex = 0;
+	this->wram.wMainData.wSecondLockTrashCanIndex = 0;
+	this->wram.wMainData.wEventFlags.fill_bytes(0);
+	this->wram.wMainData.wGrassRate = 0;
+	this->wram.wMainData.wLinkEnemyTrainerName.fill_bytes(0);
+	this->wram.wMainData.wGrassMons.fill_bytes(0);
+	this->wram.wMainData.wSerialEnemyDataBlock.fill_bytes(0);
+	this->wram.wMainData.wEnemyPartyCount = 0;
+	this->wram.wMainData.wEnemyPartyMons.fill_bytes(0);
+	this->wram.wMainData.wEnemyPartyMonsTerminator = 0;
+	this->wram.wMainData.wEnemyMons.fill_bytes(0);
+	this->wram.wMainData.wWaterRate = 0;
+	this->wram.wMainData.wWaterMons = 0;
+	this->wram.wMainData.wEnemyMonOT.fill_bytes(0);
+	this->wram.wMainData.wEnemyMonNicks.fill_bytes(0);
+	this->wram.wMainData.wTrainerHeaderPtr = 0;
+	this->wram.wMainData.wUnusedDA38 = 0;
+	this->wram.wMainData.wOpponentAfterWrongAnswer = 0;
+	this->wram.wMainData.wCurMapScript = 0;
+	this->wram.wMainData.wPlayTimeHours = 0;
+	this->wram.wMainData.wPlayTimeMaxed = 0;
+	this->wram.wMainData.wPlayTimeMinutes = 0;
+	this->wram.wMainData.wPlayTimeSeconds = 0;
+	this->wram.wMainData.wPlayTimeFrames = 0;
+	this->wram.wMainData.wSafariZoneGameOver = 0;
+	this->wram.wMainData.wNumSafariBalls = 0;
+	this->wram.wMainData.wDayCareInUse = 0;
+	this->wram.wMainData.wDayCareMonName.fill_bytes(0);
+	this->wram.wMainData.wDayCareMonOT.fill_bytes(0);
+	this->wram.wMainData.wDayCareMon.clear();
+	this->wram.wBoxData.wNumInBox = 0;
+	this->wram.wBoxData.wBoxSpecies.fill_bytes(0);
+	this->wram.wBoxData.wBoxSpeciesTerminator = 0;
+	this->wram.wBoxData.wBoxMons.clear();
+	this->wram.wBoxData.wBoxMonOT.fill_bytes(0);
+	this->wram.wBoxData.wBoxMonNicks.fill_bytes(0);
 }
 
 void CppRed::initialize_player_data(){
-	auto wd732 = this->wram.wd732.get_raw_value();
-	auto wOptions = this->wram.wOptions.get_raw_value();
-	auto wLetterPrintingDelayFlags = this->wram.wLetterPrintingDelayFlags.get_raw_value();
+	auto wd732 = this->wram.wMainData.wd732.get_raw_value();
+	auto wOptions = this->wram.wMainData.wOptions.get_raw_value();
+	auto wLetterPrintingDelayFlags = this->wram.wMainData.wLetterPrintingDelayFlags.get_raw_value();
 
 	this->mass_initialization();
-	this->wram.wSpriteStateData1.fill_bytes(0);
-	this->wram.wSpriteStateData2.fill_bytes(0);
+	this->wram.wSpriteData.wSpriteStateData1.fill_bytes(0);
+	this->wram.wSpriteData.wSpriteStateData2.fill_bytes(0);
 
-	this->wram.wd732.set_raw_value(wd732);
-	this->wram.wOptions.set_raw_value(wOptions);
-	this->wram.wLetterPrintingDelayFlags.set_raw_value(wLetterPrintingDelayFlags);
+	this->wram.wMainData.wd732.set_raw_value(wd732);
+	this->wram.wMainData.wOptions.set_raw_value(wOptions);
+	this->wram.wMainData.wLetterPrintingDelayFlags.set_raw_value(wLetterPrintingDelayFlags);
 
 	if (!this->wram.wOptionsInitialized)
 		this->initialize_options();
 
 	this->wram.wPlayerName = ninten_text;
-	this->wram.wRivalName = sony_text;
+	this->wram.wMainData.wRivalName = sony_text;
 }
 
 void CppRed::initialize_options(){
-	this->wram.wLetterPrintingDelayFlags.set_raw_value(1);
-	this->wram.wOptions.clear();
-	this->wram.wOptions.set_text_speed(TextSpeed::Medium);
+	this->wram.wMainData.wLetterPrintingDelayFlags.set_raw_value(1);
+	this->wram.wMainData.wOptions.clear();
+	this->wram.wMainData.wOptions.set_text_speed(TextSpeed::Medium);
 }
 
 void CppRed::add_item_to_inventory(unsigned position, ItemId item, unsigned quantity){
@@ -859,18 +855,18 @@ void CppRed::add_item_to_inventory(unsigned position, ItemId item, unsigned quan
 MapId CppRed::special_warp_in(){
 	this->load_special_warp_data();
 	this->call_predef(Predef::LoadTilesetHeader);
-	bool fly_warp = this->wram.wd732.get_fly_warp();
-	this->wram.wd732.set_fly_warp(false);
+	bool fly_warp = this->wram.wMainData.wd732.get_fly_warp();
+	this->wram.wMainData.wd732.set_fly_warp(false);
 	MapId destination = MapId::PalletTown;
 	if (fly_warp)
-		destination = this->wram.wDestinationMap;
+		destination = this->wram.wMainData.wDestinationMap;
 	else
 		destination = MapId::PalletTown;
-	auto destination_map = this->wram.wd72d_destinationMap.enum_value();
+	auto destination_map = this->wram.wMainData.wd72d_destinationMap.enum_value();
 	if ((unsigned)destination_map)
 		destination = destination_map;
-	if (!this->wram.wd732.get_hole_warp())
-		this->wram.wLastMap = destination;
+	if (!this->wram.wMainData.wd732.get_hole_warp())
+		this->wram.wMainData.wLastMap = destination;
 	return destination;
 }
 
@@ -879,21 +875,41 @@ void CppRed::load_special_warp_data(){
 }
 
 void CppRed::clear_save(){
-	fill_array(this->sram, 0xFF);
-	this->save_sram();
+	sram_t sram;
+	std::fill(sram.begin(), sram.end(), 0xFF);
+	this->save_sram(sram);
 }
 
-void CppRed::save_sram() const{
+void CppRed::save_sram(const sram_t &sram) const{
 	std::ofstream file("pokered.sav", std::ios::binary);
-	file.write((const char *)this->sram, sizeof(this->sram));
+	file.write((const char *)sram.data(), sram.size());
+}
+
+CppRed::sram_t CppRed::load_sram(){
+	sram_t memory;
+	SRam sram(memory.data(), { { read_memory_u8, write_memory_u8 } });
+	std::ifstream file("pokered.sav", std::ios::binary);
+	if (!file){
+		xorshift128_state state = {
+			this->random(),
+			this->random(),
+			this->random(),
+			this->random(),
+		};
+		sram.clear(state);
+	}else{
+		sram.clear();
+		file.read((char *)memory.data(), memory.size());
+	}
+	return memory;
 }
 
 void CppRed::special_enter_map(MapId id){
 	this->hram.hJoyPressed = 0;
 	this->hram.hJoyHeld.clear();
 	this->hram.hJoy5 = 0;
-	this->wram.wd72d.clear();
-	this->wram.wd732.set_counting_play_time(true);
+	this->wram.wMainData.wd72d.clear();
+	this->wram.wMainData.wd732.set_counting_play_time(true);
 	this->reset_player_sprite_data();
 	this->delay_frames(20);
 	if (this->wram.wEnteringCableClub)
@@ -907,7 +923,7 @@ void CppRed::enter_map(MapId){
 
 void CppRed::reset_player_sprite_data(){
 	{
-		auto player = this->wram.wSpriteStateData1[0];
+		auto player = this->wram.wSpriteData.wSpriteStateData1[0];
 		player.picture_id = 1;
 		player.movement_status.clear();
 		player.sprite_image_idx = 0;
@@ -925,6 +941,34 @@ void CppRed::reset_player_sprite_data(){
 		player.collision_bits2 = 0;
 		player.collision_bits3 = 0;
 	}
-	this->wram.wSpriteStateData2[0].clear();
-	this->wram.wSpriteStateData2[0].sprite_image_base_offset = 1;
+	this->wram.wSpriteData.wSpriteStateData2[0].clear();
+	this->wram.wSpriteData.wSpriteStateData2[0].sprite_image_base_offset = 1;
+}
+
+void CppRed::load_save(){
+	this->clear_screen();
+	this->load_font_tile_patterns();
+	this->load_textbox_tile_patterns();
+	auto memory = this->load_sram();
+	SRam sram(memory.data(), { { read_memory_u8, write_memory_u8 } });
+
+	auto main_data = sram.player_name.get_memory();
+	auto size = sram.main_data_checksum.get_memory() - main_data;
+	auto checksum = calculate_checksum(main_data, size);
+	if (checksum != sram.main_data_checksum){
+		this->wram.wMainData.wd730.set_no_print_delay(true);
+		this->text.print_text(this->text.FileDataDestroyedText);
+		this->delay_frames(100);
+		this->wram.wMainData.wd730.set_no_print_delay(false);
+		this->wram.wSaveFileStatus = SaveFileStatus::NoSave;
+	}else{
+		this->wram.wPlayerName.copy_from(sram.player_name);
+		this->wram.wMainData.copy_from(sram.main_data);
+		this->wram.wSpriteData.copy_from(sram.sprite_data);
+		this->wram.wPartyData.copy_from(sram.party_data);
+		this->wram.wBoxData.copy_from(sram.current_box_data);
+		this->hram.hTilesetType = sram.tileset_type;
+		this->wram.wMainData.wCurMapTileset |= 1 << 7;
+		this->wram.wSaveFileStatus = SaveFileStatus::SaveExists;
+	}
 }

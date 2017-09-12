@@ -143,6 +143,15 @@ public:
 	}
 };
 
+class SpecialStruct : public Type{
+public:
+	virtual ~SpecialStruct(){}
+	virtual std::string generate_initializer(unsigned address, unsigned base_address, const std::unique_ptr<Number> &size, const std::string &name) const override;
+	virtual std::unique_ptr<Number> get_size() override{
+		return std::make_unique<CompoundNumber>(this->get_actual_type_name() + "::size");
+	}
+};
+
 class spritestatedata1Struct : public Struct{
 public:
 	virtual ~spritestatedata1Struct(){}
@@ -199,6 +208,34 @@ class pcboxStruct : public pcboxmemberStruct{
 public:
 	virtual ~pcboxStruct(){}
 	virtual std::string get_actual_type_name() const override;
+};
+
+class maindataStruct : public SpecialStruct{
+public:
+	virtual ~maindataStruct(){}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
+};
+
+class spritedataStruct : public SpecialStruct{
+public:
+	virtual ~spritedataStruct(){}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
+};
+
+class partydataStruct : public SpecialStruct{
+public:
+	virtual ~partydataStruct(){}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
+};
+
+class boxdataStruct : public SpecialStruct{
+public:
+	virtual ~boxdataStruct(){}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
 };
 
 //------------------------------------------------------------------------------

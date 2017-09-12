@@ -72,6 +72,10 @@ int main(){
 	try{
 		generate_xram("wram", "WRam", 0xC000);
 		generate_xram("hram", "HRam", 0xFF80);
+		generate_xram("main_data", "MainData", 0xD2F7);
+		generate_xram("sprite_data", "SpriteData", 0xC100);
+		generate_xram("party_data", "PartyData", 0xD163);
+		generate_xram("box_data", "BoxData", 0xDA80);
 	}catch (std::exception &e){
 		std::cerr << e.what() << std::endl;
 		return -1;

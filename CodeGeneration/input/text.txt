@@ -3058,7 +3058,7 @@ PROMPT
 MEM wcf4b_LinkTradePlayerMonName
 TEXT " went"
 LINE "to @"
-MEM wLinkEnemyTrainerName
+MEM wMainData.wLinkEnemyTrainerName
 TEXT "."
 DONE
 
@@ -3070,7 +3070,7 @@ TEXT ","
 DONE
 
 .TradeSendsText
-MEM wLinkEnemyTrainerName
+MEM wMainData.wLinkEnemyTrainerName
 TEXT " sends"
 LINE "@"
 MEM wcd6d_LinkTradePartnerMonName
@@ -3078,7 +3078,7 @@ TEXT "."
 DONE
 
 .TradeWavesFarewellText
-MEM wLinkEnemyTrainerName
+MEM wMainData.wLinkEnemyTrainerName
 TEXT " waves"
 LINE "farewell as"
 DONE
@@ -3097,7 +3097,7 @@ TEXT "."
 DONE
 
 .TradeWillTradeText
-MEM wLinkEnemyTrainerName
+MEM wMainData.wLinkEnemyTrainerName
 TEXT " will"
 LINE "trade @"
 MEM wcd6d_LinkTradePartnerMonName
@@ -4908,7 +4908,7 @@ DONE
 .DayCareGotMonBackText
 TEXT "<PLAYER> got"
 LINE "@"
-MEM wDayCareMonName
+MEM wMainData.wDayCareMonName
 TEXT " back!"
 DONE
 
@@ -13954,7 +13954,7 @@ TEXT "!@@"
 TEXT "There's no more"
 LINE "room for <POKE>MON!"
 CONT "@"
-MEM wBoxMonNicks
+MEM wBoxData.wBoxMonNicks
 TEXT " was"
 CONT "sent to <POKE>MON"
 CONT "BOX @"
@@ -15157,14 +15157,14 @@ TEXT " was"
 CONT "caught!@@"
 
 .ItemUseBallText07
-MEM wBoxMonNicks
+MEM wBoxData.wBoxMonNicks
 TEXT " was"
 LINE "transferred to"
 CONT "BILL's PC!"
 PROMPT
 
 .ItemUseBallText08
-MEM wBoxMonNicks
+MEM wBoxData.wBoxMonNicks
 TEXT " was"
 LINE "transferred to"
 CONT "someone's PC!"

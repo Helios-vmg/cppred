@@ -29,12 +29,12 @@ void oak_speech(CppRed &red){
 	red.initialize_player_data();
 	red.call_predef(Predef::InitPlayerData2);
 	red.add_item_to_inventory(0, ItemId::Potion, 1);
-	red.wram.wDestinationMap = red.wram.wDefaultMap;
+	red.wram.wMainData.wDestinationMap = red.wram.wDefaultMap;
 	red.special_warp_in();
 	red.hram.hTilesetType = 0;
 	
 	//Skip choosing names?
-	if (!red.wram.wd732.get_unknown()){
+	if (!red.wram.wMainData.wd732.get_unknown()){
 		intro_display_picture_centered_or_upper_right(red, ProfOakPic, Placing::Centered);
 		fade_in_intro_pic(red);
 		red.print_text(text.OakSpeechText1);

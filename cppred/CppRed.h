@@ -10,6 +10,7 @@
 #include "CppRedText.h"
 #include "CppRedMainMenu.h"
 #include "CppRedMap.h"
+#include "CppRedSRam.h"
 #include "ExternalRamBuffer.h"
 #include "threads.h"
 #include "utility.h"
@@ -23,6 +24,7 @@ class HostSystem;
 class CppRed{
 public:
 	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
+	typedef std::array<byte_t, 0x8000> sram_t;
 private:
 	HostSystem *host;
 	DisplayController display_controller;
@@ -49,9 +51,8 @@ private:
 	bool speed_changed = false;
 	byte_t interrupt_flag = 0;
 	byte_t interrupt_enable_flag = 0;
-	std::uint32_t xorshift_state[4];
+	xorshift128_state random_state;
 	std::vector<std::function<void()>> predefs;
-	byte_t sram[0x8000];
 
 	void nonemulation_init();
 	void interpreter_thread_function();
@@ -115,7 +116,7 @@ private:
 	SpriteStateData2 get_current_sprite2();
 	void *map_pointer(unsigned pointer);
 	void mass_initialization();
-	void save_sram() const;
+	void save_sram(const sram_t &) const;
 public:
 
 	WRam wram;
@@ -249,6 +250,8 @@ public:
 	//Blocks until the next v-blank.
 	void delay_frame();
 	void wait_for_text_scroll_button_press();
+	sram_t load_sram();
+	void load_save();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

@@ -40,7 +40,13 @@ std::string handle_mem(const std::string &input){
 	std::string ret;
 	auto space = input.find_first_of(" \t");
 	auto e = input.substr(0, space);
-	mem_enum_values.insert(e);
+
+	auto dot = e.find('.');
+	auto mem_element = e;
+	if (dot != e.npos)
+		mem_element = e.substr(dot + 1);
+
+	mem_enum_values.insert(mem_element);
 	ret += " << MEM(";
 	ret += e;
 	ret += ")";

@@ -1,0 +1,10 @@
+address,size,type,name,comment
+DA80,mark,,wBoxDataStart,
+DA80,1,u8,wNumInBox,
+DA81,mons_per_box,u8[mons_per_box],wBoxSpecies,
+DA95,1,u8,wBoxSpeciesTerminator,
+DA96,PcBox::size,pcbox,wBoxMons,
+DD2A,character_name_length * mons_per_box,u8[character_name_length * mons_per_box],wBoxMonOT,
+DE06,character_name_length * mons_per_box,u8[character_name_length * mons_per_box],wBoxMonNicks,
+DEE2,mark,,wBoxMonNicksEnd,
+DEE2,mark,,wBoxDataEnd,

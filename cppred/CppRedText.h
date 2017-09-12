@@ -9,6 +9,8 @@
 class CppRed;
 
 namespace SpecialCharacters{
+static const byte_t terminator = 0x50;
+
 static const byte_t box_top_left     = 0x79;
 static const byte_t box_horizontal   = 0x7A;
 static const byte_t box_top_right    = 0x7B;
@@ -66,7 +68,7 @@ public:
 
 	class LineCommand : public Command{
 	public:
-		LineCommand();
+		LineCommand(){}
 		CommandType type() const override{
 			return CommandType::Line;
 		}
@@ -74,7 +76,7 @@ public:
 
 	class NextCommand : public Command{
 	public:
-		NextCommand();
+		NextCommand(){}
 		CommandType type() const override{
 			return CommandType::Next;
 		}
@@ -82,7 +84,7 @@ public:
 
 	class ContCommand : public Command{
 	public:
-		ContCommand();
+		ContCommand(){}
 		CommandType type() const override{
 			return CommandType::Cont;
 		}
@@ -90,7 +92,7 @@ public:
 
 	class PageCommand : public Command{
 	public:
-		PageCommand();
+		PageCommand(){}
 		CommandType type() const override{
 			return CommandType::Page;
 		}
@@ -98,7 +100,7 @@ public:
 
 	class ParaCommand : public Command{
 	public:
-		ParaCommand();
+		ParaCommand(){}
 		CommandType type() const override{
 			return CommandType::Para;
 		}
@@ -106,7 +108,7 @@ public:
 
 	class DoneCommand : public Command{
 	public:
-		DoneCommand();
+		DoneCommand(){}
 		CommandType type() const override{
 			return CommandType::Done;
 		}
@@ -114,7 +116,7 @@ public:
 
 	class PromptCommand : public Command{
 	public:
-		PromptCommand();
+		PromptCommand(){}
 		CommandType type() const override{
 			return CommandType::Prompt;
 		}
@@ -122,7 +124,7 @@ public:
 
 	class DexCommand : public Command{
 	public:
-		DexCommand();
+		DexCommand(){}
 		CommandType type() const override{
 			return CommandType::Dex;
 		}
@@ -130,7 +132,7 @@ public:
 
 	class AutocontCommand : public Command{
 	public:
-		AutocontCommand();
+		AutocontCommand(){}
 		CommandType type() const override{
 			return CommandType::Autocont;
 		}

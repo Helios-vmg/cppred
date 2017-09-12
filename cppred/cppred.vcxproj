@@ -178,6 +178,7 @@
     <ClCompile Include="CppRedMovement.cpp" />
     <ClCompile Include="CppRedRam.cpp" />
     <ClCompile Include="CppRedScripts.cpp" />
+    <ClCompile Include="CppRedSram.cpp" />
     <ClCompile Include="CppRedStructs.cpp" />
     <ClCompile Include="CppRedText.cpp" />
     <ClCompile Include="CppRedTextCtor.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="threads.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="UserInputController.cpp" />
+    <ClCompile Include="utility.cpp" />
     <ClCompile Include="WinSockNetworking.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +211,7 @@
     <ClInclude Include="CppRedMap.h" />
     <ClInclude Include="CppRedRam.h" />
     <ClInclude Include="CppRedScripts.h" />
+    <ClInclude Include="CppRedSRam.h" />
     <ClInclude Include="CppRedStructs.h" />
     <ClInclude Include="CppRedText.h" />
     <ClInclude Include="CppRedTitleScreen.h" />

@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <atomic>
+#include <array>
 
 template <typename T>
 class Maybe{
@@ -114,3 +115,8 @@ template <typename T, size_t N>
 void fill_array(T (&array)[N], byte_t value = 0){
 	memset(array, value, sizeof(array));
 }
+
+typedef std::array<std::uint32_t, 4> xorshift128_state;
+
+std::uint32_t xorshift128(xorshift128_state &state);
+byte_t calculate_checksum(const void *data, size_t size);

@@ -1,5 +1,7 @@
 #include "CppRedMainMenu.h"
 #include "CppRed.h"
+#include "CppRedSRam.h"
+#include "MemoryOperations.h"
 
 CppRedMainMenu::CppRedMainMenu(CppRed &parent): parent(&parent){
 }
@@ -8,14 +10,14 @@ MainMenuResult CppRedMainMenu::display(){
 	auto &wram = this->parent->wram;
 	auto &hram = this->parent->hram;
 
-	wram.wLetterPrintingDelayFlags.set_raw_value(1);
-	wram.wOptions = { true, BattleStyle::Shift, TextSpeed::Medium };
+	wram.wMainData.wLetterPrintingDelayFlags.set_raw_value(1);
+	wram.wMainData.wOptions = { true, BattleStyle::Shift, TextSpeed::Medium };
 
 	wram.wOptionsInitialized = 0;
 	wram.wSaveFileStatus = SaveFileStatus::NoSave;
 
 	if (this->check_for_player_name_in_sram())
-		this->load_save();
+		this->parent->call_predef(Predef::LoadSAV);
 
 	auto &text = this->parent->text;
 
@@ -27,9 +29,9 @@ MainMenuResult CppRedMainMenu::display(){
 		wram.wBattleAndStartSavedMenuItem = 0;
 		wram.wPlayerMoveListIndex = 0;
 		wram.wDefaultMap = MapId::PalletTown;
-		wram.wd72e.set_using_link_cable(false);
+		wram.wMainData.wd72e.set_using_link_cable(false);
 		this->parent->prepare_menu();
-		wram.wd730.set_no_print_delay(true);
+		wram.wMainData.wd730.set_no_print_delay(true);
 
 		{
 			unsigned y;
@@ -47,7 +49,7 @@ MainMenuResult CppRedMainMenu::display(){
 			text.place_string(pos, *region);
 		}
 
-		wram.wd730.set_no_print_delay(false);
+		wram.wMainData.wd730.set_no_print_delay(false);
 		this->parent->update_sprites();
 
 		wram.wCurrentMenuItem = 0;
@@ -91,4 +93,13 @@ MainMenuResult CppRedMainMenu::display(){
 				return MainMenuResult::ContinueGame;
 		}while (!check_flag(held, input_b));
 	}
+}
+
+bool CppRedMainMenu::check_for_player_name_in_sram(){
+	auto memory = this->parent->load_sram();
+	SRam sram(memory.data(), { { read_memory_u8, write_memory_u8 } });
+	for (auto &c : sram.player_name)
+		if (c == SpecialCharacters::terminator)
+			return true;
+	return false;
 }

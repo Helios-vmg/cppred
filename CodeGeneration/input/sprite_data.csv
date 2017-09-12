@@ -1,0 +1,5 @@
+address,size,type,name,comment
+C100,mark,,wSpriteDataStart,
+C100,SpriteStateData1::emulated_size * 16,spritestatedata1[16],wSpriteStateData1,
+C200,SpriteStateData2::emulated_size * 16,spritestatedata2[16],wSpriteStateData2,
+C300,mark,,wSpriteDataEnd,

@@ -5,8 +5,8 @@ void CppRed::update_sprites(){
 		return;
 
 	unsigned i = 0;
-	for (const auto &spr : this->wram.wSpriteStateData2){
-		this->hram.H_CURRENTSPRITEOFFSET = i++ * SpriteStateData1::size;
+	for (const auto &spr : this->wram.wSpriteData.wSpriteStateData2){
+		this->hram.H_CURRENTSPRITEOFFSET = (std::uint8_t)(i++ * SpriteStateData1::size);
 		if (!spr.sprite_image_base_offset)
 			continue;
 		if (spr.sprite_image_base_offset == 1)
@@ -18,8 +18,8 @@ void CppRed::update_sprites(){
 
 void CppRed::update_player_sprite(){
 	//wSpriteStateData2[0] is always the PC sprite.
-	auto sprite1 = this->wram.wSpriteStateData1[0];
-	auto sprite2 = this->wram.wSpriteStateData2[0];
+	auto sprite1 = this->wram.wSpriteData.wSpriteStateData1[0];
+	auto sprite2 = this->wram.wSpriteData.wSpriteStateData2[0];
 	byte_t counter = sprite2.walk_animation_counter;
 	bool disable_sprite = true;
 	if (!counter){
@@ -42,7 +42,7 @@ void CppRed::update_player_sprite(){
 
 	bool not_moving = false;
 	if (!this->wram.wWalkCounter){
-		PlayerDirectionBitmap pc_direction = this->wram.wPlayerMovingDirection;
+		PlayerDirectionBitmap pc_direction = this->wram.wMainData.wPlayerMovingDirection;
 		SpriteFacingDirection sprite_direction = SpriteFacingDirection::Down;
 		if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Down)){
 			sprite_direction = SpriteFacingDirection::Down;
@@ -66,9 +66,9 @@ void CppRed::update_player_sprite(){
 		sprite1.intra_anim_frame_counter = 0;
 		sprite1.anim_frame_counter = 0;
 	} else{
-		skip_sprite_animation = this->wram.wd736.get_pc_spinning();
+		skip_sprite_animation = this->wram.wMainData.wd736.get_pc_spinning();
 		if (!skip_sprite_animation){
-			auto sprite = this->wram.wSpriteStateData1[(this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size) + 1];
+			auto sprite = this->wram.wSpriteData.wSpriteStateData1[(this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size) + 1];
 			if (++sprite.intra_anim_frame_counter != 4)
 				skip_sprite_animation = true;
 			else{
@@ -85,7 +85,7 @@ void CppRed::update_player_sprite(){
 	//lower priority than the background so that it's partially obscured by the
 	//grass.Only the lower half of the sprite is permitted to have the priority
 	//bit set by later logic.
-	sprite2.grass_priority = 0x80 * (this->hram.hTilePlayerStandingOn == this->wram.wGrassTile);
+	sprite2.grass_priority = 0x80 * (this->hram.hTilePlayerStandingOn == this->wram.wMainData.wGrassTile);
 }
 
 void CppRed::update_non_player_sprite(const SpriteStateData2 &sprite){
@@ -102,12 +102,12 @@ void CppRed::do_scripted_npc_movement(){
 	//in sync, such as when the player is following the NPC somewhere. An NPC can't
 	//be moved in sync with the player using the other method.
 
-	if (!this->wram.wd730.get_input_simulated())
+	if (!this->wram.wMainData.wd730.get_input_simulated())
 		return;
 
-	bool initialized = this->wram.wd72e.get_npc_movement_initialized();
+	bool initialized = this->wram.wMainData.wd72e.get_npc_movement_initialized();
 	if (!initialized){
-		this->wram.wd72e.set_npc_movement_initialized(true);
+		this->wram.wMainData.wd72e.set_npc_movement_initialized(true);
 		this->initialize_scripted_npc_movement();
 		return;
 	}
@@ -220,7 +220,7 @@ unsigned transform_thing(unsigned x, unsigned val){
 void CppRed::update_npc_sprite(const SpriteStateData2 &){
 	unsigned offset = this->hram.H_CURRENTSPRITEOFFSET;
 	offset = (offset / 16) - 1;
-	this->wram.wCurSpriteMovement2 = this->wram.wMapSpriteData[offset].movement_byte_2;
+	this->wram.wCurSpriteMovement2 = this->wram.wMainData.wMapSpriteData[offset].movement_byte_2;
 	{
 		auto sprite = this->get_current_sprite1();
 		if (sprite.movement_status.get_movement_status() == MovementStatus::Uninitialized){
@@ -271,7 +271,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 			}
 			if (direction == 0xFF){ //== STAY
 				sprite.movement_byte1 = 0xFF;
-				this->wram.wd730.set_sprite_automoved(false);
+				this->wram.wMainData.wd730.set_sprite_automoved(false);
 				this->wram.wSimulatedJoypadStatesIndex = 0;
 				this->wram.wWastedByteCD3A = 0;
 				return;
@@ -363,23 +363,23 @@ void CppRed::initialize_sprite_status(){
 
 void CppRed::initialize_sprite_screen_position(){
 	auto sprite2 = this->get_current_sprite2();
-	auto y = (sprite2.map_y - this->wram.wYCoord) * 16 - 4;
+	auto y = (sprite2.map_y - this->wram.wMainData.wYCoord) * 16 - 4;
 	auto sprite1 = this->get_current_sprite1();
 	sprite1.y_pixels = y;
-	auto x = (sprite2.map_x - this->wram.wXCoord) * 16;
+	auto x = (sprite2.map_x - this->wram.wMainData.wXCoord) * 16;
 	sprite1.x_pixels = x;
 }
 
 bool CppRed::is_object_hidden(){
 	auto b = this->hram.H_CURRENTSPRITEOFFSET / 16;
 	bool ret = false;
-	for (auto &it : this->wram.wMissableObjectList){
+	for (auto &it : this->wram.wMainData.wMissableObjectList){
 		unsigned sprite_id = it.sprite_id;
 		if (sprite_id == 0xFF)
 			break;
 		if (sprite_id != b)
 			continue;
-		ret = this->missable_objects_flag_action(FlagAction::Test, this->wram.wMissableObjectFlags, it.missable_object_index);
+		ret = this->missable_objects_flag_action(FlagAction::Test, this->wram.wMainData.wMissableObjectFlags, it.missable_object_index);
 		break;
 	}
 	this->hram.hIsObjectHidden = ret;
@@ -387,11 +387,11 @@ bool CppRed::is_object_hidden(){
 }
 
 SpriteStateData1 CppRed::get_current_sprite1(){
-	return this->wram.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
+	return this->wram.wSpriteData.wSpriteStateData1[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size];
 }
 
 SpriteStateData2 CppRed::get_current_sprite2(){
-	return this->wram.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
+	return this->wram.wSpriteData.wSpriteStateData2[this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData2::size];
 }
 
 bool CppRed::check_sprite_availability(){
@@ -404,8 +404,8 @@ bool CppRed::check_sprite_availability(){
 	if (ret){
 		auto sprite2 = this->get_current_sprite2();
 		if (sprite2.movement_byte1 >= 0xFE){
-			ret &= this->wram.wYCoord <= sprite2.map_y && sprite2.map_y < this->wram.wYCoord + tilemap_height / 2;
-			ret &= this->wram.wXCoord <= sprite2.map_x && sprite2.map_x < this->wram.wXCoord + tilemap_width / 2;
+			ret &= this->wram.wMainData.wYCoord <= sprite2.map_y && sprite2.map_y < this->wram.wMainData.wYCoord + tilemap_height / 2;
+			ret &= this->wram.wMainData.wXCoord <= sprite2.map_x && sprite2.map_x < this->wram.wMainData.wXCoord + tilemap_width / 2;
 		}
 		auto tile = this->get_tile_sprite_stands_on();
 		ret = ret &&
@@ -422,13 +422,13 @@ bool CppRed::check_sprite_availability(){
 	}else if (!this->wram.wWalkCounter){
 		this->update_sprite_image(sprite);
 		auto sprite2 = this->get_current_sprite2();
-		sprite2.grass_priority = this->wram.wGrassTile != tile_value ? 0 : 0x80;
+		sprite2.grass_priority = this->wram.wMainData.wGrassTile != tile_value ? 0 : 0x80;
 	}
 	return ret;
 }
 
 bool CppRed::can_walk_onto_tile_helper(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay){
-	auto collision = (const byte_t *)this->map_pointer(this->wram.wTilesetCollisionPtr);
+	auto collision = (const byte_t *)this->map_pointer(this->wram.wMainData.wTilesetCollisionPtr);
 	while (true){
 		auto value = *(collision++);
 		if (value == 0xFF)
@@ -505,13 +505,13 @@ bool CppRed::can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int
 }
 
 void CppRed::make_npc_face_player(SpriteStateData1 &sprite){
-	if (this->wram.wd72d.get_npcs_dont_turn_when_spoken_to()){
+	if (this->wram.wMainData.wd72d.get_npcs_dont_turn_when_spoken_to()){
 		this->not_yet_moving(sprite);
 		return;
 	}
 	sprite.movement_status.set_face_player(false);
 	SpriteFacingDirection direction;
-	auto player_direction = (unsigned)this->wram.wPlayerDirection;
+	auto player_direction = (unsigned)this->wram.wMainData.wPlayerDirection;
 	if (check_flag(player_direction, (unsigned)PlayerDirectionBitmap::Up))
 		direction = SpriteFacingDirection::Down;
 	else if (check_flag(player_direction, (unsigned)PlayerDirectionBitmap::Down))
@@ -615,7 +615,7 @@ void CppRed::detect_sprite_collision(){
 		this->hram.hCollisionLoopCounter = i;
 		if (i == this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size)
 			continue;
-		auto compared_sprite = this->wram.wSpriteStateData1[i];
+		auto compared_sprite = this->wram.wSpriteData.wSpriteStateData1[i];
 		//          is unused?                           is off-screen?
 		if (!compared_sprite.picture_id || compared_sprite.sprite_image_idx == 0xFF)
 			continue;

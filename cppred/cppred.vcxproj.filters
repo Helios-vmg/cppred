@@ -114,6 +114,12 @@
     <ClCompile Include="MemoryOperations.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="CppRedSram.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="timer.h">
@@ -213,6 +219,9 @@
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
     <ClInclude Include="CppRedScripts.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedSRam.h">
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>
