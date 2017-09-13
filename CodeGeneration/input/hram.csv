@@ -90,8 +90,8 @@ FFB2,1,InputBitmap_t,hJoyReleased
 FFB3,1,InputBitmap_t,hJoyPressed
 FFB4,1,InputBitmap_t,hJoyHeld
 FFB5,1,InputBitmap_t,hJoy5
-FFB6,1,InputBitmap_t,hJoy6
-FFB7,1,InputBitmap_t,hJoy7
+FFB6,1,u8,hJoy6
+FFB7,1,u8,hJoy7
 FFB8,1,u8,H_LOADEDROMBANK
 FFB9,1,u8,hSavedROMBank
 FFBA,1,u8,H_AUTOBGTRANSFERENABLED

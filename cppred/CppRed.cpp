@@ -905,7 +905,7 @@ CppRed::sram_t CppRed::load_sram(){
 }
 
 void CppRed::special_enter_map(MapId id){
-	this->hram.hJoyPressed = 0;
+	this->hram.hJoyPressed.clear();
 	this->hram.hJoyHeld.clear();
 	this->hram.hJoy5.clear();
 	this->wram.wMainData.wd72d.clear();
@@ -1092,4 +1092,26 @@ void CppRed::joypad(){
 	this->hram.hJoyHeld = filtered;
 	this->hram.hJoyPressed = (last ^ input) & filtered;
 	this->hram.hJoyReleased = (last ^ input) & last;
+}
+
+InputBitmap_struct CppRed::joypad_low_sensitivity(){
+	typedef InputBitmap_struct B;
+	this->joypad();
+	bool flag6 = this->hram.hJoy6;
+	bool flag7 = this->hram.hJoy7;
+	B pressed = !flag7 ? this->hram.hJoyPressed : this->hram.hJoyHeld;
+	this->hram.hJoy5 = pressed;
+	if (any_button_pressed(this->hram.hJoyPressed)){
+		this->hram.H_FRAMECOUNTER = 30;
+		return pressed;
+	}
+	if (this->hram.H_FRAMECOUNTER){
+		this->hram.hJoy5.clear();
+		return this->hram.hJoy5;
+	}
+	B held = this->hram.hJoyHeld;
+	if ((held.button_a || held.button_b) && !flag6)
+		this->hram.hJoy5.clear();
+	this->hram.H_FRAMECOUNTER = 5;
+	return this->hram.hJoy5;
 }

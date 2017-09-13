@@ -88,8 +88,8 @@ MainMenuResult CppRedMainMenu::display(){
 
 		byte_t held;
 		do{
-			hram.hJoyPressed = 0;
-			hram.hJoyReleased = 0;
+			hram.hJoyPressed.clear();
+			hram.hJoyReleased.clear();
 			hram.hJoyHeld.clear();
 			this->parent->joypad();
 			held = hram.hJoyHeld.get_raw_value();
