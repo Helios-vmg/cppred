@@ -125,4 +125,6 @@ byte_t calculate_checksum(const void *data, size_t size);
 unsigned count_set_bits(const byte_t *src, size_t size);
 
 InputBitmap_struct operator&(const InputBitmap_struct &a, const InputBitmap_struct &b);
+InputBitmap_struct operator^(const InputBitmap_struct &a, const InputBitmap_struct &b);
+InputBitmap_struct operator~(const InputBitmap_struct &a);
 bool any_button_pressed(const InputBitmap_struct &bitmap);

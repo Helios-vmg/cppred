@@ -1070,3 +1070,26 @@ InputBitmap_struct CppRed::handle_menu_input2(){
 	this->wram.wMenuWrappingEnabled = 0;
 	return input;
 }
+
+void CppRed::joypad(){
+	typedef InputBitmap_struct B;
+	B input = this->hram.hJoyInput;
+	if (input.button_a & input.button_b & input.button_select & input.button_start)
+		throw SoftResetException();
+
+	B last = this->hram.hJoyLast;
+	this->hram.hJoyLast = input;
+
+	if (this->wram.wMainData.wd730.get_ignore_input()){
+		this->hram.hJoyHeld.clear();
+		this->hram.hJoyPressed.clear();
+		this->hram.hJoyReleased.clear();
+		return;
+	}
+
+	auto ignore = ~(B)this->wram.wJoyIgnore;
+	auto filtered = input & ignore;
+	this->hram.hJoyHeld = filtered;
+	this->hram.hJoyPressed = (last ^ input) & filtered;
+	this->hram.hJoyReleased = (last ^ input) & last;
+}

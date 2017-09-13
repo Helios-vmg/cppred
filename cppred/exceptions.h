@@ -12,6 +12,9 @@
 #define NOEXCEPT noexcept
 #endif
 
+class SoftResetException : public std::exception{
+};
+
 class GameBoyException : public std::runtime_error{
 public:
 	GameBoyException(const std::string &s): std::runtime_error(s){}

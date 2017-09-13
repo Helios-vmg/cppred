@@ -36,15 +36,42 @@ unsigned count_set_bits(const byte_t *src, size_t size){
 }
 
 InputBitmap_struct operator&(const InputBitmap_struct &a, const InputBitmap_struct &b){
-	InputBitmap_struct ret;
-	ret.button_a = a.button_a && b.button_a;
-	ret.button_b = a.button_b && b.button_b;
-	ret.button_select = a.button_select && b.button_select;
-	ret.button_start = a.button_start && b.button_start;
-	ret.button_right = a.button_right && b.button_right;
-	ret.button_left = a.button_left && b.button_left;
-	ret.button_up = a.button_up && b.button_up;
-	ret.button_down = a.button_down && b.button_down;
+	auto ret = a;
+	ret.button_a      &= b.button_a;
+	ret.button_b      &= b.button_b;
+	ret.button_select &= b.button_select;
+	ret.button_start  &= b.button_start;
+	ret.button_right  &= b.button_right;
+	ret.button_left   &= b.button_left;
+	ret.button_up     &= b.button_up;
+	ret.button_down   &= b.button_down;
+	return ret;
+}
+
+InputBitmap_struct operator^(const InputBitmap_struct &a, const InputBitmap_struct &b){
+	auto ret = a;
+	ret.button_a      ^= b.button_a;
+	ret.button_b      ^= b.button_b;
+	ret.button_select ^= b.button_select;
+	ret.button_start  ^= b.button_start;
+	ret.button_right  ^= b.button_right;
+	ret.button_left   ^= b.button_left;
+	ret.button_up     ^= b.button_up;
+	ret.button_down   ^= b.button_down;
+	return ret;
+}
+
+InputBitmap_struct operator~(const InputBitmap_struct &a){
+	auto ret = a;
+	auto &b = ret;
+	ret.button_a      = !b.button_a;
+	ret.button_b      = !b.button_b;
+	ret.button_select = !b.button_select;
+	ret.button_start  = !b.button_start;
+	ret.button_right  = !b.button_right;
+	ret.button_left   = !b.button_left;
+	ret.button_up     = !b.button_up;
+	ret.button_down   = !b.button_down;
 	return ret;
 }
 

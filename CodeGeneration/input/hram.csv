@@ -85,13 +85,13 @@ FFAD,1,u8,hSerialReceiveData
 FFAE,1,u8,hSCX
 FFAF,1,u8,hSCY
 FFB0,1,u8,hWY
-FFB1,1,u8,hJoyLast
-FFB2,1,u8,hJoyReleased
-FFB3,1,u8,hJoyPressed
+FFB1,1,InputBitmap_t,hJoyLast
+FFB2,1,InputBitmap_t,hJoyReleased
+FFB3,1,InputBitmap_t,hJoyPressed
 FFB4,1,InputBitmap_t,hJoyHeld
 FFB5,1,InputBitmap_t,hJoy5
-FFB6,1,u8,hJoy6
-FFB7,1,u8,hJoy7
+FFB6,1,InputBitmap_t,hJoy6
+FFB7,1,InputBitmap_t,hJoy7
 FFB8,1,u8,H_LOADEDROMBANK
 FFB9,1,u8,hSavedROMBank
 FFBA,1,u8,H_AUTOBGTRANSFERENABLED
@@ -142,5 +142,5 @@ FFF3,1,u8,H_WHOSETURN
 FFF4,1,wLetterPrintingDelayFlags_t,hPokedexTextFlags
 FFF6,1,hFlags_FFF6_t,hFlags_0xFFF6
 FFF7,1,u8,hFieldMoveMonMenuTopMenuItemX
-FFF8,1,u8,hJoyInput
+FFF8,1,InputBitmap_t,hJoyInput
 FFF9,1,u8,hDisableJoypadPolling
