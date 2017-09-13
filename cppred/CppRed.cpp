@@ -1115,3 +1115,21 @@ InputBitmap_struct CppRed::joypad_low_sensitivity(){
 	this->hram.H_FRAMECOUNTER = 5;
 	return this->hram.hJoy5;
 }
+
+void CppRed::wait_for_text_scroll_button_press(){
+	auto counter1 = +this->hram.H_DOWNARROWBLINKCNT1;
+	auto counter2 = +this->hram.H_DOWNARROWBLINKCNT2;
+	this->hram.H_DOWNARROWBLINKCNT1 = 0;
+	this->hram.H_DOWNARROWBLINKCNT2 = 6;
+	InputBitmap_struct joy5;
+	do{
+		if (this->wram.wTownMapSpriteBlinkingEnabled)
+			this->town_map_sprite_blinking_animation();
+		this->handle_down_arrow_blink_timing(this->get_tilemap_location(18, 16));
+		this->joypad_low_sensitivity();
+		this->call_predef(Predef::CableClub_Run);
+		joy5 = this->hram.hJoy5;
+	}while (!joy5.button_a && !joy5.button_b);
+	this->hram.H_DOWNARROWBLINKCNT1 = counter1;
+	this->hram.H_DOWNARROWBLINKCNT2 = counter2;
+}

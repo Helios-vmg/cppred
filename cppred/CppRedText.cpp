@@ -144,7 +144,7 @@ void CppRedText::place_blank(){
 
 DEFINE_COMMAND_PROCESSOR(cont){
 	this->place_arrow();
-	this->parent->protected_delay3();
+	this->parent->delay3();
 	this->manual_text_scroll();
 	*this->parent->get_tilemap_location(18, 16) = character_map_forward[' '];
 	this->process_autocont_command(command, saved, it);
@@ -152,7 +152,7 @@ DEFINE_COMMAND_PROCESSOR(cont){
 
 void CppRedText::advance_page_in_text_window(unsigned page_height, tilemap_it &it){
 	this->place_arrow();
-	this->parent->protected_delay3();
+	this->parent->delay3();
 	this->manual_text_scroll();
 	this->parent->clear_screen_area(18, page_height, this->parent->get_tilemap_location(1, 17 - page_height));
 	this->parent->delay_frames(20);
@@ -173,7 +173,7 @@ DEFINE_COMMAND_PROCESSOR(done){
 DEFINE_COMMAND_PROCESSOR(prompt){
 	if (this->parent->wram.wLinkState.enum_value() != LinkState::Battling)
 		this->place_arrow();
-	this->parent->protected_delay3();
+	this->parent->delay3();
 	this->manual_text_scroll();
 	this->place_blank();
 	this->process_done_command(command, saved, it);

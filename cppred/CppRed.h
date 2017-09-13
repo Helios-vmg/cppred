@@ -250,7 +250,6 @@ public:
 	const RenderedFrame *get_current_frame();
 	void return_used_frame(const RenderedFrame *);
 	void toggle_pause(int);
-	void protected_delay3();
 	//Blocks until the next v-blank.
 	void delay_frame();
 	void wait_for_text_scroll_button_press();
@@ -261,6 +260,7 @@ public:
 	void write_character_at_menu_cursor(byte_t character);
 	void erase_menu_cursor();
 	void place_unfilled_arrow_menu_cursor();
+	void town_map_sprite_blinking_animation();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;
