@@ -175,6 +175,7 @@
     <ClCompile Include="CppRedData.cpp" />
     <ClCompile Include="CppRedMainMenu.cpp" />
     <ClCompile Include="CppRedMap.cpp" />
+    <ClCompile Include="CppRedMessageBox.cpp" />
     <ClCompile Include="CppRedMovement.cpp" />
     <ClCompile Include="CppRedRam.cpp" />
     <ClCompile Include="CppRedScripts.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="CppRedData.h" />
     <ClInclude Include="CppRedMainMenu.h" />
     <ClInclude Include="CppRedMap.h" />
+    <ClInclude Include="CppRedMessageBox.h" />
     <ClInclude Include="CppRedRam.h" />
     <ClInclude Include="CppRedScripts.h" />
     <ClInclude Include="CppRedSRam.h" />

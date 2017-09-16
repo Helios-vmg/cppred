@@ -16921,3 +16921,61 @@ NEXT " SHIFT    SET"
 
 .OptionMenuCancelText
 TEXT "CANCEL"
+
+.UseTossText
+TEXT "USE"
+NEXT "TOSS"
+
+.MoneyText
+TEXT "MONEY"
+
+.BattleMenuText
+TEXT "FIGHT <pk><mn>"
+NEXT "ITEM  RUN"
+
+.SafariZoneBattleMenuText
+TEXT "BALL<x>       BAIT"
+NEXT "THROW ROCK  RUN"
+
+.SwitchStatsCancelText
+TEXT "SWITCH"
+NEXT "STATS"
+NEXT "CANCEL"
+
+.BuySellQuitText
+TEXT "BUY"
+NEXT "SELL"
+NEXT "QUIT"
+
+.NoYesMenu
+TEXT "NO"
+NEXT "YES"
+
+.YesNoMenu
+TEXT "YES"
+NEXT "NO"
+
+.NorthWestMenu
+TEXT "NORTH"
+NEXT "WEST"
+
+.SouthEastMenu
+TEXT "SOUTH"
+NEXT "EAST"
+
+.NorthEastMenu
+TEXT "NORTH"
+NEXT "EAST"
+
+.TradeCancelMenu
+TEXT "TRADE"
+NEXT "CANCEL"
+
+.HealCancelMenu
+TEXT "HEAL"
+NEXT "CANCEL"
+
+.PokemonMenuEntries
+TEXT "STATS"
+NEXT "SWITCH"
+NEXT "CANCEL"

@@ -8,7 +8,8 @@
 #define WHEN_TRADED(level, next_form) EvolutionTriggerType::Trade, level, SpeciesId::next_form
 #define LEARN(level, move) level, MoveId::move
 
-#include "../CodeGeneration/output/pokemon_definitions.cpp"
+#include "../CodeGeneration/output/pokemon_definitions.inl"
+#include "../CodeGeneration/output/move_data.inl"
 
 const FadePaletteData fade_palettes[8] = {
 	{ bits_from_u32<0x11111111>::value, bits_from_u32<0x11111111>::value, bits_from_u32<0x11111111>::value },

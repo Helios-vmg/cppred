@@ -48,9 +48,9 @@ CppRed::CppRed(HostSystem &host):
 		INITIALIZE_HARDWARE_REGISTER(LYC, display_controller, y_coordinate_compare)
 		INITIALIZE_HARDWARE_REGISTER_RO(DIV, clock, DIV_register)
 		,
-		text(*this)
-		{
-
+		text(*this),
+		message_box(*this)
+{
 	this->nonemulation_init();
 }
 
@@ -1132,4 +1132,16 @@ void CppRed::wait_for_text_scroll_button_press(){
 	}while (!joy5.button_a && !joy5.button_b);
 	this->hram.H_DOWNARROWBLINKCNT1 = counter1;
 	this->hram.H_DOWNARROWBLINKCNT2 = counter2;
+}
+
+void CppRed::display_two_option_menu(TwoOptionMenuType type, unsigned x, unsigned y, bool default_to_second_option){
+	this->wram.wTextBoxID = TextBoxId::TwoOptionMenu;
+	this->wram.wTwoOptionMenuID.clear();
+	this->wram.wTwoOptionMenuID.set_id(type);
+	this->wram.wTwoOptionMenuID.set_select_second_item_by_default(default_to_second_option);
+	this->display_textbox_id(x, y);
+}
+
+void CppRed::display_textbox_id(unsigned x, unsigned y){
+	this->message_box.display_textbox_id(x, y);
 }

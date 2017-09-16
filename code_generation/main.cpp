@@ -46,6 +46,7 @@ int main(){
 		generate_pokemon_data(hashes);
 		generate_text(hashes);
 		generate_charmap(hashes);
+		generate_moves(hashes);
 		save_hashes(hashes);
 	}catch (std::exception &e){
 		std::cerr << e.what() << std::endl;

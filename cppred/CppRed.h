@@ -12,6 +12,7 @@
 #include "CppRedMap.h"
 #include "CppRedSRam.h"
 #include "ExternalRamBuffer.h"
+#include "CppRedMessageBox.h"
 #include "threads.h"
 #include "utility.h"
 #include <memory>
@@ -53,6 +54,7 @@ private:
 	byte_t interrupt_enable_flag = 0;
 	xorshift128_state random_state;
 	std::vector<std::function<void()>> predefs;
+	CppRedMessageBox message_box;
 
 	void nonemulation_init();
 	void interpreter_thread_function();
@@ -214,6 +216,7 @@ public:
 		this->run_palette_command(PaletteCommand::Default);
 	}
 	void print_text(const CppRedText::Region &);
+	void display_two_option_menu(TwoOptionMenuType type, unsigned x = 0, unsigned y = 0, bool default_to_second_option = false);
 	void display_textbox_id(unsigned x = 0, unsigned y = 0);
 	void clear_save();
 	DisplayController &get_display_controller(){

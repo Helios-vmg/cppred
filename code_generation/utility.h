@@ -5,6 +5,8 @@
 
 typedef std::map<std::string, std::string> known_hashes_t;
 
+extern const char * const generated_file_warning;
+
 unsigned to_unsigned(const std::string &s);
 unsigned to_unsigned_default(const std::string &s, unsigned def = 0);
 unsigned hex_no_prefix_to_unsigned(const std::string &s);

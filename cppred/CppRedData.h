@@ -3,6 +3,7 @@
 #include "CommonTypes.h"
 
 #include "../CodeGeneration/output/pokemon_declarations.h"
+#include "../CodeGeneration/output/move_data.h"
 
 #pragma pack(push)
 #pragma pack(1)

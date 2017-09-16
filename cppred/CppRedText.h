@@ -205,7 +205,19 @@ public:
 
 	CppRedText(CppRed &parent);
 	typedef decltype(WRam::wTileMap)::iterator tilemap_it;
-	void text_box_border(const tilemap_it &it, unsigned w, unsigned h);
+	typedef std::array<byte_t, 8> border_tiles_t;
+	static const border_tiles_t trade_center_border_tiles;
+	static const border_tiles_t default_border_tiles;
+	//Specify tiles in the following order:
+	// * Top-left
+	// * Horizontal top
+	// * Top-right
+	// * Vertical left
+	// * Vertical right
+	// * Bottom-left
+	// * Horizontal bottom
+	// * Bottom-right
+	void text_box_border(const tilemap_it &it, unsigned w, unsigned h, const border_tiles_t &tiles = default_border_tiles);
 	void place_string(const tilemap_it &it, const std::string &text);
 	void place_string(const tilemap_it &it, const Region &text);
 	void print_text(const Region &text, bool without_textbox = false);
@@ -220,6 +232,7 @@ private:
 	tilemap_it get_arrow_location();
 	void place_blank();
 	void advance_page_in_text_window(unsigned page_height, tilemap_it &it);
+	void text_box_border_internal(const tilemap_it &it, unsigned w, unsigned h, const border_tiles_t &tiles);
 
 	typedef void (CppRedText::*command_processor_f)(const Command &, tilemap_it &, tilemap_it &);
 	typedef void (CppRedText::*special_character_processor_f)(tilemap_it &);

@@ -400,6 +400,9 @@ public:
 			this->index = it.index;
 			return *this;
 		}
+		bool operator!() const{
+			return !this->array && !this->index;
+		}
 		Iterator operator++(){
 			this->index++;
 			return *this;
@@ -692,7 +695,7 @@ public:
 	//Offset: 7
 	u8_type catch_rate;
 	//Offset: 8
-	WrappedArray<typename u8_type::type, 4, u8_type::size> moves;
+	WrappedArray<MoveId, 4, 1> moves;
 	//Offset: 12 (0x0C)
 	u16_type original_trainer_id;
 	//Offset: 14 (0x0E)
@@ -1021,4 +1024,38 @@ public:
 	std::vector<LearnedMove> get_learned_moves() const override{
 		return to_vector(this->learned_moves);
 	}
+};
+
+class TwoItemMenuType_wrapper{
+public:
+	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
+	typedef typename member_type::callback_struct callback_struct;
+	static const size_t size = 1;
+private:
+	member_type wrapped_value;
+public:
+	TwoItemMenuType_wrapper(void *memory, const callback_struct &callbacks): wrapped_value((char *)memory, callbacks){}
+	TwoItemMenuType_wrapper(const TwoItemMenuType_wrapper &) = default;
+	TwoItemMenuType_wrapper(TwoItemMenuType_wrapper &&) = delete;
+	void operator=(const TwoItemMenuType_wrapper &) = delete;
+	void operator=(TwoItemMenuType_wrapper &&) = delete;
+	void clear(){
+		this->wrapped_value = 0;
+	}
+	byte_t get_raw_value() const{
+		return this->wrapped_value;
+	}
+	void set_raw_value(byte_t value){
+		this->wrapped_value = value;
+	}
+	bool get_select_second_item_by_default() const;
+	void set_select_second_item_by_default(bool);
+	TwoOptionMenuType get_id() const;
+	void set_id(TwoOptionMenuType);
+};
+
+struct MoveInfo{
+	MoveId move_id;
+	byte_t field_move_index;
+	std::string display_name;
 };

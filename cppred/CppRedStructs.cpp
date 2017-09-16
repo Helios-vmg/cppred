@@ -122,3 +122,24 @@ void PcBox::clear(){
 	for (auto &i : this->mons)
 		i.clear();
 }
+
+bool TwoItemMenuType_wrapper::get_select_second_item_by_default() const{
+	return check_flag<byte_t, byte_t>(this->wrapped_value, bits_from_u32<0x10000000>::value);
+}
+
+void TwoItemMenuType_wrapper::set_select_second_item_by_default(bool bit){
+	byte_t val = this->wrapped_value;
+	val &= bits_from_u32<0x01111111>::value;
+	this->wrapped_value = val | (bit << 7);
+}
+
+TwoOptionMenuType TwoItemMenuType_wrapper::get_id() const{
+	byte_t val = this->wrapped_value;
+	return (TwoOptionMenuType)(val & bits_from_u32<0x00000111>::value);
+}
+
+void TwoItemMenuType_wrapper::set_id(TwoOptionMenuType type){
+	byte_t val = this->wrapped_value;
+	val &= bits_from_u32<0x11111000>::value;
+	this->wrapped_value = val | ((byte_t)type & bits_from_u32<0x00000111>::value);
+}
