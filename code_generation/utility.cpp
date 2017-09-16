@@ -56,9 +56,7 @@ std::string hash_file(const std::string &path, const char *date_string){
 }
 
 std::string hash_files(const std::vector<std::string> &files, const char *date_string){
-
 	SHA1 sha1;
-	return sha1.ToString();
 	for (auto &path : files){
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
