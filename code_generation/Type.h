@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <sstream>
+#include <map>
+#include <functional>
 
 class Number{
 public:
@@ -181,7 +183,7 @@ public:
 class PackedBitsWrapper : public Struct{
 	std::string name;
 public:
-	PackedBitsWrapper(const char *name): name(name){}
+	PackedBitsWrapper(const std::string &name): name(name){}
 	std::unique_ptr<Number> get_size() override{
 		return std::make_unique<IntegerLiteralNumber>(1);
 	}
@@ -266,4 +268,8 @@ public:
 	}
 };
 
-std::unique_ptr<Type> parse_string_to_Type(const std::string &);
+typedef std::function<std::unique_ptr<Type>()> basic_type_constructor;
+typedef std::map<std::string, basic_type_constructor> typemap_t;
+
+std::unique_ptr<Type> parse_string_to_Type(const typemap_t &typemap, const std::string &);
+typemap_t declare_default_types();

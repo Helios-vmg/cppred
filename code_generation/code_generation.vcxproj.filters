@@ -15,18 +15,51 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Type.h">
+    <ClInclude Include="code_generators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\csv_parser.h">
+    <ClInclude Include="utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\sha1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="generate_bitmaps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\sha1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_rams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Type.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_charmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_maps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_pokemon_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

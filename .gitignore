@@ -44,3 +44,4 @@ CodeGeneration/output/*.inl
 CodeGeneration/output/*.cpp
 *.idb
 .vs/
+CodeGeneration/output/*.csv

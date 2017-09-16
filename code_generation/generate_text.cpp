@@ -1,3 +1,4 @@
+#include "code_generators.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -8,6 +9,9 @@
 #include <sstream>
 #include <utility>
 #include <set>
+
+static const char * const input_file = "input/text.txt";
+static const char * const hash_key = "generate_text";
 
 typedef std::uint8_t byte_t;
 typedef std::string (*command_handler)(const std::string &);
@@ -34,9 +38,13 @@ std::pair<std::string, std::string> charmap[] = {
 	{ "'m",         "\\\\0F" },
 	{ "<FEMALE>",   "\\\\10" },
 	{ "<MALE>",     "\\\\11" },
+	{ "<DECIMAL>",  "\\\\12" },
+	{ "<pk>",       "\\\\13" },
+	{ "<mn>",       "\\\\14" },
+	{ "<x>",        "\\\\15" },
 };
 
-std::string handle_mem(const std::string &input){
+static std::string handle_mem(const std::string &input){
 	std::string ret;
 	auto space = input.find_first_of(" \t");
 	auto e = input.substr(0, space);
@@ -53,7 +61,7 @@ std::string handle_mem(const std::string &input){
 	return ret;
 }
 
-std::string handle_num(const std::string &input){
+static std::string handle_num(const std::string &input){
 	std::stringstream temp(input);
 	std::string name;
 	int first = 0, second = 0;
@@ -64,7 +72,7 @@ std::string handle_num(const std::string &input){
 	return ret.str();
 }
 
-std::string handle_bcd(const std::string &input){
+static std::string handle_bcd(const std::string &input){
 	std::stringstream temp(input);
 	std::string name;
 	int first = 0;
@@ -75,15 +83,11 @@ std::string handle_bcd(const std::string &input){
 	return ret.str();
 }
 
-std::string handle_dex(const std::string &){
+static std::string handle_dex(const std::string &){
 	return " << DEX\n";
 }
 
-bool is_hex(char c){
-	return isdigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
-}
-
-std::string filter_text(const std::string &input){
+static std::string filter_text(const std::string &input){
 	std::string ret;
 	for (size_t i = 0; i < input.size(); ){
 		auto c = input[i];
@@ -130,7 +134,7 @@ std::string filter_text(const std::string &input){
 	return ret;
 }
 
-std::string handle_text(const std::string &input0){
+static std::string handle_text(const std::string &input0){
 	auto input = input0;
 	if (input.size() < 2 || input[0] != '"')
 		throw std::runtime_error("Syntax error: A string must be delimited by \".");
@@ -146,43 +150,43 @@ std::string handle_text(const std::string &input0){
 	return " << \"" + filtered + "\"";
 }
 
-std::string handle_para(const std::string &input){
+static std::string handle_para(const std::string &input){
 	return " << PARA\n" + handle_text(input);
 }
 
-std::string handle_line(const std::string &input){
+static std::string handle_line(const std::string &input){
 	return " << LINE\n" + handle_text(input);
 }
 
-std::string handle_cont(const std::string &input){
+static std::string handle_cont(const std::string &input){
 	return " << CONT\n" + handle_text(input);
 }
 
-std::string handle_done(const std::string &){
+static std::string handle_done(const std::string &){
 	return " << DONE\n";
 }
 
-std::string handle_next(const std::string &input){
+static std::string handle_next(const std::string &input){
 	return " << NEXT\n" + handle_text(input);
 }
 
-std::string handle_page(const std::string &input){
+static std::string handle_page(const std::string &input){
 	return " << PAGE\n" + handle_text(input);
 }
 
-std::string handle_label(const std::string &input){
+static std::string handle_label(const std::string &input){
 	return "SEQ(" + input + ")\n";
 }
 
-std::string handle_prompt(const std::string &){
+static std::string handle_prompt(const std::string &){
 	return " << PROMPT\n";
 }
 
-std::string handle_autocont(const std::string &){
+static std::string handle_autocont(const std::string &){
 	return " << AUTOCONT\n";
 }
 
-std::map<std::string, command_handler> command_handlers = {
+static std::map<std::string, command_handler> command_handlers = {
 	{ ".",        handle_label    },
 	{ "TEXT",     handle_text     },
 	{ "LINE",     handle_line     },
@@ -205,7 +209,7 @@ struct Result{
 	std::string enum_string;
 };
 
-Result parse_text_format(std::istream &stream){
+static Result parse_text_format(std::istream &stream){
 	Result ret;
 	std::string current_label;
 	unsigned line_no = 0;
@@ -269,17 +273,19 @@ Result parse_text_format(std::istream &stream){
 	return ret;
 }
 
-int main(){
-	Result output;
-	try{
-		std::ifstream input("input/text.txt");
-		if (!input)
-			throw std::runtime_error("input/text.txt not found!");
-		output = parse_text_format(input);
-	}catch (std::exception &e){
-		std::cerr << e.what() << std::endl;
-		return -1;
+static void generate_text_internal(known_hashes_t &known_hashes){
+	auto current_hash = hash_file(input_file);
+	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
+		std::cout << "Skipping generating text.\n";
+		return;
 	}
+	std::cout << "Generating text...\n";
+
+	std::ifstream input(input_file);
+	if (!input)
+		throw std::runtime_error("input/text.txt not found!");
+	auto output = parse_text_format(input);
+	
 	std::ofstream header("output/text.h");
 	std::ofstream enum_header("output/text_enum.h");
 	std::ofstream source("output/text.inl");
@@ -289,5 +295,14 @@ int main(){
 	header << output.header_string;
 	source << output.source_string;
 	enum_header << output.enum_string;
-	return 0;
+
+	known_hashes[hash_key] = current_hash;
+}
+
+void generate_text(known_hashes_t &known_hashes){
+	try{
+		generate_text_internal(known_hashes);
+	}catch (std::exception &e){
+		throw std::runtime_error((std::string)"generate_pokemon_data(): " + e.what());
+	}
 }

@@ -4,8 +4,6 @@
 #include <map>
 #include <cctype>
 
-typedef std::unique_ptr<Type> (*basic_type_constructor)();
-
 std::unique_ptr<Type> construct_fail(){
 	throw std::exception();
 }
@@ -82,7 +80,9 @@ std::unique_ptr<Type> construct_boxdata(){
 	return std::make_unique<boxdataStruct>();
 }
 
-#include "../CodeGeneration/output/bitmaps_rams_constructors.inl"
+std::unique_ptr<Type> construct_TwoItemMenuType_t(){
+	return std::make_unique<PackedBitsWrapper>("TwoItemMenuType_wrapper");
+}
 
 std::unique_ptr<Type> construct_pointer(){
 	return std::make_unique<DataPointer>();
@@ -104,74 +104,15 @@ std::unique_ptr<Type> construct_bcd6(){
 	return std::make_unique<TypeBcdInt>(6);
 }
 
-#define ENUM_TYPE(x) construct_##x
-
-#define DEFINE_construct_enum_byte(x) \
-std::unique_ptr<Type> ENUM_TYPE(x)(){ \
-	return std::make_unique<EnumUint>(#x, 1); \
-}
-
-DEFINE_construct_enum_byte(SerialConnectionStatus);
-DEFINE_construct_enum_byte(SpeciesId);
-DEFINE_construct_enum_byte(Sound);
-DEFINE_construct_enum_byte(AudioBank);
-DEFINE_construct_enum_byte(MenuType);
-DEFINE_construct_enum_byte(TextBoxId);
-DEFINE_construct_enum_byte(LinkState);
-DEFINE_construct_enum_byte(SaveFileStatus);
-DEFINE_construct_enum_byte(PlayerDirection);
-DEFINE_construct_enum_byte(PlayerDirectionBitmap);
-DEFINE_construct_enum_byte(MapId);
-DEFINE_construct_enum_byte(NpcMovementDirection);
-
-#define DECLARE_ENUM_IN_MAP(x) { #x, ENUM_TYPE(x) }
-
-const std::map<std::string, basic_type_constructor> normal_types = {
-	{ "u8", construct_u8 },
-	{ "u16", construct_u16 },
-	{ "u24", construct_u24 },
-	{ "big_u16", construct_big_u16 },
-	{ "big_u24", construct_big_u32 },
-	{ "big_u32", construct_big_u32 },
-	{ "spritestatedata1", construct_spritestatedata1 },
-	{ "spritestatedata2", construct_spritestatedata2 },
-	{ "options", construct_options },
-	{ "mapspritedata", construct_mapspritedata },
-	{ "missableobject", construct_missableobject },
-	{ "pcboxmember", construct_pcboxmember },
-	{ "partymember", construct_partymember },
-	{ "pcbox", construct_pcbox },
-	{ "maindata", construct_maindata },
-	{ "spritedata", construct_spritedata },
-	{ "partydata", construct_partydata },
-	{ "boxdata", construct_boxdata },
-#include "../CodeGeneration/output/bitmaps_rams_declarations.inl"
-	{ "pointer", construct_pointer },
-	{ "big_pointer", construct_big_pointer },
-	{ "code_pointer", construct_code_pointer },
-	{ "bcd4", construct_bcd4 },
-	{ "bcd6", construct_bcd6 },
-	DECLARE_ENUM_IN_MAP(SerialConnectionStatus),
-	DECLARE_ENUM_IN_MAP(SpeciesId),
-	DECLARE_ENUM_IN_MAP(Sound),
-	DECLARE_ENUM_IN_MAP(AudioBank),
-	DECLARE_ENUM_IN_MAP(MenuType),
-	DECLARE_ENUM_IN_MAP(TextBoxId),
-	DECLARE_ENUM_IN_MAP(LinkState),
-	DECLARE_ENUM_IN_MAP(SaveFileStatus),
-	DECLARE_ENUM_IN_MAP(PlayerDirection),
-	DECLARE_ENUM_IN_MAP(PlayerDirectionBitmap),
-	DECLARE_ENUM_IN_MAP(MapId),
-	DECLARE_ENUM_IN_MAP(NpcMovementDirection),
-};
+#define DECLARE_ENUM_IN_MAP(x) { #x, [](){ return std::make_unique<EnumUint>(#x, 1); } }
 
 bool is_number(const std::string &s){
 	return std::all_of(s.begin(), s.end(), isdigit);
 }
 
-std::unique_ptr<Type> parse_string_to_Type(const std::string &s){
-	auto it = normal_types.find(s);
-	if (it != normal_types.end())
+std::unique_ptr<Type> parse_string_to_Type(const typemap_t &typemap, const std::string &s){
+	auto it = typemap.find(s);
+	if (it != typemap.end())
 		return it->second();
 	
 	if (s.back() != ']')
@@ -187,7 +128,7 @@ std::unique_ptr<Type> parse_string_to_Type(const std::string &s){
 		length.reset(new IntegerLiteralNumber(length_string));
 	else
 		length.reset(new CompoundNumber(length_string));
-	auto subtype = parse_string_to_Type(subtype_string);
+	auto subtype = parse_string_to_Type(typemap, subtype_string);
 	return std::make_unique<Array>(std::move(subtype), std::move(length));
 }
 
@@ -417,4 +358,47 @@ std::string SpecialStruct::generate_initializer(unsigned address, unsigned base_
 		% name
 		% (address - base_address)
 	).str();
+}
+
+typemap_t declare_default_types(){
+	return {
+		{ "u8",                construct_u8 },
+		{ "u16",               construct_u16 },
+		{ "u24",               construct_u24 },
+		{ "big_u16",           construct_big_u16 },
+		{ "big_u24",           construct_big_u32 },
+		{ "big_u32",           construct_big_u32 },
+		{ "spritestatedata1",  construct_spritestatedata1 },
+		{ "spritestatedata2",  construct_spritestatedata2 },
+		{ "options",           construct_options },
+		{ "mapspritedata",     construct_mapspritedata },
+		{ "missableobject",    construct_missableobject },
+		{ "pcboxmember",       construct_pcboxmember },
+		{ "partymember",       construct_partymember },
+		{ "pcbox",             construct_pcbox },
+		{ "maindata",          construct_maindata },
+		{ "spritedata",        construct_spritedata },
+		{ "partydata",         construct_partydata },
+		{ "boxdata",           construct_boxdata },
+		{ "TwoItemMenuType_t", construct_TwoItemMenuType_t },
+		{ "pointer",           construct_pointer },
+		{ "big_pointer",       construct_big_pointer },
+		{ "code_pointer",      construct_code_pointer },
+		{ "bcd4",              construct_bcd4 },
+		{ "bcd6",              construct_bcd6 },
+		DECLARE_ENUM_IN_MAP(SerialConnectionStatus),
+		DECLARE_ENUM_IN_MAP(SpeciesId),
+		DECLARE_ENUM_IN_MAP(Sound),
+		DECLARE_ENUM_IN_MAP(AudioBank),
+		DECLARE_ENUM_IN_MAP(MenuType),
+		DECLARE_ENUM_IN_MAP(TextBoxId),
+		DECLARE_ENUM_IN_MAP(LinkState),
+		DECLARE_ENUM_IN_MAP(SaveFileStatus),
+		DECLARE_ENUM_IN_MAP(PlayerDirection),
+		DECLARE_ENUM_IN_MAP(PlayerDirectionBitmap),
+		DECLARE_ENUM_IN_MAP(MapId),
+		DECLARE_ENUM_IN_MAP(NpcMovementDirection),
+		DECLARE_ENUM_IN_MAP(MenuExitMethod),
+		DECLARE_ENUM_IN_MAP(MoveId),
+	};
 }

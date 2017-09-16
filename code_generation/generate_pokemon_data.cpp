@@ -1,4 +1,6 @@
+#include "code_generators.h"
 #include "../common/csv_parser.h"
+#include "utility.h"
 #include <vector>
 #include <iostream>
 #include <map>
@@ -7,48 +9,17 @@
 #include <algorithm>
 #include <iomanip>
 
-const std::vector<std::string> data_order = {
-	"species_id",      // 0
-	"pokedex_id",      // 1
-	"name",            // 2
-	"base_hp",         // 3
-	"base_attack",     // 4
-	"base_defense",    // 5
-	"base_speed",      // 6
-	"base_special",    // 7
-	"type1",           // 8
-	"type2",           // 9
-	"catch_rate",      // 10
-	"base_xp_yield",   // 11
-	"initial_attack1", // 12
-	"initial_attack2", // 13
-	"initial_attack3", // 14
-	"initial_attack4", // 15
-	"growth_rate",     // 16
-	"tmlearn_bitmap",  // 17
-	"display_name",    // 18
-	"front_image",     // 19
-	"back_image",      // 20
-	"cry_base",        // 21
-	"cry_pitch",       // 22
-	"cry_length",      // 23
+static const char * const pokemon_data_file = "input/pokemon_data.csv";
+static const char * const evolutions_file = "input/evolutions.csv";
+static const char * const pokemon_moves_file = "input/pokemon_moves.csv";
+static const char * const input_files[] = {
+	pokemon_data_file,
+	evolutions_file,
+	pokemon_moves_file,
 };
+static const char * const hash_key = "generate_pokemon_data";
 
-const std::vector<std::string> evolutions_order = {
-	"species",       // 0
-	"type",          // 1
-	"minimum_level", // 2
-	"next_form",     // 3
-	"item",          // 4
-};
-
-const std::vector<std::string> moves_order = {
-	"species", // 0
-	"level",   // 1
-	"move",    // 2
-};
-
-std::pair<std::string, std::string> charmap[] = {
+static const std::pair<std::string, std::string> charmap[] = {
 	{ "\\\\",       "\\\\01" },
 	{ "<POKE>",     "\\\\02" },
 	{ "<pkmn>",     "\\\\03" },
@@ -68,11 +39,7 @@ std::pair<std::string, std::string> charmap[] = {
 	{ "<MALE>",     "\\\\11" },
 };
 
-bool is_hex(char c){
-	return isdigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
-}
-
-std::string filter_text(const std::string &input){
+static std::string filter_text(const std::string &input){
 	std::string ret;
 	for (size_t i = 0; i < input.size(); ){
 		auto c = input[i];
@@ -117,39 +84,6 @@ std::string filter_text(const std::string &input){
 		i++;
 	}
 	return ret;
-}
-
-unsigned to_unsigned(const std::string &s){
-	std::stringstream stream(s);
-	unsigned ret;
-	if (!(stream >> ret))
-		throw std::runtime_error("Can't convert \"" + s + "\" to integer.");
-	return ret;
-}
-
-unsigned to_unsigned_default(const std::string &s, unsigned def = 0){
-	try{
-		return to_unsigned(s);
-	}catch (std::exception &){
-		return def;
-	}
-}
-
-unsigned hex_no_prefix_to_integer(const std::string &s){
-	std::stringstream stream;
-	stream << std::hex << s;
-	unsigned ret;
-	if (!(stream >> ret))
-		throw std::runtime_error((std::string)"Can't convert \"" + s + "\" from hex to integer.");
-	return ret;
-}
-
-unsigned hex_no_prefix_to_integer_default(const std::string &s, unsigned def = 0){
-	try{
-		return hex_no_prefix_to_integer(s);
-	}catch (std::exception &){
-		return def;
-	}
 }
 
 class EvolutionTrigger{
@@ -217,7 +151,6 @@ public:
 };
 
 class PokemonData{
-private:
 	std::vector<SpeciesData> species;
 
 	unsigned count_pokedex_species() const;
@@ -230,7 +163,34 @@ public:
 
 PokemonData::PokemonData(){
 	{
-		CsvParser csv("input/pokemon_data.csv");
+		static const std::vector<std::string> data_order = {
+			"species_id",      // 0
+			"pokedex_id",      // 1
+			"name",            // 2
+			"base_hp",         // 3
+			"base_attack",     // 4
+			"base_defense",    // 5
+			"base_speed",      // 6
+			"base_special",    // 7
+			"type1",           // 8
+			"type2",           // 9
+			"catch_rate",      // 10
+			"base_xp_yield",   // 11
+			"initial_attack1", // 12
+			"initial_attack2", // 13
+			"initial_attack3", // 14
+			"initial_attack4", // 15
+			"growth_rate",     // 16
+			"tmlearn_bitmap",  // 17
+			"display_name",    // 18
+			"front_image",     // 19
+			"back_image",      // 20
+			"cry_base",        // 21
+			"cry_pitch",       // 22
+			"cry_length",      // 23
+		};
+
+		CsvParser csv(pokemon_data_file);
 		unsigned rows = csv.row_count();
 		for (unsigned i = 0; i < rows; i++)
 			this->species.push_back(SpeciesData(csv.get_ordered_row(i, data_order)));
@@ -241,7 +201,15 @@ PokemonData::PokemonData(){
 		species[s.name] = &s;
 
 	{
-		CsvParser csv("input/evolutions.csv");
+		static const std::vector<std::string> evolutions_order = {
+			"species",       // 0
+			"type",          // 1
+			"minimum_level", // 2
+			"next_form",     // 3
+			"item",          // 4
+		};
+
+		CsvParser csv(evolutions_file);
 		unsigned rows = csv.row_count();
 		for (unsigned i = 0; i < rows; i++){
 			EvolutionTrigger evolution(csv.get_ordered_row(i, evolutions_order));
@@ -249,7 +217,13 @@ PokemonData::PokemonData(){
 		}
 	}
 	{
-		CsvParser csv("input/moves.csv");
+		const std::vector<std::string> moves_order = {
+			"species", // 0
+			"level",   // 1
+			"move",    // 2
+		};
+
+		CsvParser csv(pokemon_moves_file);
 		unsigned rows = csv.row_count();
 		for (unsigned i = 0; i < rows; i++){
 			LearnedMove move(csv.get_ordered_row(i, moves_order));
@@ -297,9 +271,9 @@ SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 	this->display_name = filter_text(columns[18]);
 	this->front_image = columns[19];
 	this->back_image = columns[20];
-	this->cry_base = hex_no_prefix_to_integer_default(columns[21]);
-	this->cry_pitch = hex_no_prefix_to_integer_default(columns[22]);
-	this->cry_length = hex_no_prefix_to_integer_default(columns[23]);
+	this->cry_base = hex_no_prefix_to_unsigned_default(columns[21]);
+	this->cry_pitch = hex_no_prefix_to_unsigned_default(columns[22]);
+	this->cry_length = hex_no_prefix_to_unsigned_default(columns[23]);
 
 	if (this->front_image.size())
 		this->front_image = "&" + this->front_image;
@@ -484,15 +458,27 @@ unsigned PokemonData::count_pokedex_species() const{
 	return ret;
 }
 
-int main(){
-	try{
-		PokemonData data;
-		data.generate_enums("output/pokemon_enums.h");
-		data.generate_static_data_declarations("output/pokemon_declarations.h");
-		data.generate_static_data_definitions("output/pokemon_definitions.cpp", "pokemon_declarations.h");
-	}catch (std::exception &e){
-		std::cerr << e.what() << std::endl;
-		return -1;
+static void generate_pokemon_data_internal(known_hashes_t &known_hashes){
+	std::vector<std::string> input_files(::input_files, ::input_files + array_length(::input_files));
+	auto current_hash = hash_files(input_files);
+	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
+		std::cout << "Skipping generating Pokemon data.\n";
+		return;
 	}
-	return 0;
+	std::cout << "Generating Pokemon data...\n";
+
+	PokemonData data;
+	data.generate_enums("output/pokemon_enums.h");
+	data.generate_static_data_declarations("output/pokemon_declarations.h");
+	data.generate_static_data_definitions("output/pokemon_definitions.cpp", "pokemon_declarations.h");
+
+	known_hashes[hash_key] = current_hash;
+}
+
+void generate_pokemon_data(known_hashes_t &known_hashes){
+	try{
+		generate_pokemon_data_internal(known_hashes);
+	}catch (std::exception &e){
+		throw std::runtime_error((std::string)"generate_pokemon_data(): " + e.what());
+	}
 }

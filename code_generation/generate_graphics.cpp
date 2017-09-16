@@ -1,3 +1,4 @@
+#include "code_generators.h"
 #include "../common/csv_parser.h"
 #define FREEIMAGE_LIB
 #include <FreeImage.h>
@@ -12,6 +13,9 @@
 #include <algorithm>
 
 typedef std::uint8_t byte_t;
+
+static const char * const input_file = "input/graphics.csv";
+static const char * const hash_key = "generate_graphics";
 
 struct pixel{
 	byte_t r;
@@ -38,7 +42,7 @@ struct pixel{
 };
 
 constexpr pixel colorn(byte_t n){
-	return { n, n, n, 0xFF };
+	return{ n, n, n, 0xFF };
 }
 
 const pixel color3 = colorn(0x00);
@@ -76,7 +80,8 @@ class Image{
 	}
 	Image(){}
 public:
-	unsigned w, h;
+	unsigned w = 0;
+	unsigned h = 0;
 	std::vector<pixel> bitmap;
 	static std::unique_ptr<Image> load_image(const char *path){
 		auto bitmap = load_bitmap(path);
@@ -175,7 +180,7 @@ public:
 	}
 };
 
-void print(std::ostream &stream, const std::vector<byte_t> &v, unsigned base_indent = 0){
+static void print(std::ostream &stream, const std::vector<byte_t> &v, unsigned base_indent = 0){
 	base_indent++;
 	unsigned line_length = 0;
 	for (unsigned i = 0; i < base_indent; i++){
@@ -198,15 +203,22 @@ void print(std::ostream &stream, const std::vector<byte_t> &v, unsigned base_ind
 	stream << "\n" << std::dec;
 }
 
-void generate_gfx(){
+static void generate_graphics_internal(known_hashes_t &known_hashes){
+	auto current_hash = hash_file(input_file);
+	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
+		std::cout << "Skipping generating graphics.\n";
+		return;
+	}
+	std::cout << "Generating graphics...\n";
+
 	unsigned total_bytes = 0;
-	const std::vector<std::string> columns = {
+	static const std::vector<std::string> columns = {
 		"name",
 		"path",
 	};
 	const std::string dst_name = "gfx";
 
-	CsvParser csv("input/graphics.csv");
+	CsvParser csv(input_file);
 
 	std::ofstream header("output/" + dst_name + ".h");
 	std::ofstream source("output/" + dst_name + ".cpp");
@@ -251,16 +263,16 @@ void generate_gfx(){
 			<< "};\n";
 		total_bytes += buffer->size();
 	}
+
+	known_hashes[hash_key] = current_hash;
 }
 
-int main(){
+void generate_graphics(known_hashes_t &known_hashes){
 	FreeImage_Initialise();
 	try{
-		generate_gfx();
+		generate_graphics_internal(known_hashes);
 	}catch (std::exception &e){
-		std::cerr << e.what() << std::endl;
-		return -1;
+		throw std::runtime_error((std::string)"generate_graphics(): " + e.what());
 	}
 	FreeImage_DeInitialise();
-	return 0;
 }

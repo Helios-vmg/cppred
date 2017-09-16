@@ -77,7 +77,7 @@ public:
 		size_t index = row * this->headers.size() + column;
 		return this->data[index];
 	}
-	std::string get_cell(size_t row, const std::string &column){
+	std::string get_cell(size_t row, const std::string &column) const{
 		if (row > this->row_count())
 			throw std::runtime_error("CsvParser::get_cell(): Invalid row.");
 		auto it = this->headers.find(column);
