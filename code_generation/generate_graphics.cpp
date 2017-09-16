@@ -212,6 +212,9 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 	}
 	std::cout << "Generating graphics...\n";
 
+	FreeImage_Initialise();
+	std::unique_ptr<void, void(*)(void *)> fi_initializer((void *)1, [](void *){ FreeImage_DeInitialise(); });
+
 	unsigned total_bytes = 0;
 	static const std::vector<std::string> columns = {
 		"name",
@@ -269,11 +272,9 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 }
 
 void generate_graphics(known_hashes_t &known_hashes){
-	FreeImage_Initialise();
 	try{
 		generate_graphics_internal(known_hashes);
 	}catch (std::exception &e){
 		throw std::runtime_error((std::string)"generate_graphics(): " + e.what());
 	}
-	FreeImage_DeInitialise();
 }
