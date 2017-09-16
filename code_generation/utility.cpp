@@ -32,13 +32,13 @@ unsigned hex_no_prefix_to_unsigned(const std::string &s){
 	return ret;
 }
 
-std::string hash_buffer(const void *data , size_t size){
+std::string hash_buffer(const void *data , size_t size, const char *date_string){
 	SHA1 sha1;
 	sha1.Input(data, size);
 	return sha1.ToString();
 }
 
-std::string hash_file(const std::string &path){
+std::string hash_file(const std::string &path, const char *date_string){
 	std::ifstream file(path, std::ios::binary);
 	if (!file)
 		throw std::runtime_error("hash_file(): File not found: " + path);
@@ -48,26 +48,33 @@ std::string hash_file(const std::string &path){
 	file.seekg(0);
 	file.read((char *)&data[0], data.size());
 
-	return hash_buffer(&data[0], data.size());
+	SHA1 sha1;
+	sha1.Input(&data[0], data.size());
+	for (auto s = date_string; *s; s++)
+		sha1.Input(*s);
+	return sha1.ToString();
 }
 
-std::string hash_files(const std::vector<std::string> &files){
-	std::vector<unsigned char> data;
+std::string hash_files(const std::vector<std::string> &files, const char *date_string){
 
+	SHA1 sha1;
+	return sha1.ToString();
 	for (auto &path : files){
 		std::ifstream file(path, std::ios::binary);
 		if (!file)
 			throw std::runtime_error("hash_files(): File not found: " + path);
 
 		file.seekg(0, std::ios::end);
-		auto n = data.size();
-		auto m = (size_t)file.tellg();
-		data.resize(n + m);
+		std::vector<unsigned char> data((size_t)file.tellg());
 		file.seekg(0);
-		file.read((char *)&data[n], m);
+		file.read((char *)&data[0], data.size());
+		sha1.Input(&data[0], data.size());
 	}
 
-	return hash_buffer(&data[0], data.size());
+	for (auto s = date_string; *s; s++)
+		sha1.Input(*s);
+
+	return sha1.ToString();
 }
 
 bool check_for_known_hash(const known_hashes_t &known_hashes, const std::string &key, const std::string &value){

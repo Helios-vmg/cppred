@@ -4,6 +4,7 @@
 
 static const char * const input_file = "input/moves.csv";
 static const char * const hash_key = "generate_moves";
+static const char * const date_string = __DATE__ __TIME__;
 
 struct MoveData{
 	unsigned id;
@@ -69,7 +70,7 @@ static void generate_definitions(const std::map<unsigned, MoveData> &moves, cons
 }
 
 static void generate_moves_internal(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(input_file);
+	auto current_hash = hash_file(input_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating moves.\n";
 		return;

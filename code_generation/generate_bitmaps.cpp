@@ -5,6 +5,7 @@
 
 static const char * const bitmaps_file = "input/bitmaps.csv";
 static const char * const hash_key = "generate_bitmaps";
+static const char * const date_string = __DATE__ __TIME__;
 
 class BitmapMember{
 public:
@@ -201,7 +202,7 @@ static bitmaps_declarations_t light_update(){
 }
 
 generate_bitmaps_result generate_bitmaps(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(bitmaps_file);
+	auto current_hash = hash_file(bitmaps_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash))
 		return { light_update, false };
 	

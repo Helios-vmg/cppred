@@ -18,6 +18,7 @@ static const char * const input_files[] = {
 	pokemon_moves_file,
 };
 static const char * const hash_key = "generate_pokemon_data";
+static const char * const date_string = __DATE__ __TIME__;
 
 static const std::pair<std::string, std::string> charmap[] = {
 	{ "\\\\",       "\\\\01" },
@@ -457,7 +458,7 @@ unsigned PokemonData::count_pokedex_species() const{
 
 static void generate_pokemon_data_internal(known_hashes_t &known_hashes){
 	std::vector<std::string> input_files(::input_files, ::input_files + array_length(::input_files));
-	auto current_hash = hash_files(input_files);
+	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating Pokemon data.\n";
 		return;

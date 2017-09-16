@@ -9,6 +9,7 @@
 
 static const char * const charmap_file = "input/charmap.csv";
 static const char * const hash_key = "generate_charmap";
+static const char * const date_string = __DATE__ __TIME__;
 
 static std::uint8_t convert_string(const std::string &s){
 	std::stringstream stream(s);
@@ -19,7 +20,7 @@ static std::uint8_t convert_string(const std::string &s){
 }
 
 void generate_charmap_internal(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(charmap_file);
+	auto current_hash = hash_file(charmap_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating charmap.\n";
 		return;

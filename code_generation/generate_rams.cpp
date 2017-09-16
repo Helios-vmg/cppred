@@ -8,6 +8,7 @@
 //address,size,type,name
 const std::vector<std::string> wram_order = { "address", "size", "type", "name", };
 static const char * const hash_key = "generate_rams";
+static const char * const date_string = __DATE__ __TIME__;
 
 struct xram{
 	const char *file_name;
@@ -96,7 +97,7 @@ void generate_rams(known_hashes_t &known_hashes, const generate_bitmaps_result &
 	};
 
 	try{
-		auto current_hash = hash_files(to_input_files(xrams));
+		auto current_hash = hash_files(to_input_files(xrams), date_string);
 		if (check_for_known_hash(known_hashes, hash_key, current_hash) && !bitmaps_result.changed){
 			std::cout << "Skipping generating bitmaps.\n";
 			std::cout << "Skipping generating RAMs.\n";

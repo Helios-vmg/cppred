@@ -12,6 +12,7 @@
 
 static const char * const input_file = "input/text.txt";
 static const char * const hash_key = "generate_text";
+static const char * const date_string = __DATE__ __TIME__;
 
 typedef std::uint8_t byte_t;
 typedef std::string (*command_handler)(const std::string &);
@@ -274,7 +275,7 @@ static Result parse_text_format(std::istream &stream){
 }
 
 static void generate_text_internal(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(input_file);
+	auto current_hash = hash_file(input_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating text.\n";
 		return;
