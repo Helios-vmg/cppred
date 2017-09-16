@@ -99,3 +99,29 @@ unsigned hex_no_prefix_to_unsigned_default(const std::string &s, unsigned def){
 		ret = def;
 	return ret;
 }
+
+bool case_insensitive(const std::string &a, const char *b){
+	for (auto c : a){
+		if (!*b)
+			return false;
+		if (tolower(c) != tolower(*b))
+			return false;
+		b++;
+	}
+	return !*b;
+}
+
+bool to_bool(const std::string &s){
+	unsigned value;
+	if (to_unsigned_internal(value, s))
+		return !!value;
+	if (case_insensitive(s, "true"))
+		return true;
+	if (case_insensitive(s, "false"))
+		return false;
+	throw std::runtime_error("Can't convert \"" + s + "\" to a bool.");
+}
+
+const char *bool_to_string(bool value){
+	return value ? "true" : "false";
+}
