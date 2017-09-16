@@ -35,7 +35,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -163,6 +163,7 @@
     <ClCompile Include="generate_charmap.cpp" />
     <ClCompile Include="generate_graphics.cpp" />
     <ClCompile Include="generate_maps.cpp" />
+    <ClCompile Include="generate_moves.cpp" />
     <ClCompile Include="generate_pokemon_data.cpp" />
     <ClCompile Include="generate_rams.cpp" />
     <ClCompile Include="generate_text.cpp" />

@@ -1,0 +1,257 @@
+id,name,field_move_index,display_name
+0,None,0,
+1,Pound,0,POUND
+2,KarateChop,0,KARATE CHOP
+3,Doubleslap,0,DOUBLESLAP
+4,CometPunch,0,COMET PUNCH
+5,MegaPunch,0,MEGA PUNCH
+6,PayDay,0,PAY DAY
+7,FirePunch,0,FIRE PUNCH
+8,IcePunch,0,ICE PUNCH
+9,Thunderpunch,0,THUNDERPUNCH
+10,Scratch,0,SCRATCH
+11,Vicegrip,0,VICEGRIP
+12,Guillotine,0,GUILLOTINE
+13,RazorWind,0,RAZOR WIND
+14,SwordsDance,0,SWORDS DANCE
+15,Cut,1,CUT
+16,Gust,0,GUST
+17,WingAttack,0,WING ATTACK
+18,Whirlwind,0,WHIRLWIND
+19,Fly,2,FLY
+20,Bind,0,BIND
+21,Slam,0,SLAM
+22,VineWhip,0,VINE WHIP
+23,Stomp,0,STOMP
+24,DoubleKick,0,DOUBLE KICK
+25,MegaKick,0,MEGA KICK
+26,JumpKick,0,JUMP KICK
+27,RollingKick,0,ROLLING KICK
+28,SandAttack,0,SAND-ATTACK
+29,Headbutt,0,HEADBUTT
+30,HornAttack,0,HORN ATTACK
+31,FuryAttack,0,FURY ATTACK
+32,HornDrill,0,HORN DRILL
+33,Tackle,0,TACKLE
+34,BodySlam,0,BODY SLAM
+35,Wrap,0,WRAP
+36,TakeDown,0,TAKE DOWN
+37,Thrash,0,THRASH
+38,DoubleEdge,0,DOUBLE-EDGE
+39,TailWhip,0,TAIL WHIP
+40,PoisonSting,0,POISON STING
+41,Twineedle,0,TWINEEDLE
+42,PinMissile,0,PIN MISSILE
+43,Leer,0,LEER
+44,Bite,0,BITE
+45,Growl,0,GROWL
+46,Roar,0,ROAR
+47,Sing,0,SING
+48,Supersonic,0,SUPERSONIC
+49,Sonicboom,0,SONICBOOM
+50,Disable,0,DISABLE
+51,Acid,0,ACID
+52,Ember,0,EMBER
+53,Flamethrower,0,FLAMETHROWER
+54,Mist,0,MIST
+55,WaterGun,0,WATER GUN
+56,HydroPump,0,HYDRO PUMP
+57,Surf,4,SURF
+58,IceBeam,0,ICE BEAM
+59,Blizzard,0,BLIZZARD
+60,Psybeam,0,PSYBEAM
+61,Bubblebeam,0,BUBBLEBEAM
+62,AuroraBeam,0,AURORA BEAM
+63,HyperBeam,0,HYPER BEAM
+64,Peck,0,PECK
+65,DrillPeck,0,DRILL PECK
+66,Submission,0,SUBMISSION
+67,LowKick,0,LOW KICK
+68,Counter,0,COUNTER
+69,SeismicToss,0,SEISMIC TOSS
+70,Strength,5,STRENGTH
+71,Absorb,0,ABSORB
+72,MegaDrain,0,MEGA DRAIN
+73,LeechSeed,0,LEECH SEED
+74,Growth,0,GROWTH
+75,RazorLeaf,0,RAZOR LEAF
+76,Solarbeam,0,SOLARBEAM
+77,Poisonpowder,0,POISONPOWDER
+78,StunSpore,0,STUN SPORE
+79,SleepPowder,0,SLEEP POWDER
+80,PetalDance,0,PETAL DANCE
+81,StringShot,0,STRING SHOT
+82,DragonRage,0,DRAGON RAGE
+83,FireSpin,0,FIRE SPIN
+84,Thundershock,0,THUNDERSHOCK
+85,Thunderbolt,0,THUNDERBOLT
+86,ThunderWave,0,THUNDER WAVE
+87,Thunder,0,THUNDER
+88,RockThrow,0,ROCK THROW
+89,Earthquake,0,EARTHQUAKE
+90,Fissure,0,FISSURE
+91,Dig,7,DIG
+92,Toxic,0,TOXIC
+93,Confusion,0,CONFUSION
+94,PsychicM,0,PSYCHIC
+95,Hypnosis,0,HYPNOSIS
+96,Meditate,0,MEDITATE
+97,Agility,0,AGILITY
+98,QuickAttack,0,QUICK ATTACK
+99,Rage,0,RAGE
+100,Teleport,8,TELEPORT
+101,NightShade,0,NIGHT SHADE
+102,Mimic,0,MIMIC
+103,Screech,0,SCREECH
+104,DoubleTeam,0,DOUBLE TEAM
+105,Recover,0,RECOVER
+106,Harden,0,HARDEN
+107,Minimize,0,MINIMIZE
+108,Smokescreen,0,SMOKESCREEN
+109,ConfuseRay,0,CONFUSE RAY
+110,Withdraw,0,WITHDRAW
+111,DefenseCurl,0,DEFENSE CURL
+112,Barrier,0,BARRIER
+113,LightScreen,0,LIGHT SCREEN
+114,Haze,0,HAZE
+115,Reflect,0,REFLECT
+116,FocusEnergy,0,FOCUS ENERGY
+117,Bide,0,BIDE
+118,Metronome,0,METRONOME
+119,MirrorMove,0,MIRROR MOVE
+120,Selfdestruct,0,SELFDESTRUCT
+121,EggBomb,0,EGG BOMB
+122,Lick,0,LICK
+123,Smog,0,SMOG
+124,Sludge,0,SLUDGE
+125,BoneClub,0,BONE CLUB
+126,FireBlast,0,FIRE BLAST
+127,Waterfall,0,WATERFALL
+128,Clamp,0,CLAMP
+129,Swift,0,SWIFT
+130,SkullBash,0,SKULL BASH
+131,SpikeCannon,0,SPIKE CANNON
+132,Constrict,0,CONSTRICT
+133,Amnesia,0,AMNESIA
+134,Kinesis,0,KINESIS
+135,Softboiled,9,SOFTBOILED
+136,HiJumpKick,0,HI JUMP KICK
+137,Glare,0,GLARE
+138,DreamEater,0,DREAM EATER
+139,PoisonGas,0,POISON GAS
+140,Barrage,0,BARRAGE
+141,LeechLife,0,LEECH LIFE
+142,LovelyKiss,0,LOVELY KISS
+143,SkyAttack,0,SKY ATTACK
+144,Transform,0,TRANSFORM
+145,Bubble,0,BUBBLE
+146,DizzyPunch,0,DIZZY PUNCH
+147,Spore,0,SPORE
+148,Flash,6,FLASH
+149,Psywave,0,PSYWAVE
+150,Splash,0,SPLASH
+151,AcidArmor,0,ACID ARMOR
+152,Crabhammer,0,CRABHAMMER
+153,Explosion,0,EXPLOSION
+154,FurySwipes,0,FURY SWIPES
+155,Bonemerang,0,BONEMERANG
+156,Rest,0,REST
+157,RockSlide,0,ROCK SLIDE
+158,HyperFang,0,HYPER FANG
+159,Sharpen,0,SHARPEN
+160,Conversion,0,CONVERSION
+161,TriAttack,0,TRI ATTACK
+162,SuperFang,0,SUPER FANG
+163,Slash,0,SLASH
+164,Substitute,0,SUBSTITUTE
+165,Struggle,0,STRUGGLE
+166,Unknown0xA6,0,
+167,Unknown0xA7,0,
+168,Unknown0xA8,0,
+169,Unknown0xA9,0,
+170,Unknown0xAA,0,
+171,Unknown0xAB,0,
+172,Unknown0xAC,0,
+173,Unknown0xAD,0,
+174,Unknown0xAE,0,
+175,Unknown0xAF,0,
+176,Unknown0xB0,0,
+177,Unknown0xB1,0,
+178,Unknown0xB2,0,
+179,Unknown0xB3,0,
+180,Unknown0xB4,3,
+181,Unknown0xB5,0,
+182,Unknown0xB6,0,
+183,Unknown0xB7,0,
+184,Unknown0xB8,0,
+185,Unknown0xB9,0,
+186,Unknown0xBA,0,
+187,Unknown0xBB,0,
+188,Unknown0xBC,0,
+189,Unknown0xBD,0,
+190,Unknown0xBE,0,
+191,Unknown0xBF,0,
+192,Unknown0xC0,0,
+193,Unknown0xC1,0,
+194,Unknown0xC2,0,
+195,Unknown0xC3,0,
+196,Unknown0xC4,0,
+197,Unknown0xC5,0,
+198,Unknown0xC6,0,
+199,Unknown0xC7,0,
+200,Unknown0xC8,0,
+201,Unknown0xC9,0,
+202,Unknown0xCA,0,
+203,Unknown0xCB,0,
+204,Unknown0xCC,0,
+205,Unknown0xCD,0,
+206,Unknown0xCE,0,
+207,Unknown0xCF,0,
+208,Unknown0xD0,0,
+209,Unknown0xD1,0,
+210,Unknown0xD2,0,
+211,Unknown0xD3,0,
+212,Unknown0xD4,0,
+213,Unknown0xD5,0,
+214,Unknown0xD6,0,
+215,Unknown0xD7,0,
+216,Unknown0xD8,0,
+217,Unknown0xD9,0,
+218,Unknown0xDA,0,
+219,Unknown0xDB,0,
+220,Unknown0xDC,0,
+221,Unknown0xDD,0,
+222,Unknown0xDE,0,
+223,Unknown0xDF,0,
+224,Unknown0xE0,0,
+225,Unknown0xE1,0,
+226,Unknown0xE2,0,
+227,Unknown0xE3,0,
+228,Unknown0xE4,0,
+229,Unknown0xE5,0,
+230,Unknown0xE6,0,
+231,Unknown0xE7,0,
+232,Unknown0xE8,0,
+233,Unknown0xE9,0,
+234,Unknown0xEA,0,
+235,Unknown0xEB,0,
+236,Unknown0xEC,0,
+237,Unknown0xED,0,
+238,Unknown0xEE,0,
+239,Unknown0xEF,0,
+240,Unknown0xF0,0,
+241,Unknown0xF1,0,
+242,Unknown0xF2,0,
+243,Unknown0xF3,0,
+244,Unknown0xF4,0,
+245,Unknown0xF5,0,
+246,Unknown0xF6,0,
+247,Unknown0xF7,0,
+248,Unknown0xF8,0,
+249,Unknown0xF9,0,
+250,Unknown0xFA,0,
+251,Unknown0xFB,0,
+252,Unknown0xFC,0,
+253,Unknown0xFD,0,
+254,Unknown0xFE,0,
+255,Unknown0xFF,0,
