@@ -205,7 +205,9 @@ public:
 	void run_palette_command(PaletteCommand cmd);
 	void play_sound(Sound);
 	void delay_frames(unsigned count);
-	void delay3();
+	void delay3(){
+		this->delay_frames(3);
+	}
 	void wait_for_sound_to_finish();
 	void play_cry(SpeciesId);
 	Sound get_cry_data(SpeciesId);
@@ -241,7 +243,6 @@ public:
 	void gb_fadeout_to_white();
 	void gb_fadein_from_white();
 	void load_front_sprite(SpeciesId, bool flipped, const tilemap_it &destination);
-	void move_pic_left();
 	//Waits until vsync and copies tiles to VRAM.
 	//src_offset is the index of the first tile to copy.
 	void copy_video_data(const BaseStaticImage &image, unsigned tiles, unsigned src_offset, unsigned destination, bool flipped = false);

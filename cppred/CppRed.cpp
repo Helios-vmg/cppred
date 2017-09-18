@@ -434,10 +434,6 @@ void CppRed::play_sound(Sound sound){
 	}
 }
 
-void CppRed::delay3(){
-	this->delay_frames(3);
-}
-
 void CppRed::wait_for_sound_to_finish(){
 	if (check_flag<byte_t>(this->wram.wLowHealthAlarm, 0x80))
 		return;

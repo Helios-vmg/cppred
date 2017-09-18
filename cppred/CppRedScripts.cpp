@@ -48,7 +48,7 @@ void oak_speech(CppRed &red){
 		red.clear_screen();
 
 		intro_display_picture_centered_or_upper_right(red, RedPicFront, Placing::Centered);
-		red.move_pic_left();
+		move_pic_left(red);
 		red.print_text(text.IntroducePlayerText);
 		choose_player_name(red);
 		red.gb_fadeout_to_white();
@@ -84,6 +84,20 @@ void oak_speech(CppRed &red){
 	red.gb_fadeout_to_white();
 	red.clear_screen();
 }
+
+void move_pic_left(CppRed &red){
+	red.WX = 119;
+	red.delay_frame();
+	red.BGP = bits_from_u32<0x11100100>::value;
+	while (true){
+		red.delay_frame();
+		auto x = red.WX - 8;
+		if (x == 0xFF)
+			return;
+		red.WX = x;
+	}
+}
+
 
 //------------------------------------------------------------------------------
 
