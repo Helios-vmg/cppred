@@ -267,6 +267,7 @@ public:
 	void place_unfilled_arrow_menu_cursor();
 	void town_map_sprite_blinking_animation();
 	void display_picture_centered_or_upper_right(const BaseStaticImage &image, Placing placing);
+	std::string display_naming_screen(NamingScreenType);
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

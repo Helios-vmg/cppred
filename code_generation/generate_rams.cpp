@@ -61,6 +61,7 @@ typemap_t declare_default_types(){
 		DECLARE_ENUM_IN_MAP(MenuExitMethod),
 		DECLARE_ENUM_IN_MAP(MoveId),
 		DECLARE_ENUM_IN_MAP(PartyMenuHpColor),
+		DECLARE_ENUM_IN_MAP(NamingScreenType),
 	};
 }
 

@@ -13,6 +13,9 @@ void fade_in_intro_pic(CppRed &red);
 void move_pic_left(CppRed &red);
 void choose_player_name(CppRed &red);
 void choose_rival_name(CppRed &red);
+void slide_pic_right(CppRed &red);
+void slide_pic_left(CppRed &red);
+int display_intro_name_textbox(CppRed &red, const char * const *names);
 
 void oak_speech(CppRed &red){
 	auto &text = red.text;
@@ -106,6 +109,72 @@ void fade_in_intro_pic(CppRed &red){
 		red.BGP = palette;
 		red.delay_frames(10);
 	}
+}
+
+static const char * const default_names_red[] = {
+	"NEW NAME",
+	"RED",
+	"ASH",
+	"JACK",
+	nullptr,
+};
+
+static const char * const default_names_blue[] = {
+	"NEW NAME",
+	"BLUE",
+	"GARY",
+	"JOHN",
+	nullptr,
+};
+
+void choose_character_name(CppRed &red, bool is_rival){
+#if POKEMON_VERSION == RED
+	static decltype(default_names_red) * const default_names[] = {
+		&default_names_red,
+		&default_names_blue,
+	};
+#elif POKEMON_VERSION == BLUE
+	static decltype(default_names_red) * const default_names[] = {
+		&default_names_blue,
+		&default_names_red,
+	};
+#else
+#error Pokemon version not defined!
+#endif
+
+	auto &name_array = *default_names[(int)is_rival];
+	auto &name_dst = !is_rival ? red.wram.wPlayerName : red.wram.wMainData.wRivalName;
+	const auto name_screen_type = !is_rival ? NamingScreenType::PlayerName : NamingScreenType::RivalName;
+	auto &character_image = !is_rival ? RedPicFront : Rival1Pic;
+	auto &ok_text = !is_rival ? red.text.YourNameIsText : red.text.HisNameIsText;
+
+	slide_pic_right(red);
+
+	auto selection = display_intro_name_textbox(red, name_array);
+	assert(selection >= 0 && selection < array_length(name_array) - 1);
+	if (selection){
+		name_dst = name_array[selection];
+		slide_pic_left(red);
+	}else{
+		//Custom name.
+		std::string name;
+		do
+			name = red.display_naming_screen(name_screen_type);
+		while (!name.size());
+		name_dst = name;
+		red.clear_screen();
+		red.delay3();
+		red.display_picture_centered_or_upper_right(character_image, Placing::Centered);
+	}
+	red.text.print_text(ok_text);
+}
+
+void choose_player_name(CppRed &red){
+	choose_character_name(red, false);
+}
+
+void choose_rival_name(CppRed &red){
+	choose_character_name(red, true);
 }
 
 //------------------------------------------------------------------------------

@@ -1247,3 +1247,9 @@ void CppRed::display_picture_centered_or_upper_right(const BaseStaticImage &imag
 	}
 	write_mon_pic_tiles_to_buffer(position, tilemap_width);
 }
+
+std::string CppRed::display_naming_screen(NamingScreenType type){
+	this->wram.wNamingScreenType = type;
+	throw NotImplementedException();
+	return "";
+}

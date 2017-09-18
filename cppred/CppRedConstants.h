@@ -800,3 +800,9 @@ enum class Placing{
 	Centered,
 	TopLeft,
 };
+
+enum class NamingScreenType{
+	PlayerName = 0,
+	RivalName = 1,
+	PokemonNickname = 2,
+};
