@@ -27,7 +27,7 @@ void CppRed::update_player_sprite(){
 		byte_t tile = *p;
 		this->hram.hTilePlayerStandingOn = tile;
 		disable_sprite = tile >= 0x60;
-	} else{
+	}else{
 		if (counter != 0xFF){
 			counter--;
 			sprite2.walk_animation_counter = counter;
@@ -46,13 +46,13 @@ void CppRed::update_player_sprite(){
 		SpriteFacingDirection sprite_direction = SpriteFacingDirection::Down;
 		if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Down)){
 			sprite_direction = SpriteFacingDirection::Down;
-		} else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Up)){
+		}else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Up)){
 			sprite_direction = SpriteFacingDirection::Up;
-		} else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Left)){
+		}else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Left)){
 			sprite_direction = SpriteFacingDirection::Left;
-		} else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Right)){
+		}else if (check_flag((unsigned)pc_direction, (unsigned)PlayerDirectionBitmap::Right)){
 			sprite_direction = SpriteFacingDirection::Right;
-		} else
+		}else
 			not_moving = true;
 
 		if (!not_moving){
@@ -65,7 +65,7 @@ void CppRed::update_player_sprite(){
 	if (not_moving){
 		sprite1.intra_anim_frame_counter = 0;
 		sprite1.anim_frame_counter = 0;
-	} else{
+	}else{
 		skip_sprite_animation = this->wram.wMainData.wd736.get_pc_spinning();
 		if (!skip_sprite_animation){
 			auto sprite = this->wram.wSpriteData.wSpriteStateData1[(this->hram.H_CURRENTSPRITEOFFSET / SpriteStateData1::size) + 1];
@@ -261,7 +261,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 		if (movement == 0xFF || movement == 0xFE){
 			tile = this->get_tile_sprite_stands_on();
 			x = this->random() & 0xFF;
-		} else{
+		}else{
 			sprite.movement_byte1 = movement + 1;
 			this->wram.wNPCNumScriptedSteps--;
 			auto direction = (std::uint32_t)this->wram.wNPCMovementDirections[movement];
@@ -279,7 +279,7 @@ void CppRed::update_npc_sprite(const SpriteStateData2 &){
 			if (direction == 0xFE){ //== WALK
 				sprite.movement_byte1 = 1;
 				x = this->wram.wNPCMovementDirections[direction];
-			} else
+			}else
 				x = direction;
 		}
 		auto test = (unsigned)this->wram.wCurSpriteMovement2;
@@ -470,14 +470,14 @@ bool CppRed::can_walk_onto_tile_helper(unsigned tile_id, DirectionBitmap directi
 			//on the other hand, the amount a sprite can walk out to the
 			//right or bottom is not limited (until the counter overflows)
 			return false;
-	} else if (--y < 0)
+	}else if (--y < 0)
 		return false;
 	if (deltax >= 0){
 		x += deltax;
 		if (x < 5)
 			//Same as above.
 			return false;
-	} else if (--x < 0)
+	}else if (--x < 0)
 		return false;
 	sprite2.x_displacement = reduce_sign(x);
 	sprite2.y_displacement = reduce_sign(y);
