@@ -795,3 +795,8 @@ enum class PokemonOverworldSprite{
 
 const unsigned tiles_per_pokemon_ow_sprite = 4;
 const unsigned gb_max_sprite_count = 40;
+
+enum class Placing{
+	Centered,
+	TopLeft,
+};

@@ -5,16 +5,10 @@
 
 namespace CppRedScripts{
 
-enum class Placing{
-	Centered,
-	TopLeft,
-};
-
 //------------------------------------------------------------------------------
 //                                 OAK SPEECH
 //------------------------------------------------------------------------------
 
-void intro_display_picture_centered_or_upper_right(CppRed &red, const BaseStaticImage &image, Placing placing);
 void fade_in_intro_pic(CppRed &red);
 void move_pic_left(CppRed &red);
 void choose_player_name(CppRed &red);
@@ -35,7 +29,7 @@ void oak_speech(CppRed &red){
 	
 	//Skip choosing names?
 	if (!red.wram.wMainData.wd732.get_unknown()){
-		intro_display_picture_centered_or_upper_right(red, ProfOakPic, Placing::Centered);
+		red.display_picture_centered_or_upper_right(ProfOakPic, Placing::Centered);
 		fade_in_intro_pic(red);
 		red.print_text(text.OakSpeechText1);
 		red.gb_fadeout_to_white();
@@ -47,14 +41,14 @@ void oak_speech(CppRed &red){
 		red.gb_fadeout_to_white();
 		red.clear_screen();
 
-		intro_display_picture_centered_or_upper_right(red, RedPicFront, Placing::Centered);
+		red.display_picture_centered_or_upper_right(RedPicFront, Placing::Centered);
 		move_pic_left(red);
 		red.print_text(text.IntroducePlayerText);
 		choose_player_name(red);
 		red.gb_fadeout_to_white();
 		red.clear_screen();
 
-		intro_display_picture_centered_or_upper_right(red, Rival1Pic, Placing::Centered);
+		red.display_picture_centered_or_upper_right(Rival1Pic, Placing::Centered);
 		fade_in_intro_pic(red);
 		red.print_text(text.IntroduceRivalText);
 		choose_rival_name(red);
@@ -62,16 +56,16 @@ void oak_speech(CppRed &red){
 
 	red.gb_fadeout_to_white();
 	red.clear_screen();
-	intro_display_picture_centered_or_upper_right(red, RedPicFront, Placing::Centered);
+	red.display_picture_centered_or_upper_right(RedPicFront, Placing::Centered);
 	red.gb_fadein_from_white();
 
 	red.print_text(text.OakSpeechText3);
 	red.play_sound(Sound::SFX_Shrink_1);
 	red.delay_frames(4);
 	red.copy_video_data(RedSprite, 12, 0, vSprites);
-	intro_display_picture_centered_or_upper_right(red, ShrinkPic1, Placing::Centered);
+	red.display_picture_centered_or_upper_right(ShrinkPic1, Placing::Centered);
 	red.delay_frames(4);
-	intro_display_picture_centered_or_upper_right(red, ShrinkPic2, Placing::Centered);
+	red.display_picture_centered_or_upper_right(ShrinkPic2, Placing::Centered);
 	red.reset_player_sprite_data();
 	red.wram.wAudioFadeOutControl = 10;
 	red.wram.wNewSoundID = Sound::Stop;
@@ -97,7 +91,6 @@ void move_pic_left(CppRed &red){
 		red.WX = x;
 	}
 }
-
 
 //------------------------------------------------------------------------------
 

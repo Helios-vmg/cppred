@@ -985,6 +985,10 @@ void CppRed::copy_video_data(const BaseStaticImage &image, unsigned tiles, unsig
 	this->copy_video_data(&data[src_offset * 16], copy_size, destination);
 }
 
+void CppRed::copy_video_data(const BaseStaticImage &image, unsigned destination, bool flipped){
+	this->copy_video_data(image, std::numeric_limits<unsigned>::max(), 0, destination, false);
+}
+
 void CppRed::copy_video_data(const void *data, size_t size, unsigned destination){
 	this->delay_frame();
 	auto d = &this->display_controller.access_vram(destination);
@@ -1148,7 +1152,7 @@ void CppRed::display_textbox_id(unsigned x, unsigned y){
 }
 
 void CppRed::load_textbox_tile_patterns(){
-	this->copy_video_data(TextBoxGraphics, std::numeric_limits<unsigned>::max(), 0, vChars2);
+	this->copy_video_data(TextBoxGraphics, vChars2);
 }
 
 void CppRed::load_front_sprite(SpeciesId species, bool flipped, const tilemap_it &destination){
@@ -1160,6 +1164,7 @@ void CppRed::load_front_sprite(SpeciesId species, bool flipped, const tilemap_it
 	auto &front = *data->front;
 	auto image_data = decode_image_data(front, flipped);
 	image_data = pad_tiles_for_mon_pic(image_data, front.get_width() / 16, front.get_height() / 16, flipped);
+	write_mon_pic_tiles_to_buffer(destination, tilemap_width);
 	this->copy_video_data(&image_data[0], image_data.size(), vFrontPic);
 }
 
@@ -1223,4 +1228,22 @@ void CppRed::animate_party_mon(bool force_speed_1){
 		for (unsigned i = 0; i < tiles_per_pokemon_ow_sprite; i++)
 			oam[i].tile_number += tiles_per_pokemon_ow_sprite * (int)PokemonOverworldSprite::Count;
 	}
+}
+
+void CppRed::display_picture_centered_or_upper_right(const BaseStaticImage &image, Placing placing){
+	auto image_data = decode_image_data(image);
+	image_data = pad_tiles_for_mon_pic(image_data, image.get_width() / 16, image.get_height() / 16);
+	this->copy_video_data(&image_data[0], image_data.size(), vFrontPic);
+	tilemap_it position;
+	switch (placing){
+		case Placing::Centered:
+			position = this->get_tilemap_location(15, 1);
+			break;
+		case Placing::TopLeft:
+			position = this->get_tilemap_location(6, 4);
+			break;
+		default:
+			throw std::runtime_error("CppRed::display_picture_centered_or_upper_right(): Invalid switch.");
+	}
+	write_mon_pic_tiles_to_buffer(position, tilemap_width);
 }

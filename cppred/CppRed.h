@@ -246,6 +246,7 @@ public:
 	//Waits until vsync and copies tiles to VRAM.
 	//src_offset is the index of the first tile to copy.
 	void copy_video_data(const BaseStaticImage &image, unsigned tiles, unsigned src_offset, unsigned destination, bool flipped = false);
+	void copy_video_data(const BaseStaticImage &image, unsigned destination, bool flipped = false);
 	void copy_video_data(const void *data, size_t size, unsigned destination);
 	void reset_player_sprite_data();
 	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
@@ -265,6 +266,7 @@ public:
 	void erase_menu_cursor();
 	void place_unfilled_arrow_menu_cursor();
 	void town_map_sprite_blinking_animation();
+	void display_picture_centered_or_upper_right(const BaseStaticImage &image, Placing placing);
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;
