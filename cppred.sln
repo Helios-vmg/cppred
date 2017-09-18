@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppred", "cppred\cppred.vcxproj", "{89C9E90C-A8FF-4B66-AB94-BA6C9AAAD651}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3648B1FC-D9FC-494C-994C-6B7DDB247406} = {3648B1FC-D9FC-494C-994C-6B7DDB247406}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code Generation", "Code Generation", "{14F6114B-8818-4998-B151-A6A1E7BAE383}"
 EndProject
