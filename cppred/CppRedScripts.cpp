@@ -92,6 +92,22 @@ void move_pic_left(CppRed &red){
 	}
 }
 
+void fade_in_intro_pic(CppRed &red){
+	static const byte_t palettes[] = {
+		bits_from_u32<0x01010100>::value,
+		bits_from_u32<0x10101000>::value,
+		bits_from_u32<0x11111100>::value,
+		bits_from_u32<0x11111000>::value,
+		bits_from_u32<0x11110100>::value,
+		bits_from_u32<0x11100100>::value,
+	};
+
+	for (auto palette : palettes){
+		red.BGP = palette;
+		red.delay_frames(10);
+	}
+}
+
 //------------------------------------------------------------------------------
 
 }
