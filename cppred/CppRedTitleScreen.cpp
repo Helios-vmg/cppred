@@ -28,7 +28,7 @@ TitleScreenResult CppRedTitleScreen::display(){
 	this->draw_player_character();
 
 	//Put a pokeball in the player's hand.
-	this->wram.wOAMBuffer[0x28] = 0x74;
+	this->wram.wOAMBuffer[10].y_position = 116;
 
 	this->copy_copyright_to_wram_tilemap();
 	this->parent.save_screen_tiles_to_buffer2();
@@ -174,15 +174,11 @@ void CppRedTitleScreen::draw_player_character(){
 	for (int i = 7; i--;){
 		unsigned coord_x = 90;
 		for (int j = 5; j--;){
-			//y position
-			*(it++) = coord_y;
-			//x position
-			*(it++) = coord_x;
-			//tile
-			*(it++) = this->wram.wPlayerCharacterOAMTile++;
-			//skip attributes
+			auto sprite = *it;
+			sprite.y_position = coord_y;
+			sprite.x_position = coord_x;
+			sprite.tile_number = this->wram.wPlayerCharacterOAMTile++;
 			it++;
-
 			coord_x = (coord_x + 8) & 0xFF;
 		}
 		coord_y = (coord_y + 8) & 0xFF;

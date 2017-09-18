@@ -62,4 +62,16 @@ public:
 	void operator=(StaticImage &&) = delete;
 };
 
-std::vector<byte_t> decode_image_data(const BaseStaticImage &img);
+//'flip' mirrors the pixels horizontally.
+std::vector<byte_t> decode_image_data(const BaseStaticImage &img, bool flip = false);
+//Note: 'flipped' does not mirror the pixels. Set it to true if the image data
+//      was decoded by passing flip = true to decode_image_data().
+std::vector<byte_t> pad_tiles_for_mon_pic(const std::vector<byte_t> &image_data, unsigned tiles_w, unsigned tiles_h, bool flip = false);
+
+template <typename T>
+void write_mon_pic_tiles_to_buffer(const T &dst, unsigned pitch){
+	unsigned value = 0;
+	for (unsigned y = 0; y < 7; y++)
+		for (unsigned x = 0; x < 7; x++)
+			dst[x + y * pitch] = value++;
+}

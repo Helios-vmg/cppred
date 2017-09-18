@@ -68,7 +68,7 @@ void oak_speech(CppRed &red){
 	red.print_text(text.OakSpeechText3);
 	red.play_sound(Sound::SFX_Shrink_1);
 	red.delay_frames(4);
-	red.copy_video_data(12, RedSprite, 0, vSprites);
+	red.copy_video_data(RedSprite, 12, 0, vSprites);
 	intro_display_picture_centered_or_upper_right(red, ShrinkPic1, Placing::Centered);
 	red.delay_frames(4);
 	intro_display_picture_centered_or_upper_right(red, ShrinkPic2, Placing::Centered);

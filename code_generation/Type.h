@@ -240,6 +240,13 @@ public:
 	virtual std::string get_callback_struct() const override;
 };
 
+class spriteobjectStruct : public Struct{
+public:
+	virtual ~spriteobjectStruct(){}
+	virtual std::string get_actual_type_name() const override;
+	virtual std::string get_callback_struct() const override;
+};
+
 //------------------------------------------------------------------------------
 
 class Array : public Struct{

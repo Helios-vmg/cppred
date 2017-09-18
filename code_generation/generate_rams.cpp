@@ -10,6 +10,60 @@ const std::vector<std::string> wram_order = { "address", "size", "type", "name",
 static const char * const hash_key = "generate_rams";
 static const char * const date_string = __DATE__ __TIME__;
 
+#define DECLARE_ENUM_IN_MAP(x) { #x, [](){ return std::make_unique<EnumUint>(#x, 1); } }
+
+template <typename T>
+basic_type_constructor create_constructor(){
+	return [](){
+		return std::make_unique<T>();
+	};
+}
+
+typemap_t declare_default_types(){
+	return {
+		{ "u8",                [](){ return std::make_unique<TypeUint>(1); } },
+		{ "u16",               [](){ return std::make_unique<TypeUint>(2); } },
+		{ "u24",               [](){ return std::make_unique<TypeUint>(3); } },
+		{ "big_u16",           [](){ return std::make_unique<TypeUint>(2, true); } },
+		{ "big_u24",           [](){ return std::make_unique<TypeUint>(3, true); } },
+		{ "big_u32",           [](){ return std::make_unique<TypeUint>(4, true); } },
+		{ "bcd4",              [](){ return std::make_unique<TypeBcdInt>(4); } },
+		{ "bcd6",              [](){ return std::make_unique<TypeBcdInt>(6); } },
+		{ "options",           [](){ return std::make_unique<PackedBitsWrapper>("UserOptions"); } },
+		{ "TwoItemMenuType_t", [](){ return std::make_unique<PackedBitsWrapper>("TwoItemMenuType_wrapper"); } },
+		{ "spritestatedata1",  create_constructor<spritestatedata1Struct>() },
+		{ "spritestatedata2",  create_constructor<spritestatedata2Struct>() },
+		{ "mapspritedata",     create_constructor<mapspritedataStruct>() },
+		{ "missableobject",    create_constructor<missableobjectStruct>() },
+		{ "pcboxmember",       create_constructor<pcboxmemberStruct>() },
+		{ "partymember",       create_constructor<partymemberStruct>() },
+		{ "spritedata",        create_constructor<spritedataStruct>() },
+		{ "partydata",         create_constructor<partydataStruct>() },
+		{ "maindata",          create_constructor<maindataStruct>() },
+		{ "boxdata",           create_constructor<boxdataStruct>() },
+		{ "spriteobject",      create_constructor<spriteobjectStruct>() },
+		{ "pcbox",             create_constructor<pcboxStruct>() },
+		{ "pointer",           create_constructor<DataPointer>() },
+		{ "big_pointer",       create_constructor<DataPointer>() },
+		{ "code_pointer",      create_constructor<CodePointer>() },
+		DECLARE_ENUM_IN_MAP(SerialConnectionStatus),
+		DECLARE_ENUM_IN_MAP(SpeciesId),
+		DECLARE_ENUM_IN_MAP(Sound),
+		DECLARE_ENUM_IN_MAP(AudioBank),
+		DECLARE_ENUM_IN_MAP(MenuType),
+		DECLARE_ENUM_IN_MAP(TextBoxId),
+		DECLARE_ENUM_IN_MAP(LinkState),
+		DECLARE_ENUM_IN_MAP(SaveFileStatus),
+		DECLARE_ENUM_IN_MAP(PlayerDirection),
+		DECLARE_ENUM_IN_MAP(PlayerDirectionBitmap),
+		DECLARE_ENUM_IN_MAP(MapId),
+		DECLARE_ENUM_IN_MAP(NpcMovementDirection),
+		DECLARE_ENUM_IN_MAP(MenuExitMethod),
+		DECLARE_ENUM_IN_MAP(MoveId),
+		DECLARE_ENUM_IN_MAP(PartyMenuHpColor),
+	};
+}
+
 struct xram{
 	const char *file_name;
 	const char *class_name;

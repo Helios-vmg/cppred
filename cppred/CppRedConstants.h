@@ -790,6 +790,8 @@ enum class PokemonOverworldSprite{
 	Invalid13 = 13,
 	Invalid14 = 14,
 	Invalid15 = 15,
+	Count,
 };
 
 const unsigned tiles_per_pokemon_ow_sprite = 4;
+const unsigned gb_max_sprite_count = 40;

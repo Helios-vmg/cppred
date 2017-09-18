@@ -879,8 +879,8 @@ public:
 	{}
 	MissableObject(const MissableObject &other) = default;
 	MissableObject(MissableObject &&other): MissableObject((const MissableObject &)other){}
-	void operator=(const MapSpriteData &) = delete;
-	void operator=(MapSpriteData &&) = delete;
+	void operator=(const MissableObject &) = delete;
+	void operator=(MissableObject &&) = delete;
 };
 
 #include "../CodeGeneration/output/bitmaps.h"
@@ -1085,4 +1085,37 @@ struct MoveInfo{
 	MoveId move_id;
 	byte_t field_move_index;
 	std::string display_name;
+};
+
+class SpriteObject{
+public:
+	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
+	typedef typename member_type::callback_struct callback_struct;
+	static const size_t size = 2;
+private:
+public:
+	//Offset: 0
+	member_type y_position;
+	//Offset: 1
+	member_type x_position;
+	//Offset: 2
+	member_type tile_number;
+	//Offset: 4
+	member_type attributes;
+	SpriteObject(void *memory, const callback_struct &callbacks):
+		y_position ((char *)memory + 0, callbacks),
+		x_position ((char *)memory + 1, callbacks),
+		tile_number((char *)memory + 2, callbacks),
+		attributes ((char *)memory + 3, callbacks)
+	{}
+	SpriteObject(const SpriteObject &other) = default;
+	SpriteObject(SpriteObject &&other): SpriteObject((const SpriteObject &)other){}
+	void operator=(const SpriteObject &) = delete;
+	void operator=(SpriteObject &&) = delete;
+	void assign(const SpriteObject &other){
+		this->y_position = other.y_position;
+		this->x_position = other.x_position;
+		this->tile_number = other.tile_number;
+		this->attributes = other.attributes;
+	}
 };

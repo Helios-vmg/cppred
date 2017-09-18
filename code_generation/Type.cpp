@@ -4,108 +4,6 @@
 #include <map>
 #include <cctype>
 
-std::unique_ptr<Type> construct_fail(){
-	throw std::exception();
-}
-
-std::unique_ptr<Type> construct_u8(){
-	return std::make_unique<TypeUint>(1);
-}
-
-std::unique_ptr<Type> construct_u16(){
-	return std::make_unique<TypeUint>(2);
-}
-
-std::unique_ptr<Type> construct_u24(){
-	return std::make_unique<TypeUint>(3);
-}
-
-std::unique_ptr<Type> construct_big_u16(){
-	return std::make_unique<TypeUint>(2, true);
-}
-
-std::unique_ptr<Type> construct_big_u24(){
-	return std::make_unique<TypeUint>(3, true);
-}
-
-std::unique_ptr<Type> construct_big_u32(){
-	return std::make_unique<TypeUint>(4, true);
-}
-
-std::unique_ptr<Type> construct_spritestatedata1(){
-	return std::make_unique<spritestatedata1Struct>();
-}
-
-std::unique_ptr<Type> construct_spritestatedata2(){
-	return std::make_unique<spritestatedata2Struct>();
-}
-
-std::unique_ptr<Type> construct_options(){
-	return std::make_unique<PackedBitsWrapper>("UserOptions");
-}
-
-std::unique_ptr<Type> construct_mapspritedata(){
-	return std::make_unique<mapspritedataStruct>();
-}
-
-std::unique_ptr<Type> construct_missableobject(){
-	return std::make_unique<missableobjectStruct>();
-}
-
-std::unique_ptr<Type> construct_pcboxmember(){
-	return std::make_unique<pcboxmemberStruct>();
-}
-
-std::unique_ptr<Type> construct_partymember(){
-	return std::make_unique<partymemberStruct>();
-}
-
-std::unique_ptr<Type> construct_pcbox(){
-	return std::make_unique<pcboxStruct>();
-}
-
-std::unique_ptr<Type> construct_maindata(){
-	return std::make_unique<maindataStruct>();
-}
-
-std::unique_ptr<Type> construct_spritedata(){
-	return std::make_unique<spritedataStruct>();
-}
-
-std::unique_ptr<Type> construct_partydata(){
-	return std::make_unique<partydataStruct>();
-}
-
-std::unique_ptr<Type> construct_boxdata(){
-	return std::make_unique<boxdataStruct>();
-}
-
-std::unique_ptr<Type> construct_TwoItemMenuType_t(){
-	return std::make_unique<PackedBitsWrapper>("TwoItemMenuType_wrapper");
-}
-
-std::unique_ptr<Type> construct_pointer(){
-	return std::make_unique<DataPointer>();
-}
-
-std::unique_ptr<Type> construct_big_pointer(){
-	return std::make_unique<DataPointer>();
-}
-
-std::unique_ptr<Type> construct_code_pointer(){
-	return std::make_unique<CodePointer>();
-}
-
-std::unique_ptr<Type> construct_bcd4(){
-	return std::make_unique<TypeBcdInt>(4);
-}
-
-std::unique_ptr<Type> construct_bcd6(){
-	return std::make_unique<TypeBcdInt>(6);
-}
-
-#define DECLARE_ENUM_IN_MAP(x) { #x, [](){ return std::make_unique<EnumUint>(#x, 1); } }
-
 bool is_number(const std::string &s){
 	return std::all_of(s.begin(), s.end(), isdigit);
 }
@@ -351,6 +249,19 @@ std::string boxdataStruct::get_callback_struct() const{
 	return std::string();
 }
 
+std::string spriteobjectStruct::get_actual_type_name() const{
+	return "SpriteObject";
+}
+
+std::string spriteobjectStruct::get_callback_struct() const{
+	return (boost::format(
+			"{%1%, %2%}"
+		)
+		% integer_functions[0][0][0]
+		% integer_functions[0][0][1]
+	).str();
+}
+
 std::string SpecialStruct::generate_initializer(unsigned address, unsigned base_address, const std::unique_ptr<Number> &size, const std::string &name) const{
 	return (boost::format(
 			"%1%(this->memory + %2%)"
@@ -358,47 +269,4 @@ std::string SpecialStruct::generate_initializer(unsigned address, unsigned base_
 		% name
 		% (address - base_address)
 	).str();
-}
-
-typemap_t declare_default_types(){
-	return {
-		{ "u8",                construct_u8 },
-		{ "u16",               construct_u16 },
-		{ "u24",               construct_u24 },
-		{ "big_u16",           construct_big_u16 },
-		{ "big_u24",           construct_big_u32 },
-		{ "big_u32",           construct_big_u32 },
-		{ "spritestatedata1",  construct_spritestatedata1 },
-		{ "spritestatedata2",  construct_spritestatedata2 },
-		{ "options",           construct_options },
-		{ "mapspritedata",     construct_mapspritedata },
-		{ "missableobject",    construct_missableobject },
-		{ "pcboxmember",       construct_pcboxmember },
-		{ "partymember",       construct_partymember },
-		{ "pcbox",             construct_pcbox },
-		{ "maindata",          construct_maindata },
-		{ "spritedata",        construct_spritedata },
-		{ "partydata",         construct_partydata },
-		{ "boxdata",           construct_boxdata },
-		{ "TwoItemMenuType_t", construct_TwoItemMenuType_t },
-		{ "pointer",           construct_pointer },
-		{ "big_pointer",       construct_big_pointer },
-		{ "code_pointer",      construct_code_pointer },
-		{ "bcd4",              construct_bcd4 },
-		{ "bcd6",              construct_bcd6 },
-		DECLARE_ENUM_IN_MAP(SerialConnectionStatus),
-		DECLARE_ENUM_IN_MAP(SpeciesId),
-		DECLARE_ENUM_IN_MAP(Sound),
-		DECLARE_ENUM_IN_MAP(AudioBank),
-		DECLARE_ENUM_IN_MAP(MenuType),
-		DECLARE_ENUM_IN_MAP(TextBoxId),
-		DECLARE_ENUM_IN_MAP(LinkState),
-		DECLARE_ENUM_IN_MAP(SaveFileStatus),
-		DECLARE_ENUM_IN_MAP(PlayerDirection),
-		DECLARE_ENUM_IN_MAP(PlayerDirectionBitmap),
-		DECLARE_ENUM_IN_MAP(MapId),
-		DECLARE_ENUM_IN_MAP(NpcMovementDirection),
-		DECLARE_ENUM_IN_MAP(MenuExitMethod),
-		DECLARE_ENUM_IN_MAP(MoveId),
-	};
 }

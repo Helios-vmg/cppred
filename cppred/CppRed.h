@@ -119,7 +119,7 @@ private:
 	void *map_pointer(unsigned pointer);
 	void mass_initialization();
 	void save_sram(const sram_t &) const;
-	void animate_party_mon();
+	void animate_party_mon(bool force_speed_1 = false);
 	void handle_down_arrow_blink_timing(const tilemap_it &);
 public:
 
@@ -240,12 +240,12 @@ public:
 	void load_special_warp_data();
 	void gb_fadeout_to_white();
 	void gb_fadein_from_white();
-	void get_mon_header();
 	void load_front_sprite(SpeciesId, bool flipped, const tilemap_it &destination);
 	void move_pic_left();
 	//Waits until vsync and copies tiles to VRAM.
 	//src_offset is the index of the first tile to copy.
-	void copy_video_data(unsigned tiles, const BaseStaticImage &image, unsigned src_offset, unsigned destination);
+	void copy_video_data(const BaseStaticImage &image, unsigned tiles, unsigned src_offset, unsigned destination, bool flipped = false);
+	void copy_video_data(const void *data, size_t size, unsigned destination);
 	void reset_player_sprite_data();
 	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
 	void lcd_stat_irq();

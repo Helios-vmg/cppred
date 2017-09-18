@@ -140,7 +140,7 @@ void CppRed::clear_hram(){
 }
 
 void CppRed::clear_sprites(){
-	this->wram.wOAMBuffer.fill(0);
+	this->wram.wOAMBuffer.fill_bytes(0);
 }
 
 void CppRed::execute_predef(Predef predef){
@@ -385,7 +385,7 @@ void CppRed::run_palette_command(PaletteCommand cmd){
 
 void CppRed::delay_frames(unsigned count){
 	while (count--)
-		this->display_controller.wait_for_vsync();
+		this->delay_frame();
 }
 
 void CppRed::stop_all_sounds(){
@@ -980,14 +980,19 @@ void CppRed::clear_screen_area(unsigned w, unsigned h, const tilemap_it &locatio
 	}
 }
 
-void CppRed::copy_video_data(unsigned tiles, const BaseStaticImage &image, unsigned src_offset, unsigned destination){
-	auto data = decode_image_data(image);
+void CppRed::copy_video_data(const BaseStaticImage &image, unsigned tiles, unsigned src_offset, unsigned destination, bool flipped){
+	auto data = decode_image_data(image, flipped);
 	auto w = image.get_width();
 	auto h = image.get_height();
 
+	auto copy_size = std::min<size_t>(tiles * 16, data.size());
+	this->copy_video_data(&data[src_offset * 16], copy_size, destination);
+}
+
+void CppRed::copy_video_data(const void *data, size_t size, unsigned destination){
 	this->delay_frame();
 	auto d = &this->display_controller.access_vram(destination);
-	memcpy(d, &data[0] + src_offset * 16, tiles * 16);
+	memcpy(d, data, size);
 }
 
 void CppRed::place_unfilled_arrow_menu_cursor(){
@@ -1097,8 +1102,8 @@ void CppRed::joypad(){
 InputBitmap_struct CppRed::joypad_low_sensitivity(){
 	typedef InputBitmap_struct B;
 	this->joypad();
-	bool flag6 = this->hram.hJoy6;
-	bool flag7 = this->hram.hJoy7;
+	bool flag6 = !!this->hram.hJoy6;
+	bool flag7 = !!this->hram.hJoy7;
 	B pressed = !flag7 ? this->hram.hJoyPressed : this->hram.hJoyHeld;
 	this->hram.hJoy5 = pressed;
 	if (any_button_pressed(this->hram.hJoyPressed)){
@@ -1144,4 +1149,82 @@ void CppRed::display_two_option_menu(TwoOptionMenuType type, unsigned x, unsigne
 
 void CppRed::display_textbox_id(unsigned x, unsigned y){
 	this->message_box.display_textbox_id(x, y);
+}
+
+void CppRed::load_textbox_tile_patterns(){
+	this->copy_video_data(TextBoxGraphics, std::numeric_limits<unsigned>::max(), 0, vChars2);
+}
+
+void CppRed::load_front_sprite(SpeciesId species, bool flipped, const tilemap_it &destination){
+	auto data = pokemon_by_species_id[(int)species];
+	if (!data->front){
+		this->wram.wcf91 = (unsigned)SpeciesId::Rhydon;
+		return;
+	}
+	auto &front = *data->front;
+	auto image_data = decode_image_data(front, flipped);
+	image_data = pad_tiles_for_mon_pic(image_data, front.get_width() / 16, front.get_height() / 16, flipped);
+	this->copy_video_data(&image_data[0], image_data.size(), vFrontPic);
+}
+
+void CppRed::gb_fadeout_to_white(){
+	for (int i = 0; i < 3; i++){
+		auto &palette = fade_palettes[5 + i];
+		this->BGP  = palette.background_palette;
+		this->OBP0 = palette.obp0_palette;
+		this->OBP1 = palette.obp1_palette;
+		this->delay_frames(8);
+	}
+}
+
+void CppRed::gb_fadein_from_white(){
+	for (int i = 0; i < 3; i++){
+		auto &palette = fade_palettes[6 - i];
+		this->BGP = palette.background_palette;
+		this->OBP0 = palette.obp0_palette;
+		this->OBP1 = palette.obp1_palette;
+		this->delay_frames(8);
+	}
+}
+
+void CppRed::delay_frame(){
+	this->display_controller.wait_for_vsync();
+}
+
+void CppRed::animate_party_mon(bool force_speed_1){
+	static const byte_t animation_delays[] = { 6, 16, 32, };
+
+	auto current_item = +this->wram.wCurrentMenuItem;
+	unsigned delay = animation_delays[0];
+	if (!force_speed_1){
+		auto color = this->wram.wPartyMenuHPBarColors[current_item].enum_value();
+		delay = animation_delays[(int)color % 3];
+	}
+
+	auto counter = +this->wram.wAnimCounter;
+	assert(!!delay && !(!counter && counter == delay));
+	if (counter != delay){
+		if (!counter){
+			size_t i = 0;
+			for (auto &src : this->wram.wMonPartySpritesSavedOAM)
+				this->wram.wOAMBuffer[i++].assign(src);
+		}
+		counter++;
+		if (counter == delay * 2)
+			counter = 0;
+		this->wram.wAnimCounter = counter;
+		this->delay_frame();
+		return;
+	}
+
+	auto oam = this->wram.wOAMBuffer.begin() + tiles_per_pokemon_ow_sprite * current_item;
+	auto tile = +oam[0].tile_number;
+
+	if (tile == (int)PokemonOverworldSprite::Ball * tiles_per_pokemon_ow_sprite || tile == (int)PokemonOverworldSprite::Helix * tiles_per_pokemon_ow_sprite){
+		for (unsigned i = 0; i < tiles_per_pokemon_ow_sprite; i++)
+			--oam[i].y_position;
+	}else{
+		for (unsigned i = 0; i < tiles_per_pokemon_ow_sprite; i++)
+			oam[i].tile_number += tiles_per_pokemon_ow_sprite * (int)PokemonOverworldSprite::Count;
+	}
 }

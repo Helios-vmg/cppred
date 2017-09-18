@@ -11,6 +11,8 @@
 #include "../CodeGeneration/output/pokemon_definitions.inl"
 #include "../CodeGeneration/output/move_data.inl"
 
+//Note: Palettes 3 and 4 are identical and equal to the default palette. Palettes >= 4 are used for fade-outs
+//      to white, while palettes <= 3 are used for fade-outs to black.
 const FadePaletteData fade_palettes[8] = {
 	{ bits_from_u32<0x11111111>::value, bits_from_u32<0x11111111>::value, bits_from_u32<0x11111111>::value },
 	{ bits_from_u32<0x11111110>::value, bits_from_u32<0x11111110>::value, bits_from_u32<0x11111000>::value },
