@@ -9,13 +9,15 @@ namespace CppRedScripts{
 //                                 OAK SPEECH
 //------------------------------------------------------------------------------
 
-void fade_in_intro_pic(CppRed &red);
-void move_pic_left(CppRed &red);
-void choose_player_name(CppRed &red);
-void choose_rival_name(CppRed &red);
-void slide_pic_right(CppRed &red);
-void slide_pic_left(CppRed &red);
-int display_intro_name_textbox(CppRed &red, const char * const *names);
+static void fade_in_intro_pic(CppRed &red);
+static void move_pic_left(CppRed &red);
+static void choose_player_name(CppRed &red);
+static void choose_rival_name(CppRed &red);
+static void slide_pic_right(CppRed &red);
+static void slide_pic_left(CppRed &red);
+static int display_intro_name_textbox(CppRed &red, const char * const *names);
+static void choose_character_name(CppRed &red, bool is_rival);
+static void slide_pic(CppRed &red, unsigned origin_x, unsigned origin_y, unsigned width, unsigned height, int amount);
 
 void oak_speech(CppRed &red){
 	auto &text = red.text;
@@ -154,6 +156,8 @@ void choose_character_name(CppRed &red, bool is_rival){
 	assert(selection >= 0 && selection < array_length(name_array) - 1);
 	if (selection){
 		name_dst = name_array[selection];
+		red.clear_screen_area(11, 12, red.get_tilemap_location(0, 0));
+		red.delay_frames(13);
 		slide_pic_left(red);
 	}else{
 		//Custom name.
@@ -175,6 +179,33 @@ void choose_player_name(CppRed &red){
 
 void choose_rival_name(CppRed &red){
 	choose_character_name(red, true);
+}
+
+void slide_pic(CppRed &red, unsigned origin_x, unsigned origin_y, unsigned width, unsigned height, int amount){
+	auto origin = red.get_tilemap_location(origin_x, origin_y);
+	unsigned slide_region_size = width + height * tilemap_width;
+
+	int addend = -1;
+	unsigned i0 = slide_region_size - 1;
+	unsigned in = 0;
+	if (amount < 0)
+		std::swap(i0, in);
+
+	while (amount){
+		for (unsigned i = i0; i != in; i += addend)
+			origin[i] = +origin[i + addend];
+		origin[in] = 0;
+		amount += addend;
+		red.delay3();
+	}
+}
+
+void slide_pic_right(CppRed &red){
+	slide_pic(red, 0, 4, 0, 6, 6);
+}
+
+void slide_pic_left(CppRed &red){
+	slide_pic(red, 0, 4, 0, 6, -6);
 }
 
 //------------------------------------------------------------------------------
