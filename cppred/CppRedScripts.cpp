@@ -15,7 +15,7 @@ static void choose_player_name(CppRed &red);
 static void choose_rival_name(CppRed &red);
 static void slide_pic_right(CppRed &red);
 static void slide_pic_left(CppRed &red);
-static int display_intro_name_textbox(CppRed &red, const char * const *names);
+static unsigned display_intro_name_textbox(CppRed &red, const char * const *names);
 static void choose_character_name(CppRed &red, bool is_rival);
 static void slide_pic(CppRed &red, unsigned origin_x, unsigned origin_y, unsigned width, unsigned height, int amount);
 
@@ -153,7 +153,7 @@ void choose_character_name(CppRed &red, bool is_rival){
 	slide_pic_right(red);
 
 	auto selection = display_intro_name_textbox(red, name_array);
-	assert(selection >= 0 && selection < array_length(name_array) - 1);
+	assert(selection < array_length(name_array) - 1);
 	if (selection){
 		name_dst = name_array[selection];
 		red.clear_screen_area(11, 12, red.get_tilemap_location(0, 0));
@@ -206,6 +206,25 @@ void slide_pic_right(CppRed &red){
 
 void slide_pic_left(CppRed &red){
 	slide_pic(red, 0, 4, 0, 6, -6);
+}
+
+unsigned display_intro_name_textbox(CppRed &red, const char * const *names){
+	red.text.text_box_border(red.get_tilemap_location(0, 0), 9, 10);
+	red.text.place_string(red.get_tilemap_location(3, 0), "NAME");
+	for (auto it = red.get_tilemap_location(2, 2); *names; names++, it += tilemap_width * 2)
+		red.text.place_string(it, *names);
+	red.update_sprites();
+	
+	auto &wram = red.wram;
+	wram.wCurrentMenuItem = 0;
+	wram.wLastMenuItem = 0;
+	wram.wTopMenuItemX = 1;
+	wram.wMenuWatchedKeys.clear();
+	wram.wMenuWatchedKeys.set_button_a(true);
+	wram.wTopMenuItemY = 2;
+	wram.wMaxMenuItem = 3;
+	red.handle_menu_input();
+	return wram.wCurrentMenuItem;
 }
 
 //------------------------------------------------------------------------------
