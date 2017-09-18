@@ -588,6 +588,8 @@ const unsigned pc_capacity = 50;
 
 const unsigned vChars0 = 0x8000;
 const unsigned vChars1 = 0x8800;
+const unsigned vChars2 = 0x9000;
+const unsigned vFrontPic = vChars2;
 const unsigned vSprites = vChars0;
 const unsigned vFont = vChars1;
 
@@ -764,3 +766,30 @@ enum class MenuExitMethod{
 	SelectedFirstOption  = 1,
 	SelectedSecondOption = 2,
 };
+
+enum class PartyMenuHpColor{
+	Green = 0,
+	Yellow = 1,
+	Red = 2,
+};
+
+enum class PokemonOverworldSprite{
+	Mon       = 0, //Generic mon
+	Ball      = 1, //Pokeball
+	Helix     = 2, //Spiral shell
+	Fairy     = 3, //Cleraify-like
+	Bird      = 4, //Bird
+	Water     = 5, //Seal
+	Bug       = 6, //Bug
+	Grass     = 7, //Flower with eyes
+	Snake     = 8, //Snake
+	Quadruped = 9, //Bovine
+	Invalid   = 10,
+	Invalid11 = 11,
+	Invalid12 = 12,
+	Invalid13 = 13,
+	Invalid14 = 14,
+	Invalid15 = 15,
+};
+
+const unsigned tiles_per_pokemon_ow_sprite = 4;

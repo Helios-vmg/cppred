@@ -913,6 +913,7 @@ struct LearnedMove{
 struct BasePokemonInfo{
 	PokedexId pokedex_id;
 	SpeciesId species_id;
+	bool allocated;
 	byte_t base_hp;
 	byte_t base_attack;
 	byte_t base_defense;
@@ -926,11 +927,13 @@ struct BasePokemonInfo{
 	std::string display_name;
 	const BaseStaticImage * const front;
 	const BaseStaticImage * const back;
+	PokemonOverworldSprite overworld_sprite;
 	PokemonCryData cry_data;
 
 	BasePokemonInfo(
 		PokedexId pokedex_id,
 		SpeciesId species_id,
+		bool allocated,
 		byte_t base_hp,
 		byte_t base_attack,
 		byte_t base_defense,
@@ -944,10 +947,12 @@ struct BasePokemonInfo{
 		std::string &&display_name,
 		const BaseStaticImage * const front,
 		const BaseStaticImage * const back,
+		PokemonOverworldSprite overworld_sprite,
 		PokemonCryData &&cry_data
 	):
 		pokedex_id(pokedex_id),
 		species_id(species_id),
+		allocated(allocated),
 		base_hp(base_hp),
 		base_attack(base_attack),
 		base_defense(base_defense),
@@ -961,6 +966,7 @@ struct BasePokemonInfo{
 		display_name(std::move(display_name)),
 		front(front),
 		back(back),
+		overworld_sprite(overworld_sprite),
 		cry_data(cry_data)
 	{}
 	BasePokemonInfo(const BasePokemonInfo &) = delete;
@@ -991,6 +997,7 @@ public:
 	PokemonInfo(
 		PokedexId pokedex_id,
 		SpeciesId species_id,
+		bool allocated,
 		byte_t base_hp,
 		byte_t base_attack,
 		byte_t base_defense,
@@ -1004,12 +1011,32 @@ public:
 		std::string &&display_name,
 		const BaseStaticImage * const front,
 		const BaseStaticImage * const back,
+		PokemonOverworldSprite overworld_sprite,
 		PokemonCryData &&cry_data,
 		std::array<MoveId, N1> &&initial_attacks,
 		std::array<EvolutionTrigger, N2> &&evolution_triggers,
 		std::array<LearnedMove, N3> &&learned_moves
 	):
-		BasePokemonInfo(pokedex_id, species_id, base_hp, base_attack, base_defense, base_speed, base_special, std::move(type), catch_rate, base_xp_yield, growth_rate, std::move(learnable_tms_bitmap), std::move(display_name), front, back, std::move(cry_data)),
+		BasePokemonInfo(
+			pokedex_id,
+			species_id,
+			allocated,
+			base_hp,
+			base_attack,
+			base_defense,
+			base_speed,
+			base_special,
+			std::move(type),
+			catch_rate,
+			base_xp_yield,
+			growth_rate,
+			std::move(learnable_tms_bitmap),
+			std::move(display_name),
+			front,
+			back,
+			overworld_sprite,
+			std::move(cry_data)
+		),
 		initial_attacks(std::move(initial_attacks)),
 		evolution_triggers(std::move(evolution_triggers)),
 		learned_moves(std::move(learned_moves))

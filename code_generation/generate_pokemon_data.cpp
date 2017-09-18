@@ -126,6 +126,7 @@ public:
 	std::string display_name;
 	std::string front_image;
 	std::string back_image;
+	std::string overworld_sprite;
 	unsigned cry_base;
 	unsigned cry_pitch;
 	unsigned cry_length;
@@ -166,31 +167,32 @@ public:
 PokemonData::PokemonData(){
 	{
 		static const std::vector<std::string> data_order = {
-			"species_id",      // 0
-			"pokedex_id",      // 1
-			"name",            // 2
-			"base_hp",         // 3
-			"base_attack",     // 4
-			"base_defense",    // 5
-			"base_speed",      // 6
-			"base_special",    // 7
-			"type1",           // 8
-			"type2",           // 9
-			"catch_rate",      // 10
-			"base_xp_yield",   // 11
-			"initial_attack1", // 12
-			"initial_attack2", // 13
-			"initial_attack3", // 14
-			"initial_attack4", // 15
-			"growth_rate",     // 16
-			"tmlearn_bitmap",  // 17
-			"display_name",    // 18
-			"front_image",     // 19
-			"back_image",      // 20
-			"cry_base",        // 21
-			"cry_pitch",       // 22
-			"cry_length",      // 23
-			"allocated",       // 24
+			"species_id",       // 0
+			"pokedex_id",       // 1
+			"name",             // 2
+			"base_hp",          // 3
+			"base_attack",      // 4
+			"base_defense",     // 5
+			"base_speed",       // 6
+			"base_special",     // 7
+			"type1",            // 8
+			"type2",            // 9
+			"catch_rate",       // 10
+			"base_xp_yield",    // 11
+			"initial_attack1",  // 12
+			"initial_attack2",  // 13
+			"initial_attack3",  // 14
+			"initial_attack4",  // 15
+			"growth_rate",      // 16
+			"tmlearn_bitmap",   // 17
+			"display_name",     // 18
+			"front_image",      // 19
+			"back_image",       // 20
+			"cry_base",         // 21
+			"cry_pitch",        // 22
+			"cry_length",       // 23
+			"allocated",        // 24
+			"overworld_sprite", // 25
 		};
 
 		CsvParser csv(pokemon_data_file);
@@ -288,6 +290,7 @@ SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 		this->back_image = "nullptr";
 
 	this->allocated = to_bool(columns[24]);
+	this->overworld_sprite = columns[25];
 }
 
 EvolutionTrigger::EvolutionTrigger(const std::vector<std::string> &columns){
@@ -386,6 +389,7 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			"    process_escaped_text(\"" << species.display_name << "\"),\n"
 			"    " << species.front_image << ",\n"
 			"    " << species.back_image << ",\n"
+			"    PokemonOverworldSprite::" << species.overworld_sprite << ",\n"
 			"    { " << std::hex <<
 			"0x" << std::setw(2) << std::setfill('0') << species.cry_base << ", "
 			"0x" << std::setw(2) << std::setfill('0') << species.cry_pitch << ", "
