@@ -1306,3 +1306,26 @@ void CppRed::place_menu_cursor(){
 
 	this->wram.wLastMenuItem = +this->wram.wCurrentMenuItem;
 }
+
+void CppRed::handle_down_arrow_blink_timing(const tilemap_it &location){
+	if (*location == SpecialCharacters::arrow_black_down){
+		if (--this->hram.H_DOWNARROWBLINKCNT1)
+			return;
+		if (--this->hram.H_DOWNARROWBLINKCNT2)
+			return;
+		*location = SpecialCharacters::blank;
+		this->hram.H_DOWNARROWBLINKCNT1 = 0xFF;
+		this->hram.H_DOWNARROWBLINKCNT2 = 6;
+		return;
+	}
+
+	if (!this->hram.H_DOWNARROWBLINKCNT1)
+		return;
+	if (--this->hram.H_DOWNARROWBLINKCNT1)
+		return;
+	--this->hram.H_DOWNARROWBLINKCNT1;
+	if (--this->hram.H_DOWNARROWBLINKCNT2)
+		return;
+	this->hram.H_DOWNARROWBLINKCNT2 = 6;
+	*location = SpecialCharacters::arrow_black_down;
+}
