@@ -55,6 +55,9 @@ private:
 	xorshift128_state random_state;
 	std::vector<std::function<void()>> predefs;
 	CppRedMessageBox message_box;
+	const void *vblank_copy_src = nullptr;
+	size_t vblank_copy_size = 0;
+	unsigned vblank_copy_dst = 0;
 
 	void nonemulation_init();
 	void interpreter_thread_function();
@@ -124,7 +127,6 @@ private:
 	void vblank_copy_bg_map();
 	void redraw_row_or_column();
 	void vblank_copy();
-	void vblank_copy_double();
 	void update_moving_bg_tiles();
 	void oam_dma();
 	void prepare_oam_data();
@@ -135,6 +137,8 @@ private:
 	void music_do_low_health_alert();
 	void track_play_time();
 	void read_joypad();
+	void hide_sprites();
+	void get_sprite_screen_xy(SpriteStateData1 &);
 public:
 
 	WRam wram;

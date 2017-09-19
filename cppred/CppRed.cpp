@@ -123,7 +123,7 @@ void CppRed::init(){
 	this->execute_predef(Predef::LoadSGB);
 
 	this->hram.H_AUTOBGTRANSFERDEST = 0x9C00;
-	this->wram.wUpdateSpritesEnabled = 0xFF;
+	this->wram.wUpdateSpritesEnabled = reduce_sign(-1);
 
 	this->execute_predef(Predef::PlayIntro);
 
@@ -996,9 +996,10 @@ void CppRed::copy_video_data(const BaseStaticImage &image, unsigned destination,
 }
 
 void CppRed::copy_video_data(const void *data, size_t size, unsigned destination){
+	this->vblank_copy_src = data;
+	this->vblank_copy_size = size;
+	this->vblank_copy_dst = destination;
 	this->delay_frame();
-	auto d = &this->display_controller.access_vram(destination);
-	memcpy(d, data, size);
 }
 
 void CppRed::place_unfilled_arrow_menu_cursor(){
@@ -1362,7 +1363,6 @@ void CppRed::vblank_irq(){
 	this->vblank_copy_bg_map();
 	this->redraw_row_or_column();
 	this->vblank_copy();
-	this->vblank_copy_double();
 	this->update_moving_bg_tiles();
 	this->oam_dma();
 	this->prepare_oam_data();
@@ -1382,4 +1382,93 @@ void CppRed::vblank_irq(){
 
 	if (!this->hram.hDisableJoypadPolling)
 		this->read_joypad();
+}
+
+void CppRed::auto_bg_map_transfer(){
+	if (!this->hram.H_AUTOBGTRANSFERENABLED)
+		return;
+	auto src = this->get_tilemap_location(0, 0);
+	auto dst = &this->display_controller.access_vram(this->hram.H_AUTOBGTRANSFERDEST);
+	std::copy(src, src + tilemap_width * tilemap_height, dst);
+}
+
+void CppRed::vblank_copy_bg_map(){
+	auto src = +this->hram.H_VBCOPYBGSRC;
+	if (!(src & 0xFF))
+		return;
+	this->hram.H_VBCOPYBGSRC = 0;
+	auto dst = +this->hram.H_VBCOPYBGDEST;
+	auto rows = +this->hram.H_VBCOPYBGNUMROWS;
+	throw NotImplementedException();
+}
+
+void CppRed::redraw_row_or_column(){
+	auto mode = this->hram.hRedrawRowOrColumnMode;
+	if (!mode)
+		return;
+	this->hram.hRedrawRowOrColumnMode = 0;
+	throw NotImplementedException();
+
+	if (mode == 1){
+		//redraw column
+	}else{
+		//redraw row
+	}
+}
+
+void CppRed::vblank_copy(){
+	auto src = this->vblank_copy_src;
+	if (!src)
+		return;
+	this->vblank_copy_src = nullptr;
+	auto dst = &this->display_controller.access_vram(this->vblank_copy_dst);
+	memcpy(dst, src, this->vblank_copy_size);
+}
+
+void CppRed::update_moving_bg_tiles(){
+	throw NotImplementedException();
+}
+
+void CppRed::oam_dma(){
+	auto src = this->wram.wOAMBuffer.begin();
+	auto dst = this->display_controller.get_oam();
+	std::copy(src, src + gb_max_sprite_count * SpriteObject::size, dst);
+}
+
+void CppRed::prepare_oam_data(){
+	auto enabled = sign_extend(this->wram.wUpdateSpritesEnabled) - 1;
+	if (enabled){
+		if (enabled != -1)
+			return;
+		this->wram.wUpdateSpritesEnabled = reduce_sign(enabled);
+		this->hide_sprites();
+		return;
+	}
+	this->hram.hOAMBufferOffset = 0;
+
+	size_t iteration_index = 0;
+	iteration_index--;
+	for (auto sprite1 : this->wram.wSpriteData.wSpriteStateData1){
+		iteration_index++;
+		if (!sprite1.picture_id)
+			continue;
+		auto index = +sprite1.sprite_image_idx;
+		if (index == 0xFF){
+			//Invisible.
+			this->get_sprite_screen_xy(sprite1);
+			continue;
+		}
+		//Visible.
+		if (index >= 0xA0)
+			//Sprite is not animated.
+			index = index % 16 + 16;
+		else
+			//Use facing.
+			index %= 16;
+
+		auto sprite2 = this->wram.wSpriteData.wSpriteStateData2[iteration_index];
+		auto priority = sprite2.grass_priority & 0x80;
+		this->hram.hSpritePriority = priority;
+		/**/
+	}
 }

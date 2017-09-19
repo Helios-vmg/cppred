@@ -196,6 +196,9 @@ public:
 	const byte_t *get_oam() const{
 		return &this->access_oam(0xFE00);
 	}
+	byte_t *get_oam(){
+		return &this->access_oam(0xFE00);
+	}
 	std::uint64_t get_display_clock() const;
 	std::int64_t get_signed_display_clock() const;
 	//Returns true if synchronization with real time is required.

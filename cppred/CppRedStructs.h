@@ -1091,7 +1091,7 @@ class SpriteObject{
 public:
 	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
 	typedef typename member_type::callback_struct callback_struct;
-	static const size_t size = 2;
+	static const size_t size = 4;
 private:
 public:
 	//Offset: 0
@@ -1100,7 +1100,7 @@ public:
 	member_type x_position;
 	//Offset: 2
 	member_type tile_number;
-	//Offset: 4
+	//Offset: 3
 	member_type attributes;
 	SpriteObject(void *memory, const callback_struct &callbacks):
 		y_position ((char *)memory + 0, callbacks),
