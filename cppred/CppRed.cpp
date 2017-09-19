@@ -1329,3 +1329,39 @@ void CppRed::handle_down_arrow_blink_timing(const tilemap_it &location){
 	this->hram.H_DOWNARROWBLINKCNT2 = 6;
 	*location = SpecialCharacters::arrow_black_down;
 }
+
+const RenderedFrame *CppRed::get_current_frame(){
+	return this->display_controller.get_current_frame();
+}
+
+void CppRed::vblank_irq(){
+	this->SCX = +this->hram.hSCX;
+	this->SCY = +this->hram.hSCY;
+
+	if (!this->wram.wDisableVBlankWYUpdate)
+		this->WY = +this->hram.hWY;
+	
+	this->auto_bg_map_transfer();
+	this->vblank_copy_bg_map();
+	this->redraw_row_or_column();
+	this->vblank_copy();
+	this->vblank_copy_double();
+	this->update_moving_bg_tiles();
+	this->oam_dma();
+	this->prepare_oam_data();
+
+	this->hram.H_VBLANKOCCURRED = 0;
+
+	if (this->hram.H_FRAMECOUNTER)
+		--this->hram.H_FRAMECOUNTER;
+
+	this->fade_out_audio();
+	this->audio1_update_music();
+	this->music_do_low_health_alert();
+	this->audio2_update_music();
+
+	this->track_play_time();
+
+	if (!this->hram.hDisableJoypadPolling)
+		this->read_joypad();
+}

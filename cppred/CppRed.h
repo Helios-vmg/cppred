@@ -120,6 +120,21 @@ private:
 	void save_sram(const sram_t &) const;
 	void animate_party_mon(bool force_speed_1 = false);
 	void handle_down_arrow_blink_timing(const tilemap_it &);
+	void auto_bg_map_transfer();
+	void vblank_copy_bg_map();
+	void redraw_row_or_column();
+	void vblank_copy();
+	void vblank_copy_double();
+	void update_moving_bg_tiles();
+	void oam_dma();
+	void prepare_oam_data();
+	void fade_out_audio();
+	void audio1_update_music();
+	void audio2_update_music();
+	void audio3_update_music();
+	void music_do_low_health_alert();
+	void track_play_time();
+	void read_joypad();
 public:
 
 	WRam wram;
@@ -252,7 +267,7 @@ public:
 	void copy_video_data(const void *data, size_t size, unsigned destination);
 	void reset_player_sprite_data();
 	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
-	void lcd_stat_irq();
+	void lcd_stat_irq(){}
 	void vblank_irq();
 	const RenderedFrame *get_current_frame();
 	void return_used_frame(const RenderedFrame *);
