@@ -1430,13 +1430,17 @@ void CppRed::update_moving_bg_tiles(){
 }
 
 void CppRed::oam_dma(){
-	auto src = this->wram.wOAMBuffer.begin();
+	auto src = this->wram.wOAMBuffer.get_memory();
 	auto dst = this->display_controller.get_oam();
 	std::copy(src, src + gb_max_sprite_count * SpriteObject::size, dst);
 }
 
 typedef std::array<byte_t, 4> FAA_data;
-typedef std::array<byte_t, 3> OAM_CornerParameters;
+struct OAM_CornerParameters{
+	byte_t y_offset;
+	byte_t x_offset;
+	byte_t attributes;
+};
 typedef std::array<OAM_CornerParameters, 4> OAM_Parameters;
 
 struct SpriteFacingAndAnimationElement{
@@ -1509,7 +1513,6 @@ void CppRed::prepare_oam_data(){
 		this->hide_sprites();
 		return;
 	}
-	this->hram.hOAMBufferOffset = 0;
 
 	size_t iteration_index = 0;
 	iteration_index--;
@@ -1526,14 +1529,50 @@ void CppRed::prepare_oam_data(){
 		//Visible.
 		if (index >= 0xA0)
 			//Sprite is not animated.
-			index = index % 16 + 16;
+			index = (index & 0x0F) | 0x10;
 		else
 			//Use facing.
-			index %= 16;
+			index &= 0x0F;
 
 		auto sprite2 = this->wram.wSpriteData.wSpriteStateData2[iteration_index];
 		auto priority = sprite2.grass_priority & 0x80;
 		this->hram.hSpritePriority = priority;
-		/**/
+		
+		auto &sprite_data = SpriteFacingAndAnimationTable[index];
+		auto location = this->get_sprite_screen_xy(sprite1);
+		auto dst = this->wram.wOAMBuffer.begin() + iteration_index * 4;
+
+		for (int j = 0; j < 4; j++){
+			auto tile_offset = (*sprite_data.data1)[j];
+			auto param = (*sprite_data.data2)[j];
+			auto oam_dst = dst[j];
+			oam_dst.x_position = location.first + 8 + param.x_offset;
+			oam_dst.y_position = location.second + 16 + param.y_offset;
+			auto sprite_used = sprite1.sprite_image_idx >> 4;
+			unsigned subsprite_used = 0;
+			if (sprite_used == 11)
+				subsprite_used = 10 * 12 + 4;
+			else
+				subsprite_used = sprite_used * 12;
+
+			oam_dst.tile_number = tile_offset + subsprite_used;
+			oam_dst.attributes = param.attributes;
+			if (check_flag(param.attributes, oamflag_canbemasked))
+				oam_dst.attributes |= priority;
+		}
+	}
+
+	{
+		auto i = this->wram.wOAMBuffer.begin() + iteration_index * 4;
+		auto e = this->wram.wOAMBuffer.end();
+		if (this->wram.wMainData.wd736.get_doing_animation())
+			e -= 4;
+		for (; i != e; ++i){
+			auto oam = *i;
+			oam.x_position = 0xA0;
+			oam.y_position = 0xA0;
+			oam.tile_number = 0xA0;
+			oam.attributes = 0xA0;
+		}
 	}
 }

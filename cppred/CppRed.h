@@ -138,7 +138,7 @@ private:
 	void track_play_time();
 	void read_joypad();
 	void hide_sprites();
-	void get_sprite_screen_xy(SpriteStateData1 &);
+	std::pair<int, int> get_sprite_screen_xy(SpriteStateData1 &);
 public:
 
 	WRam wram;

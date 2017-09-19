@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CommonTypes.h"
+#include "utility.h"
 #include "../CodeGeneration/output/pokemon_enums.h"
 
 #define RED 'RED'
