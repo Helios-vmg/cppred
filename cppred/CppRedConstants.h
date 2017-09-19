@@ -812,3 +812,8 @@ enum class NamingScreenType{
 	RivalName = 1,
 	PokemonNickname = 2,
 };
+
+const unsigned oamflag_canbemasked = bits_from_u32<0x00000010>::value;
+const unsigned oamflag_vflipped    = bits_from_u32<0x00100000>::value;
+const unsigned oam_hflip           = bits_from_u32<0x00100000>::value;
+const unsigned oam_vflip           = bits_from_u32<0x01000000>::value;

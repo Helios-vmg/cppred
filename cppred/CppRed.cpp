@@ -1435,6 +1435,71 @@ void CppRed::oam_dma(){
 	std::copy(src, src + gb_max_sprite_count * SpriteObject::size, dst);
 }
 
+typedef std::array<byte_t, 4> FAA_data;
+typedef std::array<byte_t, 3> OAM_CornerParameters;
+typedef std::array<OAM_CornerParameters, 4> OAM_Parameters;
+
+struct SpriteFacingAndAnimationElement{
+	const FAA_data *data1;
+	const OAM_Parameters *data2;
+};
+
+static const FAA_data SpriteFacingDownAndStanding = { 0x00, 0x01, 0x02, 0x03 };
+static const FAA_data SpriteFacingUpAndStanding   = { 0x04, 0x05, 0x06, 0x07 };
+static const FAA_data SpriteFacingLeftAndStanding = { 0x08, 0x09, 0x0A, 0x0B };
+static const FAA_data SpriteFacingDownAndWalking  = { 0x80, 0x81, 0x82, 0x83 };
+static const FAA_data SpriteFacingUpAndWalking    = { 0x84, 0x85, 0x86, 0x87 };
+static const FAA_data SpriteFacingLeftAndWalking  = { 0x88, 0x89, 0x8A, 0x8B };
+
+static const OAM_Parameters SpriteOAMParameters = {
+	OAM_CornerParameters{ 0x00, 0x00, 0x00 },
+	OAM_CornerParameters{ 0x00, 0x08, 0x00 },
+	OAM_CornerParameters{ 0x08, 0x00, oamflag_canbemasked },
+	OAM_CornerParameters{ 0x08, 0x08, oamflag_canbemasked },
+};
+
+static const OAM_Parameters SpriteOAMParametersFlipped = {
+	OAM_CornerParameters{ 0x00, 0x08, oamflag_vflipped },
+	OAM_CornerParameters{ 0x00, 0x00, oamflag_vflipped },
+	OAM_CornerParameters{ 0x08, 0x00, oamflag_vflipped | oamflag_canbemasked },
+	OAM_CornerParameters{ 0x08, 0x08, oamflag_vflipped | oamflag_canbemasked },
+};
+
+static const SpriteFacingAndAnimationElement SpriteFacingAndAnimationTable[] = {
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndWalking,  &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndWalking,  &SpriteOAMParametersFlipped },
+	{ &SpriteFacingUpAndStanding,   &SpriteOAMParameters        },
+	{ &SpriteFacingUpAndWalking,    &SpriteOAMParameters        },
+	{ &SpriteFacingUpAndStanding,   &SpriteOAMParameters        },
+	{ &SpriteFacingUpAndWalking,    &SpriteOAMParametersFlipped },
+	{ &SpriteFacingLeftAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingLeftAndWalking,  &SpriteOAMParameters        },
+	{ &SpriteFacingLeftAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingLeftAndWalking,  &SpriteOAMParameters        },
+	{ &SpriteFacingLeftAndStanding, &SpriteOAMParametersFlipped },
+	{ &SpriteFacingLeftAndWalking,  &SpriteOAMParametersFlipped },
+	{ &SpriteFacingLeftAndStanding, &SpriteOAMParametersFlipped },
+	{ &SpriteFacingLeftAndWalking,  &SpriteOAMParametersFlipped },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+	{ &SpriteFacingDownAndStanding, &SpriteOAMParameters        },
+};
+
 void CppRed::prepare_oam_data(){
 	auto enabled = sign_extend(this->wram.wUpdateSpritesEnabled) - 1;
 	if (enabled){
