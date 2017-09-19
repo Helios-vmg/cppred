@@ -1334,6 +1334,23 @@ const RenderedFrame *CppRed::get_current_frame(){
 	return this->display_controller.get_current_frame();
 }
 
+void CppRed::town_map_sprite_blinking_animation(){
+	auto counter = this->wram.wAnimCounter + 1;
+	if (counter != 25){
+		if (counter == 50){
+			size_t i = 0;
+			for (auto src : this->wram.wOAMBufferBackup)
+				this->wram.wOAMBuffer[i++].assign(src);
+			counter = 0;
+		}
+	}else{
+		for (auto sprite : this->wram.wOAMBuffer)
+			sprite.y_position = lcd_height;
+	}
+	this->wram.wAnimCounter = counter;
+	this->delay_frame();
+}
+
 void CppRed::vblank_irq(){
 	this->SCX = +this->hram.hSCX;
 	this->SCY = +this->hram.hSCY;
