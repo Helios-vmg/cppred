@@ -88,7 +88,7 @@ ignored,struct,member,comment
 6,FontLoadState,skip,
 7,FontLoadState,skip,
 0,hFlags_FFF6,unknown0,
-1,hFlags_FFF6,unknown1,
+1,hFlags_FFF6,menu_singly_spaced,"If this is set, the menu has its items immediately one after the other. Otherwise, the items have a blank line in-between."
 2,hFlags_FFF6,unknown2,
 3,hFlags_FFF6,unknown3,
 4,hFlags_FFF6,unknown4,

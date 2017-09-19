@@ -1273,3 +1273,36 @@ bool CppRed::check_for_user_interruption(unsigned max_frames){
 	}
 	return false;
 }
+
+void CppRed::place_menu_cursor(){
+	const std::pair<unsigned, unsigned> location(this->wram.wTopMenuItemX, this->wram.wTopMenuItemY);
+	auto last_item = +this->wram.wLastMenuItem;
+
+	{
+		auto last_location = location;
+		if (last_item)
+			last_location.second += 2 - this->hram.hFlags_0xFFF6.get_menu_singly_spaced();
+
+		auto it = this->get_tilemap_location(location);
+		if (*it == SpecialCharacters::arrow_black_right)
+			*it = +this->wram.wTileBehindCursor;
+	}
+
+	{
+		auto current_location = location;
+		auto current_item = +this->wram.wCurrentMenuItem;
+		if (current_item){
+			current_location.second += 2 - this->hram.hFlags_0xFFF6.get_menu_singly_spaced();
+		}
+
+		auto it = this->get_tilemap_location(location);
+		if (*it != SpecialCharacters::arrow_black_right)
+			this->wram.wTileBehindCursor = +*it;
+		*it = SpecialCharacters::arrow_black_right;
+
+		this->wram.wMenuCursorLocationX = location.first;
+		this->wram.wMenuCursorLocationY = location.second;
+	}
+
+	this->wram.wLastMenuItem = +this->wram.wCurrentMenuItem;
+}

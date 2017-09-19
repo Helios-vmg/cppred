@@ -196,6 +196,9 @@ public:
 	void clear_both_bg_maps();
 	//Note: In the disassembly, the analog to this function is the macro coord.
 	tilemap_it get_tilemap_location(unsigned x, unsigned y);
+	tilemap_it get_tilemap_location(const std::pair<unsigned, unsigned> &position){
+		return this->get_tilemap_location(position.first, position.second);
+	}
 	void save_screen_tiles_to_buffer2();
 	void load_screen_tiles_from_buffer1();
 	void load_screen_tiles_from_buffer2();
