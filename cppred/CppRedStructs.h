@@ -1113,9 +1113,9 @@ public:
 	void operator=(const SpriteObject &) = delete;
 	void operator=(SpriteObject &&) = delete;
 	void assign(const SpriteObject &other){
-		this->y_position = other.y_position;
-		this->x_position = other.x_position;
-		this->tile_number = other.tile_number;
-		this->attributes = other.attributes;
+		this->y_position = +other.y_position;
+		this->x_position = +other.x_position;
+		this->tile_number = +other.tile_number;
+		this->attributes = +other.attributes;
 	}
 };
