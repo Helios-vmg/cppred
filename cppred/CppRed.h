@@ -85,7 +85,6 @@ private:
 	void update_sprite_movement_delay();
 	void update_sprite_in_walking_animation();
 	tilemap_it get_tile_sprite_stands_on();
-	std::uint32_t random();
 	void change_facing_direction();
 	bool try_walking(tilemap_it, int deltax, int deltay, DirectionBitmap movement_direction, SpriteFacingDirection facing_sprite_direction);
 	bool can_walk_onto_tile(unsigned tile_id, DirectionBitmap direction, int deltax, int deltay);
@@ -268,6 +267,13 @@ public:
 	void town_map_sprite_blinking_animation();
 	void display_picture_centered_or_upper_right(const BaseStaticImage &image, Placing placing);
 	std::string display_naming_screen(NamingScreenType);
+	//Returns when the value of LY is value.
+	void wait_for_ly(unsigned value);
+	//Returns when the value of LY is not value.
+	void wait_while_ly(unsigned value);
+	bool check_for_user_interruption(unsigned max_frames);
+	static bool check_for_data_clear_request(InputBitmap_struct);
+	std::uint32_t random();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;
@@ -287,6 +293,7 @@ public:
 	static const unsigned timer_interrupt_handler_address     = 0x0040 + 8 * timer_flag_bit;
 	static const unsigned serial_interrupt_handler_address    = 0x0040 + 8 * serial_flag_bit;
 	static const unsigned joypad_interrupt_handler_address    = 0x0040 + 8 * joypad_flag_bit;
+	static const SpeciesId starter_mons[3];
 };
 
 void cppred_main();

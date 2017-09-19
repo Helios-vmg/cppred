@@ -568,9 +568,6 @@ const unsigned wram_size = 0x2000;
 // * BG display enabled
 const byte_t lcdc_default = 0xE3;
 
-const unsigned bg_map0 = 0x9800;
-const unsigned bg_map1 = 0x9C00;
-
 extern const std::string ninten_text;
 extern const std::string sony_text;
 
@@ -586,12 +583,21 @@ const unsigned input_down   = 1 << 7;
 const unsigned bag_capacity = 20;
 const unsigned pc_capacity = 50;
 
+//Width and height of a mon or character picture.
+const unsigned pic_size = 7;
+//Size in bytes of a single 8x8 tile.
+const unsigned tile_byte_size = 16;
+
 const unsigned vChars0 = 0x8000;
 const unsigned vChars1 = 0x8800;
 const unsigned vChars2 = 0x9000;
 const unsigned vFrontPic = vChars2;
 const unsigned vSprites = vChars0;
 const unsigned vFont = vChars1;
+const unsigned vTitleLogo = vChars1;
+const unsigned vTitleLogo2 = vFrontPic + pic_size * pic_size * tile_byte_size;
+const unsigned vBGMap0 = 0x9800;
+const unsigned vBGMap1 = 0x9C00;
 
 enum class TwoOptionMenuType{
 	YesNo       = 0,

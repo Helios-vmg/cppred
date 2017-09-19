@@ -13,6 +13,12 @@
 #include <stdexcept>
 #include <random>
 
+const SpeciesId CppRed::starter_mons[3] = {
+	SpeciesId::Charmander,
+	SpeciesId::Squirtle,
+	SpeciesId::Bulbasaur,
+};
+
 #define INITIALIZE_EMPTY_HARDWARE_REGISTER(name) \
 	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
 #define INITIALIZE_HARDWARE_REGISTER(name, controller, function) \
@@ -104,8 +110,8 @@ void CppRed::init(){
 
 	this->hram.hSerialConnectionStatus = SerialConnectionStatus::ConnectionNotEstablished;
 
-	this->clear_bg_map(bg_map0 >> 8);
-	this->clear_bg_map(bg_map1 >> 8);
+	this->clear_bg_map(vBGMap0 >> 8);
+	this->clear_bg_map(vBGMap1 >> 8);
 
 	this->LCDC = lcdc_default;
 
@@ -337,8 +343,8 @@ void CppRed::load_font_tile_patterns(){
 }
 
 void CppRed::clear_both_bg_maps(){
-	auto bg = &this->display_controller.access_vram(bg_map0);
-		memset(bg, 0x7F, 0x800);
+	auto bg = &this->display_controller.access_vram(vBGMap0);
+	memset(bg, 0x7F, 0x800);
 }
 
 void CppRed::save_screen_tiles_to_buffer2(){
@@ -1251,5 +1257,19 @@ void CppRed::display_picture_centered_or_upper_right(const BaseStaticImage &imag
 std::string CppRed::display_naming_screen(NamingScreenType type){
 	this->wram.wNamingScreenType = type;
 	throw NotImplementedException();
-	return "";
+}
+
+bool CppRed::check_for_data_clear_request(InputBitmap_struct input){
+	return input.button_up && input.button_select && input.button_b;
+}
+
+bool CppRed::check_for_user_interruption(unsigned max_frames){
+	while (max_frames--){
+		this->delay_frame();
+		auto input = this->joypad_low_sensitivity();
+		InputBitmap_struct held = this->hram.hJoyHeld;
+		if (check_for_data_clear_request(held) || input.button_start || input.button_a)
+			return true;
+	}
+	return false;
 }

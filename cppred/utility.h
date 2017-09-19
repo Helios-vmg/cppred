@@ -109,7 +109,7 @@ sign_extend(T n){
 }
 
 template <typename T, size_t N>
-size_t array_length(const T (&)[N]){
+constexpr size_t array_length(const T (&)[N]){
 	return N;
 }
 
