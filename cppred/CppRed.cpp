@@ -1359,6 +1359,7 @@ void CppRed::vblank_irq(){
 	this->audio1_update_music();
 	this->music_do_low_health_alert();
 	this->audio2_update_music();
+	this->audio3_update_music();
 
 	this->track_play_time();
 
