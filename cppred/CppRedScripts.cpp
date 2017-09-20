@@ -43,6 +43,8 @@ void oak_speech(CppRed &red){
 		red.load_front_sprite(SpeciesId::Nidorino, true, red.get_tilemap_location(6, 4));
 		move_pic_left(red);
 		red.print_text(text.OakSpeechText2A);
+		red.play_cry(SpeciesId::Nidorina);
+		red.print_text(text.OakSpeechText2B);
 		red.gb_fadeout_to_white();
 		red.clear_screen();
 
