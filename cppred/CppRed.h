@@ -272,8 +272,8 @@ public:
 	void clear_screen_area(unsigned w, unsigned h, const tilemap_it &location);
 	void lcd_stat_irq(){}
 	void vblank_irq();
-	const RenderedFrame *get_current_frame();
-	void return_used_frame(const RenderedFrame *);
+	RenderedFrame *get_current_frame();
+	void return_used_frame(RenderedFrame *);
 	void toggle_pause(int);
 	//Blocks until the next v-blank.
 	void delay_frame();

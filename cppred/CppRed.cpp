@@ -1330,7 +1330,7 @@ void CppRed::handle_down_arrow_blink_timing(const tilemap_it &location){
 	*location = SpecialCharacters::arrow_black_down;
 }
 
-const RenderedFrame *CppRed::get_current_frame(){
+RenderedFrame *CppRed::get_current_frame(){
 	return this->display_controller.get_current_frame();
 }
 
@@ -1713,4 +1713,12 @@ void CppRed::read_joypad(){
 void CppRed::hide_sprites(){
 	for (auto sprite : this->wram.wOAMBuffer)
 		sprite.y_position = lcd_width;
+}
+
+void *CppRed::map_pointer(unsigned pointer){
+	throw NotImplementedException();
+}
+
+void CppRed::return_used_frame(RenderedFrame *frame){
+	this->display_controller.return_used_frame((RenderedFrame *)frame);
 }
