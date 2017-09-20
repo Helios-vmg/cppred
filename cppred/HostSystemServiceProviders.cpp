@@ -52,7 +52,7 @@ path_t StorageProvider::get_save_location(Cartridge &, SaveFileType type){
 }
 
 void EventProvider::toggle_pause(int pause){
-	this->host->toggle_pause(pause);
+	//this->host->toggle_pause(pause);
 }
 
 const char months_accumulated[] = { 0, 3, 3, 6, 8, 11, 13, 16, 19, 21, 24, 26 };

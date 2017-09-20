@@ -9,12 +9,15 @@ const std::uint32_t SystemClock::tac_selector[][2] = {
 	{ 1 << 7, 7 },
 };
 
-double SystemClock::get_realtime_clock_value_seconds() const{
-	return (double)this->get_realtime_clock_value() * (1.0 / (double)gb_cpu_frequency);
+void SystemClock::lock_clock_value(double seconds){
+	auto old = this->actual_realtime_clock;
+	this->actual_realtime_clock = seconds;
+	if (old < 0)
+		return;
+	this->advance_clock((std::uint32_t)((seconds - old) * gb_cpu_frequency));
 }
 
 void SystemClock::advance_clock(std::uint32_t clocks){
-	assert(!(clocks % 4));
 	clocks >>= 2;
 	while (clocks--){
 		this->realtime_clock += 4;

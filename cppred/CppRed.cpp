@@ -20,11 +20,29 @@ const SpeciesId CppRed::starter_mons[3] = {
 };
 
 #define INITIALIZE_EMPTY_HARDWARE_REGISTER(name) \
-	,name(nullptr, {[this](byte_t &dst, const void *){}, [this](const byte_t &src, void *){}})
+	,name(nullptr, { \
+		[this](byte_t &dst, const void *){}, \
+		[this](const byte_t &src, void *){} \
+	})
 #define INITIALIZE_HARDWARE_REGISTER(name, controller, function) \
-	,name(nullptr, {[this](byte_t &dst, const void *){ dst = this->controller.get_##function(); }, [this](const byte_t &src, void *){ this->controller.set_##function(src); }})
+	,name(nullptr, { \
+		[this](byte_t &dst, const void *){ \
+			this->simulate_time(); \
+			dst = this->controller.get_##function(); \
+		}, \
+		[this](const byte_t &src, void *){ \
+			this->simulate_time(); \
+			this->controller.set_##function(src); \
+		} \
+	})
 #define INITIALIZE_HARDWARE_REGISTER_RO(name, controller, function) \
-	,name(nullptr, {[this](byte_t &dst, const void *){ dst = this->controller.get_##function(); }, [this](const byte_t &src, void *){}})
+	,name(nullptr, {\
+		[this](byte_t &dst, const void *){ \
+			this->simulate_time(); \
+			dst = this->controller.get_##function(); \
+		}, \
+		[this](const byte_t &src, void *){} \
+	})
 
 CppRed::CppRed(HostSystem &host):
 		host(&host),
@@ -195,6 +213,8 @@ void CppRed::interpreter_thread_function(){
 
 	try{
 #if 1
+		this->real_time_multiplier = 1.0 / (double)this->realtime_counter_frequency;
+		this->current_timer_start = get_timer_count();
 		this->main();
 #else
 		while (true){
@@ -1194,10 +1214,6 @@ void CppRed::gb_fadein_from_white(){
 	}
 }
 
-void CppRed::delay_frame(){
-	this->display_controller.wait_for_vsync();
-}
-
 void CppRed::animate_party_mon(bool force_speed_1){
 	static const byte_t animation_delays[] = { 6, 16, 32, };
 
@@ -1721,4 +1737,54 @@ void *CppRed::map_pointer(unsigned pointer){
 
 void CppRed::return_used_frame(RenderedFrame *frame){
 	this->display_controller.return_used_frame((RenderedFrame *)frame);
+}
+
+std::uint32_t CppRed::simulate_time(){
+	if (this->time_simulation_lock)
+		return 0;
+	this->time_simulation_lock = true;
+
+	this->clock.lock_clock_value(get_timer_count() * this->real_time_multiplier);
+
+	if (this->clock.get_trigger_interrupt())
+		this->timer_handler();
+
+	this->sound_controller.update();
+	auto ret = this->display_controller.update();
+
+	this->time_simulation_lock = false;
+	return ret;
+}
+
+void CppRed::delay_frame(){
+	while (!check_flag(this->simulate_time(), DisplayController::update_vsync_happened))
+		this->periodic_notification.reset_and_wait_for(250);
+}
+
+void CppRed::wait_for_ly(unsigned value){
+	if (this->display_controller.get_y_coordinate() == value)
+		return;
+	while (true){
+		std::uint32_t state;
+		while (!check_flag(state = this->simulate_time(), DisplayController::update_ly_happened))
+			this->periodic_notification.reset_and_wait_for(250);
+		state &= DisplayController::update_ly_mask;
+		state >>= DisplayController::update_ly_shift;
+		if (state == value)
+			break;
+	}
+}
+
+void CppRed::wait_while_ly(unsigned value){
+	if (this->display_controller.get_y_coordinate() != value)
+		return;
+	while (true){
+		std::uint32_t state;
+		while (!check_flag(state = this->simulate_time(), DisplayController::update_ly_happened))
+			this->periodic_notification.reset_and_wait_for(250);
+		state &= DisplayController::update_ly_mask;
+		state >>= DisplayController::update_ly_shift;
+		if (state != value)
+			break;
+	}
 }

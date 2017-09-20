@@ -65,6 +65,5 @@ public:
 	void save_rtc(Cartridge &, posix_time_t);
 	std::unique_ptr<std::vector<byte_t>> load_ram(Cartridge &, size_t expected_size);
 	posix_time_t load_rtc(Cartridge &);
-	void toggle_pause(int);
 	void write_frame_to_disk(std::string &path, const RenderedFrame &);
 };

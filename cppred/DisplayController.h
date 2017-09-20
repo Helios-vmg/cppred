@@ -115,6 +115,12 @@ public:
 	static const byte_t lcdc_tall_sprite_enable_mask = bit(2);
 	static const byte_t lcdc_sprite_enable_mask = bit(1);
 	static const byte_t lcdc_bg_enable_mask = bit(0);
+
+	static const std::uint32_t update_vsync_happened = bit(0);
+	static const std::uint32_t update_ly_happened = bit(1);
+	static const std::uint32_t update_ly_shift = 2;
+	static const std::uint32_t update_ly_mask = 0xFF << update_ly_shift;
+
 private:
 
 	int get_row_status();
@@ -202,13 +208,11 @@ public:
 	std::uint64_t get_display_clock() const;
 	std::int64_t get_signed_display_clock() const;
 	//Returns true if synchronization with real time is required.
-	bool update();
+	std::uint32_t update();
 	bool get_display_enabled() const{
 		return this->display_enabled;
 	}
 	void clear_vram(){
 		this->vram.clear();
 	}
-	//Blocks until a frame has been rendered and published.
-	void wait_for_vsync();
 };

@@ -148,10 +148,6 @@ posix_time_t HostSystem::load_rtc(Cartridge &cart){
 	return this->datetime_provider->double_timestamp_to_posix(timestamp);
 }
 
-void HostSystem::toggle_pause(int pause){
-	this->cppred->toggle_pause(pause);
-}
-
 void HostSystem::write_frame_to_disk(std::string &path, const RenderedFrame &frame){
 	this->graphics_provider->write_frame_to_disk(path, frame);
 }

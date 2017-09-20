@@ -335,7 +335,7 @@ public:
 	NoiseGenerator noise;
 
 	SoundController(CppRed &);
-	void update(double speed_multiplier, bool speed_changed);
+	void update();
 	AudioFrame *get_current_frame();
 	void return_used_frame(AudioFrame *);
 	std::uint64_t get_current_clock() const{

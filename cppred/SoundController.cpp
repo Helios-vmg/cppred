@@ -163,11 +163,7 @@ SoundController::SoundController(CppRed &system):
 #endif
 }
 
-void SoundController::update(double speed_multiplier, bool speed_changed){
-	if (speed_changed){
-		this->speed_multiplier = (std::uint64_t)(speed_multiplier * fixed_point_unit);
-		this->publishing_frames.clear_public_resource();
-	}
+void SoundController::update(){
 	this->current_clock = this->system->get_system_clock().get_clock_value();
 	auto t = this->current_clock - this->audio_turned_on_at;
 

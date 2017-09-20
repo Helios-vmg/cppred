@@ -43,7 +43,7 @@ private:
 	double accumulated_time = -1;
 	Maybe<posix_time_t> start_time;
 	double real_time_multiplier;
-	double speed_multiplier = 1;
+	const double speed_multiplier = 1;
 	std::uint64_t realtime_counter_frequency = 0;
 	std::uint64_t current_timer_start;
 	//ExternalRamBuffer ram_to_save;
@@ -58,10 +58,12 @@ private:
 	const void *vblank_copy_src = nullptr;
 	size_t vblank_copy_size = 0;
 	unsigned vblank_copy_dst = 0;
+	bool time_simulation_lock = false;
 
 	void nonemulation_init();
 	void interpreter_thread_function();
 	void init();
+	std::uint32_t simulate_time();
 	//void run_until_next_frame();
 	//void sync_with_real_time();
 	double get_real_time();
@@ -138,6 +140,7 @@ private:
 	void read_joypad();
 	void hide_sprites();
 	std::pair<unsigned, unsigned> get_sprite_screen_xy(SpriteStateData1 &);
+	void timer_handler();
 public:
 
 	WRam wram;
@@ -274,7 +277,6 @@ public:
 	void vblank_irq();
 	RenderedFrame *get_current_frame();
 	void return_used_frame(RenderedFrame *);
-	void toggle_pause(int);
 	//Blocks until the next v-blank.
 	void delay_frame();
 	void wait_for_text_scroll_button_press();

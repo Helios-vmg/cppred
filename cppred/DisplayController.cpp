@@ -250,7 +250,7 @@ std::int64_t DisplayController::get_signed_display_clock() const{
 	return (std::int64_t)this->get_system_clock() - c;
 }
 
-bool DisplayController::update(){
+std::uint32_t DisplayController::update(){
 	if (!this->display_enabled){
 		if (this->display_clock_start > this->get_system_clock())
 			return false;
