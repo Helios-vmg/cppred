@@ -392,7 +392,7 @@ void CppRed::stop_all_sounds(){
 }
 
 void CppRed::play_sound(Sound sound){
-	this->play_sound(sound);
+	this->audio.play_sound(sound);
 }
 
 void CppRed::wait_for_sound_to_finish(){
@@ -1613,8 +1613,7 @@ std::uint32_t CppRed::simulate_time(){
 
 	this->clock.lock_clock_value(get_timer_count() * this->real_time_multiplier);
 
-	if (this->clock.get_trigger_interrupt())
-		this->timer_handler();
+	this->clock.get_trigger_interrupt();
 
 	this->sound_controller.update();
 	auto ret = this->display_controller.update();

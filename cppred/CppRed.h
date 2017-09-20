@@ -136,7 +136,6 @@ private:
 	void read_joypad();
 	void hide_sprites();
 	std::pair<unsigned, unsigned> get_sprite_screen_xy(SpriteStateData1 &);
-	void timer_handler();
 	void wait_ly(unsigned value, bool metavalue);
 public:
 

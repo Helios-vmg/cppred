@@ -215,6 +215,7 @@ unsigned transform_thing(unsigned x, unsigned val){
 			return val == 1 ? down : right;
 	}
 	assert(false);
+	return 0;
 }
 
 void CppRed::update_npc_sprite(const SpriteStateData2 &){
