@@ -201,6 +201,13 @@ void CppRed::run(){
 	this->continue_running = true;
 	auto This = this;
 	this->interpreter_thread.reset(new std::thread([This](){ This->interpreter_thread_function(); }));
+	while (this->continue_running)
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+}
+
+CppRed::~CppRed(){
+	std::cout << "Joining.\n";
+	this->interpreter_thread->join();
 }
 
 void CppRed::interpreter_thread_function(){
@@ -222,6 +229,7 @@ void CppRed::interpreter_thread_function(){
 	}
 
 	this->host->throw_exception(thrown);
+	this->continue_running = false;
 }
 
 #if 0
