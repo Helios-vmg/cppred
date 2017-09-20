@@ -1514,10 +1514,10 @@ void CppRed::prepare_oam_data(){
 		return;
 	}
 
-	size_t iteration_index = 0;
-	iteration_index--;
-	for (auto sprite1 : this->wram.wSpriteData.wSpriteStateData1){
-		iteration_index++;
+	size_t last_sprite_unupdated = 0;
+
+	for (size_t i = 0; i < this->wram.wSpriteData.wSpriteStateData1.length; i++){
+		auto sprite1 = this->wram.wSpriteData.wSpriteStateData1[i];
 		if (!sprite1.picture_id)
 			continue;
 		auto index = +sprite1.sprite_image_idx;
@@ -1534,13 +1534,14 @@ void CppRed::prepare_oam_data(){
 			//Use facing.
 			index &= 0x0F;
 
-		auto sprite2 = this->wram.wSpriteData.wSpriteStateData2[iteration_index];
+		auto sprite2 = this->wram.wSpriteData.wSpriteStateData2[i];
 		auto priority = sprite2.grass_priority & 0x80;
 		this->hram.hSpritePriority = priority;
 		
 		auto &sprite_data = SpriteFacingAndAnimationTable[index];
 		auto location = this->get_sprite_screen_xy(sprite1);
-		auto dst = this->wram.wOAMBuffer.begin() + iteration_index * 4;
+		auto dst = this->wram.wOAMBuffer.begin() + i * 4;
+		last_sprite_unupdated = (i + 1) * 4;
 
 		for (int j = 0; j < 4; j++){
 			auto tile_offset = (*sprite_data.data1)[j];
@@ -1562,17 +1563,14 @@ void CppRed::prepare_oam_data(){
 		}
 	}
 
-	{
-		auto i = this->wram.wOAMBuffer.begin() + iteration_index * 4;
-		auto e = this->wram.wOAMBuffer.end();
-		if (this->wram.wMainData.wd736.get_doing_animation())
-			e -= 4;
-		for (; i != e; ++i){
-			auto oam = *i;
-			oam.x_position = 0xA0;
-			oam.y_position = 0xA0;
-			oam.tile_number = 0xA0;
-			oam.attributes = 0xA0;
-		}
+	auto end = this->wram.wOAMBuffer.length;
+	if (this->wram.wMainData.wd736.get_doing_animation())
+		end -= 4;
+	for (auto i = last_sprite_unupdated; i < end; i++){
+		auto oam = this->wram.wOAMBuffer[i];
+		oam.x_position = 0xA0;
+		oam.y_position = 0xA0;
+		oam.tile_number = 0xA0;
+		oam.attributes = 0xA0;
 	}
 }
