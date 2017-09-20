@@ -40,10 +40,10 @@ ignored,struct,member,comment
 6,wd72e,using_link_cable,Using the link feature.
 7,wd72e,npc_movement_initialized,Set if scripted NPC movement has been initialised.
 0,wd730,sprite_automoved,NPC sprite being moved by script.
-1,wd730,skip,
-2,wd730,skip,
-3,wd730,skip,
-4,wd730,skip,
+1,wd730,unknown1,
+2,wd730,unknown2,
+3,wd730,unknown3,
+4,wd730,unknown4,
 5,wd730,ignore_input,Ignore joypad input.
 6,wd730,no_print_delay,Print text with no delay between each letter.
 7,wd730,input_simulated,Set if joypad states are being simulated in the overworld or an NPC's movement is being scripted.

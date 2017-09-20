@@ -1372,10 +1372,8 @@ void CppRed::vblank_irq(){
 		--this->hram.H_FRAMECOUNTER;
 
 	this->fade_out_audio();
-	this->audio1_update_music();
+	this->audio_update_music();
 	this->music_do_low_health_alert();
-	this->audio2_update_music();
-	this->audio3_update_music();
 
 	this->track_play_time();
 
@@ -1619,4 +1617,74 @@ void CppRed::fade_out_audio(){
 	this->play_sound(Sound::Stop);
 	this->wram.wNewSoundID = old_control;
 	this->play_sound(old_control);
+}
+
+void CppRed::audio_update_music(){
+	const size_t n = this->wram.wChannelSoundIDs.length;
+	auto &sc = this->sound_controller;
+	for (size_t i = 0; i < n; i++){
+		auto channel = +this->wram.wChannelSoundIDs[i];
+		if (!channel)
+			continue;
+		auto mute = +this->wram.wMuteAudioAndPauseMusic;
+		if (channel >= 4 || !mute){
+			this->audio_apply_music_effects(channel);
+			continue;
+		}
+		if (check_flag(mute, wMuteAudioAndPauseMusic_flags::audio_muted))
+			continue;
+		mute |= wMuteAudioAndPauseMusic_flags::audio_muted;
+		this->wram.wMuteAudioAndPauseMusic = mute;
+		//Output volume set to zero on both channels.
+		sc.set_NR51(0);
+		//Disable voluntary wave channel.
+		sc.wave.set_register0(0x80);
+	}
+}
+
+void CppRed::audio_apply_music_effects(unsigned channel){
+	//TODO
+}
+
+void CppRed::music_do_low_health_alert(){
+	//TODO
+}
+
+void CppRed::track_play_time(){
+	//It's structured goto time!
+	do{
+		unsigned counter = +this->wram.wIgnoreInputCounter;
+		counter = (counter + 0xFF) & 0xFF;
+		this->wram.wIgnoreInputCounter = counter;
+		if (counter)
+			continue;
+		auto wd730 = this->wram.wMainData.wd730;
+		wd730.set_unknown1(false);
+		wd730.set_unknown2(false);
+		auto old = wd730.get_ignore_input();
+		wd730.set_ignore_input(false);
+		if (!old)
+			continue;
+		this->hram.hJoyPressed.clear();
+		this->hram.hJoyHeld.clear();
+	}while (false);
+
+	auto main = this->wram.wMainData;
+	if (!main.wd732.get_counting_play_time())
+		return;
+	if (main.wPlayTimeMaxed)
+		return;
+
+	if (++main.wPlayTimeFrames != 60)
+		return;
+	main.wPlayTimeFrames = 0;
+	if (++main.wPlayTimeSeconds != 60)
+		return;
+	main.wPlayTimeSeconds = 0;
+	if (++main.wPlayTimeMinutes != 60)
+		return;
+	main.wPlayTimeMinutes = 0;
+	if (++main.wPlayTimeHours != 0xFF)
+		return;
+	main.wPlayTimeMaxed = 0xFF;
 }

@@ -131,9 +131,8 @@ private:
 	void oam_dma();
 	void prepare_oam_data();
 	void fade_out_audio();
-	void audio1_update_music();
-	void audio2_update_music();
-	void audio3_update_music();
+	void audio_update_music();
+	void audio_apply_music_effects(unsigned channel);
 	void music_do_low_health_alert();
 	void track_play_time();
 	void read_joypad();

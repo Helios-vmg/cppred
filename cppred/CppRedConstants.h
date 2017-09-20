@@ -818,3 +818,8 @@ const unsigned oamflag_canbemasked = bits_from_u32<0x00000010>::value;
 const unsigned oamflag_vflipped    = bits_from_u32<0x00100000>::value;
 const unsigned oam_hflip           = bits_from_u32<0x00100000>::value;
 const unsigned oam_vflip           = bits_from_u32<0x01000000>::value;
+
+namespace wMuteAudioAndPauseMusic_flags{
+const unsigned audio_muted = bits_from_u32<0x10000000>::value;
+const unsigned effect_mask = bits_from_u32<0x01111111>::value;
+}
