@@ -1761,8 +1761,8 @@ void CppRed::delay_frame(){
 		this->periodic_notification.reset_and_wait_for(250);
 }
 
-void CppRed::wait_for_ly(unsigned value){
-	if (this->display_controller.get_y_coordinate() == value)
+void CppRed::wait_ly(unsigned value, bool metavalue){
+	if ((this->display_controller.get_y_coordinate() == value) == metavalue)
 		return;
 	if (this->time_simulation_lock)
 		throw std::runtime_error("CppRed::wait_for_ly(): Infinite loop detected!");
@@ -1772,23 +1772,15 @@ void CppRed::wait_for_ly(unsigned value){
 			this->periodic_notification.reset_and_wait_for(250);
 		state &= DisplayController::update_ly_mask;
 		state >>= DisplayController::update_ly_shift;
-		if (state == value)
+		if ((state == value) != metavalue)
 			break;
 	}
 }
 
+void CppRed::wait_for_ly(unsigned value){
+	this->wait_ly(value, true);
+}
+
 void CppRed::wait_while_ly(unsigned value){
-	if (this->display_controller.get_y_coordinate() != value)
-		return;
-	if (this->time_simulation_lock)
-		throw std::runtime_error("CppRed::wait_while_ly(): Infinite loop detected!");
-	while (true){
-		std::uint32_t state;
-		while (!check_flag(state = this->simulate_time(), DisplayController::update_ly_happened))
-			this->periodic_notification.reset_and_wait_for(250);
-		state &= DisplayController::update_ly_mask;
-		state >>= DisplayController::update_ly_shift;
-		if (state != value)
-			break;
-	}
+	this->wait_ly(value, false);
 }
