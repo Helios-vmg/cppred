@@ -1524,7 +1524,7 @@ void CppRed::prepare_oam_data(){
 			continue;
 		}
 		//Visible.
-		if (index >= 0xA0)
+		if (index >= lcd_width)
 			//Sprite is not animated.
 			index = (index & 0x0F) | 0x10;
 		else
@@ -1565,10 +1565,10 @@ void CppRed::prepare_oam_data(){
 		end -= 4;
 	for (auto i = last_sprite_unupdated; i < end; i++){
 		auto oam = this->wram.wOAMBuffer[i];
-		oam.x_position = 0xA0;
-		oam.y_position = 0xA0;
-		oam.tile_number = 0xA0;
-		oam.attributes = 0xA0;
+		oam.x_position = lcd_width;
+		oam.y_position = lcd_width;
+		oam.tile_number = lcd_width;
+		oam.attributes = lcd_width;
 	}
 }
 
@@ -1708,4 +1708,9 @@ void CppRed::read_joypad(){
 
 	this->hram.hJoyInput.set_raw_value(final_state);
 	ic.request_input_state(select_none);
+}
+
+void CppRed::hide_sprites(){
+	for (auto sprite : this->wram.wOAMBuffer)
+		sprite.y_position = lcd_width;
 }
