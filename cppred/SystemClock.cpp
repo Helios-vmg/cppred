@@ -10,16 +10,13 @@ const std::uint32_t SystemClock::tac_selector[][2] = {
 };
 
 void SystemClock::lock_clock_value(double seconds){
-	auto old = this->actual_realtime_clock;
-	this->actual_realtime_clock = seconds;
-	if (old < 0)
-		return;
-	this->advance_clock((std::uint32_t)((seconds - old) * gb_cpu_frequency));
+	if (this->t0 < 0)
+		this->t0 = seconds;
+	this->advance_clock((std::uint64_t)((seconds - this->t0) * gb_cpu_frequency));
 }
 
-void SystemClock::advance_clock(std::uint32_t clocks){
-	clocks >>= 2;
-	while (clocks--){
+void SystemClock::advance_clock(std::uint64_t now){
+	while (this->realtime_clock < now){
 		this->realtime_clock += 4;
 		this->cpu_clock += 4;
 		this->DIV_register += 4;

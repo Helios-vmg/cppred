@@ -11,8 +11,8 @@ const int dmg_dma_transfer_length_clocks = 640;
 
 class SystemClock{
 	CppRed *system;
-	//Last value of the actual real-time clock.
-	double actual_realtime_clock = -1;
+	//Initialization time.
+	double t0 = -1;
 	//Ticks at a rate of 2^22 cycles per emulation second (2^23 cycles per
 	//emulation second when in double speed mode), regardless of the state of
 	//the CPU, as long as the emulation is running.
@@ -38,6 +38,7 @@ class SystemClock{
 	void cascade_timer_behavior_no_check();
 	void handle_tima_overflow_part1();
 	void handle_tima_overflow_part2();
+	void advance_clock(std::uint64_t now);
 public:
 	SystemClock(CppRed &system): system(&system){}
 
@@ -48,7 +49,6 @@ public:
 	std::uint64_t get_clock_value() const{
 		return this->cpu_clock;
 	}
-	void advance_clock(std::uint32_t clocks);
 	byte_t get_DIV_register() const{
 		auto ret = this->DIV_register;
 		ret >>= 8;
