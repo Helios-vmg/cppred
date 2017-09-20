@@ -1688,3 +1688,24 @@ void CppRed::track_play_time(){
 		return;
 	main.wPlayTimeMaxed = 0xFF;
 }
+
+void CppRed::read_joypad(){
+	const byte_t select_dpad = 1 << 5;
+	const byte_t select_buttons = 1 << 4;
+	const byte_t select_none = select_dpad | select_buttons;
+
+	auto &ic = this->input_controller;
+	ic.request_input_state(select_dpad);
+	byte_t state;
+	for (int i = 0; i < 6; i++)
+		state = ic.get_requested_input_state();
+	byte_t final_state = (state ^ 0xFF) << 4;
+
+	ic.request_input_state(select_buttons);
+	for (int i = 0; i < 10; i++)
+		state = ic.get_requested_input_state();
+	final_state |= (state ^ 0xFF) & 0x0F;
+
+	this->hram.hJoyInput.set_raw_value(final_state);
+	ic.request_input_state(select_none);
+}
