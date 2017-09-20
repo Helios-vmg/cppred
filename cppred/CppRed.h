@@ -132,15 +132,12 @@ private:
 	void update_moving_bg_tiles();
 	void oam_dma();
 	void prepare_oam_data();
-	void fade_out_audio();
-	void audio_update_music();
-	void audio_apply_music_effects(unsigned channel);
-	void music_do_low_health_alert();
 	void track_play_time();
 	void read_joypad();
 	void hide_sprites();
 	std::pair<unsigned, unsigned> get_sprite_screen_xy(SpriteStateData1 &);
 	void timer_handler();
+	void wait_ly(unsigned value, bool metavalue);
 public:
 
 	WRam wram;

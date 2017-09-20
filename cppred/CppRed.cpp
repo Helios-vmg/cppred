@@ -212,41 +212,9 @@ void CppRed::interpreter_thread_function(){
 	std::shared_ptr<std::exception> thrown;
 
 	try{
-#if 1
 		this->real_time_multiplier = 1.0 / (double)this->realtime_counter_frequency;
 		this->current_timer_start = get_timer_count();
 		this->main();
-#else
-		while (true){
-			bool continue_running;
-			bool paused;
-			this->real_time_multiplier = this->speed_multiplier / (double)this->realtime_counter_frequency;
-			this->current_timer_start = get_timer_count();
-			while (true){
-				continue_running = this->continue_running;
-				paused = this->paused;
-				if (!continue_running || paused)
-					break;
-
-				auto t0 = get_timer_count();
-				this->run_until_next_frame();
-				//this->ram_to_save.try_save(*this->host);
-				auto t1 = get_timer_count();
-#ifndef BENCHMARKING
-				this->sync_with_real_time();
-#endif
-				auto t2 = get_timer_count();
-
-				this->time_running += t1 - t0;
-				this->time_waiting += t2 - t1;
-			}
-			if (!continue_running)
-				break;
-			this->accumulated_time = this->get_real_time();
-			if (paused)
-				this->execute_pause();
-		}
-#endif
 	}catch (GameBoyException &ex){
 		thrown.reset(ex.clone());
 	}catch (...){
@@ -424,39 +392,7 @@ void CppRed::stop_all_sounds(){
 }
 
 void CppRed::play_sound(Sound sound){
-	if (this->wram.wNewSoundID.value){
-		auto i = this->wram.wChannelSoundIDs.begin() + 4;
-		std::fill(i, i + 4, 0);
-	}
-	if (this->wram.wAudioFadeOutControlCounterRequest){
-		if (!this->wram.wNewSoundID.value)
-			return;
-		this->wram.wNewSoundID.value = 0;
-		if (this->wram.wLastMusicSoundID.value != 0xFF){
-			this->wram.wLastMusicSoundID = sound;
-
-			this->wram.wAudioFadeOutCounter =
-			this->wram.wAudioFadeOutCounterReloadValue = this->wram.wAudioFadeOutControlCounterRequest;
-
-			this->wram.wAudioFadeOutControlNextSound = sound;
-			return;
-		}
-		this->wram.wAudioFadeOutControlCounterRequest = 0;
-	}
-	this->wram.wNewSoundID.value = 0;
-	switch (this->wram.wAudioROMBank){
-		case AudioBank::Bank1:
-			this->audio.audio1_play_sound(sound);
-			break;
-		case AudioBank::Bank2:
-			this->audio.audio2_play_sound(sound);
-			break;
-		case AudioBank::Bank3:
-			this->audio.audio3_play_sound(sound);
-			break;
-		default:
-			throw std::runtime_error("Invalid audio bank value.");
-	}
+	this->play_sound(sound);
 }
 
 void CppRed::wait_for_sound_to_finish(){
@@ -1387,9 +1323,9 @@ void CppRed::vblank_irq(){
 	if (this->hram.H_FRAMECOUNTER)
 		--this->hram.H_FRAMECOUNTER;
 
-	this->fade_out_audio();
-	this->audio_update_music();
-	this->music_do_low_health_alert();
+	this->audio.fade_out_audio();
+	this->audio.audio_update_music();
+	this->audio.music_do_low_health_alert();
 
 	this->track_play_time();
 
@@ -1595,75 +1531,6 @@ std::pair<unsigned, unsigned> CppRed::get_sprite_screen_xy(SpriteStateData1 &spr
 	this->hram.hSpriteScreenX = ret.first;
 	this->hram.hSpriteScreenY = ret.second;
 	return ret;
-}
-
-void CppRed::fade_out_audio(){
-	const byte_t max_volume = 0x77;
-
-	auto &sc = this->sound_controller;
-	if (!this->wram.wAudioFadeOutControlCounterRequest){
-		if (!this->wram.wMainData.wd72c.get_no_audio_fade_out())
-			sc.set_NR50(max_volume);
-		return;
-	}
-	auto counter = +this->wram.wAudioFadeOutCounter;
-	if (counter){
-		this->wram.wAudioFadeOutCounter = counter - 1;
-		return;
-	}
-	this->wram.wAudioFadeOutCounter = +this->wram.wAudioFadeOutCounterReloadValue;
-	
-	auto volume = sc.get_NR50();
-	if (!volume){
-		//Fade-out not yet complete.
-		
-		//NR50 stores the volumes for both channels as the individual nibbles
-		//of a single byte. The following operation decrements both volumes
-		//simultaneously.
-		volume -= 0x11;
-
-		sc.set_NR50(volume);
-		return;
-	}
-
-	//Fade-out complete.
-	auto old_control = this->wram.wAudioFadeOutControlNextSound.enum_value();
-	this->wram.wAudioFadeOutControlNextSound = Sound::None;
-	this->wram.wNewSoundID = Sound::Stop;
-	this->play_sound(Sound::Stop);
-	this->wram.wNewSoundID = old_control;
-	this->play_sound(old_control);
-}
-
-void CppRed::audio_update_music(){
-	const size_t n = this->wram.wChannelSoundIDs.length;
-	auto &sc = this->sound_controller;
-	for (size_t i = 0; i < n; i++){
-		auto channel = +this->wram.wChannelSoundIDs[i];
-		if (!channel)
-			continue;
-		auto mute = +this->wram.wMuteAudioAndPauseMusic;
-		if (channel >= 4 || !mute){
-			this->audio_apply_music_effects(channel);
-			continue;
-		}
-		if (check_flag(mute, wMuteAudioAndPauseMusic_flags::audio_muted))
-			continue;
-		mute |= wMuteAudioAndPauseMusic_flags::audio_muted;
-		this->wram.wMuteAudioAndPauseMusic = mute;
-		//Output volume set to zero on both channels.
-		sc.set_NR51(0);
-		//Disable voluntary wave channel.
-		sc.wave.set_register0(0x80);
-	}
-}
-
-void CppRed::audio_apply_music_effects(unsigned channel){
-	//TODO
-}
-
-void CppRed::music_do_low_health_alert(){
-	//TODO
 }
 
 void CppRed::track_play_time(){
