@@ -74,7 +74,7 @@ void oak_speech(CppRed &red){
 	red.delay_frames(4);
 	red.display_picture_centered_or_upper_right(ShrinkPic2, Placing::Centered);
 	red.reset_player_sprite_data();
-	red.wram.wAudioFadeOutControl = 10;
+	red.wram.wAudioFadeOutControlCounterRequest = 10;
 	red.wram.wNewSoundID = Sound::Stop;
 	red.play_sound(Sound::Music_PalletTown);
 	red.delay_frames(20);

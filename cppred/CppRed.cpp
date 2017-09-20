@@ -397,7 +397,7 @@ void CppRed::delay_frames(unsigned count){
 void CppRed::stop_all_sounds(){
 	this->wram.wAudioROMBank = AudioBank::Bank1;
 	this->wram.wAudioSavedROMBank = AudioBank::Bank1;
-	this->wram.wAudioFadeOutControl = 0;
+	this->wram.wAudioFadeOutControlCounterRequest = 0;
 	this->wram.wNewSoundID = Sound::None;
 	this->wram.wLastMusicSoundID = Sound::None;
 	this->play_sound(Sound::Stop);
@@ -408,7 +408,7 @@ void CppRed::play_sound(Sound sound){
 		auto i = this->wram.wChannelSoundIDs.begin() + 4;
 		std::fill(i, i + 4, 0);
 	}
-	if (this->wram.wAudioFadeOutControl){
+	if (this->wram.wAudioFadeOutControlCounterRequest){
 		if (!this->wram.wNewSoundID.value)
 			return;
 		this->wram.wNewSoundID.value = 0;
@@ -416,13 +416,12 @@ void CppRed::play_sound(Sound sound){
 			this->wram.wLastMusicSoundID = sound;
 
 			this->wram.wAudioFadeOutCounter =
-			this->wram.wAudioFadeOutCounterReloadValue = this->wram.wAudioFadeOutControl;
+			this->wram.wAudioFadeOutCounterReloadValue = this->wram.wAudioFadeOutControlCounterRequest;
 
-			//TODO: What does this mean?
-			this->wram.wAudioFadeOutControl = (unsigned)sound;
+			this->wram.wAudioFadeOutControlNextSound = sound;
 			return;
 		}
-		this->wram.wAudioFadeOutControl = 0;
+		this->wram.wAudioFadeOutControlCounterRequest = 0;
 	}
 	this->wram.wNewSoundID.value = 0;
 	switch (this->wram.wAudioROMBank){
@@ -1573,4 +1572,51 @@ void CppRed::prepare_oam_data(){
 		oam.tile_number = 0xA0;
 		oam.attributes = 0xA0;
 	}
+}
+
+std::pair<unsigned, unsigned> CppRed::get_sprite_screen_xy(SpriteStateData1 &sprite){
+	std::pair<unsigned, unsigned> ret(sprite.x_pixels, sprite.y_pixels);
+	sprite.tile_position_x = ret.first & 0xF0;
+	sprite.tile_position_y = (ret.second + 4) & 0xF0;
+	this->hram.hSpriteScreenX = ret.first;
+	this->hram.hSpriteScreenY = ret.second;
+	return ret;
+}
+
+void CppRed::fade_out_audio(){
+	const byte_t max_volume = 0x77;
+
+	auto &sc = this->sound_controller;
+	if (!this->wram.wAudioFadeOutControlCounterRequest){
+		if (!this->wram.wMainData.wd72c.get_no_audio_fade_out())
+			sc.set_NR50(max_volume);
+		return;
+	}
+	auto counter = +this->wram.wAudioFadeOutCounter;
+	if (counter){
+		this->wram.wAudioFadeOutCounter = counter - 1;
+		return;
+	}
+	this->wram.wAudioFadeOutCounter = +this->wram.wAudioFadeOutCounterReloadValue;
+	
+	auto volume = sc.get_NR50();
+	if (!volume){
+		//Fade-out not yet complete.
+		
+		//NR50 stores the volumes for both channels as the individual nibbles
+		//of a single byte. The following operation decrements both volumes
+		//simultaneously.
+		volume -= 0x11;
+
+		sc.set_NR50(volume);
+		return;
+	}
+
+	//Fade-out complete.
+	auto old_control = this->wram.wAudioFadeOutControlNextSound.enum_value();
+	this->wram.wAudioFadeOutControlNextSound = Sound::None;
+	this->wram.wNewSoundID = Sound::Stop;
+	this->play_sound(Sound::Stop);
+	this->wram.wNewSoundID = old_control;
+	this->play_sound(old_control);
 }
