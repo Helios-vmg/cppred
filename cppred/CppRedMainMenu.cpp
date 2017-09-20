@@ -207,8 +207,8 @@ void CppRedMainMenu::display_options_menu(){
 		this->set_options_from_cursor_positions();
 		InputBitmap_struct input;
 		do{
+			parent.delay_frame();
 			input = parent.joypad_low_sensitivity();
-			//TODO: Is this a spinlock?
 		}while (!input.button_a & !input.button_b & !input.button_start & !input.button_down & !input.button_up & !input.button_left & !input.button_right);
 		if (input.button_b || input.button_start)
 			break;

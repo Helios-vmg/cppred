@@ -142,6 +142,7 @@ cd %a%
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ControlFlowGuard>false</ControlFlowGuard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,6 +175,7 @@ cd %a%
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ControlFlowGuard>false</ControlFlowGuard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

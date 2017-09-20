@@ -365,12 +365,12 @@ void CppRedText::print_letter_delay(){
 	hram.H_FRAMECOUNTER = frame_counter;
 
 	do{
+		this->parent->delay_frame();
 		this->parent->joypad();
 		if (hram.hJoyHeld.get_button_a() || hram.hJoyHeld.get_button_b()){
 			this->parent->delay_frame();
 			break;
 		}
-		//TODO: Add some delay here to prevent CPU burning.
 	}while (hram.H_FRAMECOUNTER);
 }
 

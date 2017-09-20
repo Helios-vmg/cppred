@@ -289,8 +289,7 @@ void CppRed::disable_lcd(){
 	auto ie = this->IE;
 	this->IE = ie & ~vblank_mask;
 
-	//TODO: Replace spinlock with a wait or something:
-	while (this->LY != lcd_blank);
+	this->wait_for_ly(lcd_blank);
 	
 	this->LCDC &= ~DisplayController::lcdc_display_enable_mask;
 
@@ -303,9 +302,8 @@ void CppRed::clear_vram(){
 
 void CppRed::clear_bg_map(unsigned page){
 	page <<= 8;
-	//TODO: This can be optimized.
 	auto vmem = &this->display_controller.access_vram(page);
-	memset(vmem, 0, 0x400);
+	memset(vmem, SpecialCharacters::blank, 0x400);
 }
 
 void CppRed::gb_pal_normal(){
@@ -396,6 +394,8 @@ void CppRed::play_sound(Sound sound){
 }
 
 void CppRed::wait_for_sound_to_finish(){
+	//TODO
+	return;
 	if (check_flag<byte_t>(this->wram.wLowHealthAlarm, 0x80))
 		return;
 	byte_t a;
@@ -977,8 +977,6 @@ InputBitmap_struct CppRed::handle_menu_input(){
 }
 
 InputBitmap_struct CppRed::handle_menu_input2(){
-	//TODO: This whole function looks like a spinlock.
-
 	auto counter1 = +this->hram.H_DOWNARROWBLINKCNT1;
 	auto counter2 = +this->hram.H_DOWNARROWBLINKCNT2;
 	this->hram.H_DOWNARROWBLINKCNT1 = 0;
@@ -993,6 +991,8 @@ InputBitmap_struct CppRed::handle_menu_input2(){
 		while (true){
 			if (this->wram.wPartyMenuAnimMonEnabled)
 				this->animate_party_mon();
+			//TODO: Verify that this works correctly.
+			this->delay_frame();
 			input = this->joypad_low_sensitivity();
 			if (any_button_pressed(input))
 				break;
