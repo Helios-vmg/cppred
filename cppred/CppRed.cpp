@@ -1764,6 +1764,8 @@ void CppRed::delay_frame(){
 void CppRed::wait_for_ly(unsigned value){
 	if (this->display_controller.get_y_coordinate() == value)
 		return;
+	if (this->time_simulation_lock)
+		throw std::runtime_error("CppRed::wait_for_ly(): Infinite loop detected!");
 	while (true){
 		std::uint32_t state;
 		while (!check_flag(state = this->simulate_time(), DisplayController::update_ly_happened))
@@ -1778,6 +1780,8 @@ void CppRed::wait_for_ly(unsigned value){
 void CppRed::wait_while_ly(unsigned value){
 	if (this->display_controller.get_y_coordinate() != value)
 		return;
+	if (this->time_simulation_lock)
+		throw std::runtime_error("CppRed::wait_while_ly(): Infinite loop detected!");
 	while (true){
 		std::uint32_t state;
 		while (!check_flag(state = this->simulate_time(), DisplayController::update_ly_happened))
