@@ -259,8 +259,13 @@ std::uint32_t DisplayController::update(){
 	auto row_status = (unsigned)this->get_row_status();
 	auto state = row_status & 3;
 	auto row = row_status >> 2;
+	std::uint32_t ret = 0;
+	if (row != this->last_row){
+		ret = (row << update_ly_shift) | update_ly_happened;
+		this->last_row = row;
+	}
 	if (this->last_row_state == state)
-		return false;
+		return ret;
 	typedef void (DisplayController::*fp_t)(unsigned);
 	static const fp_t functions[] = {
 		&DisplayController::switch_to_row_state_0,
@@ -269,7 +274,7 @@ std::uint32_t DisplayController::update(){
 		&DisplayController::switch_to_row_state_3,
 	};
 	(this->*functions[state])(row);
-	bool ret = this->last_row_state == 3;
+	ret |= this->last_row_state == 3 ? update_vsync_happened : 0;
 	this->last_row_state = state;
 	return ret;
 }

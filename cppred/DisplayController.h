@@ -90,6 +90,7 @@ class DisplayController{
 	std::atomic<bool> display_enabled;
 	static const std::uint64_t invalid_clock = std::numeric_limits<std::uint64_t>::max();
 	std::uint64_t display_clock_start = invalid_clock;
+	int last_row = -1;
 	int last_row_state = -1;
 	unsigned swallow_frames = 0;
 	bool clock_start_scheduled = false;

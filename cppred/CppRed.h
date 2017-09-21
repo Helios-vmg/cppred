@@ -164,9 +164,9 @@ public:
 	//LCD STATus
 	DECLARE_HARDWARE_REGISTER(STAT);
 	//Interrupt Flag
-	DECLARE_HARDWARE_REGISTER(IF);
+	byte_t IF;
 	//Interrupt Enable Flag
-	DECLARE_HARDWARE_REGISTER(IE);
+	byte_t IE;
 	DECLARE_HARDWARE_REGISTER(InterruptMasterFlag);
 	DECLARE_HARDWARE_REGISTER(SCX);
 	DECLARE_HARDWARE_REGISTER(SCY);
@@ -294,6 +294,9 @@ public:
 	bool check_for_user_interruption(unsigned max_frames);
 	static bool check_for_data_clear_request(InputBitmap_struct);
 	std::uint32_t random();
+	bool get_continue_running() const{
+		return this->continue_running;
+	}
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

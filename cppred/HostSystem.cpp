@@ -47,7 +47,7 @@ void HostSystem::run(){
 #ifdef BENCHMARKING
 		auto start = SDL_GetTicks();
 #endif
-		while (this->handle_events()){
+		while (this->handle_events() && this->cppred->get_continue_running()){
 #ifdef BENCHMARKING
 			if (SDL_GetTicks() - start >= 20000)
 				break;

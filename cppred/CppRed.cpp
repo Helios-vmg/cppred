@@ -61,8 +61,8 @@ CppRed::CppRed(HostSystem &host):
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(OBP1)
 		INITIALIZE_HARDWARE_REGISTER(LCDC, display_controller, lcd_control)
 		INITIALIZE_HARDWARE_REGISTER(STAT, display_controller, status)
-		INITIALIZE_EMPTY_HARDWARE_REGISTER(IF)
-		INITIALIZE_EMPTY_HARDWARE_REGISTER(IE)
+		,IF(0)
+		,IE(0)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(InterruptMasterFlag)
 		INITIALIZE_HARDWARE_REGISTER(SCX, display_controller, scroll_x)
 		INITIALIZE_HARDWARE_REGISTER(SCY, display_controller, scroll_y)
@@ -168,7 +168,13 @@ void CppRed::clear_sprites(){
 }
 
 void CppRed::execute_predef(Predef predef){
-	this->predef_functions[(int)predef]();
+	auto f = this->predef_functions[(int)predef];
+	if (!f){
+		std::stringstream stream;
+		stream << "CppRed::execute_predef(): Unset function: " << (int)predef << std::endl;
+		throw std::runtime_error(stream.str());
+	}
+	f();
 }
 
 const std::string ninten_text = "NINTEN";
@@ -201,8 +207,6 @@ void CppRed::run(){
 	this->continue_running = true;
 	auto This = this;
 	this->interpreter_thread.reset(new std::thread([This](){ This->interpreter_thread_function(); }));
-	while (this->continue_running)
-		std::this_thread::sleep_for(std::chrono::milliseconds(250));
 }
 
 CppRed::~CppRed(){
@@ -224,12 +228,16 @@ void CppRed::interpreter_thread_function(){
 		this->main();
 	}catch (GameBoyException &ex){
 		thrown.reset(ex.clone());
+	}catch (std::exception &e){
+		thrown.reset(new GenericException(e.what()));
 	}catch (...){
 		thrown.reset(new GenericException("Unknown exception."));
 	}
 
-	this->host->throw_exception(thrown);
-	this->continue_running = false;
+	if (!thrown)
+		this->continue_running = false;
+	else
+		this->host->throw_exception(thrown);
 }
 
 #if 0
@@ -1312,6 +1320,8 @@ void CppRed::town_map_sprite_blinking_animation(){
 }
 
 void CppRed::vblank_irq(){
+	if (!this->IF || !check_flag(this->IE, vblank_mask))
+		return;
 	this->SCX = +this->hram.hSCX;
 	this->SCY = +this->hram.hSCY;
 
