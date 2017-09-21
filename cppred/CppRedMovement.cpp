@@ -396,7 +396,7 @@ SpriteStateData2 CppRed::get_current_sprite2(){
 }
 
 bool CppRed::check_sprite_availability(){
-	this->call_predef(Predef::IsObjectHidden);
+	this->is_object_hidden();
 	bool ret = true;
 	if (this->hram.hIsObjectHidden)
 		ret = false;

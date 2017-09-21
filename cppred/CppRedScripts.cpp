@@ -26,7 +26,7 @@ void oak_speech(CppRed &red){
 	red.clear_screen();
 	red.load_textbox_tile_patterns();
 	red.initialize_player_data();
-	red.call_predef(Predef::InitPlayerData2);
+	red.init_player_data2();
 	red.add_item_to_inventory(0, ItemId::Potion, 1);
 	red.wram.wMainData.wDestinationMap = red.wram.wDefaultMap;
 	red.special_warp_in();

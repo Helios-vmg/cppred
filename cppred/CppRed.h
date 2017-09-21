@@ -34,7 +34,6 @@ private:
 	SystemClock clock;
 	CppRedAudio audio;
 	//std::unique_ptr<byte_t[]> emulated_memory;
-	std::function<void()> predef_functions[(int)Predef::COUNT];
 	std::atomic<bool> continue_running;
 	std::atomic<bool> paused;
 	bool registered = false;
@@ -53,7 +52,6 @@ private:
 	byte_t interrupt_flag = 0;
 	byte_t interrupt_enable_flag = 0;
 	xorshift128_state random_state;
-	std::vector<std::function<void()>> predefs;
 	CppRedMessageBox message_box;
 	const void *vblank_copy_src = nullptr;
 	size_t vblank_copy_size = 0;
@@ -137,6 +135,8 @@ private:
 	void hide_sprites();
 	std::pair<unsigned, unsigned> get_sprite_screen_xy(SpriteStateData1 &);
 	void wait_ly(unsigned value, bool metavalue);
+	void play_intro();
+	void cable_club_run();
 public:
 
 	WRam wram;
@@ -200,7 +200,6 @@ public:
 	void clear_sprites();
 	void clear_bg_map(unsigned page);
 	void stop_all_sounds();
-	void execute_predef(Predef);
 	void gb_pal_normal();
 	void gb_pal_whiteout();
 	void gb_pal_white_out_with_delay3(){
@@ -256,7 +255,6 @@ public:
 	void joypad();
 	void initialize_player_data();
 	void initialize_options();
-	void call_predef(Predef);
 	void add_item_to_inventory(unsigned position, ItemId, unsigned quantity);
 	MapId special_warp_in();
 	void load_special_warp_data();
@@ -297,6 +295,8 @@ public:
 	bool get_continue_running() const{
 		return this->continue_running;
 	}
+	void init_player_data2();
+	void load_tileset_header();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

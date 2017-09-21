@@ -18,7 +18,7 @@ MainMenuResult CppRedMainMenu::display(){
 	wram.wSaveFileStatus = SaveFileStatus::NoSave;
 
 	if (this->check_for_player_name_in_sram())
-		this->parent->call_predef(Predef::LoadSAV);
+		this->parent->load_save();
 
 	auto &text = this->parent->text;
 

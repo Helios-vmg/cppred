@@ -85,10 +85,6 @@ void CppRed::nonemulation_init(){
 	std::random_device rnd;
 	for (auto &i : this->random_state)
 		i = rnd();
-
-	this->predefs.resize((int)Predef::COUNT);
-	this->predefs[(int)Predef::IsObjectHidden] = [this](){ this->is_object_hidden(); };
-	this->predefs[(int)Predef::LoadSAV] = [this](){ this->load_save(); };
 }
 
 void CppRed::init(){
@@ -138,12 +134,10 @@ void CppRed::init(){
 
 	this->InterruptMasterFlag = 1;
 
-	this->execute_predef(Predef::LoadSGB);
-
 	this->hram.H_AUTOBGTRANSFERDEST = 0x9C00;
 	this->wram.wUpdateSpritesEnabled = reduce_sign(-1);
 
-	this->execute_predef(Predef::PlayIntro);
+	this->play_intro();
 
 	this->disable_lcd();
 	this->clear_vram();
@@ -165,16 +159,6 @@ void CppRed::clear_hram(){
 
 void CppRed::clear_sprites(){
 	this->wram.wOAMBuffer.fill_bytes(0);
-}
-
-void CppRed::execute_predef(Predef predef){
-	auto f = this->predef_functions[(int)predef];
-	if (!f){
-		std::stringstream stream;
-		stream << "CppRed::execute_predef(): Unset function: " << (int)predef << std::endl;
-		throw std::runtime_error(stream.str());
-	}
-	f();
 }
 
 const std::string ninten_text = "NINTEN";
@@ -388,7 +372,7 @@ void CppRed::save_screen_tiles_to_buffer1(){
 void CppRed::run_palette_command(PaletteCommand cmd){
 	if (!this->wram.wOnSGB)
 		return;
-	this->execute_predef(Predef::_RunPaletteCommand);
+	throw NotImplementedException();
 }
 
 void CppRed::delay_frames(unsigned count){
@@ -494,16 +478,6 @@ CppRed::tilemap_it CppRed::get_tilemap_location(unsigned x, unsigned y){
 
 unsigned CppRed::random(){
 	return xorshift128(this->random_state);
-}
-
-void CppRed::call_predef(Predef f){
-	auto index = (int)f;
-	if (index < 0 || index >= this->predefs.size()){
-		std::stringstream stream;
-		stream << "CppRed::call_predef(): Invalid predef value: " << index;
-		throw std::runtime_error(stream.str());
-	}
-	this->predefs[index]();
 }
 
 void CppRed::start_new_game(){
@@ -827,7 +801,7 @@ void CppRed::add_item_to_inventory(unsigned position, ItemId item, unsigned quan
 
 MapId CppRed::special_warp_in(){
 	this->load_special_warp_data();
-	this->call_predef(Predef::LoadTilesetHeader);
+	this->load_tileset_header();
 	bool fly_warp = this->wram.wMainData.wd732.get_fly_warp();
 	this->wram.wMainData.wd732.set_fly_warp(false);
 	MapId destination = MapId::PalletTown;
@@ -1110,7 +1084,7 @@ void CppRed::wait_for_text_scroll_button_press(){
 			this->town_map_sprite_blinking_animation();
 		this->handle_down_arrow_blink_timing(this->get_tilemap_location(18, 16));
 		this->joypad_low_sensitivity();
-		this->call_predef(Predef::CableClub_Run);
+		this->cable_club_run();
 		joy5 = this->hram.hJoy5;
 	}while (!joy5.button_a && !joy5.button_b);
 	this->hram.H_DOWNARROWBLINKCNT1 = counter1;
