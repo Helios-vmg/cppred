@@ -123,6 +123,9 @@
     <ClCompile Include="CppRedMessageBox.cpp">
       <Filter>Source Files\CppRed</Filter>
     </ClCompile>
+    <ClCompile Include="CppRedIntro.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="timer.h">
@@ -228,6 +231,9 @@
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
     <ClInclude Include="CppRedMessageBox.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedIntro.h">
       <Filter>Header Files\CppRed</Filter>
     </ClInclude>
   </ItemGroup>

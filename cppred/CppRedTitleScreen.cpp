@@ -55,7 +55,6 @@ TitleScreenResult CppRedTitleScreen::display(){
 	this->hram.hWY = 0x40;
 	this->parent->load_screen_tiles_from_buffer2();
 	this->copy_tilemap_to_vram(vBGMap0 >> 8);
-	this->parent->run_palette_command(PaletteCommand::SetPaletteTitleScreen);
 	this->parent->gb_pal_normal();
 	this->parent->OBP0 = 0xE4;
 

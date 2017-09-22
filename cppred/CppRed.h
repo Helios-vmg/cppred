@@ -135,8 +135,8 @@ private:
 	void hide_sprites();
 	std::pair<unsigned, unsigned> get_sprite_screen_xy(SpriteStateData1 &);
 	void wait_ly(unsigned value, bool metavalue);
-	void play_intro();
 	void cable_club_run();
+	void load_copyright_tiles();
 public:
 
 	WRam wram;
@@ -149,10 +149,6 @@ public:
 	DECLARE_HARDWARE_REGISTER(SB);
 	//Serial Control
 	DECLARE_HARDWARE_REGISTER(SC);
-	//Timer Modulo
-	DECLARE_HARDWARE_REGISTER(TMA);
-	//Timer Control
-	DECLARE_HARDWARE_REGISTER(TAC);
 	//Background Palette
 	DECLARE_HARDWARE_REGISTER(BGP);
 	//Object Palette 0
@@ -221,7 +217,6 @@ public:
 	void load_screen_tiles_from_buffer2();
 	void load_screen_tiles_from_buffer2_disable_bg_transfer();
 	void save_screen_tiles_to_buffer1();
-	void run_palette_command(PaletteCommand cmd);
 	void play_sound(Sound);
 	void delay_frames(unsigned count);
 	void delay3(){
@@ -233,9 +228,6 @@ public:
 	void load_gb_pal();
 	void display_clear_save_dialog();
 	MainMenuResult display_main_menu();
-	void run_default_palette_command(){
-		this->run_palette_command(PaletteCommand::Default);
-	}
 	void print_text(const CppRedText::Region &);
 	void display_two_option_menu(TwoOptionMenuType type, unsigned x = 0, unsigned y = 0, bool default_to_second_option = false);
 	void display_textbox_id(unsigned x = 0, unsigned y = 0);
@@ -245,7 +237,6 @@ public:
 	}
 	void prepare_menu(){
 		this->clear_screen();
-		this->run_default_palette_command();
 		this->load_textbox_tile_patterns();
 		this->load_font_tile_patterns();
 	}
@@ -297,6 +288,7 @@ public:
 	}
 	void init_player_data2();
 	void load_tileset_header();
+	void load_copyright_and_textbox_tiles();
 
 	static const unsigned vblank_flag_bit = 0;
 	static const unsigned lcd_stat_flag_bit = 1;

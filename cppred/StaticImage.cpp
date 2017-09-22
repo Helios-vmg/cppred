@@ -1,5 +1,6 @@
 #include "StaticImage.h"
 #include "utility.h"
+#include "CppRedConstants.h"
 #include <cassert>
 
 std::vector<byte_t> decode_image_data(unsigned w, unsigned h, BitmapEncoding encoding, const byte_t *data, size_t size, bool flip){
@@ -35,7 +36,7 @@ std::vector<byte_t> decode_image_data(unsigned w, unsigned h, BitmapEncoding enc
 }
 
 std::vector<byte_t> decode_image_data(const BaseStaticImage &img, bool flip){
-	return decode_image_data(img.get_width(), img.get_height(), img.get_encoding(), img.get_data(), img.get_data_size(), flip);
+	return decode_image_data(img.get_width() * tile_pixel_size, img.get_height() * tile_pixel_size, img.get_encoding(), img.get_data(), img.get_data_size(), flip);
 }
 
 std::vector<byte_t> pad_tiles_for_mon_pic(const std::vector<byte_t> &image_data, unsigned tiles_w, unsigned tiles_h, bool flipped){

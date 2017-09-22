@@ -301,6 +301,7 @@ cd %a%
     <ClCompile Include="CppRedAudio.cpp" />
     <ClCompile Include="CppRedClearSave.cpp" />
     <ClCompile Include="CppRedData.cpp" />
+    <ClCompile Include="CppRedIntro.cpp" />
     <ClCompile Include="CppRedMainMenu.cpp" />
     <ClCompile Include="CppRedMap.cpp" />
     <ClCompile Include="CppRedMessageBox.cpp" />
@@ -336,6 +337,7 @@ cd %a%
     <ClInclude Include="CppRedClearSave.h" />
     <ClInclude Include="CppRedConstants.h" />
     <ClInclude Include="CppRedData.h" />
+    <ClInclude Include="CppRedIntro.h" />
     <ClInclude Include="CppRedMainMenu.h" />
     <ClInclude Include="CppRedMap.h" />
     <ClInclude Include="CppRedMessageBox.h" />

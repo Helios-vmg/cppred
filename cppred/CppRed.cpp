@@ -9,6 +9,7 @@
 #include "CppRedScripts.h"
 #include "CppRedSRam.h"
 #include "MemoryOperations.h"
+#include "CppRedIntro.h"
 #include <cassert>
 #include <stdexcept>
 #include <random>
@@ -54,8 +55,6 @@ CppRed::CppRed(HostSystem &host):
 		continue_running(false)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(SB)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(SC)
-		INITIALIZE_HARDWARE_REGISTER(TMA, clock, TMA_register)
-		INITIALIZE_HARDWARE_REGISTER(TAC, clock, TAC_register)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(BGP)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(OBP0)
 		INITIALIZE_EMPTY_HARDWARE_REGISTER(OBP1)
@@ -94,8 +93,6 @@ void CppRed::init(){
 	this->set_window_position(0, 0);
 	this->SB = 0;
 	this->SC = 0;
-	this->TMA = 0;
-	this->TAC = 0;
 	this->BGP = 0;
 	this->OBP0 = 0;
 	this->OBP1 = 0;
@@ -137,7 +134,7 @@ void CppRed::init(){
 	this->hram.H_AUTOBGTRANSFERDEST = 0x9C00;
 	this->wram.wUpdateSpritesEnabled = reduce_sign(-1);
 
-	this->play_intro();
+	CppRedIntro::play(*this);
 
 	this->disable_lcd();
 	this->clear_vram();
@@ -367,12 +364,6 @@ void CppRed::save_screen_tiles_to_buffer1(){
 	const auto size = this->wram.wTileMapBackup2.size;
 	auto dst = this->wram.wTileMapBackup2.begin();
 	std::copy(src, src + size, dst);
-}
-
-void CppRed::run_palette_command(PaletteCommand cmd){
-	if (!this->wram.wOnSGB)
-		return;
-	throw NotImplementedException();
 }
 
 void CppRed::delay_frames(unsigned count){
@@ -929,11 +920,9 @@ void CppRed::clear_screen_area(unsigned w, unsigned h, const tilemap_it &locatio
 
 void CppRed::copy_video_data(const BaseStaticImage &image, unsigned tiles, unsigned src_offset, unsigned destination, bool flipped){
 	auto data = decode_image_data(image, flipped);
-	auto w = image.get_width();
-	auto h = image.get_height();
 
-	auto copy_size = std::min<size_t>(tiles * 16, data.size());
-	this->copy_video_data(&data[src_offset * 16], copy_size, destination);
+	auto copy_size = std::min<size_t>(tiles * tile_byte_size, data.size());
+	this->copy_video_data(&data[src_offset * tile_byte_size], copy_size, destination);
 }
 
 void CppRed::copy_video_data(const BaseStaticImage &image, unsigned destination, bool flipped){
@@ -944,7 +933,10 @@ void CppRed::copy_video_data(const void *data, size_t size, unsigned destination
 	this->vblank_copy_src = data;
 	this->vblank_copy_size = size;
 	this->vblank_copy_dst = destination;
-	this->delay_frame();
+	if (this->display_controller.get_display_enabled())
+		this->delay_frame();
+	else
+		this->vblank_copy();
 }
 
 void CppRed::place_unfilled_arrow_menu_cursor(){
@@ -1115,7 +1107,7 @@ void CppRed::load_front_sprite(SpeciesId species, bool flipped, const tilemap_it
 	}
 	auto &front = *data->front;
 	auto image_data = decode_image_data(front, flipped);
-	image_data = pad_tiles_for_mon_pic(image_data, front.get_width() / 16, front.get_height() / 16, flipped);
+	image_data = pad_tiles_for_mon_pic(image_data, front.get_width(), front.get_height(), flipped);
 	write_mon_pic_tiles_to_buffer(destination, tilemap_width);
 	this->copy_video_data(&image_data[0], image_data.size(), vFrontPic);
 }
@@ -1603,9 +1595,8 @@ std::uint32_t CppRed::simulate_time(){
 		return 0;
 	this->time_simulation_lock = true;
 
-	this->clock.lock_clock_value(get_timer_count() * this->real_time_multiplier);
-
-	this->clock.get_trigger_interrupt();
+	if (!this->clock.lock_clock_value(get_timer_count() * this->real_time_multiplier))
+		return 0;
 
 	this->sound_controller.update();
 	auto ret = this->display_controller.update();
@@ -1641,4 +1632,41 @@ void CppRed::wait_for_ly(unsigned value){
 
 void CppRed::wait_while_ly(unsigned value){
 	this->wait_ly(value, false);
+}
+
+void CppRed::load_copyright_and_textbox_tiles(){
+	this->hram.hWY = 0;
+	this->clear_screen();
+	this->load_textbox_tile_patterns();
+
+	this->copy_video_data(NintendoCopyrightLogoGraphics, vChars2 + 0x600);
+
+	static const byte_t strings[] = {
+		/* (c)'95,'96,'98  Nintendo        */ 0x60, 0x61, 0x62, 0x61, 0x63, 0x61, 0x64, 0x7F, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x00,
+		/* (c)'95,'96,'98  Creatures inc.  */ 0x60, 0x61, 0x62, 0x61, 0x63, 0x61, 0x64, 0x7F, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x00,
+		/* (c)'95,'96,'98  GAME FREAK inc. */ 0x60, 0x61, 0x62, 0x61, 0x63, 0x61, 0x64, 0x7F, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B,
+	};
+
+	auto begin = this->get_tilemap_location(2, 7);
+	auto it = begin;
+	for (auto b : strings){
+		if (!b){
+			begin += 2 * tilemap_width;
+			it = begin;
+			continue;
+		}
+		*(it++) = b;
+	}
+}
+
+void CppRed::init_player_data2(){
+	throw NotImplementedException();
+}
+
+void CppRed::load_tileset_header(){
+	throw NotImplementedException();
+}
+
+void CppRed::cable_club_run(){
+	throw NotImplementedException();
 }

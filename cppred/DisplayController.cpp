@@ -206,12 +206,13 @@ void DisplayController::toggle_lcd(){
 		return;
 
 	if (enable){
-		this->display_clock_start = this->get_system_clock() + 244;
+		this->display_enabled = true;
 		this->swallow_frames = 1;
 	}else{
 		this->display_enabled = false;
 		this->publishing_frames.clear_public_resource();
 		this->last_row_state = -1;
+		this->last_row = -1;
 		this->display_clock_start = this->invalid_clock;
 		this->enable_memories();
 	}
@@ -251,11 +252,8 @@ std::int64_t DisplayController::get_signed_display_clock() const{
 }
 
 std::uint32_t DisplayController::update(){
-	if (!this->display_enabled){
-		if (this->display_clock_start > this->get_system_clock())
-			return false;
-		this->display_enabled = true;
-	}
+	if (!this->display_enabled)
+		return 0;
 	auto row_status = (unsigned)this->get_row_status();
 	auto state = row_status & 3;
 	auto row = row_status >> 2;
@@ -312,6 +310,15 @@ void DisplayController::switch_to_row_state_3(unsigned row){
 		}
 #endif
 		this->publishing_frames.publish();
+		{
+			auto resource = this->publishing_frames.get_private_resource();
+			RGB rgb;
+			rgb.r = 0xFF;
+			rgb.g = 0x00;
+			rgb.b = 0xFF;
+			rgb.a = 0xFF;
+			std::fill(resource->pixels, resource->pixels + RenderedFrame::size, rgb);
+		}
 		frames_drawn++;
 	}else
 		this->swallow_frames--;

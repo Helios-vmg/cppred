@@ -1087,6 +1087,10 @@ struct MoveInfo{
 	std::string display_name;
 };
 
+struct SimpleSpriteObject{
+	byte_t y, x, tile, attr;
+};
+
 class SpriteObject{
 public:
 	typedef typename WrapperSelector<std::uint8_t, 1>::type member_type;
@@ -1112,6 +1116,12 @@ public:
 	SpriteObject(SpriteObject &&other): SpriteObject((const SpriteObject &)other){}
 	void operator=(const SpriteObject &) = delete;
 	void operator=(SpriteObject &&) = delete;
+	void operator=(const SimpleSpriteObject &obj){
+		this->y_position = obj.y;
+		this->x_position = obj.x;
+		this->tile_number = obj.tile;
+		this->attributes = obj.attr;
+	}
 	void assign(const SpriteObject &other){
 		this->y_position = +other.y_position;
 		this->x_position = +other.x_position;

@@ -17,40 +17,6 @@ enum class SerialConnectionStatus{
 	ConnectionNotEstablished = 0xFF,
 };
 
-enum class PaletteCommand{
-	//SET_PAL_BATTLE_BLACK         EQU $00
-	SetPaletteBattleBlack = 0x00,
-	//SET_PAL_BATTLE               EQU $01
-	SetPaletteBattle = 0x01,
-	//SET_PAL_TOWN_MAP             EQU $02
-	SetPaletteTownMap = 0x02,
-	//SET_PAL_STATUS_SCREEN        EQU $03
-	SetPaletteStatusScreen = 0x03,
-	//SET_PAL_POKEDEX              EQU $04
-	SetPalettePokedex = 0x04,
-	//SET_PAL_SLOTS                EQU $05
-	SetPaletteSlots = 0x05,
-	//SET_PAL_TITLE_SCREEN         EQU $06
-	SetPaletteTitleScreen = 0x06,
-	//SET_PAL_NIDORINO_INTRO       EQU $07
-	SetPaletteNidorinoIntro = 0x07,
-	//SET_PAL_GENERIC              EQU $08
-	SetPaletteGeneric = 0x08,
-	//SET_PAL_OVERWORLD            EQU $09
-	SetPaletteOverworld = 0x09,
-	//SET_PAL_PARTY_MENU           EQU $0A
-	SetPalettePartyMenu = 0x0A,
-	//SET_PAL_POKEMON_WHOLE_SCREEN EQU $0B
-	SetPalettePokemonWholeScreen = 0x0B,
-	//SET_PAL_GAME_FREAK_INTRO     EQU $0C
-	SetPaletteGameFreakIntro = 0x0C,
-	//SET_PAL_TRAINER_CARD         EQU $0D
-	SetPaletteTrainerCard = 0x0D,
-	//UPDATE_PARTY_MENU_BLK_PACKET EQU $FC
-	UpdatePartyMenuBlkPacket = 0xFC,
-	Default = 0xFF,
-};
-
 enum class Sound{
 	None = 0,
 	//AUDIO_1
@@ -447,6 +413,7 @@ enum class AudioBank{
 //extern const std::map<Sound, AudioBank> 
 
 const unsigned tilemap_width = 20;
+const unsigned vram_tilemap_width = 32;
 const unsigned tilemap_height = 18;
 
 //const unsigned oam_location = 0xC300;
@@ -482,6 +449,7 @@ const unsigned bag_capacity = 20;
 const unsigned pc_capacity = 50;
 
 //Width and height of a mon or character picture.
+const unsigned tile_pixel_size = 8;
 const unsigned pic_size = 7;
 //Size in bytes of a single 8x8 tile.
 const unsigned tile_byte_size = 16;
