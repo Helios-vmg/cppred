@@ -11,6 +11,7 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include "../common/sha1.h"
 
 typedef std::uint8_t byte_t;
 
@@ -51,6 +52,31 @@ const pixel color2 = colorn(0x55);
 const pixel color1 = colorn(0xAA);
 const pixel color0 = colorn(0xFF);
 
+struct Tile{
+	static const unsigned size = 8;
+	pixel pixels[size * size];
+
+	std::string hash() const{
+		SHA1 sha1;
+		sha1.Input(this->pixels, sizeof(this->pixels));
+		return sha1.ToString();
+	}
+};
+
+class Image;
+
+template <typename T>
+std::set<pixel> get_unique_colors(const T &s){
+	std::set<pixel> ret;
+	for (auto &p : s)
+		ret.insert(p);
+	return ret;
+}
+
+std::set<pixel> get_unique_colors(const Tile &tile){
+	return ::get_unique_colors(tile.pixels);
+}
+
 class Image{
 	typedef std::unique_ptr<FIBITMAP, void(*)(FIBITMAP *)> bitmap_ptr;
 
@@ -80,6 +106,7 @@ class Image{
 		return convert_to_32bit_bitmap(converted.get());
 	}
 	Image(){}
+	Image(unsigned w, unsigned h): w(w), h(h), bitmap(w * h){}
 public:
 	unsigned w = 0;
 	unsigned h = 0;
@@ -94,8 +121,8 @@ public:
 		auto ret = std::unique_ptr<Image>(new Image);
 		auto w = FreeImage_GetWidth(bitmap.get());
 		auto h = FreeImage_GetHeight(bitmap.get());
-		ret->w = w + (8 - w % 8) % 8;
-		ret->h = h + (8 - h % 8) % 8;
+		ret->w = w + (Tile::size - w % Tile::size) % Tile::size;
+		ret->h = h + (Tile::size - h % Tile::size) % Tile::size;
 		ret->bitmap.resize(ret->w * ret->h, color0);
 
 		auto dst = &(ret->bitmap[0]);
@@ -113,10 +140,7 @@ public:
 		return ret;
 	}
 	std::set<pixel> get_unique_colors() const{
-		std::set<pixel> ret;
-		for (auto &p : this->bitmap)
-			ret.insert(p);
-		return ret;
+		return ::get_unique_colors(this->bitmap);
 	}
 	std::unique_ptr<std::vector<byte_t>> reduce(unsigned &bits) const{
 		const auto unique = this->get_unique_colors();
@@ -179,6 +203,61 @@ public:
 		}
 		return nullptr;
 	}
+	std::unique_ptr<Image> pad_out_pic(unsigned target_size) const{
+		std::unique_ptr<Image> ret(new Image(target_size * Tile::size, target_size * Tile::size));
+		std::fill(ret->bitmap.begin(), ret->bitmap.end(), color0);
+		unsigned tiles_w = this->w / Tile::size;
+		unsigned tiles_h = this->h / Tile::size;
+		assert(tiles_w <= target_size && tiles_h <= target_size);
+		unsigned y0 = target_size - tiles_h;
+		unsigned x0 = (target_size + 1 - tiles_w) / 2;
+		for (unsigned dst_y = y0; dst_y < target_size; dst_y++){
+			unsigned src_y = dst_y - y0;
+			assert(src_y < tiles_h);
+			for (unsigned dst_x = x0; dst_x < x0 + tiles_w; dst_x++){
+				auto src_x = dst_x - x0;
+				auto src = this->bitmap.begin() + (src_x * Tile::size + src_y * tiles_w * (Tile::size * Tile::size));
+				auto dst = ret->bitmap.begin() + (dst_x * Tile::size + dst_y * target_size * (Tile::size * Tile::size));
+				for (unsigned i = 0; i < Tile::size; i++){
+					auto src2 = src + this->w * i;
+					std::copy(src2, src2 + Tile::size, dst + ret->w * i);
+				}
+			}
+		}
+		return ret;
+	}
+	std::unique_ptr<Image> double_size() const{
+		std::unique_ptr<Image> ret(new Image(this->w * 2, this->h * 2));
+		for (unsigned y = 0; y < this->h; y++){
+			for (unsigned x = 0; x < this->w; x++){
+				auto pix = this->bitmap[x + y * this->w];
+				auto dst = ret->bitmap.begin() + (x * 2 + y * 2 * ret->w);
+				dst[0] = pix;
+				dst[1] = pix;
+				dst[ret->w] = pix;
+				dst[ret->w + 1] = pix;
+			}
+		}
+		return ret;
+	}
+	std::vector<Tile> reorder_into_tiles() const{
+		std::vector<Tile> ret;
+		unsigned tiles_w = this->w / Tile::size;
+		unsigned tiles_h = this->h / Tile::size;
+		ret.reserve(tiles_w * tiles_h);
+		for (unsigned y = 0; y < tiles_h; y++){
+			for (unsigned x = 0; x < tiles_w; x++){
+				ret.resize(ret.size() + 1);
+				auto &dst = ret.back();
+				auto src = this->bitmap.begin() + (x * Tile::size + y * tiles_w * (Tile::size * Tile::size));
+				for (int i = 0; i < Tile::size; i++){
+					auto src2 = src + this->w * i;
+					std::copy(src2, src2 + Tile::size, dst.pixels + i * Tile::size);
+				}
+			}
+		}
+		return ret;
+	}
 };
 
 static void print(std::ostream &stream, const std::vector<byte_t> &v, unsigned base_indent = 0){
@@ -204,6 +283,128 @@ static void print(std::ostream &stream, const std::vector<byte_t> &v, unsigned b
 	stream << "\n" << std::dec;
 }
 
+enum class ImageType{
+	Normal = 0,
+	Charmap,
+	Pic,
+	BackPic,
+};
+
+struct Graphic{
+	std::string name;
+	std::string path;
+	ImageType type;
+	std::vector<Tile> tiles;
+	std::vector<unsigned> corrected_tile_numbers;
+	int first_tile = -1;
+	int w = -1, h = -1;
+
+	Graphic() = default;
+	Graphic(const Graphic &other){
+		*this = other;
+	}
+	Graphic(Graphic &&other){
+		*this = std::move(other);
+	}
+	const Graphic &operator=(const Graphic &other){
+		this->name = other.name;
+		this->path = other.path;
+		this->type = other.type;
+		this->tiles = other.tiles;
+		this->corrected_tile_numbers = other.corrected_tile_numbers;
+		this->first_tile = other.first_tile;
+		this->w = other.w;
+		this->h = other.h;
+		return *this;
+	}
+	const Graphic &operator=(Graphic &&other){
+		this->name = std::move(other.name);
+		this->path = std::move(other.path);
+		this->type = other.type;
+		this->tiles = std::move(other.tiles);
+		this->corrected_tile_numbers = std::move(other.corrected_tile_numbers);
+		this->first_tile = other.first_tile;
+		this->w = other.w;
+		this->h = other.h;
+		return *this;
+	}
+
+	bool operator<(const Graphic &other) const{
+		return this->type == ImageType::Charmap && other.type != ImageType::Charmap;
+	}
+};
+
+struct ExtendedTile{
+	Graphic *graphic;
+	Tile *tile;
+};
+
+std::set<pixel> get_unique_colors(const std::vector<ExtendedTile> &tiles){
+	std::set<pixel> ret;
+	for (auto &t : tiles){
+		auto temp = get_unique_colors(*t.tile);
+		for (auto &p : temp)
+			ret.insert(p);
+	}
+	return ret;
+}
+
+std::vector<byte_t> bit_pack(const std::vector<ExtendedTile> &tiles){
+	auto unique_colors = get_unique_colors(tiles);
+
+	{
+		auto e = unique_colors.end();
+		auto f0 = unique_colors.find(color0);
+		auto f1 = unique_colors.find(color1);
+		auto f2 = unique_colors.find(color2);
+		auto f3 = unique_colors.find(color3);
+		if (unique_colors.size() != ((f0 != e) + (f1 != e) + (f2 != e) + (f3 != e)))
+			throw std::runtime_error("The graphics assets must only use colors [000000, 555555, AAAAAA, FFFFFF].");
+	}
+
+	static const unsigned colors_per_byte = 4;
+	
+	std::vector<byte_t> ret(tiles.size() * (Tile::size * Tile::size / colors_per_byte));
+	for (size_t i = 0; i < tiles.size(); i++){
+		auto &tile = tiles[i].tile->pixels;
+		for (size_t j = 0; j < array_length(tile); j++){
+			auto shift = (j % colors_per_byte) * 2;
+			auto bit_value = 3 - tile[j].r / 0x55;
+			auto dst = (j + i * array_length(tile)) / colors_per_byte;
+			ret[dst] |= bit_value << shift;
+		}
+	}
+	return ret;
+}
+
+std::vector<byte_t> byte_pack(const std::vector<ExtendedTile> &tiles){
+	auto unique_colors = get_unique_colors(tiles);
+
+	{
+		auto e = unique_colors.end();
+		auto f0 = unique_colors.find(color0);
+		auto f1 = unique_colors.find(color1);
+		auto f2 = unique_colors.find(color2);
+		auto f3 = unique_colors.find(color3);
+		if (unique_colors.size() != ((f0 != e) + (f1 != e) + (f2 != e) + (f3 != e)))
+			throw std::runtime_error("The graphics assets must only use colors [000000, 555555, AAAAAA, FFFFFF].");
+	}
+
+	static const unsigned colors_per_byte = 1;
+
+	std::vector<byte_t> ret(tiles.size() * (Tile::size * Tile::size / colors_per_byte));
+	for (size_t i = 0; i < tiles.size(); i++){
+		auto &tile = tiles[i].tile->pixels;
+		for (size_t j = 0; j < array_length(tile); j++){
+			auto shift = (j % colors_per_byte) * 2;
+			auto bit_value = 3 - tile[j].r / 0x55;
+			auto dst = (j + i * array_length(tile)) / colors_per_byte;
+			ret[dst] |= bit_value << shift;
+		}
+	}
+	return ret;
+}
+
 static void generate_graphics_internal(known_hashes_t &known_hashes){
 	auto current_hash = hash_file(input_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
@@ -219,53 +420,121 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 	static const std::vector<std::string> columns = {
 		"name",
 		"path",
+		"type",
 	};
 	const std::string dst_name = "gfx";
-
+	
 	CsvParser csv(input_file);
+	std::vector<Graphic> graphics;
+	graphics.reserve(csv.row_count());
+	int first_tile = 0;
 
-	std::ofstream header("output/" + dst_name + ".h");
-	std::ofstream source("output/" + dst_name + ".cpp");
-	header << generated_file_warning << "\n";
-	source << generated_file_warning << "\n";
-	header << "#include \"../../cppred/StaticImage.h\"\n\n";
-	source << "#include \"" + dst_name + ".h\"\n\n";
 	for (size_t i = 0; i < csv.row_count(); i++){
 		auto row = csv.get_ordered_row(i, columns);
-		auto name = row[0];
-		if (name.size() == 0)
+		Graphic gr;
+		gr.name = row[0];
+		if (gr.name.size() == 0)
 			throw std::runtime_error("Invalid input.");
-		if (name[0] == '#')
+		if (gr.name[0] == '#')
 			continue;
-		auto path = "input/" + row[1];
-		auto image = Image::load_image(path.c_str());
+		gr.path = "input/" + row[1];
+		gr.type = (ImageType)to_unsigned(row[2]);
+
+		graphics.push_back(gr);
+	}
+
+	std::sort(graphics.begin(), graphics.end());
+
+	for (auto &gr : graphics){
+		auto image = Image::load_image(gr.path.c_str());
 		if (!image)
-			throw std::runtime_error("Error processing " + path);
-		unsigned bits;
-		auto buffer = image->reduce(bits);
-		if (!buffer)
-			throw std::runtime_error("Error processing " + path);
-		header << "extern const StaticImage<" << buffer->size() << "> " << name << ";\n";
-		source << "const StaticImage<" << buffer->size() << "> " << name << " = {\n"
-			<< "    " << image->w / 8 << ", " << image->h / 8 << ",\n"
-			<< "    BitmapEncoding::";
-		switch (bits){
-			case 1:
-				source << "Bit1";
+			throw std::runtime_error("Error processing " + gr.path);
+
+		switch (gr.type){
+			case ImageType::Normal:
+			case ImageType::Charmap:
 				break;
-			case 2:
-				source << "Bit2";
+			case ImageType::Pic:
+				image = image->pad_out_pic(7);
 				break;
-			case 24:
-				source << "Rgb";
+			case ImageType::BackPic:
+				image = image->double_size();
 				break;
+			default:
+				throw std::runtime_error("Internal error.");
 		}
-		source << ",\n"
-			<< "    {\n";
-		print(source, *buffer, 1);
-		source << "    }\n"
-			<< "};\n";
-		total_bytes += buffer->size();
+
+		gr.first_tile = first_tile;
+		gr.tiles = image->reorder_into_tiles();
+		first_tile += gr.tiles.size();
+		gr.w = image->w;
+		gr.h = image->h;
+	}
+	
+	std::vector<ExtendedTile> final_tiles;
+	{
+		std::map<std::string, unsigned> unique_tile_mapping;
+		for (auto &g : graphics){
+			for (auto &t : g.tiles){
+				auto hash = t.hash();
+				auto it = unique_tile_mapping.find(hash);
+				auto id = final_tiles.size();
+				if (it == unique_tile_mapping.end()){
+					unique_tile_mapping[hash] = id;
+					final_tiles.push_back({ &g, &t });
+				}else{
+					id = it->second;
+				}
+				g.corrected_tile_numbers.push_back(id);
+			}
+		}
+	}
+
+	auto bit_packed = bit_pack(final_tiles);
+
+	{
+		std::ofstream header("output/graphics_public.h");
+		header <<
+			generated_file_warning << "\n"
+			"#pragma once\n"
+			"\n";
+		for (auto &g : graphics)
+			header << "extern const GraphicsAsset " << g.name << ";\n";
+	}
+	{
+		std::ofstream header("output/graphics_private.h");
+		header <<
+			generated_file_warning << "\n"
+			"#pragma once\n"
+			"\n";
+		for (auto &g : graphics)
+			header <<
+				"extern const byte_t packed_image_data[];\n"
+				"extern const size_t packed_image_data_size;\n"
+				"extern const std::uint16_t tile_mapping[];\n"
+				"extern const size_t tile_mapping_size;\n"
+			;
+	}
+	
+	{
+		std::ofstream source("output/graphics.inl");
+		source <<
+			generated_file_warning << "\n"
+			"\n";
+
+		for (auto &g : graphics)
+			source << "const GraphicsAsset " << g.name << " = { " << g.first_tile << ", " << g.w << ", " << g.h << " };\n";
+
+		source << "const byte_t packed_image_data[] = { " << std::hex;
+		for (auto b : bit_packed)
+			source << "0x" << std::setw(2) << std::setfill('0') << (unsigned)b << ", ";
+		source << std::dec << "};\n"
+			"\n"
+			"static const std::uint16_t tile_mapping[] = { ";
+		for (auto &g : graphics)
+			for (auto i : g.corrected_tile_numbers)
+				source << i << ", ";
+		source << "};\n";
 	}
 
 	known_hashes[hash_key] = current_hash;
