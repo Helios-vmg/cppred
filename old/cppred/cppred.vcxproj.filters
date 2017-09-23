@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Network">
+      <UniqueIdentifier>{585bf246-451d-471b-afe2-d5f7d36fef3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Network">
+      <UniqueIdentifier>{17ec8432-c01c-47b1-ade2-38de61698d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CppRed">
+      <UniqueIdentifier>{ce4da77e-bf9a-4e0b-8d9d-9f4c45e2d82d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CppRed">
+      <UniqueIdentifier>{d2ae3882-4d05-46ca-945e-42c60375e1f7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HostSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInputController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemClock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threads.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SdlProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HostSystemServiceProviders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BgbProtocol.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="WinSockNetworking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalRamBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedTitleScreen.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedStructs.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedRam.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CodeGeneration\output\gfx.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticImage.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedAudio.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedData.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedClearSave.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedText.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedTextCtor.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMainMenu.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMap.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMovement.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedScripts.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryOperations.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedSram.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMessageBox.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedIntro.cpp">
+      <Filter>Source Files\CppRed</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HostSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInputController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemClock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="threads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="point.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HostSystemServiceProviders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SdlProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BgbProtocol.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="PublishingResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalRamBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedTitleScreen.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedConstants.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedStructs.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryOperations.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedRam.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticImage.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CodeGeneration\output\gfx.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedAudio.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedData.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedClearSave.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedText.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMainMenu.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMap.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedScripts.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedSRam.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMessageBox.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedIntro.h">
+      <Filter>Header Files\CppRed</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WinSockNetworking.h">
+      <Filter>Header Files\Network</Filter>
+    </None>
+  </ItemGroup>
+</Project>
