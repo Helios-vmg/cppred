@@ -26,6 +26,27 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common_types.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="EnginePrivate.h" />
+    <ClInclude Include="graphics_asset.h" />
+    <ClInclude Include="HighResolutionClock.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RendererPrivate.h" />
+    <ClInclude Include="ScriptEntryPoint.h" />
+    <ClInclude Include="utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EnginePrivate.cpp" />
+    <ClCompile Include="HighResolutionClock.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RendererPrivate.cpp" />
+    <ClCompile Include="ScriptEntryPoint.cpp" />
+    <ClCompile Include="utility.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{89C9E90C-A8FF-4B66-AB94-BA6C9AAAD651}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -294,82 +315,6 @@ cd %a%
 ..\bin\code_generation.exe</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\CodeGeneration\output\gfx.cpp" />
-    <ClCompile Include="BgbProtocol.cpp" />
-    <ClCompile Include="CppRed.cpp" />
-    <ClCompile Include="CppRedAudio.cpp" />
-    <ClCompile Include="CppRedClearSave.cpp" />
-    <ClCompile Include="CppRedData.cpp" />
-    <ClCompile Include="CppRedIntro.cpp" />
-    <ClCompile Include="CppRedMainMenu.cpp" />
-    <ClCompile Include="CppRedMap.cpp" />
-    <ClCompile Include="CppRedMessageBox.cpp" />
-    <ClCompile Include="CppRedMovement.cpp" />
-    <ClCompile Include="CppRedRam.cpp" />
-    <ClCompile Include="CppRedScripts.cpp" />
-    <ClCompile Include="CppRedSram.cpp" />
-    <ClCompile Include="CppRedStructs.cpp" />
-    <ClCompile Include="CppRedText.cpp" />
-    <ClCompile Include="CppRedTextCtor.cpp" />
-    <ClCompile Include="CppRedTitleScreen.cpp" />
-    <ClCompile Include="DisplayController.cpp" />
-    <ClCompile Include="ExternalRamBuffer.cpp" />
-    <ClCompile Include="HostSystem.cpp" />
-    <ClCompile Include="HostSystemServiceProviders.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MemoryOperations.cpp" />
-    <ClCompile Include="SdlProvider.cpp" />
-    <ClCompile Include="SoundController.cpp" />
-    <ClCompile Include="StaticImage.cpp" />
-    <ClCompile Include="SystemClock.cpp" />
-    <ClCompile Include="threads.cpp" />
-    <ClCompile Include="timer.cpp" />
-    <ClCompile Include="UserInputController.cpp" />
-    <ClCompile Include="utility.cpp" />
-    <ClCompile Include="WinSockNetworking.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\CodeGeneration\output\gfx.h" />
-    <ClInclude Include="BgbProtocol.h" />
-    <ClInclude Include="CppRed.h" />
-    <ClInclude Include="CppRedAudio.h" />
-    <ClInclude Include="CppRedClearSave.h" />
-    <ClInclude Include="CppRedConstants.h" />
-    <ClInclude Include="CppRedData.h" />
-    <ClInclude Include="CppRedIntro.h" />
-    <ClInclude Include="CppRedMainMenu.h" />
-    <ClInclude Include="CppRedMap.h" />
-    <ClInclude Include="CppRedMessageBox.h" />
-    <ClInclude Include="CppRedRam.h" />
-    <ClInclude Include="CppRedScripts.h" />
-    <ClInclude Include="CppRedSRam.h" />
-    <ClInclude Include="CppRedStructs.h" />
-    <ClInclude Include="CppRedText.h" />
-    <ClInclude Include="CppRedTitleScreen.h" />
-    <ClInclude Include="ExternalRamBuffer.h" />
-    <ClInclude Include="HostSystemServiceProviders.h" />
-    <ClInclude Include="MemoryOperations.h" />
-    <ClInclude Include="MemorySection.h" />
-    <ClInclude Include="GeneralString.h" />
-    <ClInclude Include="point.h" />
-    <ClInclude Include="PublishingResource.h" />
-    <ClInclude Include="SdlProvider.h" />
-    <ClInclude Include="SoundController.h" />
-    <ClInclude Include="StaticImage.h" />
-    <ClInclude Include="SystemClock.h" />
-    <ClInclude Include="CommonTypes.h" />
-    <ClInclude Include="DisplayController.h" />
-    <ClInclude Include="exceptions.h" />
-    <ClInclude Include="HostSystem.h" />
-    <ClInclude Include="threads.h" />
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="UserInputController.h" />
-    <ClInclude Include="utility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="WinSockNetworking.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

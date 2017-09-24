@@ -1,15 +1,19 @@
-#include "HostSystem.h"
-#include "SdlProvider.h"
+#include "Engine.h"
+#include <SDL_main.h>
+#include <stdexcept>
 #include <iostream>
+#include <boost/coroutine/asymmetric_coroutine.hpp>
 
 int main(int argc, char **argv){
-	auto sdl = std::make_unique<SdlProvider>();
-	auto dtp = std::make_unique<StdDateTimeProvider>();
-	HostSystem system(nullptr, sdl.get(), sdl.get(), sdl.get(), sdl.get(), dtp.get());
 	try{
-		system.run();
+		Engine engine;
+		engine.run();
 	}catch (std::exception &e){
 		std::cerr << e.what() << std::endl;
+		return -1;
+	}catch (...){
+		std::cerr << "Unknown exception.\n";
+		return -1;
 	}
 	return 0;
 }
