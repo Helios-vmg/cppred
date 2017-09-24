@@ -141,7 +141,6 @@ GamblerSprite,graphics/gfx/sprites/gambler.png,0
 GameboyKidSprite,graphics/gfx/sprites/gameboy_kid.png,0
 GameFreakIntro,graphics/gfx/gamefreak_intro.png,0
 GameFreakIntroLogo,graphics/gfx/gamefreak_logo.png,0
-GamefreakLogoGraphics,graphics/gfx/gamefreak.png,0
 GastlyPicBack,graphics/pic/monback/gastlyb.png,3
 GastlyPicFront,graphics/pic/bmon/gastly.png,2
 Gate_GFX,graphics/gfx/tilesets/gate.t1.png,0
@@ -282,7 +281,6 @@ NidorinoPicBack,graphics/pic/monback/nidorinob.png,3
 NidorinoPicFront,graphics/pic/bmon/nidorino.png,2
 NinetalesPicBack,graphics/pic/monback/ninetalesb.png,3
 NinetalesPicFront,graphics/pic/bmon/ninetales.png,2
-NintendoCopyrightLogoGraphics,graphics/gfx/copyright.png,0
 NurseSprite,graphics/gfx/sprites/nurse.png,0
 OakAideSprite,graphics/gfx/sprites/oak_aide.png,0
 OakSprite,graphics/gfx/sprites/oak.png,0
@@ -503,3 +501,4 @@ LancePic,graphics/pic/trainer/lance.png,2
 RedPicFront,graphics/pic/trainer/red.png,2
 ShrinkPic1,graphics/pic/trainer/shrink1.png,2
 ShrinkPic2,graphics/pic/trainer/shrink2.png,2
+CopyrightScreen,graphics/gfx/copyright_screen.png,0
