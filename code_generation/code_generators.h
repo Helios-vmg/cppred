@@ -23,3 +23,4 @@ void generate_maps(known_hashes_t &known_hashes);
 void generate_pokemon_data(known_hashes_t &known_hashes);
 void generate_text(known_hashes_t &known_hashes);
 void generate_moves(known_hashes_t &known_hashes);
+void generate_sound_data(known_hashes_t &known_hashes);

@@ -142,6 +142,7 @@
     <ClCompile Include="generate_moves.cpp" />
     <ClCompile Include="generate_pokemon_data.cpp" />
     <ClCompile Include="generate_rams.cpp" />
+    <ClCompile Include="generate_sound_data.cpp" />
     <ClCompile Include="generate_text.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Type.cpp" />

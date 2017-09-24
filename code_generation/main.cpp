@@ -47,6 +47,7 @@ int main(){
 		generate_text(hashes);
 		generate_charmap(hashes);
 		generate_moves(hashes);
+		generate_sound_data(hashes);
 		save_hashes(hashes);
 	}catch (std::exception &e){
 		std::cerr << e.what() << std::endl;

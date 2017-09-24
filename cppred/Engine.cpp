@@ -40,3 +40,7 @@ double Engine::get_clock(){
 void Engine::wait_frames(int frames){
 	this->wait(frames * logical_refresh_period);
 }
+
+const InputState &Engine::get_input_state(){
+	return this->get_pimpl().get_input_state();
+}

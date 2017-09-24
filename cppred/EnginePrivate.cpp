@@ -1,5 +1,5 @@
 #include "EnginePrivate.h"
-#include "ScriptEntryPoint.h"
+#include "CppRedEntryPoint.h"
 #include <stdexcept>
 #include <cassert>
 
@@ -25,7 +25,7 @@ void Engine::Pimpl::initialize_window(){
 }
 
 void Engine::Pimpl::initialize_video(){
-	this->renderer.reset(new Renderer(this->window));
+	this->renderer.reset(new Renderer(*this->engine, this->window));
 }
 
 void Engine::Pimpl::initialize_audio(){
@@ -57,9 +57,7 @@ void Engine::Pimpl::run(){
 	this->yielder = nullptr;
 
 	//Main loop.
-	while (true){
-		//Handle input.
-
+	while (this->handle_events()){
 		//Resume game code.
 		std::swap(yielder, this->yielder);
 		auto stop = !(*this->coroutine)();
@@ -68,6 +66,7 @@ void Engine::Pimpl::run(){
 			break;
 
 		//Process audio.
+
 		this->renderer->render();
 	}
 
@@ -77,7 +76,7 @@ void Engine::Pimpl::run(){
 void Engine::Pimpl::coroutine_entry_point(yielder_t &yielder){
 	this->yielder = &yielder;
 	this->yield();
-	script_entry_point(*this->engine);
+	CppRed::entry_point(*this->engine);
 }
 
 void Engine::Pimpl::yield(){
@@ -102,4 +101,70 @@ void Engine::Pimpl::wait(double s){
 
 double Engine::Pimpl::get_clock(){
 	return this->clock.get();
+}
+
+template <bool DOWN>
+static void handle_event(InputState &state, SDL_Event &event, bool &flag){
+	switch (event.key.keysym.sym){
+		case SDLK_UP:
+			flag = true;
+			state.set_up(DOWN);
+			break;
+		case SDLK_DOWN:
+			flag = true;
+			state.set_down(DOWN);
+			break;
+		case SDLK_LEFT:
+			flag = true;
+			state.set_left(DOWN);
+			break;
+		case SDLK_RIGHT:
+			flag = true;
+			state.set_right(DOWN);
+			break;
+		case SDLK_z:
+			flag = true;
+			state.set_a(DOWN);
+			break;
+		case SDLK_x:
+			flag = true;
+			state.set_b(DOWN);
+			break;
+		case SDLK_a:
+			flag = true;
+			state.set_start(DOWN);
+			break;
+		case SDLK_s:
+			flag = true;
+			state.set_select(DOWN);
+			break;
+	}
+}
+
+bool Engine::Pimpl::handle_events(){
+	SDL_Event event;
+	auto &state = this->input_state;
+	bool button_down = false;
+	bool button_up = false;
+	while (SDL_PollEvent(&event)){
+		switch (event.type){
+			case SDL_QUIT:
+				return false;
+			case SDL_KEYDOWN:
+				if (!event.key.repeat)
+					handle_event<true>(state, event, button_down);
+				break;
+			case SDL_KEYUP:
+				if (!event.key.repeat)
+					handle_event<false>(state, event, button_up);
+				break;
+			default:
+				break;
+		}
+	}
+	const byte_t mask = InputState::mask_a | InputState::mask_b | InputState::mask_select | InputState::mask_start;
+	if (button_down && (state.get_value() & mask) == mask){
+		//Do soft reset
+	}
+	return true;
 }

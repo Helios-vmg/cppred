@@ -33,3 +33,17 @@ xorshift128_state get_seed(){
 		i = rnd();
 	return ret;
 }
+
+int euclidean_modulo_u(int n, int mod){
+	if (n >= 0)
+		return n % mod;
+	return mod - (-n % mod);
+}
+
+int euclidean_modulo(int n, int mod){
+	if (mod < 0)
+		mod = -mod;
+	if (n >= 0)
+		return n % mod;
+	return mod - (-n % mod);
+}

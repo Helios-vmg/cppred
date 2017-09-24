@@ -1,8 +1,20 @@
 #pragma once
 #include "common_types.h"
 #include <array>
+#include <vector>
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
+
+#define DEFINE_GETTER(x) \
+	const decltype(x) &get_##x() const{ \
+		return this->x; \
+	}
+
+#define DEFINE_GETTER_SETTER(x) \
+	DEFINE_GETTER(x) \
+	void set_##x(const decltype(x) &value){ \
+		this->x = value; \
+	}
 
 typedef std::array<std::uint32_t, 4> xorshift128_state;
 
@@ -46,4 +58,11 @@ void fill(T (&array)[N], const T &value){
 	std::fill(array, array + N, value);
 }
 
+template <typename T>
+void fill(std::vector<T> &vector, const T &value){
+	std::fill(vector.begin(), vector.end(), value);
+}
+
 xorshift128_state get_seed();
+int euclidean_modulo_u(int n, int mod);
+int euclidean_modulo(int n, int mod);

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{ac3c00ce-b401-4905-abab-6d1efc678bad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -36,11 +39,20 @@
     <ClInclude Include="RendererPrivate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptEntryPoint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HighResolutionClock.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedIntro.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedCommonFunctions.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedEntryPoint.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedEngine.h">
+      <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,11 +74,20 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptEntryPoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HighResolutionClock.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedIntro.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedCommonFunctions.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedEntryPoint.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedEngine.cpp">
+      <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

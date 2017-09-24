@@ -28,23 +28,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common_types.h" />
+    <ClInclude Include="CppRedCommonFunctions.h" />
+    <ClInclude Include="CppRedEngine.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EnginePrivate.h" />
     <ClInclude Include="graphics_asset.h" />
     <ClInclude Include="HighResolutionClock.h" />
+    <ClInclude Include="CppRedIntro.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RendererPrivate.h" />
-    <ClInclude Include="ScriptEntryPoint.h" />
+    <ClInclude Include="CppRedEntryPoint.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CppRedCommonFunctions.cpp" />
+    <ClCompile Include="CppRedEngine.cpp" />
+    <ClCompile Include="CppRedIntro.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EnginePrivate.cpp" />
     <ClCompile Include="HighResolutionClock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RendererPrivate.cpp" />
-    <ClCompile Include="ScriptEntryPoint.cpp" />
+    <ClCompile Include="CppRedEntryPoint.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
