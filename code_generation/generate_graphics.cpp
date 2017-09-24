@@ -467,8 +467,8 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 		gr.first_tile = first_tile;
 		gr.tiles = image->reorder_into_tiles();
 		first_tile += gr.tiles.size();
-		gr.w = image->w;
-		gr.h = image->h;
+		gr.w = image->w / Tile::size;
+		gr.h = image->h / Tile::size;
 	}
 	
 	std::vector<ExtendedTile> final_tiles;
@@ -506,14 +506,12 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 		header <<
 			generated_file_warning << "\n"
 			"#pragma once\n"
-			"\n";
-		for (auto &g : graphics)
-			header <<
-				"extern const byte_t packed_image_data[];\n"
-				"extern const size_t packed_image_data_size;\n"
-				"extern const std::uint16_t tile_mapping[];\n"
-				"extern const size_t tile_mapping_size;\n"
-			;
+			"\n"
+			"extern const byte_t packed_image_data[];\n"
+			"extern const size_t packed_image_data_size;\n"
+			"extern const std::uint16_t tile_mapping[];\n"
+			"extern const size_t tile_mapping_size;\n"
+		;
 	}
 	
 	{
@@ -534,7 +532,10 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 		for (auto &g : graphics)
 			for (auto i : g.corrected_tile_numbers)
 				source << i << ", ";
-		source << "};\n";
+		source << "};\n"
+			"const size_t packed_image_data_size = array_length(packed_image_data);\n"
+			"const size_t tile_mapping_size = array_length(tile_mapping);\n"
+		;
 	}
 
 	known_hashes[hash_key] = current_hash;
