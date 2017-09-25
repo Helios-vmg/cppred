@@ -327,6 +327,8 @@ static bool battle_scene(CppRedEngine &cppred){
 	}
 
 	//Duck Nidorino.
+	nidorino->set_visible(false);
+	nidorino2->set_visible(true);
 	{
 		auto t0 = engine.get_clock();
 		const double duration = 20.0;
@@ -337,10 +339,10 @@ static bool battle_scene(CppRedEngine &cppred){
 			if (scaled > duration)
 				scaled = duration;
 			Point delta = { 0, cast_round(scaled * 1.0 / 5.0) };
-			nidorino->set_position(nidorino_position + delta);
+			nidorino2->set_position(nidorino_position + delta);
 			engine.wait_exactly_one_frame();
 		} while (scaled < duration);
-		nidorino_position = nidorino->get_position();
+		nidorino_position = nidorino2->get_position();
 	}
 
 	if (cppred.check_for_user_interruption(0.5))
@@ -348,7 +350,7 @@ static bool battle_scene(CppRedEngine &cppred){
 
 	//Lunge Nidorino.
 	cppred.play_sound(SoundId::SFX_Intro_Lunge);
-	nidorino->set_visible(false);
+	nidorino2->set_visible(false);
 	nidorino3->set_visible(true);
 	{
 		auto t0 = engine.get_clock();
