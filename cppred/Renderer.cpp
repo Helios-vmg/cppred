@@ -165,7 +165,7 @@ void Renderer::do_software_rendering(){
 				for (auto sprite : this->sprite_list){
 					auto spry = sprite->get_y();
 					auto sprx = sprite->get_x();
-					if (!sprite->get_visible() | spry >= logical_screen_height | sprx >= logical_screen_width)
+					if (!sprite->get_visible() | (spry >= logical_screen_height) | (sprx >= logical_screen_width))
 						continue;
 
 					auto sprite_is_here = (x >= sprx) & (x < sprx + sprite->get_w() * tile_size) & (y >= spry) & (y < spry + sprite->get_h() * tile_size);

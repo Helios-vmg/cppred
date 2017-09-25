@@ -239,7 +239,11 @@ bool move_gengar(CppRedEngine &cppred, Sprite &nidorino, Point &position, int le
 	return false;
 }
 
-static bool battle_scene(CppRedEngine &cppred){
+struct BattleSceneSprites{
+	std::shared_ptr<Sprite> nidorino[3];
+};
+
+static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	const Point gengar_position = { 13, 7 };
 	const Point nidorino_initial_position = { -6, 72 };
 
@@ -249,8 +253,8 @@ static bool battle_scene(CppRedEngine &cppred){
 	clear_middle_of_screen<4>(engine);
 	engine.wait_frames(3);
 	renderer.set_default_palettes();
-	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
 	renderer.set_palette(PaletteRegion::Sprites0, default_palette);
+	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
 
 #if POKEMON_VERSION == RED
 	GraphicsAsset assets[] = {
@@ -269,6 +273,7 @@ static bool battle_scene(CppRedEngine &cppred){
 	auto nidorino = renderer.create_sprite(assets[0]);
 	auto nidorino2 = renderer.create_sprite(assets[1]);
 	auto nidorino3 = renderer.create_sprite(assets[2]);
+	BattleSceneSprites ret = { nidorino, nidorino2, nidorino3 };
 	nidorino->set_position(nidorino_initial_position);
 	nidorino->set_visible(true);
 	
@@ -276,7 +281,7 @@ static bool battle_scene(CppRedEngine &cppred){
 
 	//Animate "rotation" around pokemon ring.
 	if (move_gengar<true>(cppred, *nidorino, nidorino_position, 80))
-		return true;
+		return ret;
 
 	static const SoundId hophop[] = {
 		SoundId::SFX_Intro_Hip,
@@ -288,32 +293,32 @@ static bool battle_scene(CppRedEngine &cppred){
 		hop_sprite<nidorino_parabola1>(cppred, *nidorino, hophop[i % 2], nidorino_position, sign, 8.0 / 25.0);
 		sign = -sign;
 		if (i % 2 && cppred.check_for_user_interruption(1.0 / 6.0))
-			return false;
+			return ret;
 	}
 
 	//Gengar moves back and raises arm.
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon2);
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 8) || cppred.check_for_user_interruption(0.5))
-		return true;
+		return ret;
 
 	//Now moves forward and lowers arm.
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon3);
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 18, -1))
-		return true;
+		return ret;
 
 	//Nidorino dodges.
 	nidorino->set_visible(false);
 	nidorino2->set_visible(true);
 	hop_sprite<nidorino_parabola2>(cppred, *nidorino2, SoundId::SFX_Intro_Hip, nidorino_position, 1, 1);
 	if (cppred.check_for_user_interruption(0.5))
-		return false;
+		return ret;
 
 	//Now moves back to original position and original pose.
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 10, 1))
-		return true;
+		return ret;
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
 	if (cppred.check_for_user_interruption(1))
-		return false;
+		return ret;
 
 	nidorino->set_visible(true);
 	nidorino2->set_visible(false);
@@ -323,7 +328,7 @@ static bool battle_scene(CppRedEngine &cppred){
 		hop_sprite<nidorino_parabola3>(cppred, *nidorino, hophop[i % 2], nidorino_position, sign, 16.0 / 25.0);
 		sign = -sign;
 		if (i % 2 && cppred.check_for_user_interruption(1.0 / 6.0))
-			return false;
+			return ret;
 	}
 
 	//Duck Nidorino.
@@ -346,7 +351,7 @@ static bool battle_scene(CppRedEngine &cppred){
 	}
 
 	if (cppred.check_for_user_interruption(0.5))
-		return false;
+		return ret;
 
 	//Lunge Nidorino.
 	cppred.play_sound(SoundId::SFX_Intro_Lunge);
@@ -371,7 +376,7 @@ static bool battle_scene(CppRedEngine &cppred){
 		nidorino_position = nidorino3->get_position();
 	}
 
-	return false;
+	return ret;
 }
 
 namespace CppRed{
@@ -388,9 +393,11 @@ void intro(CppRedEngine &cppred){
 	if (!shooting_star_scene(cppred))
 		engine.wait_frames(40);
 
-	battle_scene(cppred);
+	{
+		auto temp = battle_scene(cppred);
 
-	cppred.fade_out_to_white();
+		cppred.fade_out_to_white();
+	}
 	renderer.clear_screen();
 	engine.wait_exactly_one_frame();
 }

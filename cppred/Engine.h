@@ -43,6 +43,8 @@ public:
 	}
 	void yield();
 	void wait(double seconds);
+	//Note: Doesn't actually wait a specific number of frames. It multiplies
+	//the argument by a time constant and waits that much time instead.
 	void wait_frames(int frames);
 	void wait_exactly_one_frame(){
 		this->yield();

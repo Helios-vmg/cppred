@@ -2,6 +2,25 @@
 #include "Engine.h"
 #include "Renderer.h"
 
+struct FadePaletteData{
+	Palette background_palette;
+	Palette obp0_palette;
+	Palette obp1_palette;
+};
+
+//Note: Palettes 3 and 4 are identical and equal to the default palette. Palettes >= 4 are used for fade-outs
+//      to white, while palettes <= 3 are used for fade-outs to black.
+const FadePaletteData fade_palettes[8] = {
+	{ BITMAP(11111111), BITMAP(11111111), BITMAP(11111111) },
+	{ BITMAP(11111110), BITMAP(11111110), BITMAP(11111000) },
+	{ BITMAP(11111001), BITMAP(11100100), BITMAP(11100100) },
+	{ BITMAP(11100100), BITMAP(11010000), BITMAP(11100000) },
+	{ BITMAP(11100100), BITMAP(11010000), BITMAP(11100000) },
+	{ BITMAP(10010000), BITMAP(10000000), BITMAP(10010000) },
+	{ BITMAP(01000000), BITMAP(01000000), BITMAP(01000000) },
+	{ BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
+};
+
 CppRedEngine::CppRedEngine(Engine &engine): engine(&engine){
 }
 
@@ -15,7 +34,15 @@ void CppRedEngine::play_sound(SoundId sound){
 }
 
 void CppRedEngine::fade_out_to_white(){
-	//TODO
+	auto &engine = *this->engine;
+	auto &renderer = engine.get_renderer();
+	for (int i = 0; i < 3; i++){
+		auto &palette = fade_palettes[5 + i];
+		renderer.set_palette(PaletteRegion::Background, palette.background_palette);
+		renderer.set_palette(PaletteRegion::Sprites0, palette.obp0_palette);
+		renderer.set_palette(PaletteRegion::Sprites1, palette.obp1_palette);
+		engine.wait_frames(8);
+	}
 }
 
 bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input_state){
