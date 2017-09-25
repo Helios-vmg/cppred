@@ -1,5 +1,6 @@
 #include "utility.h"
 #include <random>
+#include <cmath>
 
 std::uint32_t XorShift128::operator()(){
 	auto x = this->state[3];
@@ -46,4 +47,8 @@ int euclidean_modulo(int n, int mod){
 	if (n >= 0)
 		return n % mod;
 	return mod - (-n % mod);
+}
+
+int cast_round(double x){
+	return (int)round(x);
 }

@@ -1,107 +1,18 @@
 #pragma once
 #include "graphics_asset.h"
 #include "utility.h"
-#include <memory>
+#include "RendererStructs.h"
+#include "Sprite.h"
+#include <SDL.h>
 #include <vector>
 #include <map>
+#include <memory>
 
 struct SDL_Window;
 class Engine;
 
-enum class PaletteRegion{
-	Background,
-	Sprites0,
-	Sprites1,
-};
-
-enum class TileRegion{
-	Background,
-	Window,
-};
-
-struct Tile{
-	std::uint16_t tile_no;
-	bool flipped_x;
-	bool flipped_y;
-};
-
-struct SpriteTile : public Tile{
-	bool has_priority;
-};
-
-struct Tilemap{
-	static const int w = 32;
-	static const int h = 32;
-	static const int size = w * h;
-	Tile tiles[size];
-};
-
-struct Point{
-	int x, y;
-
-	Point operator+(const Point &p) const{
-		return { this->x + p.x, this->y + p.y };
-	}
-	Point operator-(const Point &p) const{
-		return{ this->x - p.x, this->y - p.y };
-	}
-};
-
-class SpriteOwner{
-public:
-	virtual void release_sprite(std::uint64_t) = 0;
-	virtual std::uint64_t get_id() = 0;
-};
-
-class Sprite{
-	SpriteOwner *owner;
-	std::uint64_t id;
-	int x, y, w, h;
-	bool visible = false;
-	PaletteRegion palette = PaletteRegion::Sprites0;
-	std::vector<SpriteTile> tiles;
-public:
-	Sprite(SpriteOwner &, int w, int h);
-	~Sprite();
-	Sprite(const Sprite &) = delete;
-	Sprite(Sprite &&) = delete;
-	void operator=(const Sprite &) = delete;
-	void operator=(Sprite &&) = delete;
-	SpriteTile &get_tile(int x, int y);
-
-	DEFINE_GETTER(id)
-	DEFINE_GETTER_SETTER(x)
-	DEFINE_GETTER_SETTER(y)
-	DEFINE_GETTER(w)
-	DEFINE_GETTER(h)
-	DEFINE_GETTER_SETTER(visible)
-	DEFINE_GETTER_SETTER(palette)
-};
-
 class Renderer{
-	class Pimpl;
-	std::unique_ptr<void, void(*)(void *)> pimpl;
-	Pimpl &get_pimpl();
 public:
-	Renderer(Engine &, SDL_Window *);
-	~Renderer();
-	void set_palette(PaletteRegion region, byte_t value);
-	void set_default_palettes();
-	Tile &get_tile(TileRegion, int x, int y);
-	Tilemap &get_tilemap(TileRegion);
-	void render();
-	void draw_image_to_tilemap(int x, int y, const GraphicsAsset &);
-	void clear_screen();
-	void set_enable_bg(bool value);
-	void set_enable_window(bool value);
-	void fill_rectangle(TileRegion region, int x, int y, int w, int h, int tile);
-	void clear_sprites();
-	std::shared_ptr<Sprite> create_sprite(int tiles_w, int tiles_h);
-	typedef typename std::map<std::uint64_t, Sprite *>::iterator sprite_iterator;
-	void require_redraw();
-	//std::pair<sprite_iterator, sprite_iterator> iterate_sprites();
-
-
 	//Constants:
 	static const int tile_size = 8;
 	static const int logical_screen_tile_width = 20;
@@ -110,6 +21,68 @@ public:
 	static const int logical_screen_height = logical_screen_tile_height * tile_size;
 	static const int tilemap_width = Tilemap::w;
 	static const int tilemap_height = Tilemap::h;
+	//Types:
+	typedef BasicTileData<tile_size> TileData;
+	typedef std::map<std::uint64_t, Sprite *> sprite_map_t;
+	typedef typename sprite_map_t::iterator sprite_iterator;
+
+private:
+	Engine *engine;
+	SDL_Renderer *renderer = nullptr;
+	SDL_Texture *main_texture = nullptr;
+	std::vector<TileData> tile_data;
+	Tilemap bg_tilemap;
+	Tilemap window_tilemap;
+	RGB final_palette[4];
+	Palette bg_palette;
+	Palette sprite0_palette;
+	Palette sprite1_palette;
+	Point bg_offsets[logical_screen_height];
+	Point window_offsets[logical_screen_height];
+	Point bg_global_offset = { 0, 0 };
+	Point window_global_offset = { 0, 0 };
+	sprite_map_t sprites;
+	std::vector<Sprite *> sprite_list;
+	std::uint64_t next_sprite_id = 0;
+	bool enable_bg = false;
+	bool enable_window = false;
+	bool enable_sprites = true;
+	bool skip_rendering = true;
+
+	void initialize_sdl(SDL_Window *);
+	void initialize_assets();
+	void initialize_data();
+	void do_software_rendering();
+public:
+	Renderer(Engine &, SDL_Window *);
+	~Renderer();
+	Renderer(const Renderer &) = delete;
+	Renderer(Renderer &&) = delete;
+	void operator=(const Renderer &) = delete;
+	void operator=(Renderer &&) = delete;
+	void set_palette(PaletteRegion region, Palette value);
+	void set_default_palettes();
+	Tile &get_tile(TileRegion, int x, int y);
+	Tilemap &get_tilemap(TileRegion);
+	void render();
+	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, Palette = null_palette);
+	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
+	void clear_subpalettes(SubPaletteRegion);
+	void clear_screen();
+	void set_enable_bg(bool value);
+	void set_enable_window(bool value);
+	void fill_rectangle(TileRegion region, const Point &corner, const Point &size, const Tile &tile);
+	void clear_sprites();
+	std::shared_ptr<Sprite> create_sprite(int tiles_w, int tiles_h);
+	std::shared_ptr<Sprite> create_sprite(const GraphicsAsset &);
+	void require_redraw(){
+		this->skip_rendering = false;
+	}
+	//std::pair<sprite_iterator, sprite_iterator> iterate_sprites();
+	void release_sprite(std::uint64_t);
+	std::uint64_t get_id();
+	DEFINE_GETTER_SETTER(bg_global_offset)
+	DEFINE_GETTER_SETTER(window_global_offset)
 };
 
 #include "../CodeGeneration/output/graphics_public.h"

@@ -10,6 +10,11 @@
 		return this->x; \
 	}
 
+#define DEFINE_NON_CONST_GETTER(x) \
+	decltype(x) &get_##x(){ \
+		return this->x; \
+	}
+
 #define DEFINE_GETTER_SETTER(x) \
 	DEFINE_GETTER(x) \
 	void set_##x(const decltype(x) &value){ \
@@ -17,6 +22,9 @@
 	}
 
 typedef std::array<std::uint32_t, 4> xorshift128_state;
+
+template <typename T>
+using iterator_pair = std::pair<typename T::iterator, typename T::iterator>;
 
 class XorShift128{
 	xorshift128_state state;
@@ -66,3 +74,4 @@ void fill(std::vector<T> &vector, const T &value){
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);
+int cast_round(double);

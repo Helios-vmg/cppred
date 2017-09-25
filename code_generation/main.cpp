@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <map>
 #include <memory>
+#include <ctime>
 
 const char * const hashes_path = "output/hashes.csv";
 
@@ -38,6 +39,7 @@ void save_hashes(const known_hashes_t &hashes){
 
 int main(){
 	try{
+		auto t0 = clock();
 		auto hashes = load_hashes();
 		auto bitmaps = generate_bitmaps(hashes);
 		generate_rams(hashes, bitmaps);
@@ -49,6 +51,8 @@ int main(){
 		generate_moves(hashes);
 		generate_sound_data(hashes);
 		save_hashes(hashes);
+		auto t1 = clock();
+		std::cout << "Elapsed: " << (double)(t1 - t0) / CLOCKS_PER_SEC << " s.\n";
 	}catch (std::exception &e){
 		std::cerr << e.what() << std::endl;
 		return -1;

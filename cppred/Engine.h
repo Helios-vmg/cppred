@@ -1,85 +1,46 @@
 #pragma once
-#include <memory>
-#include "common_types.h"
 #include "utility.h"
+#include "InputState.h"
+#include "Renderer.h"
+#include "HighResolutionClock.h"
+#include <SDL.h>
+#include <boost/coroutine/coroutine.hpp>
+#include <thread>
+#include <memory>
 
 class XorShift128;
 class Renderer;
 
-class InputState{
-	byte_t value;
-	InputState(byte_t value){
-		this->value = value;
-	}
-public:
-	InputState(){
-		this->value = 0;
-	}
-	InputState(const InputState &other){
-		*this = other;
-	}
-	const InputState &operator=(const InputState &other){
-		this->value = other.value;
-		return *this;
-	}
-	bool operator==(const InputState &other) const{
-		return this->value == other.value;
-	}
-	bool operator!=(const InputState &other) const{
-		return !(*this == other);
-	}
-	InputState operator&(const InputState &is) const{
-		return this->value & is.value;
-	}
-	InputState operator~() const{
-		return ~this->value;
-	}
-	DEFINE_GETTER_SETTER(value);
-
-	static const byte_t mask_a      = 1 << 0;
-	static const byte_t mask_b      = 1 << 1;
-	static const byte_t mask_start  = 1 << 2;
-	static const byte_t mask_select = 1 << 3;
-	static const byte_t mask_up     = 1 << 4;
-	static const byte_t mask_down   = 1 << 5;
-	static const byte_t mask_left   = 1 << 6;
-	static const byte_t mask_right  = 1 << 7;
-
-#define DEFINE_InputState_GETTER_SETTER(x) \
-	bool get_##x() const{ \
-		return !!(this->value & mask_##x); \
-	} \
-	void set_##x(bool value){ \
-		if (value) \
-			this->value |= mask_##x; \
-		else \
-			this->value &= 0xFF ^ mask_##x; \
-	}
-
-	DEFINE_InputState_GETTER_SETTER(a)
-	DEFINE_InputState_GETTER_SETTER(b)
-	DEFINE_InputState_GETTER_SETTER(start)
-	DEFINE_InputState_GETTER_SETTER(select)
-	DEFINE_InputState_GETTER_SETTER(up)
-	DEFINE_InputState_GETTER_SETTER(down)
-	DEFINE_InputState_GETTER_SETTER(left)
-	DEFINE_InputState_GETTER_SETTER(right)
-};
-
 class Engine{
-	class Pimpl;
-	std::unique_ptr<void, void (*)(void *)> pimpl;
-	Pimpl &get_pimpl();
+	HighResolutionClock clock;
+	SDL_Window *window = nullptr;
+	std::unique_ptr<Renderer> renderer;
+	XorShift128 prng;
+	typedef boost::coroutines::asymmetric_coroutine<void>::pull_type coroutine_t;
+	typedef boost::coroutines::asymmetric_coroutine<void>::push_type yielder_t;
+	std::unique_ptr<coroutine_t> coroutine;
+	yielder_t *yielder = nullptr;
+	std::thread::id main_thread_id;
+	double wait_remainder = 0;
+	InputState input_state;
+
+	void initialize_window();
+	void initialize_video();
+	void initialize_audio();
+	void coroutine_entry_point(yielder_t &);
+	bool handle_events();
 public:
 	Engine();
 	~Engine();
 	Engine(const Engine &) = delete;
-	Engine(Engine &&other): pimpl(std::move(other.pimpl)){}
+	Engine(Engine &&other) = delete;
 	void operator=(const Engine &) = delete;
 	void operator=(Engine &&) = delete;
 	void run();
-	XorShift128 &get_prng();
-	Renderer &get_renderer();
+	DEFINE_NON_CONST_GETTER(prng)
+	Renderer &get_renderer(){
+		return *this->renderer;
+	}
 	void yield();
 	void wait(double seconds);
 	void wait_frames(int frames);
@@ -87,9 +48,9 @@ public:
 		this->yield();
 	}
 	double get_clock();
-	void require_redraw();
-	const InputState &get_input_state();
+	DEFINE_GETTER(input_state)
 
+	static const int screen_scale = 4;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;
 	static const double logical_refresh_rate;
