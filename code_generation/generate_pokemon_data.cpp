@@ -131,6 +131,7 @@ public:
 	unsigned cry_pitch;
 	unsigned cry_length;
 	bool allocated;
+	int starter_index;
 	std::vector<EvolutionTrigger> evolution_triggers;
 	std::vector<LearnedMove> learned_moves;
 
@@ -193,6 +194,7 @@ PokemonData::PokemonData(){
 			"cry_length",       // 23
 			"allocated",        // 24
 			"overworld_sprite", // 25
+			"starter_index",    // 26
 		};
 
 		CsvParser csv(pokemon_data_file);
@@ -291,6 +293,7 @@ SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 
 	this->allocated = to_bool(columns[24]);
 	this->overworld_sprite = columns[25];
+	this->starter_index = to_unsigned(columns[26]);
 }
 
 EvolutionTrigger::EvolutionTrigger(const std::vector<std::string> &columns){
@@ -365,6 +368,7 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			"    PokedexId::" << (species.pokedex_id ? species.name : "None") << ",\n"
 			"    SpeciesId::" << species.name << ",\n"
 			"    " << bool_to_string(species.allocated) << ",\n"
+			"    " << species.starter_index << ",\n"
 			"    " << species.base_hp << ",\n"
 			"    " << species.base_attack << ",\n"
 			"    " << species.base_defense << ",\n"

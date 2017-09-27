@@ -3,9 +3,9 @@
 #include "utility.h"
 
 enum class PaletteRegion{
-	Background,
-	Sprites0,
-	Sprites1,
+	Background = 0,
+	Sprites0 = 1,
+	Sprites1 = 2,
 };
 
 enum class SubPaletteRegion{
@@ -95,9 +95,15 @@ struct Point{
 	int x, y;
 
 	Point operator+(const Point &p) const{
-		return{ this->x + p.x, this->y + p.y };
+		return { this->x + p.x, this->y + p.y };
 	}
 	Point operator-(const Point &p) const{
-		return{ this->x - p.x, this->y - p.y };
+		return { this->x - p.x, this->y - p.y };
+	}
+	Point operator-() const{
+		return { -this->x, -this->y };
+	}
+	Point operator*(double x) const{
+		return { cast_round(this->x * x), cast_round(this->y * x) };
 	}
 };

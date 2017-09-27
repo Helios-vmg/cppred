@@ -93,12 +93,63 @@ static void scroll_version(CppRedEngine &cppred){
 	}while (x < 1);
 }
 
+static double pokemon_easing_curve(double x){
+	const double acceleration = 68400.0 / 64.0;
+	return acceleration * x * x;
+}
+
+static const Point pokemon_location = {5, 10};
+
+template <size_t N>
+static void pick_new_pokemon(CppRedEngine &cppred, const SpeciesId (&pokemons)[N], int &current_pokemon, Sprite &ball){
+	auto &engine = cppred.get_engine();
+	auto &renderer = engine.get_renderer();
+	
+	int previous_pokemon = current_pokemon;
+	current_pokemon = (current_pokemon + engine.get_prng()() % (N - 1) + 1) % N;
+
+	//Scroll out.
+	{
+		auto t0 = engine.get_clock();
+		const double duration = 0.3;
+		double x = 0;
+		do{
+			auto t1 = engine.get_clock();
+			x = t1 - t0;
+			if (x > duration)
+				x = duration;
+			auto offset = cast_round(pokemon_easing_curve(x));
+			renderer.set_y_bg_offset(80, 80 + 7 * Renderer::tile_size, {offset, 0});
+			engine.wait_exactly_one_frame();
+		}while (x < duration);
+	}
+
+	//Load new pokemon.
+	renderer.draw_image_to_tilemap(pokemon_location, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
+
+	//Scroll in.
+	{
+		auto t0 = engine.get_clock();
+		const double duration = 0.3;
+		double x = 0;
+		do{
+			auto t1 = engine.get_clock();
+			x = t1 - t0;
+			if (x > duration)
+				x = duration;
+			auto offset = cast_round(-pokemon_easing_curve(duration - x));
+			renderer.set_y_bg_offset(80, 80 + 7 * Renderer::tile_size, {offset, 0});
+			engine.wait_exactly_one_frame();
+		}while (x < duration);
+	}
+}
+
 namespace CppRedScripts{
 
 TitleScreenResult title_screen(CppRedEngine &cppred){
 #if POKEMON_VERSION == RED
 	static const char version_offsets[] = { 0, 1, -1, 5, 6, 7, 8, 9 };
-	static const SpeciesId mons[] = {
+	static const SpeciesId pokemons[] = {
 		SpeciesId::Charmander,
 		SpeciesId::Squirtle,
 		SpeciesId::Bulbasaur,
@@ -118,7 +169,7 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	};
 #elif POKEMON_VERSION == BLUE
 	static const char version_offsets[] = { 2, 3, 4, 5, 6, 7, 8, 9 };
-	static const SpeciesId mons[] = {
+	static const SpeciesId pokemons[] = {
 		SpeciesId::Squirtle,
 		SpeciesId::Charmander,
 		SpeciesId::Bulbasaur,
@@ -150,8 +201,12 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	renderer.set_palette(PaletteRegion::Sprites0, default_palette);
 
 	renderer.draw_image_to_tilemap({2, 1}, PokemonLogoGraphics);
-	renderer.draw_image_to_tilemap({ (Renderer::logical_screen_tile_width - CopyrightTitleScreen.width) / 2, Renderer::logical_screen_tile_height - 1 }, CopyrightTitleScreen);
-	renderer.draw_image_to_tilemap({5, 10}, *pokemon_by_species_id[(int)mons[0]]->front);
+	const Point copyright_location = {(Renderer::logical_screen_tile_width - CopyrightTitleScreen.width) / 2, Renderer::logical_screen_tile_height - 1};
+	const Point window_offset = {0, 10};
+	int current_pokemon = 0;
+	renderer.draw_image_to_tilemap(copyright_location - window_offset, CopyrightTitleScreen, TileRegion::Window);
+	renderer.draw_image_to_tilemap(pokemon_location - window_offset, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front, TileRegion::Window);
+	renderer.set_window_global_offset(window_offset * Renderer::tile_size);
 
 	auto pc = renderer.create_sprite(PlayerCharacterTitleGraphics);
 	//Hide pokeball in Red's hand.
@@ -179,6 +234,15 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	draw_image_from_offsets(renderer, { 7, 8 }, RedBlueVersion, version_offsets);
 	//Scroll version from the right.
 	scroll_version(cppred);
+
+	renderer.set_enable_window(false);
+	renderer.draw_image_to_tilemap(copyright_location, CopyrightTitleScreen);
+	renderer.draw_image_to_tilemap(pokemon_location, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
+
+	InputState user_input;
+	while (!cppred.check_for_user_interruption(200.0/60.0, &user_input)){
+		pick_new_pokemon(cppred, pokemons, current_pokemon, *pokeball);
+	}
 
 	engine.wait(3600);
 	return TitleScreenResult::GoToMainMenu;

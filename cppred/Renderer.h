@@ -66,7 +66,7 @@ public:
 	Tile &get_tile(TileRegion, int x, int y);
 	Tilemap &get_tilemap(TileRegion);
 	void render();
-	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, Palette = null_palette);
+	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
 	void clear_subpalettes(SubPaletteRegion);
 	void clear_screen();

@@ -12,9 +12,21 @@ static bool to_unsigned_internal(unsigned &dst, const std::string &s){
 	return !!(stream >> dst);
 }
 
+static bool to_int_internal(int &dst, const std::string &s){
+	std::stringstream stream(s);
+	return !!(stream >> dst);
+}
+
 unsigned to_unsigned(const std::string &s){
 	unsigned ret;
 	if (!to_unsigned_internal(ret, s))
+		throw std::runtime_error("Can't convert \"" + s + "\" to integer.");
+	return ret;
+}
+
+int to_int(const std::string &s){
+	int ret;
+	if (!to_int_internal(ret, s))
 		throw std::runtime_error("Can't convert \"" + s + "\" to integer.");
 	return ret;
 }

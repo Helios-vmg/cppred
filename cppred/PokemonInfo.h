@@ -74,6 +74,7 @@ struct BasePokemonInfo{
 	PokedexId pokedex_id;
 	SpeciesId species_id;
 	bool allocated;
+	std::int8_t starter_index;
 	byte_t base_hp;
 	byte_t base_attack;
 	byte_t base_defense;
@@ -94,6 +95,7 @@ struct BasePokemonInfo{
 		PokedexId pokedex_id,
 		SpeciesId species_id,
 		bool allocated,
+		std::int8_t starter_index,
 		byte_t base_hp,
 		byte_t base_attack,
 		byte_t base_defense,
@@ -113,6 +115,7 @@ struct BasePokemonInfo{
 		pokedex_id(pokedex_id),
 		species_id(species_id),
 		allocated(allocated),
+		starter_index(starter_index),
 		base_hp(base_hp),
 		base_attack(base_attack),
 		base_defense(base_defense),
@@ -158,6 +161,7 @@ public:
 		PokedexId pokedex_id,
 		SpeciesId species_id,
 		bool allocated,
+		std::int8_t starter_index,
 		byte_t base_hp,
 		byte_t base_attack,
 		byte_t base_defense,
@@ -181,6 +185,7 @@ public:
 		pokedex_id,
 		species_id,
 		allocated,
+		starter_index,
 		base_hp,
 		base_attack,
 		base_defense,
