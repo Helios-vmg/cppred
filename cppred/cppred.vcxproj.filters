@@ -1,96 +1,140 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Scripts">
-      <UniqueIdentifier>{ac3c00ce-b401-4905-abab-6d1efc678bad}</UniqueIdentifier>
+      <UniqueIdentifier>{b3ca2bd6-4879-4f9d-9a0c-94164a540f54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Sources">
+      <UniqueIdentifier>{3da45571-c86e-45fb-a190-c2ba190fe749}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Scripts\Headers">
+      <UniqueIdentifier>{4dde1977-9e8e-42b8-a33a-23151494d84c}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Main code">
+      <UniqueIdentifier>{f65c77b1-553f-47ab-9b32-69f40df4d33b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main code\Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Main code\Sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Other">
+      <UniqueIdentifier>{f5b5fefb-753c-46c0-be03-55cf3b66706e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other\Headers">
+      <UniqueIdentifier>{63939ce5-e16b-44fd-8d2b-9a69fc0e3d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other\Sources">
+      <UniqueIdentifier>{b2f52764-42bf-4c55-a683-182bf04f4cdf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="utility.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="common_types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics_asset.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="HighResolutionClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CppRedIntro.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="CppRedCommonFunctions.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="CppRedEntryPoint.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="CppRedEngine.h">
-      <Filter>Scripts</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="InputState.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="RendererStructs.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="pokemon_version.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedClearSave.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedCommonFunctions.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedEngine.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedEntryPoint.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedIntro.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMainMenu.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedOakSpeech.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedTitleScreen.h">
+      <Filter>Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsAsset.h">
+      <Filter>Main code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedData.h">
+      <Filter>Other\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PokemonInfo.h">
+      <Filter>Other\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Main code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Main code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="utility.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Main code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Main code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="HighResolutionClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRedIntro.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRedCommonFunctions.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRedEntryPoint.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRedEngine.cpp">
-      <Filter>Scripts</Filter>
+      <Filter>Main code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Main code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedCommonFunctions.cpp">
+      <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedEngine.cpp">
+      <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedEntryPoint.cpp">
+      <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedIntro.cpp">
+      <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedTitleScreen.cpp">
+      <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedData.cpp">
+      <Filter>Other\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

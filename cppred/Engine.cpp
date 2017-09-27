@@ -78,7 +78,7 @@ void Engine::run(){
 void Engine::coroutine_entry_point(yielder_t &yielder){
 	this->yielder = &yielder;
 	this->yield();
-	CppRed::entry_point(*this);
+	CppRedScripts::entry_point(*this);
 }
 
 void Engine::yield(){

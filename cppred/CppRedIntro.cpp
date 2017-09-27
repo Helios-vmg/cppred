@@ -24,7 +24,7 @@ static void draw_black_bars(Engine &engine){
 	renderer.fill_rectangle(TileRegion::Background, { 0, Renderer::logical_screen_tile_height - N }, { Tilemap::w, N }, Tile(3));
 }
 
-static const byte_t logo_palette_cycle[] = {
+static const Palette logo_palette_cycle[] = {
 	BITMAP(11111100),
 	BITMAP(11111100),
 	BITMAP(01010100),
@@ -165,33 +165,17 @@ static void clear_middle_of_screen(Engine &engine){
 	renderer.fill_rectangle(TileRegion::Background, { 0, N }, { Tilemap::w, Renderer::logical_screen_tile_height - N * 2 }, Tile(0));
 }
 
-static double nidorino_parabola1(double x){
-	const double a = 1.0 / 52.0;
-	const double b = -25.0 / 52.0;
+template <int A, int B, int C>
+double parabola_func(double x){
+	const double a = (double)A / (double)C;
+	const double b = (double)B / (double)C;
 	return (a * x + b) * x;
 }
 
-static double nidorino_parabola2(double x){
-	const double a = 5.0 / 39.0;
-	const double b = -125.0 / 39.0;
-	return (a * x + b) * x;
-}
-
-static double nidorino_parabola3(double x){
-	const double a = 1.0 / 13.0;
-	const double b = -25.0 / 13.0;
-	return (a * x + b) * x;
-}
-
-static double nidorino_parabola4(double x){
-	const double a = 1.0 / 25.0;
-	const double b = -85.0 / 25.0;
-	return (a * x + b) * x;
-}
-
-static double nidorino_parabola5(double x){
-	return nidorino_parabola4(x) * 0.5;
-}
+#define nidorino_parabola1 parabola_func<1, -25, 52>
+#define nidorino_parabola2 parabola_func<5, -125, 39>
+#define nidorino_parabola3 parabola_func<1, -25, 13>
+#define nidorino_parabola4 parabola_func<1, -85, 25>
 
 template <double Parabola(double)>
 void hop_sprite(CppRedEngine &cppred, Sprite &sprite, SoundId sfx, Point &position, int sign, double x_multiplier){
@@ -379,11 +363,14 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	return ret;
 }
 
-namespace CppRed{
+namespace CppRedScripts{
 
 void intro(CppRedEngine &cppred){
+	return;
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
+	engine.get_renderer().set_enable_bg(true);
+	engine.get_renderer().set_enable_sprites(true);
 	display_copyright(engine);
 	
 	clear_screen(cppred.get_engine());

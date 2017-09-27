@@ -138,6 +138,7 @@
     <ClCompile Include="generate_bitmaps.cpp" />
     <ClCompile Include="generate_charmap.cpp" />
     <ClCompile Include="generate_graphics.cpp" />
+    <ClCompile Include="generate_items.cpp" />
     <ClCompile Include="generate_maps.cpp" />
     <ClCompile Include="generate_moves.cpp" />
     <ClCompile Include="generate_pokemon_data.cpp" />

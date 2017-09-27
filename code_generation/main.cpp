@@ -50,6 +50,7 @@ int main(){
 		generate_charmap(hashes);
 		generate_moves(hashes);
 		generate_sound_data(hashes);
+		generate_items(hashes);
 		save_hashes(hashes);
 		auto t1 = clock();
 		std::cout << "Elapsed: " << (double)(t1 - t0) / CLOCKS_PER_SEC << " s.\n";

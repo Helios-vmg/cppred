@@ -2,7 +2,6 @@
 #include <SDL_main.h>
 #include <stdexcept>
 #include <iostream>
-#include <boost/coroutine/asymmetric_coroutine.hpp>
 
 int main(int argc, char **argv){
 	try{

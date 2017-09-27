@@ -2,7 +2,7 @@
 
 class Engine;
 
-namespace CppRed{
+namespace CppRedScripts{
 
 void clear_screen(Engine &engine);
 

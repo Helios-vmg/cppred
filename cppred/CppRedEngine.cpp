@@ -45,6 +45,14 @@ void CppRedEngine::fade_out_to_white(){
 	}
 }
 
+void CppRedEngine::palette_whiteout(){
+	auto &renderer = this->engine->get_renderer();
+	renderer.clear_subpalettes(SubPaletteRegion::All);
+	renderer.set_palette(PaletteRegion::Background, zero_palette);
+	renderer.set_palette(PaletteRegion::Sprites0, zero_palette);
+	renderer.set_palette(PaletteRegion::Sprites1, zero_palette);
+}
+
 bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input_state){
 	timeout += this->engine->get_clock();
 	do{

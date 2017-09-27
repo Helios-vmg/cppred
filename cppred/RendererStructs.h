@@ -9,6 +9,7 @@ enum class PaletteRegion{
 };
 
 enum class SubPaletteRegion{
+	All,
 	Background,
 	Window,
 	Sprites,
@@ -50,6 +51,7 @@ public:
 	}
 };
 
+static const Palette zero_palette = { 0, 0, 0, 0 };
 static const Palette null_palette = { -1, -1, -1, -1 };
 static const Palette default_palette = { 0, 1, 2, 3 };
 

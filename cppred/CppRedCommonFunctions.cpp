@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "Renderer.h"
 
-namespace CppRed{
+namespace CppRedScripts{
 
 void clear_screen(Engine &engine){
 	engine.get_renderer().clear_screen();

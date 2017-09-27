@@ -4,7 +4,7 @@
 #include "Renderer.h"
 #include "HighResolutionClock.h"
 #include <SDL.h>
-#include <boost/coroutine/coroutine.hpp>
+#include <boost/coroutine2/all.hpp>
 #include <thread>
 #include <memory>
 
@@ -16,8 +16,8 @@ class Engine{
 	SDL_Window *window = nullptr;
 	std::unique_ptr<Renderer> renderer;
 	XorShift128 prng;
-	typedef boost::coroutines::asymmetric_coroutine<void>::pull_type coroutine_t;
-	typedef boost::coroutines::asymmetric_coroutine<void>::push_type yielder_t;
+	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
+	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;
 	std::unique_ptr<coroutine_t> coroutine;
 	yielder_t *yielder = nullptr;
 	std::thread::id main_thread_id;

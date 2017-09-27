@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics_asset.h"
+#include "GraphicsAsset.h"
 #include "utility.h"
 #include "RendererStructs.h"
 #include "Sprite.h"
@@ -53,6 +53,7 @@ private:
 	void initialize_assets();
 	void initialize_data();
 	void do_software_rendering();
+	void set_y_offset(Point(&)[logical_screen_height], int y0, int y1, const Point &);
 public:
 	Renderer(Engine &, SDL_Window *);
 	~Renderer();
@@ -71,6 +72,7 @@ public:
 	void clear_screen();
 	void set_enable_bg(bool value);
 	void set_enable_window(bool value);
+	void set_enable_sprites(bool value);
 	void fill_rectangle(TileRegion region, const Point &corner, const Point &size, const Tile &tile);
 	void clear_sprites();
 	std::shared_ptr<Sprite> create_sprite(int tiles_w, int tiles_h);
@@ -83,6 +85,8 @@ public:
 	std::uint64_t get_id();
 	DEFINE_GETTER_SETTER(bg_global_offset)
 	DEFINE_GETTER_SETTER(window_global_offset)
+	void set_y_bg_offset(int y0, int y1, const Point &);
+	void set_y_window_offset(int y0, int y1, const Point &);
 };
 
 #include "../CodeGeneration/output/graphics_public.h"

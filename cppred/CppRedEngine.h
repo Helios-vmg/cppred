@@ -3,6 +3,10 @@
 #include "../CodeGeneration/output/sounds.h"
 #include "utility.h"
 
+#ifdef max
+#undef max
+#endif
+
 enum class JlsMode{
 	Normal,
 	Delayed,
@@ -22,6 +26,7 @@ public:
 	}
 	void play_sound(SoundId);
 	void fade_out_to_white();
+	void palette_whiteout();
 	bool check_for_user_interruption(double timeout = 0, InputState * = nullptr);
 	bool check_for_user_interruption(InputState &is){
 		return this->check_for_user_interruption(0, &is);

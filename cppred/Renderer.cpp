@@ -9,6 +9,12 @@
 
 //#define MEASURE_RENDERING_TIMES
 #define ALWAYS_RENDER
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
 
 Renderer::Renderer(Engine &engine, SDL_Window *window): engine(&engine){
 	this->initialize_sdl(window);
@@ -127,9 +133,19 @@ void Renderer::do_software_rendering(){
 	if (SDL_LockTexture(this->main_texture, nullptr, &void_pixels, &pitch) < 0)
 		return;
 
-	this->sprite_list.clear();
-	for (auto &kv : this->sprites)
-		this->sprite_list.push_back(kv.second);
+	if (this->enable_sprites){
+		this->sprite_list.clear();
+		for (auto &kv : this->sprites){
+			auto sprite = kv.second;
+			auto x0 = sprite->get_x();
+			auto y0 = sprite->get_y();
+			auto x1 = x0 + sprite->get_w();
+			auto y1 = y0 + sprite->get_h();
+			if (!sprite->get_visible() | (y0 >= logical_screen_height) | (x0 >= logical_screen_width) | (y1 <= 0) | (x1 <= 0))
+				continue;
+			this->sprite_list.push_back(sprite);
+		}
+	}
 
 	std::sort(this->sprite_list.begin(), this->sprite_list.end(), sort_sprites);
 
@@ -161,13 +177,10 @@ void Renderer::do_software_rendering(){
 					palette = &this->bg_palette;
 			}
 
-			if (true || this->enable_sprites){
+			if (this->enable_sprites /*& (color_index == -1)*/){
 				for (auto sprite : this->sprite_list){
 					auto spry = sprite->get_y();
 					auto sprx = sprite->get_x();
-					if (!sprite->get_visible() | (spry >= logical_screen_height) | (sprx >= logical_screen_width))
-						continue;
-
 					auto sprite_is_here = (x >= sprx) & (x < sprx + sprite->get_w() * tile_size) & (y >= spry) & (y < spry + sprite->get_h() * tile_size);
 					if (!sprite_is_here)
 						continue;
@@ -252,14 +265,17 @@ void Renderer::mass_set_palettes(const std::vector<Point> &tiles, Palette palett
 void Renderer::clear_subpalettes(SubPaletteRegion region){
 	this->require_redraw();
 	switch (region){
+		case SubPaletteRegion::All:
 		case SubPaletteRegion::Background:
 			for (auto &tile : this->get_tilemap(TileRegion::Background).tiles)
 				tile.palette = null_palette;
-			break;
+			if (region != SubPaletteRegion::All)
+				break;
 		case SubPaletteRegion::Window:
 			for (auto &tile : this->get_tilemap(TileRegion::Window).tiles)
 				tile.palette = null_palette;
-			break;
+			if (region != SubPaletteRegion::All)
+				break;
 		case SubPaletteRegion::Sprites:
 			for (auto &sprite : this->sprites){
 				sprite.second->set_palette(null_palette);
@@ -267,7 +283,8 @@ void Renderer::clear_subpalettes(SubPaletteRegion region){
 				for (auto it = its.first; it != its.second; ++it)
 					it->palette = null_palette;
 			}
-			break;
+			if (region != SubPaletteRegion::All)
+				break;
 	}
 }
 
@@ -290,6 +307,11 @@ void Renderer::set_enable_bg(bool value){
 
 void Renderer::set_enable_window(bool value){
 	this->enable_window = value;
+	this->skip_rendering = false;
+}
+
+void Renderer::set_enable_sprites(bool value){
+	this->enable_sprites = value;
 	this->skip_rendering = false;
 }
 
@@ -339,4 +361,19 @@ void Renderer::release_sprite(std::uint64_t id){
 
 std::uint64_t Renderer::get_id(){
 	return this->next_sprite_id++;
+}
+
+void Renderer::set_y_offset(Point (&array)[logical_screen_height], int y0, int y1, const Point &p){
+	y0 = std::max(y0, 0);
+	y1 = std::min(y1, logical_screen_height);
+	for (int y = y0; y < y1; y++)
+		array[y] = p;
+}
+
+void Renderer::set_y_bg_offset(int y0, int y1, const Point &p){
+	this->set_y_offset(this->bg_offsets, y0, y1, p);
+}
+
+void Renderer::set_y_window_offset(int y0, int y1, const Point &p){
+	this->set_y_offset(this->window_offsets, y0, y1, p);
 }

@@ -341,9 +341,6 @@ void PokemonData::generate_static_data_declarations(const char *filename) const{
 	file << generated_file_warning <<
 		"\n"
 		"#pragma once\n"
-		"\n"
-		"#include \"../../cppred/CppRedStructs.h\"\n"
-		"#include \"gfx.h\"\n"
 		"\n";
 
 	for (auto &species : this->species)
@@ -386,7 +383,7 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			file << "0x" << std::setw(2) << std::setfill('0') << (int)tm << ", ";
 		file << std::dec <<
 			"},\n"
-			"    process_escaped_text(\"" << species.display_name << "\"),\n"
+			"    \"" << species.display_name << "\",\n"
 			"    " << species.front_image << ",\n"
 			"    " << species.back_image << ",\n"
 			"    PokemonOverworldSprite::" << species.overworld_sprite << ",\n"

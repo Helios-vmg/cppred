@@ -5,6 +5,6 @@ class CppRedEngine;
 
 namespace CppRedScripts{
 
-void intro(CppRedEngine &cppred);
+void clear_save_dialog(CppRedEngine &cppred);
 
 }
