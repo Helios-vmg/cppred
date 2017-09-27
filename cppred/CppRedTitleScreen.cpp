@@ -158,11 +158,15 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	pc->get_tile(0, 2).tile_no = ' ';
 	pc->set_position({82, 80});
 	pc->set_visible(true);
+	for (auto pair = pc->iterate_tiles(); pair.first != pair.second; ++pair.first)
+		pair.first->has_priority = true;
 
 	auto pokeball = renderer.create_sprite(1, 1);
 	pokeball->get_tile(0, 0).tile_no = PlayerCharacterTitleGraphics.first_tile + PlayerCharacterTitleGraphics.width * 2;
 	pokeball->set_position({ 82, 100 });
 	pokeball->set_visible(true);
+	for (auto pair = pokeball->iterate_tiles(); pair.first != pair.second; ++pair.first)
+		pair.first->has_priority = true;
 
 	renderer.set_y_bg_offset(0, 64, { 0, 64 });
 
