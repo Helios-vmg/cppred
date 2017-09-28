@@ -71,6 +71,12 @@ void fill(std::vector<T> &vector, const T &value){
 	std::fill(vector.begin(), vector.end(), value);
 }
 
+//Returns true if all the bits that are set in the mask are also set in the value.
+template <typename T1, typename T2>
+bool check_flag(const T1 &value, const T2 &mask){
+	return (value & mask) == mask;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);

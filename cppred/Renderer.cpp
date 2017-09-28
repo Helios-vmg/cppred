@@ -88,8 +88,8 @@ void Renderer::set_palette(PaletteRegion region, Palette value){
 }
 
 void Renderer::set_default_palettes(){
-	this->set_palette(PaletteRegion::Background, BITMAP(11100100));
-	this->set_palette(PaletteRegion::Sprites0, BITMAP(11010000));
+	this->set_palette(PaletteRegion::Background, default_palette);
+	this->set_palette(PaletteRegion::Sprites0, default_palette);
 	this->clear_subpalettes(SubPaletteRegion::Background);
 	this->clear_subpalettes(SubPaletteRegion::Window);
 	this->clear_subpalettes(SubPaletteRegion::Sprites);

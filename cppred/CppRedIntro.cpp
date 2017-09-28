@@ -237,7 +237,6 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	clear_middle_of_screen<4>(engine);
 	engine.wait_frames(3);
 	renderer.set_default_palettes();
-	renderer.set_palette(PaletteRegion::Sprites0, default_palette);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
 
 #if POKEMON_VERSION == RED
@@ -366,7 +365,6 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 namespace CppRedScripts{
 
 void intro(CppRedEngine &cppred){
-	return;
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	engine.get_renderer().set_enable_bg(true);

@@ -98,6 +98,10 @@ static double pokemon_easing_curve(double x){
 	return acceleration * x * x;
 }
 
+static double pokeball_trajectory(double x){
+	return (x - 1.0 / 6.0) * (-192 * 6.0) * x;
+}
+
 static const Point pokemon_location = {5, 10};
 
 template <size_t N>
@@ -126,6 +130,22 @@ static void pick_new_pokemon(CppRedEngine &cppred, const SpeciesId (&pokemons)[N
 
 	//Load new pokemon.
 	renderer.draw_image_to_tilemap(pokemon_location, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
+
+	if (pokemon_by_species_id[(int)pokemons[previous_pokemon]]->starter_index >= 0){
+		auto y = ball.get_y();
+		auto t0 = engine.get_clock();
+		const double duration = 1.0/6.0;
+		double x = 0;
+		do{
+			auto t1 = engine.get_clock();
+			x = t1 - t0;
+			if (x > duration)
+				x = duration;
+			auto position = cast_round(pokeball_trajectory(x));
+			ball.set_y(y - position);
+			engine.wait_exactly_one_frame();
+		}while (x < duration);
+	}
 
 	//Scroll in.
 	{
@@ -198,7 +218,6 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	renderer.set_enable_bg(true);
 	renderer.set_enable_window(true);
 	renderer.set_enable_sprites(true);
-	renderer.set_palette(PaletteRegion::Sprites0, default_palette);
 
 	renderer.draw_image_to_tilemap({2, 1}, PokemonLogoGraphics);
 	const Point copyright_location = {(Renderer::logical_screen_tile_width - CopyrightTitleScreen.width) / 2, Renderer::logical_screen_tile_height - 1};
@@ -240,12 +259,18 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	renderer.draw_image_to_tilemap(pokemon_location, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
 
 	InputState user_input;
-	while (!cppred.check_for_user_interruption(200.0/60.0, &user_input)){
+	while (!cppred.check_for_user_interruption(200.0/60.0, &user_input))
 		pick_new_pokemon(cppred, pokemons, current_pokemon, *pokeball);
-	}
 
-	engine.wait(3600);
-	return TitleScreenResult::GoToMainMenu;
+	cppred.play_cry(pokemons[current_pokemon]);
+	cppred.wait_for_sound_to_finish();
+	renderer.clear_screen();
+
+	pc.reset();
+	pokeball.reset();
+
+	bool clear_save = check_flag(user_input.get_value(), InputState::mask_up | InputState::mask_select | InputState::mask_b);
+	return clear_save ? TitleScreenResult::GoToClearSaveDialog : TitleScreenResult::GoToMainMenu;
 }
 
 }

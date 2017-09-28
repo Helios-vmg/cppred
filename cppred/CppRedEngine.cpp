@@ -33,6 +33,10 @@ void CppRedEngine::play_sound(SoundId sound){
 	//TODO
 }
 
+void CppRedEngine::play_cry(SpeciesId){
+	//TODO
+}
+
 void CppRedEngine::fade_out_to_white(){
 	auto &engine = *this->engine;
 	auto &renderer = engine.get_renderer();
@@ -70,6 +74,9 @@ bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input
 }
 
 InputState CppRedEngine::joypad_low_sensitivity(){
+	//TODO: There's some kind of weird bug here. This function sometimes
+	//recognizes multiple button presses even if a button was pressed only once.
+
 	auto held = this->engine->get_input_state();
 
 	auto old = this->jls_last_state;
@@ -89,4 +96,8 @@ InputState CppRedEngine::joypad_low_sensitivity(){
 	this->jls_timeout = this->engine->get_clock() + 5.0/60.0;
 	
 	return ret;
+}
+
+void CppRedEngine::wait_for_sound_to_finish(){
+	//TODO
 }

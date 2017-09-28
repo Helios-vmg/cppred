@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "../CodeGeneration/output/sounds.h"
 #include "utility.h"
+#include "CppRedData.h"
 
 #ifdef max
 #undef max
@@ -25,6 +26,7 @@ public:
 		return *this->engine;
 	}
 	void play_sound(SoundId);
+	void play_cry(SpeciesId);
 	void fade_out_to_white();
 	void palette_whiteout();
 	bool check_for_user_interruption(double timeout = 0, InputState * = nullptr);
@@ -32,6 +34,7 @@ public:
 		return this->check_for_user_interruption(0, &is);
 	}
 	InputState joypad_low_sensitivity();
+	void wait_for_sound_to_finish();
 	
 	DEFINE_GETTER_SETTER(jls_mode)
 };
