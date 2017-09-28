@@ -379,6 +379,7 @@ void intro(CppRedEngine &cppred){
 		engine.wait_frames(40);
 
 	{
+		//Warning: temp contains side effect in its destructor. Do not remove this!
 		auto temp = battle_scene(cppred);
 
 		cppred.fade_out_to_white();
