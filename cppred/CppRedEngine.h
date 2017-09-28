@@ -3,6 +3,7 @@
 #include "../CodeGeneration/output/sounds.h"
 #include "utility.h"
 #include "CppRedData.h"
+#include "CppRedSavableData.h"
 
 #ifdef max
 #undef max
@@ -35,6 +36,7 @@ public:
 	}
 	InputState joypad_low_sensitivity();
 	void wait_for_sound_to_finish();
-	
+	decltype(SavableData::load("")) load_save();
+
 	DEFINE_GETTER_SETTER(jls_mode)
 };

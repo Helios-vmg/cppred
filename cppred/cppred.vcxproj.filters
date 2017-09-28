@@ -16,17 +16,6 @@
       <UniqueIdentifier>{4dde1977-9e8e-42b8-a33a-23151494d84c}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Main code">
-      <UniqueIdentifier>{f65c77b1-553f-47ab-9b32-69f40df4d33b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Main code\Headers">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Main code\Sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Other">
       <UniqueIdentifier>{f5b5fefb-753c-46c0-be03-55cf3b66706e}</UniqueIdentifier>
     </Filter>
@@ -36,42 +25,56 @@
     <Filter Include="Other\Sources">
       <UniqueIdentifier>{b2f52764-42bf-4c55-a683-182bf04f4cdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine code">
+      <UniqueIdentifier>{f65c77b1-553f-47ab-9b32-69f40df4d33b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine code\Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Engine code\Sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Game code">
+      <UniqueIdentifier>{89758a15-bdb8-4681-bd5b-815107368132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game code\Sources">
+      <UniqueIdentifier>{037b666f-fbc9-4cd4-9164-29025617bb24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game code\Headers">
+      <UniqueIdentifier>{2f9d52fe-86db-4f6c-90a7-3a38fd65dd3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="utility.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="common_types.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="HighResolutionClock.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="InputState.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="RendererStructs.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
-      <Filter>Main code\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="pokemon_version.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="CppRedClearSave.h">
       <Filter>Scripts\Headers</Filter>
     </ClInclude>
     <ClInclude Include="CppRedCommonFunctions.h">
-      <Filter>Scripts\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="CppRedEngine.h">
       <Filter>Scripts\Headers</Filter>
     </ClInclude>
     <ClInclude Include="CppRedEntryPoint.h">
@@ -90,7 +93,7 @@
       <Filter>Scripts\Headers</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsAsset.h">
-      <Filter>Main code\Headers</Filter>
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="CppRedData.h">
       <Filter>Other\Headers</Filter>
@@ -98,30 +101,39 @@
     <ClInclude Include="PokemonInfo.h">
       <Filter>Other\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRedEngine.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pokemon_version.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedSavableData.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedMiscClasses.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
-      <Filter>Main code\Sources</Filter>
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Main code\Sources</Filter>
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="utility.cpp">
-      <Filter>Main code\Sources</Filter>
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Main code\Sources</Filter>
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="HighResolutionClock.cpp">
-      <Filter>Main code\Sources</Filter>
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
-      <Filter>Main code\Sources</Filter>
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRedCommonFunctions.cpp">
-      <Filter>Scripts\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRedEngine.cpp">
       <Filter>Scripts\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRedEntryPoint.cpp">
@@ -135,6 +147,15 @@
     </ClCompile>
     <ClCompile Include="CppRedData.cpp">
       <Filter>Other\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedMainMenu.cpp">
+      <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedEngine.cpp">
+      <Filter>Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedSavableData.cpp">
+      <Filter>Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

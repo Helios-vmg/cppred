@@ -16,9 +16,9 @@ static MainMenuResult initial_sequence(CppRedEngine &cppred){
 		intro(cppred);
 		TitleScreenResult title_screen_result;
 		while (title_screen(cppred) == TitleScreenResult::GoToMainMenu){
-			//auto main_menu_result = main_menu(cppred);
-			//if (main_menu_result != MainMenuResult::GoToTitleScreen)
-			//	return main_menu_result;
+			auto main_menu_result = main_menu(cppred);
+			if (main_menu_result != MainMenuResult::GoToTitleScreen)
+				return main_menu_result;
 		}
 		//assert(title_screen_result == TitleScreenResult::GoToClearSaveDialog);
 		//clear_save_dialog(cppred);
