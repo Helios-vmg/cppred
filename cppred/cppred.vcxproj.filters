@@ -113,6 +113,9 @@
     <ClInclude Include="CppRedMiscClasses.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRedTextResources.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -155,6 +158,9 @@
       <Filter>Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRedSavableData.cpp">
+      <Filter>Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedTextResources.cpp">
       <Filter>Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

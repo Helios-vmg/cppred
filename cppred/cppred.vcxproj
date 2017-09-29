@@ -36,6 +36,7 @@
     <ClInclude Include="CppRedMiscClasses.h" />
     <ClInclude Include="CppRedOakSpeech.h" />
     <ClInclude Include="CppRedSavableData.h" />
+    <ClInclude Include="CppRedTextResources.h" />
     <ClInclude Include="CppRedTitleScreen.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GraphicsAsset.h" />
@@ -57,6 +58,7 @@
     <ClCompile Include="CppRedIntro.cpp" />
     <ClCompile Include="CppRedMainMenu.cpp" />
     <ClCompile Include="CppRedSavableData.cpp" />
+    <ClCompile Include="CppRedTextResources.cpp" />
     <ClCompile Include="CppRedTitleScreen.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="HighResolutionClock.cpp" />

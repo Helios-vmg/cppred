@@ -52,3 +52,14 @@ int euclidean_modulo(int n, int mod){
 int cast_round(double x){
 	return (int)round(x);
 }
+
+std::uint32_t read_u32(const void *void_buffer){
+	auto buffer = (const byte_t *)void_buffer;
+	std::uint32_t ret = 0;
+	buffer += 4;
+	while (buffer != (const byte_t *)void_buffer){
+		ret <<= 8;
+		ret |= *--buffer;
+	}
+	return ret;
+}

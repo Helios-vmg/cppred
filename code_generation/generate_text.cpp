@@ -38,10 +38,10 @@ enum class CommandType{
 	Prompt,
 	Done,
 	Dex,
+	Autocont,
 	Mem,
 	Num,
 	Bcd,
-	Autocont,
 	End,
 };
 
