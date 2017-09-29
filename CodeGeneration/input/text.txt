@@ -2623,7 +2623,7 @@ POKÈDEX   Seen:<num,wDexRatingNumMonsSeen,1,3>
          Owned:<num,wDexRatingNumMonsOwned,1,3><end>
 
 .DexRatingText
-POKÈDEX Rating<$6D><done>
+POKÈDEX Rating:<done>
 
 .GymStatueText1
 <mem,wGymCityName>

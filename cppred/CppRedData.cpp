@@ -7,3 +7,5 @@
 #define LEARN(level, move) level, MoveId::move
 
 #include "../CodeGeneration/output/pokemon_definitions.inl"
+#include "../CodeGeneration/output/graphics.inl"
+#include "../CodeGeneration/output/text.inl"

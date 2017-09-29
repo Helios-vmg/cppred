@@ -9,268 +9,222 @@
 #include <sstream>
 #include <utility>
 #include <set>
+#include <iomanip>
+#include <algorithm>
 
 static const char * const input_file = "input/text.txt";
 static const char * const hash_key = "generate_text";
 static const char * const date_string = __DATE__ __TIME__;
 
 typedef std::uint8_t byte_t;
-typedef std::string (*command_handler)(const std::string &);
 
-std::set<std::string> mem_enum_values;
-std::set<std::string> num_enum_values;
-std::set<std::string> bcd_enum_values;
+const unsigned char e_with_acute = 0xE9;
 
-std::pair<std::string, std::string> charmap[] = {
-	{ "\\\\",       "\\\\01" },
-	{ "<POKE>",     "\\\\02" },
-	{ "<pkmn>",     "\\\\03" },
-	{ "<PLAYER>",   "\\\\04" },
-	{ "<RIVAL>",    "\\\\05" },
-	{ "<USER>",     "\\\\06" },
-	{ "<TARGET>",   "\\\\07" },
-	{ "<CURRENCY>", "\\\\08" },
-	{ "'d",         "\\\\09" },
-	{ "'l",         "\\\\0A" },
-	{ "'s",         "\\\\0B" },
-	{ "'t",         "\\\\0C" },
-	{ "'v",         "\\\\0D" },
-	{ "'r",         "\\\\0E" },
-	{ "'m",         "\\\\0F" },
-	{ "<FEMALE>",   "\\\\10" },
-	{ "<MALE>",     "\\\\11" },
-	{ "<DECIMAL>",  "\\\\12" },
-	{ "<pk>",       "\\\\13" },
-	{ "<mn>",       "\\\\14" },
-	{ "<x>",        "\\\\15" },
-};
-
-static std::string handle_mem(const std::string &input){
-	std::string ret;
-	auto space = input.find_first_of(" \t");
-	auto e = input.substr(0, space);
-
-	auto dot = e.find('.');
-	auto mem_element = e;
-	if (dot != e.npos)
-		mem_element = e.substr(dot + 1);
-
-	mem_enum_values.insert(mem_element);
-	ret += " << MEM(";
-	ret += e;
-	ret += ")";
-	return ret;
-}
-
-static std::string handle_num(const std::string &input){
-	std::stringstream temp(input);
-	std::string name;
-	int first = 0, second = 0;
-	temp >> name >> first >> second;
-	std::stringstream ret;
-	num_enum_values.insert(name);
-	ret << " << NUM(" << name << ", " << first << ", " << second << ")";
-	return ret.str();
-}
-
-static std::string handle_bcd(const std::string &input){
-	std::stringstream temp(input);
-	std::string name;
-	int first = 0;
-	temp >> name >> first;
-	std::stringstream ret;
-	bcd_enum_values.insert(name);
-	ret << " << BCD(" << name << ", " << first << ")";
-	return ret.str();
-}
-
-static std::string handle_dex(const std::string &){
-	return " << DEX\n";
-}
-
-static std::string filter_text(const std::string &input){
-	std::string ret;
-	for (size_t i = 0; i < input.size(); ){
-		auto c = input[i];
-		if (c == '@'){
-			i++;
-			continue;
-		}
-		bool Continue = false;
-		for (auto &p : charmap){
-			if (p.first.size() > input.size() - i)
-				continue;
-			if (p.first != input.substr(i, p.first.size()))
-				continue;
-			ret += p.second;
-			i += p.first.size();
-			Continue = true;
-			break;
-		}
-		if (Continue)
-			continue;
-		if (c == '<'){
-			if (i + 2 > input.size())
-				throw std::runtime_error("Syntax error: string can't contain '<': " + input);
-			if (input[i + 1] != '$')
-				throw std::runtime_error("Missed a case: " + input);
-			if (i + 5 > input.size())
-				throw std::runtime_error("Syntax error: Incomplete <$XX> sequence: " + input);
-			auto a = input[i + 2];
-			auto b = input[i + 3];
-			if (!is_hex(a) || !is_hex(b) || input[i + 4] != '>')
-				throw std::runtime_error("Syntax error: Invalid <$XX> sequence: " + input);
-			if (a == '0' && b == '0')
-				throw std::runtime_error("Internal error: Can't represent <$00>: " + input);
-			ret += "\\\\x\\x";
-			ret += (char)toupper(a);
-			ret += (char)toupper(b);
-			ret += "\" \"";
-			i += 5;
-			continue;
-		}
-		ret += c;
-		i++;
+static void write_u32(std::vector<byte_t> &dst, std::uint32_t n){
+	for (int i = 4; i--;){
+		dst.push_back(n & 0xFF);
+		n >>= 8;
 	}
-	return ret;
 }
 
-static std::string handle_text(const std::string &input0){
-	auto input = input0;
-	if (input.size() < 2 || input[0] != '"')
-		throw std::runtime_error("Syntax error: A string must be delimited by \".");
-	auto last_quote = input.find_last_not_of(" \t");
-	if (last_quote == input.npos || input[last_quote] != '"')
-		throw std::runtime_error("Syntax error: A string must be delimited by \".");
-	input.assign(input.begin() + 1, input.begin() + last_quote);
-
-	auto filtered = filter_text(input);
-	if (!filtered.size())
-		return "";
-
-	return " << \"" + filtered + "\"";
-}
-
-static std::string handle_para(const std::string &input){
-	return " << PARA\n" + handle_text(input);
-}
-
-static std::string handle_line(const std::string &input){
-	return " << LINE\n" + handle_text(input);
-}
-
-static std::string handle_cont(const std::string &input){
-	return " << CONT\n" + handle_text(input);
-}
-
-static std::string handle_done(const std::string &){
-	return " << DONE\n";
-}
-
-static std::string handle_next(const std::string &input){
-	return " << NEXT\n" + handle_text(input);
-}
-
-static std::string handle_page(const std::string &input){
-	return " << PAGE\n" + handle_text(input);
-}
-
-static std::string handle_label(const std::string &input){
-	return "SEQ(" + input + ")\n";
-}
-
-static std::string handle_prompt(const std::string &){
-	return " << PROMPT\n";
-}
-
-static std::string handle_autocont(const std::string &){
-	return " << AUTOCONT\n";
-}
-
-static std::map<std::string, command_handler> command_handlers = {
-	{ ".",        handle_label    },
-	{ "TEXT",     handle_text     },
-	{ "LINE",     handle_line     },
-	{ "CONT",     handle_cont     },
-	{ "DONE",     handle_done     },
-	{ "MEM",      handle_mem      },
-	{ "PROMPT",   handle_prompt   },
-	{ "PARA",     handle_para     },
-	{ "NUM",      handle_num      },
-	{ "BCD",      handle_bcd      },
-	{ "NEXT",     handle_next     },
-	{ "PAGE",     handle_page     },
-	{ "DEX",      handle_dex      },
-	{ "AUTOCONT", handle_autocont },
+enum class CommandType{
+	None = 0,
+	Text,
+	Line,
+	Next,
+	Cont,
+	Para,
+	Page,
+	Prompt,
+	Done,
+	Dex,
+	Mem,
+	Num,
+	Bcd,
+	Autocont,
+	End,
 };
 
-struct Result{
-	std::string header_string;
-	std::string source_string;
-	std::string enum_string;
-};
+static void process_command(std::vector<byte_t> &dst, const std::string &command, CommandType &last_command){
+	if (command == "cont"){
+		last_command = CommandType::Cont;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "para"){
+		last_command = CommandType::Para;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "page"){
+		last_command = CommandType::Page;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "prompt"){
+		last_command = CommandType::Prompt;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "done"){
+		last_command = CommandType::Done;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "dex"){
+		last_command = CommandType::Dex;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "autocont"){
+		last_command = CommandType::Autocont;
+		dst.push_back((byte_t)last_command);
+		return;
+	}
+	if (command == "end"){
+		last_command = CommandType::End;
+		dst.push_back(0);
+		return;
+	}
+	auto first_four = command.substr(0, 4);
+	if (first_four == "mem,"){
+		auto variable_name = command.substr(4);
+		last_command = CommandType::Mem;
+		dst.push_back((byte_t)last_command);
+		for (auto c : variable_name)
+			dst.push_back(c);
+		dst.push_back(0);
+		return;
+	}
+	if (first_four == "num,"){
+		size_t first_comma = 3;
+		size_t second_comma = command.find(',', first_comma + 1);
+		if (second_comma == command.npos)
+			throw std::runtime_error("Can't parse: " + command);
+		size_t third_comma = command.find(',', second_comma + 1);
+		if (third_comma == command.npos)
+			throw std::runtime_error("Can't parse: " + command);
+		first_comma++;
+		auto variable_name = command.substr(first_comma, second_comma - first_comma);
+		second_comma++;
+		auto first_parameter = to_unsigned(command.substr(second_comma, third_comma - second_comma));
+		third_comma++;
+		auto second_parameter = to_unsigned(command.substr(third_comma));
+		last_command = CommandType::Num;
+		dst.push_back((byte_t)last_command);
+		for (auto c : variable_name)
+			dst.push_back(c);
+		dst.push_back(0);
+		write_u32(dst, first_parameter);
+		write_u32(dst, second_parameter);
+		return;
+	}
+	if (first_four == "bcd,"){
+		size_t first_comma = 3;
+		size_t second_comma = command.find(',', first_comma + 1);
+		if (second_comma == command.npos)
+			throw std::runtime_error("Can't parse: " + command);
+		first_comma++;
+		auto variable_name = command.substr(first_comma, second_comma - first_comma);
+		second_comma++;
+		auto first_parameter = to_unsigned(command.substr(second_comma));
+		last_command = CommandType::Num;
+		dst.push_back((byte_t)last_command);
+		for (auto c : variable_name)
+			dst.push_back(c);
+		dst.push_back(0);
+		write_u32(dst, first_parameter);
+		return;
+	}
+	throw std::runtime_error("Unrecognized command: " + command);
+}
 
-static Result parse_text_format(std::istream &stream){
-	Result ret;
-	std::string current_label;
-	unsigned line_no = 0;
-	bool first = true;
-	while (true){
-		line_no++;
+const std::set<char> apostrophed_letters = { 'd', 'l', 's', 't', 'v', 'r', 'm', };
+
+static void set_text_command(std::vector<byte_t> &dst, CommandType &last_command){
+	if (last_command != CommandType::None && last_command != CommandType::Text)
+		dst.push_back((byte_t)CommandType::Text);
+	last_command = CommandType::Text;
+}
+
+static std::vector<byte_t> parse_text_format(std::istream &stream, std::map<std::string, int> &section_names){
+	std::vector<byte_t> ret;
+	bool in_section = false;
+	CommandType last_command = CommandType::None;
+	for (int line_no = 1;; line_no++){
 		std::string line;
 		std::getline(stream, line);
 		if (!stream)
 			break;
-		if (!line.size())
-			continue;
-
-		if (line[0] == '.'){
-			if (first)
-				first = false;
-			else
-				ret.source_string += ";\n\n";
-			current_label = line.substr(1);
-			ret.header_string += "DECLSEQ(" + current_label + ");\n";
-			ret.source_string += command_handlers["."](current_label);
-			continue;
-		}
-		
-		auto first_space = line.find(' ');
-		auto it = command_handlers.find(line.substr(0, first_space));
-		if (it == command_handlers.end()){
-			std::stringstream ss;
-			ss << "Don't know how to parse line " << line_no << ": " << line;
-			throw std::runtime_error(ss.str());
+		if (!in_section){
+			if (!line.size())
+				continue;
+			if (line[0] == '.'){
+				auto label_name = line.substr(1);
+				if (section_names.find(label_name) != section_names.end())
+					throw std::runtime_error("Duplicate label: " + label_name);
+				auto id = section_names.size();
+				section_names[label_name] = id;
+				write_u32(ret, id);
+				in_section = true;
+				last_command = CommandType::None;
+				continue;
+			}
+			std::stringstream sstream;
+			sstream << "Syntax error: line number " << line_no << ": \"" << line << "\"";
+			throw std::runtime_error(sstream.str());
 		}
 
-		auto first_non_space = line.find_first_not_of(" \t", first_space);
-		if (first_non_space == line.npos)
-			first_non_space = line.size();
-		ret.source_string += it->second(line.substr(first_non_space));
+		std::string accum;
+		bool in_command = false;
+		bool apostrophe_seen = false;
+		for (char c : line){
+			unsigned char uc = c;
+			if (in_command){
+				if (c == '>'){
+					process_command(ret, accum, last_command);
+					accum.clear();
+					in_command = false;
+				}else
+					accum.push_back(c);
+				continue;
+			}
+			if (apostrophe_seen){
+				apostrophe_seen = false;
+				set_text_command(ret, last_command);
+				if (apostrophed_letters.find(c) != apostrophed_letters.end()){ 
+					ret.push_back((byte_t)c + 128);
+					continue;
+				}
+				ret.push_back('\'');
+			}
+			if (c == '<'){
+				if (last_command == CommandType::Text)
+					ret.push_back(0);
+				in_command = true;
+				continue;
+			}
+			if ((byte_t)c == e_with_acute){
+				set_text_command(ret, last_command);
+				ret.push_back((byte_t)'e' + 128);
+				continue;
+			}
+			if (c == '\''){
+				apostrophe_seen = true;
+				continue;
+			}
+			set_text_command(ret, last_command);
+			ret.push_back(c);
+		}
+		if (last_command == CommandType::End || last_command == CommandType::Done || last_command == CommandType::Dex){
+			in_section = false;
+			continue;
+		}
+		if (last_command == CommandType::Text)
+			ret.push_back(0);
+		last_command = CommandType::Line;
+		ret.push_back((byte_t)last_command);
 	}
-
-	ret.source_string += ";\n";
-
-	ret.enum_string += "enum class MemSource{\n";
-	for (auto &e : mem_enum_values){
-		ret.enum_string += "    ";
-		ret.enum_string += e;
-		ret.enum_string += ",\n";
-	}
-	ret.enum_string += "};\n\nenum class NumSource{\n";
-	for (auto &e : num_enum_values){
-		ret.enum_string += "    ";
-		ret.enum_string += e;
-		ret.enum_string += ",\n";
-	}
-	ret.enum_string += "};\n\nenum class BcdSource{\n";
-	for (auto &e : bcd_enum_values){
-		ret.enum_string += "    ";
-		ret.enum_string += e;
-		ret.enum_string += ",\n";
-	}
-	ret.enum_string += "};\n";
-
 	return ret;
 }
 
@@ -285,18 +239,33 @@ static void generate_text_internal(known_hashes_t &known_hashes){
 	std::ifstream input(input_file);
 	if (!input)
 		throw std::runtime_error("input/text.txt not found!");
-	auto output = parse_text_format(input);
+	std::map<std::string, int> sections;
+	auto binary_data = parse_text_format(input, sections);
 	
-	std::ofstream header("output/text.h");
-	std::ofstream enum_header("output/text_enum.h");
-	std::ofstream source("output/text.inl");
-	header      << generated_file_warning << "\n";
-	enum_header << generated_file_warning << "\n";
-	source      << generated_file_warning << "\n";
-	header << output.header_string;
-	source << output.source_string;
-	enum_header << output.enum_string;
+	std::ofstream text_inl("output/text.inl");
+	text_inl << generated_file_warning <<
+		"\n"
+		"const byte_t packed_text_data[] = ";
+	write_buffer_to_stream(text_inl, &binary_data[0], binary_data.size());
+	text_inl << ";\n";
 
+	std::ofstream text_h("output/text.h");
+	text_h << "#pragma once\n"
+		<< generated_file_warning
+		<< "\n"
+		"extern const byte_t packed_text_data[];\n"
+		"static const size_t packed_text_data_size = "<< binary_data.size() << ";\n"
+		"enum class TextResourceId{\n";
+	{
+		std::vector<std::pair<std::string, int>> temp;
+		for (auto &kv : sections)
+			temp.push_back(kv);
+		std::sort(temp.begin(), temp.end(), [](const auto &a, const auto &b){ return a.second < b.second; });
+		for (auto &kv : temp)
+			text_h << "    " << kv.first << " = " << kv.second << ",\n";
+	}
+	text_h << "};\n";
+		
 	known_hashes[hash_key] = current_hash;
 }
 

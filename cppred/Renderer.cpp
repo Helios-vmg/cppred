@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Engine.h"
 
-#include "../CodeGeneration/output/graphics.inl"
+#include "../CodeGeneration/output/graphics_private.h"
 
 //#define MEASURE_RENDERING_TIMES
 #define ALWAYS_RENDER

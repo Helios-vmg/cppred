@@ -501,19 +501,8 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 		for (auto &g : graphics)
 			header << "extern const GraphicsAsset " << g.name << ";\n";
 	}
-	{
-		std::ofstream header("output/graphics_private.h");
-		header <<
-			generated_file_warning << "\n"
-			"#pragma once\n"
-			"\n"
-			"extern const byte_t packed_image_data[];\n"
-			"extern const size_t packed_image_data_size;\n"
-			"extern const std::uint16_t tile_mapping[];\n"
-			"extern const size_t tile_mapping_size;\n"
-		;
-	}
-	
+	size_t packed_image_data_size,
+		tile_mapping_size;
 	{
 		std::ofstream source("output/graphics.inl");
 		source <<
@@ -523,20 +512,36 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 		for (auto &g : graphics)
 			source << "const GraphicsAsset " << g.name << " = { " << g.first_tile << ", " << g.w << ", " << g.h << " };\n";
 
-		source << "const byte_t packed_image_data[] = { " << std::hex;
-		for (auto b : bit_packed)
-			source << "0x" << std::setw(2) << std::setfill('0') << (unsigned)b << ", ";
-		source << std::dec << "};\n"
+		source << "const byte_t packed_image_data[] = ";
+		write_buffer_to_stream(source, &bit_packed[0], bit_packed.size());
+		packed_image_data_size = bit_packed.size();
+		source << std::dec << ";\n"
 			"\n"
-			"static const std::uint16_t tile_mapping[] = { ";
-		for (auto &g : graphics)
-			for (auto i : g.corrected_tile_numbers)
-				source << i << ", ";
-		source << "};\n"
-			"const size_t packed_image_data_size = array_length(packed_image_data);\n"
-			"const size_t tile_mapping_size = array_length(tile_mapping);\n"
-		;
+			"static const std::uint16_t tile_mapping[] = ";
+		{
+			std::vector<unsigned> temp;
+			for (auto &g : graphics)
+				for (auto i : g.corrected_tile_numbers)
+					temp.push_back(i);
+			write_collection_to_stream(source, temp.begin(), temp.end());
+			tile_mapping_size = temp.size();
+		}
+		source << ";\n";
 	}
+
+	{
+		std::ofstream header("output/graphics_private.h");
+		header <<
+			generated_file_warning << "\n"
+			"#pragma once\n"
+			"\n"
+			"extern const byte_t packed_image_data[];\n"
+			"extern const std::uint16_t tile_mapping[];\n"
+			"static const size_t packed_image_data_size = " << packed_image_data_size << ";\n"
+			"static const size_t tile_mapping_size = " << tile_mapping_size << ";\n"
+			;
+	}
+
 
 	known_hashes[hash_key] = current_hash;
 }

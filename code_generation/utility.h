@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
+#include <sstream>
 
 typedef std::map<std::string, std::string> known_hashes_t;
 
@@ -19,6 +21,29 @@ std::string hash_files(const std::vector<std::string> &files, const char *date_s
 //Returns true if the key is found and the hash matches, otherwise returns false.
 bool check_for_known_hash(const known_hashes_t &, const std::string &key, const std::string &value);
 bool is_hex(char c);
+void write_buffer_to_stream(std::ostream &, const void *, size_t);
+
+template <typename T>
+void write_collection_to_stream(std::ostream &stream, const T &begin, const T &end){
+	stream << "{\n";
+	bool new_line = true;
+	std::stringstream accum;
+	for (auto it = begin; it != end; ++it){
+		if (new_line){
+			accum << "   ";
+			new_line = false;
+		}
+		accum << " " << *it << ",";
+		if (accum.str().size() >= 80){
+			new_line = true;
+			stream << accum.str() << std::endl;
+			auto temp = std::move(accum);
+		}
+	}
+	if (!new_line)
+		stream << accum.str() << std::endl;
+	stream << "}";
+}
 
 template <typename T, size_t N>
 size_t array_length(const T(&)[N]){
