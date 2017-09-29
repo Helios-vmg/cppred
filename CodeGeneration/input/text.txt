@@ -12894,7 +12894,7 @@ protective pouch
 until it is 3
 years old<dex>
 
-.NidoranMDexEntry
+.NidoranMaleDexEntry
 Stiffens its ears
 to sense danger.
 The larger its<page>
@@ -12990,7 +12990,7 @@ the shadows of
 people and laugh
 at their fright<dex>
 
-.NidoranFDexEntry
+.NidoranFemaleDexEntry
 Although small,
 its venomous
 barbs render this<page>
