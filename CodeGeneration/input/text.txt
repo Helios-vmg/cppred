@@ -56,34 +56,34 @@ items!<done>
 Hi! Remember me?
 I'm PROF.OAK's<cont>
 AIDE!<para>
-If you caught <num,hOaksAideRequirement,1,3>
+If you caught <num,hOaksAideRequirement,3>
 kinds of POKÈMON,<cont>
 I'm supposed to<cont>
 give you an<cont>
 <mem,wOaksAideRewardItemName>!<para>
 So, <mem,player_name>! Have
 you caught at<cont>
-least <num,hOaksAideRequirement,1,3> kinds of<cont>
+least <num,hOaksAideRequirement,3> kinds of<cont>
 POKÈMON?<done>
 
 .OaksAideUhOhText
 Let's see...
 Uh-oh! You have<cont>
-caught only <num,hOaksAideNumMonsOwned,1,3><cont>
+caught only <num,hOaksAideNumMonsOwned,3><cont>
 kinds of POKÈMON!<para>
-You need <num,hOaksAideRequirement,1,3> kinds
+You need <num,hOaksAideRequirement,3> kinds
 if you want the<cont>
 <mem,wOaksAideRewardItemName>.<done>
 
 .OaksAideComeBackText
 Oh. I see.<para>
-When you get <num,hOaksAideRequirement,1,3>
+When you get <num,hOaksAideRequirement,3>
 kinds, come back<cont>
 for <mem,wOaksAideRewardItemName>.<done>
 
 .OaksAideHereYouGoText
 Great! You have
-caught <num,hOaksAideNumMonsOwned,1,3> kinds <cont>
+caught <num,hOaksAideNumMonsOwned,3> kinds <cont>
 of POKÈMON!<cont>
 Congratulations!<para>
 Here you go!<prompt><end>
@@ -2619,8 +2619,8 @@ Not this time!<prompt><end>
 Yeah!<end>
 
 .DexSeenOwnedText
-POKÈDEX   Seen:<num,wDexRatingNumMonsSeen,1,3>
-         Owned:<num,wDexRatingNumMonsOwned,1,3><end>
+POKÈDEX   Seen:<num,wDexRatingNumMonsSeen,3>
+         Owned:<num,wDexRatingNumMonsOwned,3><end>
 
 .DexRatingText
 POKÈDEX Rating:<done>
@@ -3266,7 +3266,7 @@ moves left!<done>
 
 .MultiHitText
 Hit the enemy
-<num,wPlayerNumHits,1,1> times!<prompt><end>
+<num,wPlayerNumHits,1> times!<prompt><end>
 
 .ScaredText
 <mem,wBattleMonNick> is too
@@ -3435,7 +3435,7 @@ The MIRROR MOVE
 failed!<prompt><end>
 
 .HitXTimesText
-Hit <num,wEnemyNumHits,1,1> times!<prompt><end>
+Hit <num,wEnemyNumHits,1> times!<prompt><end>
 
 .GainedText
 <mem,wcd6d_ExpAllGainerMonName> gained
@@ -3450,11 +3450,11 @@ a boosted<cont>
 <end>
 
 .ExpPointsText
-<num,wExpAmountGained,2,4> EXP. Points!<prompt><end>
+<num,wExpAmountGained,4> EXP. Points!<prompt><end>
 
 .GrewLevelText
 <mem,wcd6d_LevelledUpMonName> grew
-to level <num,wCurEnemyLVL,1,3>!<end>
+to level <num,wCurEnemyLVL,3>!<end>
 
 .WildMonAppearedText
 Wild <mem,wEnemyMonNick>
@@ -3563,7 +3563,7 @@ where?<done>
 
 .PotionText
 <mem,wcd6d_ActionTargetMonName>
-recovered by <num,wHPBarHPDifference,2,3>!<done>
+recovered by <num,wHPBarHPDifference,3>!<done>
 
 .AntidoteText
 <mem,wcd6d_ActionTargetMonName> was
@@ -3595,7 +3595,7 @@ is revitalized!<done>
 
 .RareCandyText
 <mem,wcd6d_ActionTargetMonName> grew
-to level <num,wCurEnemyLVL,1,3>!<end>
+to level <num,wCurEnemyLVL,3>!<end>
 
 .TurnedOnPC1Text
 <mem,player_name> turned on
@@ -3853,7 +3853,7 @@ name is <mem,rival_name>!<prompt><end>
 be traded.<done>
 
 .Char00Text
-<num,hSpriteIndexOrTextID,1,2> ERROR.<done>
+<num,hSpriteIndexOrTextID,2> ERROR.<done>
 
 .DiglettsCaveRoute2Text1
 I went to ROCK
@@ -4003,7 +4003,7 @@ a while.<done>
 Your <mem,wcd6d_DaycareMonName>
 has grown a lot!<para>
 By level, it's
-grown by <num,wDayCareNumLevelsGrown,1,3>!<para>
+grown by <num,wDayCareNumLevelsGrown,3>!<para>
 Aren't I great?<prompt><end>
 
 .DayCareOweMoneyText
@@ -7545,8 +7545,8 @@ PROF.OAK's AIDE.<done>
 .OaksLabText_441cc
 POKÈDEX comp-
 letion is:<para>
-<num,hDexRatingNumMonsSeen,1,3> POKÈMON seen
-<num,hDexRatingNumMonsOwned,1,3> POKÈMON owned<para>
+<num,hDexRatingNumMonsSeen,3> POKÈMON seen
+<num,hDexRatingNumMonsOwned,3> POKÈMON owned<para>
 PROF.OAK's
 Rating:<prompt><end>
 
