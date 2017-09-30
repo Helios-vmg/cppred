@@ -3117,11 +3117,11 @@ other items!<done>
 
 .FoundHiddenCoinsText
 <mem,player_name> found
-<bcd,hCoins,2,-1> coins!<end>
+<num,hCoins,4> coins!<end>
 
 .FoundHiddenCoins2Text
 <mem,player_name> found
-<bcd,hCoins,2,-1> coins!<end>
+<num,hCoins,4> coins!<end>
 
 .DroppedHiddenCoinsText
 <para>
@@ -3190,7 +3190,7 @@ Enemy <mem,wEnemyMonNick>
 fainted!<prompt><end>
 
 .MoneyForWinningText
-<mem,player_name> got $<bcd,wAmountMoneyWon,3,-1>
+<mem,player_name> got $<num,wAmountMoneyWon,6>
 for winning!<prompt><end>
 
 .TrainerDefeatedText
@@ -3532,7 +3532,7 @@ is angry!<prompt><end>
 
 .PickUpPayDayMoneyText
 <mem,player_name> picked up
-$<bcd,wTotalPayDayMoney,3,-1>!<prompt><end>
+$<num,wTotalPayDayMoney,6>!<prompt><end>
 
 .ClearSaveDataText
 Clear all saved
@@ -4007,7 +4007,7 @@ grown by <num,wDayCareNumLevelsGrown,3>!<para>
 Aren't I great?<prompt><end>
 
 .DayCareOweMoneyText
-You owe me $<bcd,wDayCareTotalCost,2,-1>
+You owe me $<num,wDayCareTotalCost,4>
 for the return<cont>
 of this POKÈMON.<done>
 
@@ -11398,7 +11398,7 @@ Take your time.<done>
 .PokemartTellBuyPriceText
 <mem,wcf4b_BuyingItemName>?
 That will be<cont>
-$<bcd,hMoney,3,-1>. OK?<done>
+$<num,hMoney,6>. OK?<done>
 
 .PokemartBoughtItemText
 Here you are!
@@ -11418,7 +11418,7 @@ like to sell?<done>
 
 .PokemartTellSellPriceText
 I can pay you
-$<bcd,hMoney,3,-1> for that.<done>
+$<num,hMoney,6> for that.<done>
 
 .PokemartItemBagEmptyText
 You don't have
@@ -12678,7 +12678,7 @@ POKÈ FLUTE.<end>
 
 .CoinCaseNumCoinsText
 Coins
-<bcd,wPlayerCoins,2,-1> <prompt><end>
+<num,wPlayerCoins,4> <prompt><end>
 
 .ItemfinderFoundItemText
 Yes! ITEMFINDER
