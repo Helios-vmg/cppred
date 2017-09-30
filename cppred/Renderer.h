@@ -89,4 +89,8 @@ public:
 	void set_y_window_offset(int y0, int y1, const Point &);
 };
 
+static const std::uint16_t white_arrow = (std::uint16_t)('A' + 128);
+static const std::uint16_t black_arrow = (std::uint16_t)('B' + 128);
+static const std::uint16_t down_arrow = (std::uint16_t)('C' + 128);
+
 #include "../CodeGeneration/output/graphics_public.h"

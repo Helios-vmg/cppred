@@ -5,23 +5,21 @@
 #include "CppRedData.h"
 #include "CppRedSavableData.h"
 #include "CppRedTextResources.h"
+#include <initializer_list>
+#include <string>
 
 #ifdef max
 #undef max
 #endif
 
-enum class JlsMode{
-	Normal,
-	Delayed,
-	HoldingRestricts,
-};
-
 class CppRedEngine{
 	Engine *engine;
 	TextStore store;
-	JlsMode jls_mode = JlsMode::Normal;
 	InputState jls_last_state;
 	double jls_timeout = std::numeric_limits<double>::max();
+	GameOptions options;
+	bool options_initialized = false;
+
 public:
 	CppRedEngine(Engine &engine);
 	void clear_screen();
@@ -40,6 +38,16 @@ public:
 	void wait_for_sound_to_finish();
 	typedef decltype(SavableData::load("")) load_save_t;
 	load_save_t load_save();
+	void draw_box(const Point &corner, const Point &size, TileRegion);
+	int handle_standard_menu(
+		TileRegion region,
+		const Point &position,
+		const std::vector<std::string> &items,
+		int minimum_width = 0,
+		bool ignore_b = false
+	);
+	void put_string(const Point &position, TileRegion region, const char *string);
 
-	DEFINE_GETTER_SETTER(jls_mode)
+	DEFINE_GETTER_SETTER(options)
+	DEFINE_GETTER_SETTER(options_initialized)
 };

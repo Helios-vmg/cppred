@@ -64,9 +64,14 @@ bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input
 		auto input = this->joypad_low_sensitivity();
 		auto held = this->engine->get_input_state();
 		const auto mask = InputState::mask_up | InputState::mask_select | InputState::mask_b;
-		if (held.get_value() == mask || held.get_a() || held.get_start()){
+		if (held.get_value() == mask){
 			if (input_state)
 				*input_state = held;
+			return true;
+		}
+		if (input.get_a() || input.get_start()){
+			if (input_state)
+				*input_state = input;
 			return true;
 		}
 	}while (this->engine->get_clock() < timeout);
@@ -74,28 +79,23 @@ bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input
 }
 
 InputState CppRedEngine::joypad_low_sensitivity(){
-	//TODO: There's some kind of weird bug here. This function sometimes
-	//recognizes multiple button presses even if a button was pressed only once.
-
 	auto held = this->engine->get_input_state();
 
 	auto old = this->jls_last_state;
 	this->jls_last_state = held;
 	auto pressed = held & ~old;
-	InputState ret = pressed;
-	if (this->jls_mode != JlsMode::Normal)
-		ret = held;
 	if (pressed.get_value()){
 		this->jls_timeout = this->engine->get_clock() + 0.5;
-		return ret;
+		return held;
 	}
 	if (this->engine->get_clock() < this->jls_timeout)
 		return InputState();
-	if ((held.get_a() | held.get_b()) && this->jls_mode == JlsMode::HoldingRestricts)
-		ret = InputState();
-	this->jls_timeout = this->engine->get_clock() + 5.0/60.0;
+	if (held.get_value())
+		this->jls_timeout = this->engine->get_clock() + 5.0/60.0;
+	else
+		this->jls_timeout = std::numeric_limits<double>::max();
 	
-	return ret;
+	return held;
 }
 
 void CppRedEngine::wait_for_sound_to_finish(){
@@ -105,4 +105,93 @@ void CppRedEngine::wait_for_sound_to_finish(){
 CppRedEngine::load_save_t CppRedEngine::load_save(){
 	//TODO
 	return nullptr;
+}
+
+void CppRedEngine::draw_box(const Point &corner, const Point &size, TileRegion region){
+	if (corner.x < 0 || corner.y < 0)
+		throw std::runtime_error("CppRedEngine::handle_standard_menu(): invalid position.");
+	if (size.x > Renderer::logical_screen_tile_width - 2 || size.y > Renderer::logical_screen_tile_height - 2)
+		throw std::runtime_error("CppRedEngine::handle_standard_menu(): invalid dimensions.");
+	const std::uint16_t w = TextBoxGraphics.width;
+	const std::uint16_t f = TextBoxGraphics.first_tile + 1 + 6 * w;
+	const std::uint16_t tiles[] = {
+		(std::uint16_t)(f + 0),
+		(std::uint16_t)(f + 1),
+		(std::uint16_t)(f + 2),
+		(std::uint16_t)(f + 3),
+		(std::uint16_t)' ',
+		(std::uint16_t)(f + 3),
+		(std::uint16_t)(f + 4),
+		(std::uint16_t)(f + 1),
+		(std::uint16_t)(f + 5),
+	};
+
+	auto dst = this->engine->get_renderer().get_tilemap(region).tiles + corner.x + corner.y * Tilemap::w;
+	dst[0].tile_no = tiles[0];
+	for (int i = 0; i < size.x; i++)
+		dst[1 + i].tile_no = tiles[1];
+	dst[1 + size.x].tile_no = tiles[2];
+	for (int y = 0; y < size.y; y++){
+		dst += Tilemap::w;
+		dst[0].tile_no = tiles[3];
+		for (int x = 0; x < size.x; x++)
+			dst[1 + x].tile_no = tiles[4];
+		dst[1 + size.x].tile_no = tiles[5];
+	}
+	dst += Tilemap::w;
+	dst[0].tile_no = tiles[6];
+	for (int i = 0; i < size.x; i++)
+		dst[1 + i].tile_no = tiles[7];
+	dst[1 + size.x].tile_no = tiles[8];
+}
+
+void CppRedEngine::put_string(const Point &position, TileRegion region, const char *string){
+	int i = position.x + position.y * Tilemap::w;
+	auto tilemap = this->engine->get_renderer().get_tilemap(region).tiles;
+	for (; *string; string++){
+		tilemap[i].tile_no = (byte_t)*string;
+		tilemap[i].flipped_x = false;
+		tilemap[i].flipped_y = false;
+		i = (i + 1) % Tilemap::size;
+	}
+}
+
+int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position_, const std::vector<std::string> &items, int minimum_width, bool ignore_b){
+	auto position = position_;
+	auto width = minimum_width;
+	auto n = (int)items.size();
+	for (auto &s : items)
+		width = std::max((int)s.size() + 1, width);
+	if (position.x + width + 2 > Renderer::logical_screen_tile_width)
+		position.x = Renderer::logical_screen_tile_width - (width + 2);
+	if (position.y + n * 2 + 2 > Renderer::logical_screen_tile_height)
+		position.y = Renderer::logical_screen_tile_height - (n * 2 + 2);
+
+	this->draw_box(position, { width, n * 2 }, region);
+
+	int y = 1;
+	for (auto &s : items)
+		this->put_string(position + Point{ 2, y++ * 2 }, region, s.c_str());
+
+	int current_item = 0;
+	auto tilemap = this->engine->get_renderer().get_tilemap(region).tiles;
+	while (true){
+		auto index = position.x + 1 + (position.y + (current_item + 1) * 2) * Tilemap::w;
+		tilemap[index].tile_no = black_arrow;
+		int addend = 0;
+		do{
+			this->engine->wait_exactly_one_frame();
+			auto state = this->joypad_low_sensitivity();
+			if (!ignore_b && state.get_b())
+				return -1;
+			if (state.get_a())
+				return current_item;
+			if (!(state.get_down() || state.get_up()))
+				continue;
+			addend = state.get_down() ? 1 : -1;
+		}while (!addend);
+		tilemap[index].tile_no = ' ';
+		current_item = (current_item + addend) % n;
+	}
+	return -1;
 }
