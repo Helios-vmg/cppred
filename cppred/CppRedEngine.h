@@ -4,6 +4,7 @@
 #include "utility.h"
 #include "CppRedData.h"
 #include "CppRedSavableData.h"
+#include "CppRedTextResources.h"
 
 #ifdef max
 #undef max
@@ -17,6 +18,7 @@ enum class JlsMode{
 
 class CppRedEngine{
 	Engine *engine;
+	TextStore store;
 	JlsMode jls_mode = JlsMode::Normal;
 	InputState jls_last_state;
 	double jls_timeout = std::numeric_limits<double>::max();
@@ -36,7 +38,8 @@ public:
 	}
 	InputState joypad_low_sensitivity();
 	void wait_for_sound_to_finish();
-	decltype(SavableData::load("")) load_save();
+	typedef decltype(SavableData::load("")) load_save_t;
+	load_save_t load_save();
 
 	DEFINE_GETTER_SETTER(jls_mode)
 };

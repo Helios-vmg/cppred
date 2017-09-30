@@ -101,3 +101,8 @@ InputState CppRedEngine::joypad_low_sensitivity(){
 void CppRedEngine::wait_for_sound_to_finish(){
 	//TODO
 }
+
+CppRedEngine::load_save_t CppRedEngine::load_save(){
+	//TODO
+	return nullptr;
+}

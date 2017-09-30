@@ -41,7 +41,6 @@ enum class CommandType{
 	Autocont,
 	Mem,
 	Num,
-	Bcd,
 	End,
 };
 
@@ -101,39 +100,16 @@ static void process_command(std::vector<byte_t> &dst, const std::string &command
 		size_t second_comma = command.find(',', first_comma + 1);
 		if (second_comma == command.npos)
 			throw std::runtime_error("Can't parse: " + command);
-		size_t third_comma = command.find(',', second_comma + 1);
-		if (third_comma == command.npos)
-			throw std::runtime_error("Can't parse: " + command);
 		first_comma++;
 		auto variable_name = command.substr(first_comma, second_comma - first_comma);
 		second_comma++;
-		auto first_parameter = to_unsigned(command.substr(second_comma, third_comma - second_comma));
-		third_comma++;
-		auto second_parameter = to_unsigned(command.substr(third_comma));
+		auto digits = to_unsigned(command.substr(second_comma));
 		last_command = CommandType::Num;
 		dst.push_back((byte_t)last_command);
 		for (auto c : variable_name)
 			dst.push_back(c);
 		dst.push_back(0);
-		write_u32(dst, first_parameter);
-		write_u32(dst, second_parameter);
-		return;
-	}
-	if (first_four == "bcd,"){
-		size_t first_comma = 3;
-		size_t second_comma = command.find(',', first_comma + 1);
-		if (second_comma == command.npos)
-			throw std::runtime_error("Can't parse: " + command);
-		first_comma++;
-		auto variable_name = command.substr(first_comma, second_comma - first_comma);
-		second_comma++;
-		auto first_parameter = to_unsigned(command.substr(second_comma));
-		last_command = CommandType::Num;
-		dst.push_back((byte_t)last_command);
-		for (auto c : variable_name)
-			dst.push_back(c);
-		dst.push_back(0);
-		write_u32(dst, first_parameter);
+		write_u32(dst, digits);
 		return;
 	}
 	throw std::runtime_error("Unrecognized command: " + command);
@@ -142,7 +118,7 @@ static void process_command(std::vector<byte_t> &dst, const std::string &command
 const std::set<char> apostrophed_letters = { 'd', 'l', 's', 't', 'v', 'r', 'm', };
 
 static void set_text_command(std::vector<byte_t> &dst, CommandType &last_command){
-	if (last_command != CommandType::None && last_command != CommandType::Text)
+	if (/*last_command != CommandType::None &&*/ last_command != CommandType::Text)
 		dst.push_back((byte_t)CommandType::Text);
 	last_command = CommandType::Text;
 }
@@ -265,6 +241,11 @@ static void generate_text_internal(known_hashes_t &known_hashes){
 			text_h << "    " << kv.first << " = " << kv.second << ",\n";
 	}
 	text_h << "};\n";
+
+	{
+		std::ofstream file("output/text.bin", std::ios::binary);
+		file.write((const char *)&binary_data[0], binary_data.size());
+	}
 		
 	known_hashes[hash_key] = current_hash;
 }

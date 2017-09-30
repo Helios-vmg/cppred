@@ -6,10 +6,12 @@
 
 static CppRedScripts::MainMenuResult no_save_file(CppRedEngine &cppred){
 	//TODO
+	return CppRedScripts::MainMenuResult::GoToTitleScreen;
 }
 
 static CppRedScripts::MainMenuResult valid_save_file(CppRedEngine &cppred, SavableData &save){
 	//TODO
+	return CppRedScripts::MainMenuResult::GoToTitleScreen;
 }
 
 static CppRedScripts::MainMenuResult corrupted_save_file(CppRedEngine &cppred){
