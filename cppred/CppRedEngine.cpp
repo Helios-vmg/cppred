@@ -22,6 +22,13 @@ const FadePaletteData fade_palettes[8] = {
 };
 
 CppRedEngine::CppRedEngine(Engine &engine): engine(&engine){
+	this->text_state.region = TileRegion::Background;
+	this->text_state.first_position =
+		this->text_state.position =
+		this->text_state.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
+	this->text_state.box_corner = { 1, Renderer::logical_screen_tile_height - 5 };
+	this->text_state.box_size = { Renderer::logical_screen_tile_width - 2, 4};
+	this->text_state.continue_location = { 18, 16 };
 }
 
 void CppRedEngine::clear_screen(){
@@ -194,4 +201,16 @@ int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position_
 		current_item = (current_item + addend) % n;
 	}
 	return -1;
+}
+
+void CppRedEngine::run_dialog(TextResourceId resource){
+	if (!this->dialog_box_visible){
+		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Background);
+		this->dialog_box_visible = true;
+	}
+	this->text_store.execute(*this, resource, this->text_state);
+}
+
+void CppRedEngine::text_print_delay(){
+	this->engine->wait_frames((int)this->options.text_speed);
 }

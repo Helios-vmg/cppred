@@ -14,11 +14,13 @@
 
 class CppRedEngine{
 	Engine *engine;
-	TextStore store;
+	TextStore text_store;
 	InputState jls_last_state;
 	double jls_timeout = std::numeric_limits<double>::max();
 	GameOptions options;
 	bool options_initialized = false;
+	TextState text_state;
+	bool dialog_box_visible = false;
 
 public:
 	CppRedEngine(Engine &engine);
@@ -47,6 +49,8 @@ public:
 		bool ignore_b = false
 	);
 	void put_string(const Point &position, TileRegion region, const char *string);
+	void run_dialog(TextResourceId);
+	void text_print_delay();
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

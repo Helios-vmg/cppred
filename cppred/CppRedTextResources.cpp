@@ -1,4 +1,5 @@
 #include "CppRedTextResources.h"
+#include "CppRedEngine.h"
 #include "utility.h"
 
 TextStore::TextStore(){
@@ -135,9 +136,9 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const byte_t *&buf
 	return ret;
 }
 
-void TextResource::execute(CppRedEngine &cppred, TextStore &store){
+void TextResource::execute(CppRedEngine &cppred, TextState &state){
 	for (auto &p : this->commands)
-		p->execute(cppred, store);
+		p->execute(cppred, state);
 }
 
 TextCommand::TextCommand(const byte_t *buffer, size_t size){
@@ -145,15 +146,80 @@ TextCommand::TextCommand(const byte_t *buffer, size_t size){
 	memcpy(&this->data[0], buffer, size);
 }
 
-void TextCommand::execute(CppRedEngine &, TextStore &){}
-void LineCommand::execute(CppRedEngine &, TextStore &){}
-void NextCommand::execute(CppRedEngine &, TextStore &){}
-void ContCommand::execute(CppRedEngine &, TextStore &){}
-void ParaCommand::execute(CppRedEngine &, TextStore &){}
-void PageCommand::execute(CppRedEngine &, TextStore &){}
-void PromptCommand::execute(CppRedEngine &, TextStore &){}
-void DoneCommand::execute(CppRedEngine &, TextStore &){}
-void DexCommand::execute(CppRedEngine &, TextStore &){}
-void AutocontCommand::execute(CppRedEngine &, TextStore &){}
-void MemCommand::execute(CppRedEngine &, TextStore &){}
-void NumCommand::execute(CppRedEngine &, TextStore &){}
+void TextStore::execute(CppRedEngine &cppred, TextResourceId id, TextState &state){
+	this->resources[(int)id]->execute(cppred, state);
+}
+
+void TextCommand::execute(CppRedEngine &cppred, TextState &state){
+	auto &engine = cppred.get_engine();
+	auto &renderer = engine.get_renderer();
+
+	auto tiles = renderer.get_tilemap(state.region).tiles + state.position.x + state.position.y * Tilemap::w;
+	for (auto c : this->data){
+		(tiles++)->tile_no = c;
+		state.position.x++;
+		cppred.text_print_delay();
+	}
+}
+
+void LineCommand::execute(CppRedEngine &cppred, TextState &state){
+	state.position = state.start_of_line + Point{0, 2};
+	state.start_of_line = state.position;
+}
+
+void TextResourceCommand::wait_for_continue(CppRedEngine &cppred, TextState &state){
+	auto &engine = cppred.get_engine();
+	auto &renderer = engine.get_renderer();
+	auto tilemap = renderer.get_tilemap(state.region).tiles;
+	auto &arrow_location = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w].tile_no;
+	for (bool b = true;; b = !b){
+		arrow_location = b ? down_arrow : ' ';
+		if (cppred.check_for_user_interruption(0.5))
+			break;
+	}
+	arrow_location = ' ';
+}
+
+void ContCommand::execute(CppRedEngine &cppred, TextState &state){
+	auto &engine = cppred.get_engine();
+	auto &renderer = engine.get_renderer();
+	auto tilemap = renderer.get_tilemap(state.region).tiles;
+	
+	this->wait_for_continue(cppred, state);
+
+	for (int i = 0; i < 2; i++){
+		for (int y = 0; y < state.box_size.y - 1; y++){
+			auto y0 = (state.box_corner.y + y) * Tilemap::w;
+			auto y1 = y0 + Tilemap::w;
+			for (int x = 0; x < state.box_size.x; x++)
+				tilemap[state.box_corner.x + x + y0] = tilemap[state.box_corner.x + x + y1];
+		}
+		auto y0 = (state.box_corner.y + state.box_size.y - 1) * Tilemap::w;
+		for (int x = 0; x < state.box_size.x; x++)
+			tilemap[state.box_corner.x + x + y0].tile_no = ' ';
+		engine.wait_frames(6);
+	}
+	state.position = state.start_of_line;
+}
+
+void ParaCommand::execute(CppRedEngine &cppred, TextState &state){
+	auto &engine = cppred.get_engine();
+	auto &renderer = engine.get_renderer();
+	auto tilemap = renderer.get_tilemap(state.region).tiles;
+	
+	this->wait_for_continue(cppred, state);
+	
+	for (int y = 0; y < state.box_size.y; y++){
+		auto y0 = (state.box_corner.y + y) * Tilemap::w;
+		for (int x = 0; x < state.box_size.x; x++)
+			tilemap[state.box_corner.x + x + y0].tile_no = ' ';
+	}
+	state.start_of_line = state.position = state.first_position;
+}
+
+void PromptCommand::execute(CppRedEngine &, TextState &){}
+void DoneCommand::execute(CppRedEngine &, TextState &){}
+void DexCommand::execute(CppRedEngine &, TextState &){}
+void AutocontCommand::execute(CppRedEngine &, TextState &){}
+void MemCommand::execute(CppRedEngine &, TextState &){}
+void NumCommand::execute(CppRedEngine &, TextState &){}

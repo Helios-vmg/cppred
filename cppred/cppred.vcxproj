@@ -57,6 +57,7 @@
     <ClCompile Include="CppRedEngine.cpp" />
     <ClCompile Include="CppRedIntro.cpp" />
     <ClCompile Include="CppRedMainMenu.cpp" />
+    <ClCompile Include="CppRedOakSpeech.cpp" />
     <ClCompile Include="CppRedSavableData.cpp" />
     <ClCompile Include="CppRedTextResources.cpp" />
     <ClCompile Include="CppRedTitleScreen.cpp" />
