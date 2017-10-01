@@ -22,13 +22,8 @@ const FadePaletteData fade_palettes[8] = {
 };
 
 CppRedEngine::CppRedEngine(Engine &engine): engine(&engine){
-	this->text_state.region = TileRegion::Background;
-	this->text_state.first_position =
-		this->text_state.position =
-		this->text_state.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
-	this->text_state.box_corner = { 1, Renderer::logical_screen_tile_height - 5 };
-	this->text_state.box_size = { Renderer::logical_screen_tile_width - 2, 4};
-	this->text_state.continue_location = { 18, 16 };
+	this->engine->set_on_yield([this](){ this->update_joypad_state(); });
+	this->reset_dialog_state();
 }
 
 void CppRedEngine::clear_screen(){
@@ -64,12 +59,12 @@ void CppRedEngine::palette_whiteout(){
 	renderer.set_palette(PaletteRegion::Sprites1, zero_palette);
 }
 
-bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input_state){
+bool CppRedEngine::check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *input_state){
 	timeout += this->engine->get_clock();
 	do{
 		this->engine->wait_exactly_one_frame();
-		auto input = this->joypad_low_sensitivity();
-		auto held = this->engine->get_input_state();
+		auto input = autorepeat ? this->joypad_auto_repeat() : this->joypad_only_newly_pressed();
+		auto held = this->joypad_held;
 		const auto mask = InputState::mask_up | InputState::mask_select | InputState::mask_b;
 		if (held.get_value() == mask){
 			if (input_state)
@@ -85,12 +80,28 @@ bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input
 	return false;
 }
 
-InputState CppRedEngine::joypad_low_sensitivity(){
-	auto held = this->engine->get_input_state();
+bool CppRedEngine::check_for_user_interruption_no_auto_repeat(double timeout, InputState *input_state){
+	return this->check_for_user_interruption_internal(false, timeout, input_state);
+}
 
-	auto old = this->jls_last_state;
-	this->jls_last_state = held;
-	auto pressed = held & ~old;
+bool CppRedEngine::check_for_user_interruption(double timeout, InputState *input_state){
+	return this->check_for_user_interruption_internal(true, timeout, input_state);
+}
+
+InputState CppRedEngine::joypad_only_newly_pressed(){
+	return this->joypad_pressed;
+}
+
+void CppRedEngine::update_joypad_state(){
+	auto old = this->joypad_held;
+	this->joypad_held = this->engine->get_input_state();
+	this->joypad_pressed = this->joypad_held & ~old;
+}
+
+InputState CppRedEngine::joypad_auto_repeat(){
+	auto held = this->joypad_held;
+
+	auto pressed = this->joypad_pressed;
 	if (pressed.get_value()){
 		this->jls_timeout = this->engine->get_clock() + 0.5;
 		return held;
@@ -163,9 +174,16 @@ void CppRedEngine::put_string(const Point &position, TileRegion region, const ch
 	}
 }
 
-int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position_, const std::vector<std::string> &items, int minimum_width, bool ignore_b){
+int CppRedEngine::handle_standard_menu_with_title(
+		TileRegion region,
+		const Point &position_,
+		const std::vector<std::string> &items,
+		const char *title,
+		const Point &minimum_size,
+		bool ignore_b){
+
 	auto position = position_;
-	auto width = minimum_width;
+	auto width = minimum_size.x;
 	auto n = (int)items.size();
 	for (auto &s : items)
 		width = std::max((int)s.size() + 1, width);
@@ -174,7 +192,11 @@ int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position_
 	if (position.y + n * 2 + 2 > Renderer::logical_screen_tile_height)
 		position.y = Renderer::logical_screen_tile_height - (n * 2 + 2);
 
-	this->draw_box(position, { width, n * 2 }, region);
+	this->draw_box(position, { width, std::max(n * 2, minimum_size.y) }, region);
+	if (title){
+		auto l = (int)strlen(title);
+		this->put_string(position + Point{ (width - l) / 2 + 1, 0 }, region, title);
+	}
 
 	int y = 1;
 	for (auto &s : items)
@@ -188,7 +210,7 @@ int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position_
 		int addend = 0;
 		do{
 			this->engine->wait_exactly_one_frame();
-			auto state = this->joypad_low_sensitivity();
+			auto state = this->joypad_auto_repeat();
 			if (!ignore_b && state.get_b())
 				return -1;
 			if (state.get_a())
@@ -203,6 +225,10 @@ int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position_
 	return -1;
 }
 
+int CppRedEngine::handle_standard_menu(TileRegion region, const Point &position, const std::vector<std::string> &items, const Point &minimum_size, bool ignore_b){
+	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b);
+}
+
 void CppRedEngine::run_dialog(TextResourceId resource){
 	if (!this->dialog_box_visible){
 		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Background);
@@ -211,6 +237,18 @@ void CppRedEngine::run_dialog(TextResourceId resource){
 	this->text_store.execute(*this, resource, this->text_state);
 }
 
+void CppRedEngine::reset_dialog_state(){
+	this->text_state.region = TileRegion::Background;
+	this->text_state.first_position =
+		this->text_state.position =
+		this->text_state.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
+	this->text_state.box_corner = { 1, Renderer::logical_screen_tile_height - 5 };
+	this->text_state.box_size = { Renderer::logical_screen_tile_width - 2, 4 };
+	this->text_state.continue_location = { 18, 16 };
+	this->dialog_box_visible = false;
+}
+
 void CppRedEngine::text_print_delay(){
-	this->engine->wait_frames((int)this->options.text_speed);
+	if (!this->engine->get_input_state().get_a())
+		this->engine->wait_frames((int)this->options.text_speed);
 }

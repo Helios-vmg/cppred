@@ -23,6 +23,7 @@ class Engine{
 	std::thread::id main_thread_id;
 	double wait_remainder = 0;
 	InputState input_state;
+	std::function<void()> on_yield;
 
 	void initialize_window();
 	void initialize_video();
@@ -50,6 +51,7 @@ public:
 		this->yield();
 	}
 	double get_clock();
+	void set_on_yield(std::function<void()> &&);
 	DEFINE_GETTER(input_state)
 
 	static const int screen_scale = 4;

@@ -87,6 +87,8 @@ void Engine::yield(){
 	if (!this->yielder)
 		throw std::runtime_error("Engine::yield() must be called while the coroutine is active!");
 	(*this->yielder)();
+	if (this->on_yield)
+		this->on_yield();
 }
 
 void Engine::wait(double s){
@@ -173,4 +175,8 @@ bool Engine::handle_events(){
 
 void Engine::wait_frames(int frames){
 	this->wait(frames * logical_refresh_period);
+}
+
+void Engine::set_on_yield(std::function<void()> &&callback){
+	this->on_yield = std::move(callback);
 }

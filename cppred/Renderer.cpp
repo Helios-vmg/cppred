@@ -96,9 +96,9 @@ void Renderer::set_default_palettes(){
 	this->clear_subpalettes(SubPaletteRegion::Sprites);
 }
 
-Tile &Renderer::get_tile(TileRegion region, int x, int y){
+Tile &Renderer::get_tile(TileRegion region, const Point &p){
 	this->skip_rendering = false;
-	return this->get_tilemap(region).tiles[x + y * Tilemap::w];
+	return this->get_tilemap(region).tiles[p.x + p.y * Tilemap::w];
 }
 
 Tilemap &Renderer::get_tilemap(TileRegion region){
@@ -267,7 +267,7 @@ void Renderer::render(){
 	this->skip_rendering = true;
 }
 
-std::vector<Point> Renderer::draw_image_to_tilemap(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette){
+std::vector<Point> Renderer::draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette, bool flipped){
 	auto x = corner.x;
 	auto y = corner.y;
 	std::vector<Point> ret;
@@ -279,8 +279,8 @@ std::vector<Point> Renderer::draw_image_to_tilemap(const Point &corner, const Gr
 			auto y2 = y + i;
 			ret.push_back({ x2, y2 });
 			auto &tile = tilemap.tiles[x2 + y2 * Tilemap::w];
-			tile.tile_no = asset.first_tile + j + i * asset.width;
-			tile.flipped_x = false;
+			tile.tile_no = asset.first_tile + (flipped ? (asset.width - 1) - j : j) + i * asset.width;
+			tile.flipped_x = flipped;
 			tile.flipped_y = false;
 			tile.palette = palette;
 		}
@@ -288,9 +288,17 @@ std::vector<Point> Renderer::draw_image_to_tilemap(const Point &corner, const Gr
 	return ret;
 }
 
+std::vector<Point> Renderer::draw_image_to_tilemap(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette){
+	return this->draw_image_to_tilemap_internal(corner, asset, region, palette, false);
+}
+
+std::vector<Point> Renderer::draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette){
+	return this->draw_image_to_tilemap_internal(corner, asset, region, palette, true);
+}
+
 void Renderer::mass_set_palettes(const std::vector<Point> &tiles, Palette palette){
 	for (auto &p : tiles)
-		this->get_tile(TileRegion::Background, p.x, p.y).palette = palette;
+		this->get_tile(TileRegion::Background, p).palette = palette;
 }
 
 void Renderer::clear_subpalettes(SubPaletteRegion region){
@@ -329,6 +337,7 @@ void Renderer::clear_screen(){
 	this->bg_global_offset = zero;
 	this->window_global_offset = zero;
 	this->skip_rendering = false;
+	this->set_default_palettes();
 }
 
 void Renderer::set_enable_bg(bool value){

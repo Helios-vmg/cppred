@@ -163,8 +163,10 @@ void TextCommand::execute(CppRedEngine &cppred, TextState &state){
 }
 
 void LineCommand::execute(CppRedEngine &cppred, TextState &state){
-	state.position = state.start_of_line + Point{0, 2};
-	state.start_of_line = state.position;
+	auto temp = state.start_of_line + Point{ 0, 2 };
+	if (temp.y < state.box_corner.y + state.box_size.y)
+		state.start_of_line = temp;
+	state.position = state.start_of_line;
 }
 
 void TextResourceCommand::wait_for_continue(CppRedEngine &cppred, TextState &state){
@@ -174,7 +176,7 @@ void TextResourceCommand::wait_for_continue(CppRedEngine &cppred, TextState &sta
 	auto &arrow_location = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w].tile_no;
 	for (bool b = true;; b = !b){
 		arrow_location = b ? down_arrow : ' ';
-		if (cppred.check_for_user_interruption(0.5))
+		if (cppred.check_for_user_interruption_no_auto_repeat(0.5))
 			break;
 	}
 	arrow_location = ' ';
@@ -217,8 +219,15 @@ void ParaCommand::execute(CppRedEngine &cppred, TextState &state){
 	state.start_of_line = state.position = state.first_position;
 }
 
-void PromptCommand::execute(CppRedEngine &, TextState &){}
-void DoneCommand::execute(CppRedEngine &, TextState &){}
+void PromptCommand::execute(CppRedEngine &cppred, TextState &state){
+	this->wait_for_continue(cppred, state);
+	DoneCommand::execute(cppred, state);
+}
+
+void DoneCommand::execute(CppRedEngine &cppred, TextState &){
+	cppred.reset_dialog_state();
+}
+
 void DexCommand::execute(CppRedEngine &, TextState &){}
 void AutocontCommand::execute(CppRedEngine &, TextState &){}
 void MemCommand::execute(CppRedEngine &, TextState &){}

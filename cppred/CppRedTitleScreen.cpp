@@ -8,7 +8,7 @@
 template <typename T, size_t N>
 static void draw_image_from_offsets(Renderer &renderer, Point first_point, const GraphicsAsset &asset, const T (&offsets)[N]){
 	for (size_t i = 0; i < N; i++){
-		auto &tile = renderer.get_tile(TileRegion::Background, first_point.x, first_point.y);
+		auto &tile = renderer.get_tile(TileRegion::Background, first_point);
 		auto offset = offsets[i];
 		tile.tile_no = offset >= 0 ? asset.first_tile + offsets[i] : ' ';
 		tile.flipped_x = false;

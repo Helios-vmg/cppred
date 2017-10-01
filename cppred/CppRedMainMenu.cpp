@@ -68,7 +68,7 @@ static void show_options(CppRedEngine &cppred){
 
 		while (true){
 			engine.wait_exactly_one_frame();
-			auto input = cppred.joypad_low_sensitivity();
+			auto input = cppred.joypad_auto_repeat();
 			if (input.get_left()){
 				if (!horizontal_cursor_positions[vertical_cursor_position])
 					while (cursor_positions[vertical_cursor_position].second[horizontal_cursor_positions[vertical_cursor_position]] >= 0)
@@ -131,7 +131,7 @@ MainMenuResult main_menu(CppRedEngine &cppred){
 	items.push_back("NEW GAME");
 	items.push_back("OPTION");
 	while (true){
-		selection = cppred.handle_standard_menu(TileRegion::Background, { 0, 0 }, items, 13);
+		selection = cppred.handle_standard_menu(TileRegion::Background, { 0, 0 }, items, { 13, 0 });
 		selection += (selection >= 0) * delta;
 		
 		if (selection < 0)

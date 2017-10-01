@@ -198,8 +198,10 @@ static std::vector<byte_t> parse_text_format(std::istream &stream, std::map<std:
 		}
 		if (last_command == CommandType::Text)
 			ret.push_back(0);
-		last_command = CommandType::Line;
-		ret.push_back((byte_t)last_command);
+		if (!(last_command == CommandType::Cont || last_command == CommandType::Para || last_command == CommandType::Page || last_command == CommandType::Prompt)){
+			last_command = CommandType::Line;
+			ret.push_back((byte_t)last_command);
+		}
 	}
 	return ret;
 }

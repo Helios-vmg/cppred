@@ -54,6 +54,7 @@ private:
 	void initialize_data();
 	void do_software_rendering();
 	void set_y_offset(Point(&)[logical_screen_height], int y0, int y1, const Point &);
+	std::vector<Point> draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &, TileRegion, Palette, bool);
 public:
 	Renderer(Engine &, SDL_Window *);
 	~Renderer();
@@ -63,10 +64,11 @@ public:
 	void operator=(Renderer &&) = delete;
 	void set_palette(PaletteRegion region, Palette value);
 	void set_default_palettes();
-	Tile &get_tile(TileRegion, int x, int y);
+	Tile &get_tile(TileRegion, const Point &p);
 	Tilemap &get_tilemap(TileRegion);
 	void render();
 	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
+	std::vector<Point> draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
 	void clear_subpalettes(SubPaletteRegion);
 	void clear_screen();

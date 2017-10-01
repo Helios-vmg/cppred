@@ -73,12 +73,12 @@ class PageCommand : public ParaCommand{
 public:
 };
 
-class PromptCommand : public TextResourceCommand{
+class DoneCommand : public TextResourceCommand{
 public:
-	void execute(CppRedEngine &, TextState &) override;
+	virtual void execute(CppRedEngine &, TextState &) override;
 };
 
-class DoneCommand : public TextResourceCommand{
+class PromptCommand : public DoneCommand{
 public:
 	void execute(CppRedEngine &, TextState &) override;
 };
