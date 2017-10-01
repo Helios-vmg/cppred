@@ -241,6 +241,7 @@ void MemCommand::execute(CppRedEngine &cppred, TextState &state){
 	auto value = cppred.get_variable_store().get_string(this->variable);
 	progressively_write_text(value, cppred, state);
 }
+
 void NumCommand::execute(CppRedEngine &cppred, TextState &state){
 	std::stringstream stream;
 	stream << cppred.get_variable_store().get_number(this->variable);

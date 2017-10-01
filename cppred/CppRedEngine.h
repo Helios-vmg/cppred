@@ -7,6 +7,7 @@
 #include "CppRedTextResources.h"
 #include <string>
 #include <unordered_map>
+#include <queue>
 
 #ifdef max
 #undef max
@@ -15,8 +16,8 @@
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
 	std::unordered_map<std::string, int *> number_variables;
-	std::vector<std::string> strings;
-	std::vector<int> numbers;
+	std::deque<std::string> strings;
+	std::deque<int> numbers;
 public:
 	void set_string(const std::string &key, std::string *value);
 	void set_string(const std::string &key, const std::string &value);
@@ -26,6 +27,12 @@ public:
 	int get_number(const std::string &key);
 	void delete_string(const std::string &key);
 	void delete_number(const std::string &key);
+};
+
+enum class NameEntryType{
+	Player,
+	Rival,
+	Pokemon,
 };
 
 class CppRedEngine{
@@ -42,6 +49,7 @@ class CppRedEngine{
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
+	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 public:
 	CppRedEngine(Engine &engine);
 	void clear_screen();
@@ -85,6 +93,8 @@ public:
 	VariableStore &get_variable_store(){
 		return this->variable_store;
 	}
+	std::string get_name_from_user(NameEntryType, int max_length = -1);
+	std::string get_name_from_user(SpeciesId, int max_length = -1);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

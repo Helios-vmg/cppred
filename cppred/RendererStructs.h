@@ -54,6 +54,7 @@ public:
 static const Palette zero_palette = { 0, 0, 0, 0 };
 static const Palette null_palette = { -1, -1, -1, -1 };
 static const Palette default_palette = { 0, 1, 2, 3 };
+static const Palette default_world_sprite_palette = { 0, 0, 1, 3 };
 
 template <unsigned N>
 struct BasicTileData{
@@ -105,5 +106,20 @@ struct Point{
 	}
 	Point operator*(double x) const{
 		return { cast_round(this->x * x), cast_round(this->y * x) };
+	}
+	const Point &operator+=(const Point &other){
+		this->x += other.x;
+		this->y += other.y;
+		return *this;
+	}
+	const Point &operator-=(const Point &other){
+		this->x -= other.x;
+		this->y -= other.y;
+		return *this;
+	}
+	const Point &operator*=(double x){
+		this->x = cast_round(this->x * x);
+		this->y = cast_round(this->y * x);
+		return *this;
 	}
 };

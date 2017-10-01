@@ -77,6 +77,10 @@ bool check_flag(const T1 &value, const T2 &mask){
 	return (value & mask) == mask;
 }
 
+inline char make_apostrophe(char c){
+	return c + 128;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);

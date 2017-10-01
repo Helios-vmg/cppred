@@ -3824,7 +3824,7 @@ you were a baby.<para>
 his name again?<prompt><end>
 
 .OakSpeechText3
-<mem,player_name>!<para>
+<mem,temp_player_name>!<para>
 Your very own
 POKÈMON legend is<cont>
 about to unfold!<para>

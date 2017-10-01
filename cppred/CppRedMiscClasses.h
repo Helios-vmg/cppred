@@ -15,5 +15,5 @@ class GameOptions{
 public:
 	bool battle_animations_enabled = true;
 	BattleStyle battle_style = BattleStyle::Shift;
-	TextSpeed text_speed = TextSpeed::Medium;
+	TextSpeed text_speed = TextSpeed::Fast;
 };

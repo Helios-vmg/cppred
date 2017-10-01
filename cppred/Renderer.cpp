@@ -301,6 +301,11 @@ void Renderer::mass_set_palettes(const std::vector<Point> &tiles, Palette palett
 		this->get_tile(TileRegion::Background, p).palette = palette;
 }
 
+void Renderer::mass_set_tile_numbers(const std::vector<Point> &tiles, , const Tile &tile){
+	for (auto &p : tiles)
+		this->get_tile(TileRegion::Background, p) = tile;
+}
+
 void Renderer::clear_subpalettes(SubPaletteRegion region){
 	this->require_redraw();
 	switch (region){

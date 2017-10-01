@@ -1,6 +1,11 @@
 #include "CppRedEngine.h"
 #include "Engine.h"
 #include "Renderer.h"
+#include <iostream>
+
+#ifdef min
+#undef min
+#endif
 
 struct FadePaletteData{
 	Palette background_palette;
@@ -249,8 +254,7 @@ void CppRedEngine::reset_dialog_state(){
 }
 
 void CppRedEngine::text_print_delay(){
-	if (!this->engine->get_input_state().get_a())
-		this->engine->wait_frames((int)this->options.text_speed);
+	this->engine->wait_frames((int)this->options.text_speed);
 }
 
 void VariableStore::set_string(const std::string &key, std::string *value){
@@ -297,4 +301,170 @@ void VariableStore::delete_number(const std::string &key){
 	if (it == this->number_variables.end())
 		return;
 	this->number_variables.erase(it);
+}
+
+std::string CppRedEngine::get_name_from_user(NameEntryType type, SpeciesId species, int max_length_){
+	if (!max_length_)
+		return "";
+	size_t max_display_length = type == NameEntryType::Pokemon ? 10 : 7;
+	size_t max_length;
+	if (max_length_ < 0)
+		max_length = max_display_length;
+	else
+		max_length = max_length_;
+
+	auto &renderer = this->engine->get_renderer();
+	renderer.clear_screen();
+	std::string query_string;
+	query_string.reserve(Tilemap::w);
+	switch (type){
+		case NameEntryType::Player:
+			query_string = "YOUR NAME?";
+			break;
+		case NameEntryType::Rival:
+			query_string = "RIVAL";
+			query_string += make_apostrophe('s');
+			query_string += " NAME?";
+			break;
+		case NameEntryType::Pokemon:
+			query_string = "    ";
+			query_string += pokemon_by_species_id[(int)species]->display_name;
+			break;
+		default:
+			throw std::runtime_error("CppRedEngine::get_name_from_user(): Invalid switch.");
+	}
+	this->put_string({ 0, 1 }, TileRegion::Background, query_string.c_str());
+	if (type == NameEntryType::Pokemon)
+		this->put_string({ 1, 3 }, TileRegion::Background, "NICKNAME?");
+
+	Point box_location = { 0, 4 };
+	const Point box_size = { 18, 9 };
+	this->draw_box(box_location, box_size, TileRegion::Background);
+	const char *selection_sheet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]{}-?!%+/.,\xFF";
+	const char *mode_select_lower = "lower case";
+	const char *mode_select_upper = "UPPER CASE";
+	const Point mode_select_cursor_location = box_location + Point{ 1, box_size.y + 2 };
+	const Point mode_select_location = mode_select_cursor_location + Point{ 1, 0 };
+	box_location += Point{ 1, 1 };
+	bool redraw_alphabet = true;
+	bool redraw_name = true;
+	bool lower_case = false;
+	auto tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
+	Point cursor_position = { 0, 0 };
+	const int grid_w = 9;
+	const int grid_h = 5;
+	std::string ret;
+	while (true){
+		if (redraw_alphabet){
+			for (int y = 0; y < grid_h; y++){
+				auto dst_y = box_location.y + y * 2;
+				for (int x = 0; x < grid_w; x++){
+					auto src = (byte_t)selection_sheet[x + y * grid_w];
+					auto dst_x = box_location.x + x * 2 + 1;
+					if (lower_case)
+						src = (byte_t)tolower(src);
+					tilemap[dst_x + dst_y * Tilemap::w].tile_no = src;
+				}
+			}
+			this->put_string(mode_select_location, TileRegion::Background, lower_case ? mode_select_upper : mode_select_lower);
+			redraw_alphabet = false;
+		}
+
+		if (redraw_name){
+			auto name_location = tilemap + 10 + 2 * Tilemap::w;
+			auto dash_location = name_location + Tilemap::w;
+			auto first_index = ret.size() > max_display_length ? ret.size() - max_display_length : 0;
+			auto text_cursor_position = std::min(ret.size(), max_display_length - 1);
+			auto low_dash = HpBarAndStatusGraphics.first_tile + HpBarAndStatusGraphics.width * 4;
+			for (size_t i = 0; i < max_display_length; i++){
+				name_location[i].tile_no = first_index + i < ret.size() ? (byte_t)ret[first_index + i] : ' ';
+				dash_location[i].tile_no = low_dash + (i == text_cursor_position);
+			}
+			redraw_name = false;
+		}
+
+		for (int y = 0; y < grid_h; y++){
+			auto dst_y = box_location.y + y * 2;
+			for (int x = 0; x < grid_w; x++){
+				auto dst_x = box_location.x + x * 2;
+				tilemap[dst_x + dst_y * Tilemap::w].tile_no = ((x == cursor_position.x) & (y == cursor_position.y)) ? black_arrow : ' ';
+			}
+		}
+		tilemap[mode_select_cursor_location.x + mode_select_cursor_location.y * Tilemap::w].tile_no = cursor_position.y == grid_h ? black_arrow : ' ';
+
+		if (type == NameEntryType::Pokemon){
+			//TODO: Draw animated pokemon sprite.
+		}
+
+		while (true){
+			this->engine->wait_exactly_one_frame();
+			auto input = this->joypad_only_newly_pressed();
+			if (input.get_up()){
+				cursor_position.y = (cursor_position.y + grid_h) % (grid_h + 1);
+				break;
+			}
+			if (input.get_down()){
+				cursor_position.y = (cursor_position.y + 1) % (grid_h + 1);
+				break;
+			}
+			if (input.get_left() && cursor_position.y != grid_h){
+				cursor_position.x = (cursor_position.x + (grid_w - 1)) % grid_w;
+				break;
+			}
+			if (input.get_right() && cursor_position.y != grid_h){
+				cursor_position.x = (cursor_position.x + 1) % grid_w;
+				break;
+			}
+			if (input.get_select()){
+				lower_case = !lower_case;
+				redraw_alphabet = true;
+				break;
+			}
+			if (input.get_start()){
+				return ret;
+			}
+			if (input.get_a()){
+				if (cursor_position.y == grid_h){
+					lower_case = !lower_case;
+					redraw_alphabet = true;
+					break;
+				}
+				auto character = (byte_t)selection_sheet[cursor_position.x + cursor_position.y * grid_w];
+				if (character == 0xFF)
+					return ret;
+				if (ret.size() >= max_length)
+					continue;
+				if (lower_case)
+					character = (byte_t)tolower(character);
+				ret.push_back((char)character);
+				if (ret.size() >= max_length){
+					cursor_position.x = grid_w - 1;
+					cursor_position.y = grid_h - 1;
+				}
+				redraw_name = true;
+				break;
+			}
+			if (input.get_b()){
+				if (!ret.size())
+					continue;
+				ret.pop_back();
+				redraw_name = true;
+				break;
+			}
+		}
+	}
+}
+
+std::string CppRedEngine::get_name_from_user(NameEntryType type, int max_length){
+	if (type == NameEntryType::Pokemon)
+		throw std::runtime_error("CppRedEngine::get_name_from_user(): Invalid usage. type must not be NameEntryType::Pokemon.");
+	auto ret = this->get_name_from_user(type, SpeciesId::None, max_length);
+	std::cout << "Selected name: " << ret << std::endl;
+	return ret;
+}
+
+std::string CppRedEngine::get_name_from_user(SpeciesId species, int max_length){
+	auto ret = this->get_name_from_user(NameEntryType::Pokemon, SpeciesId::None, max_length);
+	std::cout << "Selected name: " << ret << std::endl;
+	return ret;
 }

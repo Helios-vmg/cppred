@@ -70,6 +70,7 @@ public:
 	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	std::vector<Point> draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
+	void mass_set_tiles(const std::vector<Point> &tiles, const Tile &);
 	void clear_subpalettes(SubPaletteRegion);
 	void clear_screen();
 	void set_enable_bg(bool value);
