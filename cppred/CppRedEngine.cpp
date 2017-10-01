@@ -220,7 +220,7 @@ int CppRedEngine::handle_standard_menu_with_title(
 			addend = state.get_down() ? 1 : -1;
 		}while (!addend);
 		tilemap[index].tile_no = ' ';
-		current_item = (current_item + addend) % n;
+		current_item = (current_item + n + addend) % n;
 	}
 	return -1;
 }
@@ -251,4 +251,50 @@ void CppRedEngine::reset_dialog_state(){
 void CppRedEngine::text_print_delay(){
 	if (!this->engine->get_input_state().get_a())
 		this->engine->wait_frames((int)this->options.text_speed);
+}
+
+void VariableStore::set_string(const std::string &key, std::string *value){
+	this->string_variables[key] = value;
+}
+
+void VariableStore::set_string(const std::string &key, const std::string &value){
+	this->strings.push_back(value);
+	this->set_string(key, &this->strings.back());
+}
+
+void VariableStore::set_number(const std::string &key, int *value){
+	this->number_variables[key] = value;
+}
+
+void VariableStore::set_number(const std::string &key, int value){
+	this->numbers.push_back(value);
+	this->set_number(key, &this->numbers.back());
+}
+
+const std::string &VariableStore::get_string(const std::string &key){
+	auto it = this->string_variables.find(key);
+	if (it == this->string_variables.end())
+		throw std::runtime_error("Variable not found: " + key);
+	return *it->second;
+}
+
+int VariableStore::get_number(const std::string &key){
+	auto it = this->number_variables.find(key);
+	if (it == this->number_variables.end())
+		throw std::runtime_error("Variable not found: " + key);
+	return *it->second;
+}
+
+void VariableStore::delete_string(const std::string &key){
+	auto it = this->string_variables.find(key);
+	if (it == this->string_variables.end())
+		return;
+	this->string_variables.erase(it);
+}
+
+void VariableStore::delete_number(const std::string &key){
+	auto it = this->number_variables.find(key);
+	if (it == this->number_variables.end())
+		return;
+	this->number_variables.erase(it);
 }

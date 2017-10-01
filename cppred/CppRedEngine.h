@@ -5,12 +5,28 @@
 #include "CppRedData.h"
 #include "CppRedSavableData.h"
 #include "CppRedTextResources.h"
-#include <initializer_list>
 #include <string>
+#include <unordered_map>
 
 #ifdef max
 #undef max
 #endif
+
+class VariableStore{
+	std::unordered_map<std::string, std::string *> string_variables;
+	std::unordered_map<std::string, int *> number_variables;
+	std::vector<std::string> strings;
+	std::vector<int> numbers;
+public:
+	void set_string(const std::string &key, std::string *value);
+	void set_string(const std::string &key, const std::string &value);
+	void set_number(const std::string &key, int *value);
+	void set_number(const std::string &key, int value);
+	const std::string &get_string(const std::string &key);
+	int get_number(const std::string &key);
+	void delete_string(const std::string &key);
+	void delete_number(const std::string &key);
+};
 
 class CppRedEngine{
 	Engine *engine;
@@ -22,6 +38,7 @@ class CppRedEngine{
 	bool options_initialized = false;
 	TextState text_state;
 	bool dialog_box_visible = false;
+	VariableStore variable_store;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
@@ -65,6 +82,9 @@ public:
 	void run_dialog(TextResourceId);
 	void reset_dialog_state();
 	void text_print_delay();
+	VariableStore &get_variable_store(){
+		return this->variable_store;
+	}
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

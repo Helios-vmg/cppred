@@ -38,26 +38,32 @@ static void scroll_from_the_right(CppRedEngine &cppred){
 	}
 }
 
-static void scroll_portrait_to_the_right(CppRedEngine &cppred, std::vector<Point> &red_pic){
+static void scroll_portrait(CppRedEngine &cppred, std::vector<Point> &red_pic, bool direction){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	const auto t = Renderer::tile_size;
 	{
 		auto t0 = engine.get_clock();
 		double y;
+		double multiplier = !direction ? -20 : 20;
 		do{
 			auto t1 = engine.get_clock();
-			y = (t1 - t0) * -20;
-			if (y < -6)
-				y = -6;
+			y = (t1 - t0) * multiplier;
+			if (!direction){
+				if (y < -6)
+					y = -6;
+			}else{
+				if (y > 6)
+					y = 6;
+			}
 			renderer.set_y_bg_offset(4 * t, (4 + 7) * t, { cast_round(y * t), 0 });
 			engine.wait_exactly_one_frame();
-		}while (y > -6);
+		}while (!direction ? (y > -6) : (y < 6));
 	}
 	renderer.set_y_bg_offset(4 * t, (4 + 7) * t, Point{0, 0});
 	for (auto p : red_pic)
 		renderer.get_tile(TileRegion::Background, p).tile_no = 0;
-	red_pic = renderer.draw_image_to_tilemap({ 12, 4 }, RedPicFront);
+	red_pic = renderer.draw_image_to_tilemap({ !direction ? 12 : 6, 4 }, RedPicFront);
 }
 
 const char * const default_names_a[] = {
@@ -80,13 +86,20 @@ auto &default_names_player = default_names_b;
 auto &default_names_rival = default_names_a;
 #endif
 
-static void select_player_name(CppRedEngine &cppred){
+static std::string select_player_name(CppRedEngine &cppred){
+	auto &engine = cppred.get_engine();
+	auto &renderer = engine.get_renderer();
+
 	std::vector<std::string> items;
 	items.push_back("NEW NAME");
 	for (auto s : default_names_player)
 		items.push_back(s);
+	auto tilemap_copy = renderer.get_tilemap(TileRegion::Background);
 	auto selection = cppred.handle_standard_menu_with_title(TileRegion::Background, { 0, 0 }, items, "NAME", { 0, 10 }, true);
-
+	renderer.get_tilemap(TileRegion::Background) = tilemap_copy;
+	if (selection)
+		return default_names_player[selection - 1];
+	return "";
 }
 
 namespace CppRedScripts{
@@ -117,10 +130,16 @@ NamesChosenDuringOakSpeech oak_speech(CppRedEngine &cppred){
 	auto red_pic = renderer.draw_image_to_tilemap({ 6, 4 }, RedPicFront);
 	scroll_from_the_right(cppred);
 	cppred.run_dialog(TextResourceId::IntroducePlayerText);
-	scroll_portrait_to_the_right(cppred, red_pic);
-	select_player_name(cppred);
+	scroll_portrait(cppred, red_pic, false);
+	ret.player_name = select_player_name(cppred);
+	auto &variables = cppred.get_variable_store();
+	variables.set_string("temp_player_name", ret.player_name);
+	scroll_portrait(cppred, red_pic, true);
+	cppred.run_dialog(TextResourceId::YourNameIsText);
 	engine.wait(3600);
 
+	variables.delete_string("temp_player_name");
+	variables.delete_string("temp_rival_name");
 	return ret;
 }
 

@@ -3840,12 +3840,12 @@ to <mem,wcd6d_ActionTargetMonName>?<done>
 
 .YourNameIsText
 Right! So your
-name is <mem,player_name>!<prompt><end>
+name is <mem,temp_player_name>!<prompt><end>
 
 .HisNameIsText
 That's right! I
 remember now! His<cont>
-name is <mem,rival_name>!<prompt><end>
+name is <mem,temp_rival_name>!<prompt><end>
 
 .WillBeTradedText
 <mem,wNameOfPlayerMonToBeTraded> and

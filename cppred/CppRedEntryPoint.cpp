@@ -14,7 +14,6 @@ static MainMenuResult initial_sequence(CppRedEngine &cppred){
 	auto &engine = cppred.get_engine();
 	while (true){
 		intro(cppred);
-		TitleScreenResult title_screen_result;
 		while (title_screen(cppred) == TitleScreenResult::GoToMainMenu){
 			auto main_menu_result = main_menu(cppred);
 			if (main_menu_result != MainMenuResult::GoToTitleScreen)

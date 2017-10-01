@@ -1,6 +1,7 @@
 #include "CppRedTextResources.h"
 #include "CppRedEngine.h"
 #include "utility.h"
+#include <sstream>
 
 TextStore::TextStore(){
 	auto buffer = packed_text_data;
@@ -150,16 +151,21 @@ void TextStore::execute(CppRedEngine &cppred, TextResourceId id, TextState &stat
 	this->resources[(int)id]->execute(cppred, state);
 }
 
-void TextCommand::execute(CppRedEngine &cppred, TextState &state){
+template <typename T>
+void progressively_write_text(const T &data, CppRedEngine &cppred, TextState &state){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
 	auto tiles = renderer.get_tilemap(state.region).tiles + state.position.x + state.position.y * Tilemap::w;
-	for (auto c : this->data){
-		(tiles++)->tile_no = c;
+	for (auto c : data){
+		(tiles++)->tile_no = (typename std::make_unsigned<decltype(c)>::type)c;
 		state.position.x++;
 		cppred.text_print_delay();
 	}
+}
+
+void TextCommand::execute(CppRedEngine &cppred, TextState &state){
+	progressively_write_text(this->data, cppred, state);
 }
 
 void LineCommand::execute(CppRedEngine &cppred, TextState &state){
@@ -230,5 +236,13 @@ void DoneCommand::execute(CppRedEngine &cppred, TextState &){
 
 void DexCommand::execute(CppRedEngine &, TextState &){}
 void AutocontCommand::execute(CppRedEngine &, TextState &){}
-void MemCommand::execute(CppRedEngine &, TextState &){}
-void NumCommand::execute(CppRedEngine &, TextState &){}
+
+void MemCommand::execute(CppRedEngine &cppred, TextState &state){
+	auto value = cppred.get_variable_store().get_string(this->variable);
+	progressively_write_text(value, cppred, state);
+}
+void NumCommand::execute(CppRedEngine &cppred, TextState &state){
+	std::stringstream stream;
+	stream << cppred.get_variable_store().get_number(this->variable);
+	progressively_write_text(stream.str(), cppred, state);
+}
