@@ -301,7 +301,7 @@ void Renderer::mass_set_palettes(const std::vector<Point> &tiles, Palette palett
 		this->get_tile(TileRegion::Background, p).palette = palette;
 }
 
-void Renderer::mass_set_tile_numbers(const std::vector<Point> &tiles, , const Tile &tile){
+void Renderer::mass_set_tiles(const std::vector<Point> &tiles, const Tile &tile){
 	for (auto &p : tiles)
 		this->get_tile(TileRegion::Background, p) = tile;
 }
