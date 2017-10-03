@@ -85,4 +85,5 @@ xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);
 int cast_round(double);
+std::uint64_t cast_round_u64(double);
 std::uint32_t read_u32(const void *);

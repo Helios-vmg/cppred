@@ -27,7 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActualAudioRenderer.h" />
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="common_types.h" />
+    <ClInclude Include="CppRedAudioProgram.h" />
     <ClInclude Include="CppRedClearSave.h" />
     <ClInclude Include="CppRedCommonFunctions.h" />
     <ClInclude Include="CppRedData.h" />
@@ -45,13 +48,19 @@
     <ClInclude Include="InputState.h" />
     <ClInclude Include="PokemonInfo.h" />
     <ClInclude Include="pokemon_version.h" />
+    <ClInclude Include="PublishingResource.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="CppRedEntryPoint.h" />
     <ClInclude Include="RendererStructs.h" />
+    <ClInclude Include="SoundGenerators.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="threads.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActualAudioRenderer.cpp" />
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="CppRedAudioProgram.cpp" />
     <ClCompile Include="CppRedCommonFunctions.cpp" />
     <ClCompile Include="CppRedData.cpp" />
     <ClCompile Include="CppRedEngine.cpp" />
@@ -66,7 +75,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="CppRedEntryPoint.cpp" />
+    <ClCompile Include="SoundGenerators.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="threads.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

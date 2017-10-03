@@ -31,23 +31,7 @@ void Engine::initialize_video(){
 }
 
 void Engine::initialize_audio(){
-#if 0
-	SDL_AudioSpec desired, actual;
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = 44100;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = AudioFrame::length;
-	desired.callback = SdlProvider::audio_callback;
-	desired.userdata = this;
-	this->audio_device = SDL_OpenAudioDevice(nullptr, false, &desired, &actual, 0);
-	if (!(actual == desired)){
-		SDL_CloseAudioDevice(this->audio_device);
-		this->audio_device = 0;
-		return;
-	}
-	SDL_PauseAudioDevice(this->audio_device, 0);
-#endif
+	this->audio.reset(new AudioRenderer);
 }
 
 void Engine::run(){

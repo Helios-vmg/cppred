@@ -2,6 +2,7 @@
 #include "utility.h"
 #include "InputState.h"
 #include "Renderer.h"
+#include "Audio.h"
 #include "HighResolutionClock.h"
 #include <SDL.h>
 #include <boost/coroutine2/all.hpp>
@@ -24,6 +25,7 @@ class Engine{
 	double wait_remainder = 0;
 	InputState input_state;
 	std::function<void()> on_yield;
+	std::unique_ptr<AudioRenderer> audio;
 
 	void initialize_window();
 	void initialize_video();

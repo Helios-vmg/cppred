@@ -116,6 +116,24 @@
     <ClInclude Include="CppRedTextResources.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PublishingResource.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="threads.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundGenerators.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ActualAudioRenderer.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedAudioProgram.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -165,6 +183,21 @@
     </ClCompile>
     <ClCompile Include="CppRedOakSpeech.cpp">
       <Filter>Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="threads.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundGenerators.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ActualAudioRenderer.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedAudioProgram.cpp">
+      <Filter>Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
