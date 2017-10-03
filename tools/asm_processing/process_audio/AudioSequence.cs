@@ -166,7 +166,7 @@ namespace process_audio
 
     enum NoteType
     {
-        C,
+        C = 0,
         CSharp,
         D,
         DSharp,
@@ -186,7 +186,7 @@ namespace process_audio
         public int Param1;
         public override void Write(TextWriter tw)
         {
-            tw.WriteLine($"note {Type} {Param1}");
+            tw.WriteLine($"note {(int)Type} {Param1}");
         }
         public override int TotalSize => 1 + EstimateSize((int)Type) + EstimateSize(Param1);
     }

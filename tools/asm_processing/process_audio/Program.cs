@@ -14,7 +14,7 @@ namespace process_audio
         {
             try
             {
-                var lib = new AudioLibrary("../../pokered/", AudioLibrary.DuplicateBehavior.NormalizeAndRemoveDuplicates);
+                var lib = new AudioLibrary("../../pokered/", AudioLibrary.DuplicateBehavior.LeaveEverythingUntouched);
                 //lib.RemoveUnreachableSequences();
                 using (var file = new StreamWriter("audio.txt"))
                     lib.Output(file);

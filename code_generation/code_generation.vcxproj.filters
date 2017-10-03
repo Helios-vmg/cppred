@@ -65,10 +65,10 @@
     <ClCompile Include="generate_moves.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="generate_sound_data.cpp">
+    <ClCompile Include="generate_items.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="generate_items.cpp">
+    <ClCompile Include="generate_audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

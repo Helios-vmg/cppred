@@ -42,6 +42,7 @@ int main(){
 		auto t0 = clock();
 		auto hashes = load_hashes();
 		auto bitmaps = generate_bitmaps(hashes);
+		generate_audio(hashes);
 		generate_rams(hashes, bitmaps);
 		generate_graphics(hashes);
 		generate_maps(hashes);
@@ -49,7 +50,6 @@ int main(){
 		generate_text(hashes);
 		generate_charmap(hashes);
 		generate_moves(hashes);
-		generate_sound_data(hashes);
 		generate_items(hashes);
 		save_hashes(hashes);
 		auto t1 = clock();

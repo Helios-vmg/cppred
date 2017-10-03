@@ -162,3 +162,12 @@ void write_buffer_to_stream(std::ostream &stream, const void *void_buffer, size_
 		stream << std::endl;
 	stream << "}";
 }
+
+void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t n){
+	do{
+		auto m = n & 0x7F;
+		n >>= 7;
+		m |= (1 << 7) * !!n;
+		dst.push_back(m);
+	}while (n);
+}
