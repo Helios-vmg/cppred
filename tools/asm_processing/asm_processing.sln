@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "process_audio", "process_audio\process_audio.csproj", "{F9AA7129-BEF8-4CE1-B570-C3B9EF6D91AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParseRgbdsObj", "ParseRgbdsObj\ParseRgbdsObj.csproj", "{2518267F-8009-47ED-B6DE-D1C207EC476B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9AA7129-BEF8-4CE1-B570-C3B9EF6D91AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9AA7129-BEF8-4CE1-B570-C3B9EF6D91AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9AA7129-BEF8-4CE1-B570-C3B9EF6D91AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9AA7129-BEF8-4CE1-B570-C3B9EF6D91AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
