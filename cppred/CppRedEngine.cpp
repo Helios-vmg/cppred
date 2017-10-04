@@ -36,7 +36,7 @@ void CppRedEngine::clear_screen(){
 	this->engine->wait_frames(3);
 }
 
-void CppRedEngine::play_sound(SoundId sound){
+void CppRedEngine::play_sound(AudioResourceId sound){
 	//TODO
 }
 

@@ -50,8 +50,6 @@ AudioRenderer::~AudioRenderer(){
 	}
 }
 
-AbstractAudioRenderer::~AbstractAudioRenderer(){}
-
 void SDLCALL AudioRenderer::audio_callback(void *userdata, Uint8 *stream, int len){
 	auto This = (AudioRenderer *)userdata;
 	{

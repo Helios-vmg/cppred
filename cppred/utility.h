@@ -87,3 +87,4 @@ int euclidean_modulo(int n, int mod);
 int cast_round(double);
 std::uint64_t cast_round_u64(double);
 std::uint32_t read_u32(const void *);
+std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size);

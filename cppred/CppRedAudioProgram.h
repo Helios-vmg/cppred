@@ -27,6 +27,9 @@ enum class AudioCommandType : byte_t{
 	Loop,
 	Call,
 	Goto,
+	IfRed,
+	Else,
+	EndIf,
 	End,
 };
 
@@ -97,14 +100,19 @@ DEFINE_AC_STRUCT2(Cymbal, type, length);
 DEFINE_AC_STRUCT2(Loop, times, dst);
 DEFINE_AC_STRUCT1(Call, dst);
 DEFINE_AC_STRUCT1(Goto, dst);
+DEFINE_AC_STRUCT0(IfRed);
+DEFINE_AC_STRUCT0(Else);
+DEFINE_AC_STRUCT0(EndIf);
 DEFINE_AC_STRUCT0(End);
 
 class CppRedAudioProgram : public AudioProgram{
+	std::vector<AudioCommand> commands;
 	int channel_sound_ids[8];
 	byte_t mute_audio_and_pause_music = 0;
 	byte_t channel_note_delay_counters[8];
 
 	void apply_effects(int channel, double now, AbstractAudioRenderer &renderer);
+	void load_commands();
 public:
 	CppRedAudioProgram();
 	void update(double now, AbstractAudioRenderer &renderer);

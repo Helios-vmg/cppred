@@ -110,8 +110,8 @@ static void oak_introduction(CppRedEngine &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	cppred.play_sound(SoundId::Stop);
-	cppred.play_sound(SoundId::Music_Routes2);
+	cppred.play_sound(AudioResourceId::Stop);
+	cppred.play_sound(AudioResourceId::Music_Routes2);
 	renderer.clear_screen();
 	engine.wait(1);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ProfOakPic);
@@ -171,7 +171,7 @@ static void red_closing(CppRedEngine &cppred){
 	fade_in(cppred);
 
 	cppred.run_dialog(TextResourceId::OakSpeechText3);
-	cppred.play_sound(SoundId::SFX_Shrink);
+	cppred.play_sound(AudioResourceId::SFX_Shrink);
 	engine.wait_frames(4);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic1);
 	engine.wait(0.5);

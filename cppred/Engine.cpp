@@ -31,7 +31,7 @@ void Engine::initialize_video(){
 }
 
 void Engine::initialize_audio(){
-	this->audio.reset(new AudioRenderer);
+	this->audio.reset(new AudioRenderer(*this));
 }
 
 void Engine::run(){

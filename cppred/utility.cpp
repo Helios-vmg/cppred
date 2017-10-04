@@ -67,3 +67,19 @@ std::uint32_t read_u32(const void *void_buffer){
 	}
 	return ret;
 }
+
+std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size){
+	std::uint32_t ret = 0;
+	int shift = 0;
+	bool terminate = false;
+	do{
+		if (offset >= size)
+			throw std::runtime_error("read_varint(): Invalid read.");
+		auto byte = buffer[offset++];
+		terminate = !(byte & BITMAP(10000000));
+		byte &= BITMAP(01111111);
+		ret |= (std::uint32_t)byte << shift;
+		shift += 7;
+	}while (!terminate);
+	return ret;
+}

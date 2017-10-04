@@ -91,7 +91,7 @@ public:
 		return this->commands;
 	}
 	void serialize(std::vector<std::uint8_t> &sequences){
-		write_varint(sequences, (u32)this->commands.size());
+		//write_varint(sequences, (u32)this->commands.size());
 		for (auto &c : this->commands)
 			c->serialize(sequences);
 	}
