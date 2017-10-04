@@ -8,6 +8,7 @@ CppRedAudioProgram::CppRedAudioProgram(){
 	fill(this->channel_sound_ids, 0);
 	fill(this->channel_note_delay_counters, (byte_t)0);
 	this->load_commands();
+	this->load_resources();
 }
 
 void CppRedAudioProgram::load_commands(){
@@ -26,6 +27,23 @@ void CppRedAudioProgram::load_commands(){
 			command.params[i] = read_varint(buffer, offset, size);
 	}
 	assert(offset == size);
+}
+
+void CppRedAudioProgram::load_resources(){
+	auto buffer = audio_header_data;
+	size_t offset = 0;
+	const size_t size = audio_header_data_size;
+	this->resources.resize(read_varint(buffer, offset, size));
+	assert(this->resources.size() == (size_t)AudioResourceId::Stop - 1);
+	for (auto &resource : this->resources){
+		resource.name = read_string(buffer, offset, size);
+		resource.bank = (byte_t)read_varint(buffer, offset, size);
+		resource.channel_count = (byte_t)read_varint(buffer, offset, size);
+		for (byte_t i = 0; i < resource.channel_count; i++){
+			resource.channels[i].entry_point = read_varint(buffer, offset, size);
+			resource.channels[i].channel = read_varint(buffer, offset, size);
+		}
+	}
 }
 
 void CppRedAudioProgram::update(double now, AbstractAudioRenderer &renderer){

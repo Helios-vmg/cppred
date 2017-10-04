@@ -83,3 +83,16 @@ std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size){
 	}while (!terminate);
 	return ret;
 }
+
+std::string read_string(const byte_t *buffer, size_t &offset, size_t size){
+	std::string ret;
+	while (true){
+		if (offset >= size)
+			throw std::runtime_error("read_string(): Invalid read.");
+		auto byte = buffer[offset++];
+		if (!byte)
+			break;
+		ret.push_back((char)byte);
+	}
+	return ret;
+}

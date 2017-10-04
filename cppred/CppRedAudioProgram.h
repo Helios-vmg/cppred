@@ -105,14 +105,27 @@ DEFINE_AC_STRUCT0(Else);
 DEFINE_AC_STRUCT0(EndIf);
 DEFINE_AC_STRUCT0(End);
 
+struct AudioResource{
+	struct Channel{
+		std::uint32_t channel;
+		std::uint32_t entry_point;
+	};
+	std::string name;
+	Channel channels[8];
+	byte_t channel_count;
+	byte_t bank;
+};
+
 class CppRedAudioProgram : public AudioProgram{
 	std::vector<AudioCommand> commands;
+	std::vector<AudioResource> resources;
 	int channel_sound_ids[8];
 	byte_t mute_audio_and_pause_music = 0;
 	byte_t channel_note_delay_counters[8];
 
 	void apply_effects(int channel, double now, AbstractAudioRenderer &renderer);
 	void load_commands();
+	void load_resources();
 public:
 	CppRedAudioProgram();
 	void update(double now, AbstractAudioRenderer &renderer);
