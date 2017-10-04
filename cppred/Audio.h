@@ -119,6 +119,6 @@ public:
 	AudioRenderer(Engine &);
 	~AudioRenderer();
 	void start_audio_processing(AudioProgram &);
-	void set_nr51(byte_t){}
-	void set_nr30(byte_t){}
+	void set_nr51(byte_t);
+	void set_nr30(byte_t);
 };

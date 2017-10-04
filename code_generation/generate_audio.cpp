@@ -401,7 +401,10 @@ public:
 		this->place_sequences();
 	}
 	void serialize_sequences(std::vector<std::uint8_t> &sequences) const{
-		write_varint(sequences, (u32)this->sequences.size());
+		u32 command_count = 0;
+		for (auto &s : this->sequences)
+			command_count += (u32)s.second->get_commands().size();
+		write_varint(sequences, command_count);
 		for (auto &s : this->sequences)
 			s.second->serialize(sequences);
 	}

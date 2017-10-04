@@ -13,6 +13,20 @@ bool operator==(const SDL_AudioSpec &a, const SDL_AudioSpec &b){
 		a.samples == b.samples;
 }
 
+basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_audio_type> &src){
+#ifdef USE_FLOAT_AUDIO
+	basic_StereoSample<std::int16_t> ret;
+	ret.left = (std::int16_t)(src.left * int16_max);
+	ret.right = (std::int16_t)(src.right * int16_max);
+	return ret;
+#else
+	basic_StereoSample<std::int16_t> ret;
+	ret.left = (std::int16_t)src.left;
+	ret.right = (std::int16_t)src.right;
+	return ret;
+#endif
+}
+
 AudioRenderer::AudioRenderer(Engine &engine): engine(&engine){
 	this->renderer.reset(new ActualRenderer);
 	this->continue_running = false;
@@ -102,4 +116,12 @@ void AudioRenderer::processor(AudioProgram &program){
 		this->renderer->update(now);
 		this->timer_event.wait();
 	}
+}
+
+void AudioRenderer::set_nr30(byte_t value){
+	this->renderer->set_NR30(value);
+}
+
+void AudioRenderer::set_nr51(byte_t value){
+	this->renderer->set_NR51(value);
 }

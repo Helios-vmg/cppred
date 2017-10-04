@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "CppRedEntryPoint.h"
+#include "CppRedAudioProgram.h"
 #include <stdexcept>
 #include <cassert>
 
@@ -41,6 +42,9 @@ void Engine::run(){
 	this->coroutine.reset(new coroutine_t([this](yielder_t &y){ this->coroutine_entry_point(y); }));
 	auto yielder = this->yielder;
 	this->yielder = nullptr;
+
+	CppRedAudioProgram crap;
+	this->audio->start_audio_processing(crap);
 
 	//Main loop.
 	while (this->handle_events()){

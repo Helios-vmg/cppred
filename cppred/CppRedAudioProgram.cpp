@@ -7,6 +7,7 @@ const byte_t command_parameter_counts[] = { 1, 2, 1, 1, 3, 0, 3, 1, 1, 2, 1, 2, 
 CppRedAudioProgram::CppRedAudioProgram(){
 	fill(this->channel_sound_ids, 0);
 	fill(this->channel_note_delay_counters, (byte_t)0);
+	this->load_commands();
 }
 
 void CppRedAudioProgram::load_commands(){
@@ -24,6 +25,7 @@ void CppRedAudioProgram::load_commands(){
 		for (int i = 0; i < (int)command_parameter_counts[type]; i++)
 			command.params[i] = read_varint(buffer, offset, size);
 	}
+	assert(offset == size);
 }
 
 void CppRedAudioProgram::update(double now, AbstractAudioRenderer &renderer){

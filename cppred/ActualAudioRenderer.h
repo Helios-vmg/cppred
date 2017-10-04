@@ -13,6 +13,7 @@ class AudioRenderer::ActualRenderer{
 	unsigned current_frame_position = 0;
 	std::uint64_t frame_no = 0;
 	std::uint64_t audio_turned_on_at = 0;
+	bool set_audio_turned_on_at_at_next_update = false;
 	std::uint64_t current_clock = 0;
 
 	ClockDivider audio_sample_clock,
@@ -58,4 +59,17 @@ public:
 	void update(double now);
 
 	QueuedPublishingResource<AudioFrame> publishing_frames;
+	void set_NR30(byte_t value){
+		this->wave.set_register0(value);
+	}
+	void set_NR50(byte_t);
+	void set_NR51(byte_t);
+	void set_NR52(byte_t);
+	byte_t get_NR50() const{
+		return this->NR50;
+	}
+	byte_t get_NR51() const{
+		return this->NR51;
+	}
+	byte_t get_NR52() const;
 };

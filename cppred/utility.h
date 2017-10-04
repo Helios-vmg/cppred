@@ -81,6 +81,10 @@ inline char make_apostrophe(char c){
 	return c + 128;
 }
 
+constexpr std::uint32_t bit(std::uint32_t i){
+	return (std::uint32_t)1 << i;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);

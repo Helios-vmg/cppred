@@ -21,6 +21,8 @@ AudioRenderer::ActualRenderer::ActualRenderer():
 
 void AudioRenderer::ActualRenderer::update(double now){
 	this->current_clock = cast_round_u64(now * gb_cpu_frequency);
+	if (this->set_audio_turned_on_at_at_next_update)
+		this->audio_turned_on_at = current_clock;
 	auto t = this->current_clock - this->audio_turned_on_at;
 
 	this->noise.update_state_before_render(t);
@@ -186,4 +188,46 @@ void AudioRenderer::ActualRenderer::volume_event(){
 
 void AudioRenderer::ActualRenderer::sweep_event(){
 	this->square1.sweep_event();
+}
+
+void AudioRenderer::ActualRenderer::set_NR50(byte_t value){
+	this->NR50 = value;
+
+	this->left_volume = (value >> 4) & 0x07;
+	this->right_volume = value & 0x07;
+}
+
+void AudioRenderer::ActualRenderer::set_NR51(byte_t value){
+	this->NR51 = value;
+
+	for (int channel = 0; channel < 4; channel++){
+		auto &pan = this->stereo_panning[channel];
+		pan.right = !!(value & bit(channel));
+		pan.left = !!(value & bit(channel + 4));
+		pan.either = pan.right | pan.left;
+	}
+}
+
+void AudioRenderer::ActualRenderer::set_NR52(byte_t value){
+	auto mt = this->master_toggle;
+	this->master_toggle = !!(value & bit(7));
+	if (this->master_toggle & !mt){
+		this->set_audio_turned_on_at_at_next_update = true;
+		this->frame_sequencer_clock.reset();
+		this->audio_sample_clock.reset();
+		this->internal_sample_counter = 0;
+		this->speed_counter_a = 0;
+		this->speed_counter_b = 0;
+		this->last_sample *= 0;
+	}
+}
+
+byte_t AudioRenderer::ActualRenderer::get_NR52() const{
+	auto ret = (byte_t)this->master_toggle << 7;
+	ret |= 0x70;
+	ret |= (byte_t)this->square1.length_counter_has_not_finished() << 0;
+	ret |= (byte_t)this->square2.length_counter_has_not_finished() << 1;
+	ret |= bit(2);
+	ret |= (byte_t)this->noise.length_counter_has_not_finished() << 3;
+	return ret;
 }
