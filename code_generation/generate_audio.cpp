@@ -1,4 +1,5 @@
 #include "code_generators.h"
+#include "../FreeImage/Source/ZLib/zlib.h"
 #include <iostream>
 #include <memory>
 #include <set>
@@ -164,7 +165,7 @@ public:
 	const std::string &get_referenced_sequence() const{
 		return this->referenced_sequence;
 	}
-	void serialize(std::vector<std::uint8_t> &headers){
+	void serialize(std::vector<std::uint8_t> &headers) const{
 		write_varint(headers, this->dst);
 		write_varint(headers, this->channel_no);
 	}
@@ -197,11 +198,15 @@ public:
 	std::vector<AudioChannel> &get_channels(){
 		return this->channels;
 	}
-	void serialize(std::vector<std::uint8_t> &headers){
+	void serialize(std::vector<std::uint8_t> &headers) const{
+		write_ascii_string(headers, this->name);
 		write_varint(headers, this->bank);
 		write_varint(headers, this->channels.size());
 		for (auto &c : this->channels)
 			c.serialize(headers);
+	}
+	const std::string &get_name() const{
+		return this->name;
 	}
 };
 
@@ -268,7 +273,7 @@ static std::vector<AudioHeader> parse_headers(const std::vector<std::string> &in
 			std::stringstream stream(s.substr(1));
 			std::string name;
 			u32 bank;
-			stream >> name >> name;
+			stream >> name >> bank;
 			ret.emplace_back(name, bank);
 			current_header = &ret.back();
 			continue;
@@ -395,17 +400,57 @@ public:
 		this->remove_unreachable_sequences(log_file);
 		this->place_sequences();
 	}
-	void serialize_sequences(std::vector<std::uint8_t> &sequences){
+	void serialize_sequences(std::vector<std::uint8_t> &sequences) const{
 		write_varint(sequences, (u32)this->sequences.size());
 		for (auto &s : this->sequences)
 			s.second->serialize(sequences);
 	}
-	void serialize_headers(std::vector<std::uint8_t> &headers){
+	void serialize_headers(std::vector<std::uint8_t> &headers) const{
 		write_varint(headers, (u32)this->headers.size());
 		for (auto &s : this->headers)
 			s.serialize(headers);
 	}
+
+	const std::vector<AudioHeader> &get_headers() const{
+		return this->headers;
+	}
 };
+
+static void write_header(const char *path, const std::vector<AudioHeader> &headers){
+	std::ofstream header(path);
+	header << "#pragma once\n"
+		<< generated_file_warning <<
+		"\n"
+		"extern const byte_t audio_sequence_data[];\n"
+		"extern const size_t audio_sequence_data_size;\n"
+		"extern const byte_t audio_header_data[];\n"
+		"extern const size_t audio_header_data_size;\n"
+		"enum class AudioResourceId{\n"
+		"    None = 0,\n";
+	size_t i = 1;
+	for (auto &h : headers)
+		header << "    " << h.get_name() << " = " << i++ << ",\n";
+	header << "    Stop = " << i++ << ",\n"
+		"};\n";
+}
+
+static void write_source(const char *path, const AudioData &data){
+	std::vector<std::uint8_t> sequences, headers;
+	data.serialize_sequences(sequences);
+	data.serialize_headers(headers);
+
+	std::ofstream source(path);
+	source << generated_file_warning <<
+		"\n"
+		"const byte_t audio_sequence_data[] = ";
+	write_buffer_to_stream(source, sequences);
+	source << std::dec << ";\n"
+		"const size_t audio_sequence_data_size = " << sequences.size() << ";\n"
+		"const byte_t audio_header_data[] = ";
+	write_buffer_to_stream(source, headers);
+	source << std::dec << ";\n"
+		"const size_t audio_header_data_size = " << headers.size() << ";\n";
+}
 
 static void generate_audio_internal(known_hashes_t &known_hashes){
 	auto current_hash = hash_files(input_files, date_string);
@@ -417,9 +462,9 @@ static void generate_audio_internal(known_hashes_t &known_hashes){
 
 	std::ofstream log_file("output/audio_generation.log");
 	AudioData data(log_file);
-	std::vector<std::uint8_t> sequences, headers;
-	data.serialize_sequences(sequences);
-	data.serialize_headers(headers);
+	
+	write_header("output/audio.h", data.get_headers());
+	write_source("output/audio.inl", data);
 
 	known_hashes[hash_key] = current_hash;
 }

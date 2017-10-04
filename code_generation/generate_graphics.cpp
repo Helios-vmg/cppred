@@ -513,7 +513,7 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 			source << "const GraphicsAsset " << g.name << " = { " << g.first_tile << ", " << g.w << ", " << g.h << " };\n";
 
 		source << "const byte_t packed_image_data[] = ";
-		write_buffer_to_stream(source, &bit_packed[0], bit_packed.size());
+		write_buffer_to_stream(source, bit_packed);
 		packed_image_data_size = bit_packed.size();
 		source << std::dec << ";\n"
 			"\n"

@@ -21,8 +21,9 @@ std::string hash_files(const std::vector<std::string> &files, const char *date_s
 //Returns true if the key is found and the hash matches, otherwise returns false.
 bool check_for_known_hash(const known_hashes_t &, const std::string &key, const std::string &value);
 bool is_hex(char c);
-void write_buffer_to_stream(std::ostream &, const void *, size_t);
+void write_buffer_to_stream(std::ostream &, const std::vector<std::uint8_t> &);
 void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t);
+void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &);
 
 template <typename T>
 void write_collection_to_stream(std::ostream &stream, const T &begin, const T &end){
