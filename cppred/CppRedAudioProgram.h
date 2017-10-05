@@ -61,6 +61,10 @@ class CppRedAudioProgram : public AudioProgram{
 	int music_wave_instrument = 0;
 	int sfx_wave_instrument = 0;
 	std::uint32_t stereo_panning = 0;
+	std::uint32_t music_tempo = 0;
+	std::uint32_t sfx_tempo = 0;
+	std::uint32_t music_note_delay_counter_fractional_part = 0;
+	std::uint32_t sfx_note_delay_counter_fractional_part = 0;
 	class Channel{
 		std::vector<int> call_stack;
 		CppRedAudioProgram *program;
@@ -80,6 +84,9 @@ class CppRedAudioProgram : public AudioProgram{
 		std::uint32_t loop_counter = 1;
 		int volume = 0;
 		int fade = 0;
+		int octave = 0;
+		int duty = 0;
+		int duty_cycle = 0;
 		bool do_rotate_duty = false;
 		bool do_execute_music = false;
 		bool do_noise_or_sfx = false;

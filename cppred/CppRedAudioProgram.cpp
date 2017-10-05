@@ -284,10 +284,37 @@ bool CppRedAudioProgram::Channel::continue_execution(AbstractAudioRenderer &rend
 
 #define DEFINE_COMMAND_FUNCTION(x) bool CppRedAudioProgram::Channel::command_##x(const AudioCommand &command_, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel)
 
-//DEFINE_COMMAND_FUNCTION(Tempo)
-//DEFINE_COMMAND_FUNCTION(Volume)
-//DEFINE_COMMAND_FUNCTION(Duty)
-//DEFINE_COMMAND_FUNCTION(DutyCycle)
+DEFINE_COMMAND_FUNCTION(Tempo){
+	TempoAudioCommand command(command_);
+	if (this->channel_no < 4){
+		this->program->music_tempo = command.tempo;
+		this->program->music_note_delay_counter_fractional_part = 0;
+	}else{
+		this->program->sfx_tempo = command.tempo;
+		this->program->sfx_note_delay_counter_fractional_part = 0;
+	}
+	return true;
+}
+
+DEFINE_COMMAND_FUNCTION(Volume){
+	VolumeAudioCommand command(command_);
+	renderer.set_NR50((byte_t)((command.vol1 & 0x0F) | ((command.vol2 & 0x0F) << 4)));
+	return true;
+}
+
+DEFINE_COMMAND_FUNCTION(Duty){
+	DutyAudioCommand command(command_);
+	this->duty = command.duty;
+	return true;
+}
+
+DEFINE_COMMAND_FUNCTION(DutyCycle){
+	DutyCycleAudioCommand command(command_);
+	this->duty_cycle = command.duty;
+	this->duty = command.duty & 0xC0;
+	this->do_rotate_duty = true;
+	return true;
+}
 
 DEFINE_COMMAND_FUNCTION(Vibrato){
 	VibratoAudioCommand command(command_);
@@ -325,7 +352,13 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 }
 
 //DEFINE_COMMAND_FUNCTION(Rest)
-//DEFINE_COMMAND_FUNCTION(Octave)
+
+DEFINE_COMMAND_FUNCTION(Octave){
+	OctaveAudioCommand command(command_);
+	this->octave = command.octave;
+	return true;
+}
+
 //DEFINE_COMMAND_FUNCTION(Note)
 //DEFINE_COMMAND_FUNCTION(DSpeed)
 //DEFINE_COMMAND_FUNCTION(Snare)
@@ -333,7 +366,12 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 //DEFINE_COMMAND_FUNCTION(UnknownSfx10)
 //DEFINE_COMMAND_FUNCTION(UnknownSfx20)
 //DEFINE_COMMAND_FUNCTION(UnknownNoise20)
-//DEFINE_COMMAND_FUNCTION(ExecuteMusic)
+
+DEFINE_COMMAND_FUNCTION(ExecuteMusic){
+	this->do_execute_music = true;
+	return true;
+}
+
 //DEFINE_COMMAND_FUNCTION(PitchBend)
 //DEFINE_COMMAND_FUNCTION(Triangle)
 

@@ -107,13 +107,33 @@ public:
 
 DEFINE_SEQUENCE_CLASS(Tempo, 1, 0);
 DEFINE_SEQUENCE_CLASS(Volume, 2, 1);
-DEFINE_SEQUENCE_CLASS(Duty, 1, 2);
+//DEFINE_SEQUENCE_CLASS(Duty, 1, 2);
+class DutyCommand : public AudioCommand{
+public:
+	DutyCommand(std::istream &stream): AudioCommand(stream, 1){
+		this->params[0] <<= 6;
+		this->params[0] &= 0xC0;
+	}
+	u32 command_id() const override{ return 3; }
+};
 DEFINE_SEQUENCE_CLASS(DutyCycle, 1, 3);
 DEFINE_SEQUENCE_CLASS(Vibrato, 3, 4);
 DEFINE_SEQUENCE_CLASS(TogglePerfectPitch, 0, 5);
 DEFINE_SEQUENCE_CLASS(NoteType, 3, 6);
 DEFINE_SEQUENCE_CLASS(Rest, 1, 7);
-DEFINE_SEQUENCE_CLASS(Octave, 1, 8);
+//DEFINE_SEQUENCE_CLASS(Octave, 1, 8);
+class OctaveCommand : public AudioCommand{
+public:
+	OctaveCommand(std::istream &stream): AudioCommand(stream, 1){
+		if (this->params[0] < 1 || this->params[0] > 8){
+			std::stringstream stream;
+			stream << "Invalid octave parameter: " << this->params[0];
+			throw std::runtime_error(stream.str());
+		}
+		this->params[0] = 8 - this->params[0];
+	}
+	u32 command_id() const override{ return 8; }
+};
 DEFINE_SEQUENCE_CLASS(Note, 2, 9);
 DEFINE_SEQUENCE_CLASS(DSpeed, 1, 10);
 DEFINE_SEQUENCE_CLASS(Snare, 2, 11);
