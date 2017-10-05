@@ -114,14 +114,16 @@ void AudioRenderer::processor(AudioProgram &program){
 		auto now = this->engine->get_clock();
 		program.update(now, *this);
 		this->renderer->update(now);
+		//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
+		//actual wait can last up to a few ms.
 		this->timer_event.wait();
 	}
 }
 
-void AudioRenderer::set_nr30(byte_t value){
+void AudioRenderer::set_NR30(byte_t value){
 	this->renderer->set_NR30(value);
 }
 
-void AudioRenderer::set_nr51(byte_t value){
+void AudioRenderer::set_NR51(byte_t value){
 	this->renderer->set_NR51(value);
 }

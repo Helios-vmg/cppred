@@ -3,10 +3,6 @@
 #include "Renderer.h"
 #include <iostream>
 
-#ifdef min
-#undef min
-#endif
-
 struct FadePaletteData{
 	Palette background_palette;
 	Palette obp0_palette;

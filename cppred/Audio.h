@@ -89,8 +89,10 @@ struct AudioFrame{
 class AbstractAudioRenderer{
 public:
 	virtual ~AbstractAudioRenderer(){}
-	virtual void set_nr51(byte_t) = 0;
-	virtual void set_nr30(byte_t) = 0;
+	virtual void set_NR30(byte_t) = 0;
+	virtual void set_NR50(byte_t) = 0;
+	virtual void set_NR51(byte_t) = 0;
+	virtual byte_t get_NR51() = 0;
 };
 
 class AudioProgram{
@@ -119,6 +121,6 @@ public:
 	AudioRenderer(Engine &);
 	~AudioRenderer();
 	void start_audio_processing(AudioProgram &);
-	void set_nr51(byte_t);
-	void set_nr30(byte_t);
+	void set_NR30(byte_t) override;
+	void set_NR51(byte_t) override;
 };

@@ -10,12 +10,6 @@
 
 //#define MEASURE_RENDERING_TIMES
 #define ALWAYS_RENDER
-#ifdef max
-#undef max
-#endif
-#ifdef min
-#undef min
-#endif
 
 Renderer::Renderer(Engine &engine, SDL_Window *window): engine(&engine){
 	this->initialize_sdl(window);

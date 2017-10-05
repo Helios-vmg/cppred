@@ -8,10 +8,6 @@
 #include <unordered_map>
 #include <queue>
 
-#ifdef max
-#undef max
-#endif
-
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
 	std::unordered_map<std::string, int *> number_variables;

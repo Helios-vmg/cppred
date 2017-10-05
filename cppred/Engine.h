@@ -9,6 +9,13 @@
 #include <thread>
 #include <memory>
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
 class XorShift128;
 class Renderer;
 
