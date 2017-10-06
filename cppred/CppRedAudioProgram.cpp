@@ -146,6 +146,13 @@ const std::set<AudioResourceId> CppRedAudioProgram::Channel::pokemon_cries = {
 	AudioResourceId::SFX_Cry25,
 };
 
+static const byte_t disable_channel_masks[] = {
+	BITMAP(11101110),
+	BITMAP(11011101),
+	BITMAP(10111011),
+	BITMAP(01110111),
+};
+
 CppRedAudioProgram::CppRedAudioProgram(){
 	this->load_commands();
 	this->load_resources();
@@ -351,7 +358,20 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 	return true;
 }
 
-//DEFINE_COMMAND_FUNCTION(Rest)
+DEFINE_COMMAND_FUNCTION(Rest){
+	RestAudioCommand command(command_);
+	if (this->channel_no < 4 && this->program->channels[4])
+		return true;
+	if (this->channel_no == 2 || this->channel_no == 6){
+		auto r = renderer.get_NR51();
+		r &= disable_channel_masks[this->channel_no % 4];
+		renderer.set_NR51(r);
+	}else{
+		this->program->get_register_pointer(RegisterId::VolumeEnvelope)(renderer, 0x08);
+		this->program->get_register_pointer(RegisterId::VolumeEnvelopePlus1)(renderer, 0x80);
+	}
+	return true;
+}
 
 DEFINE_COMMAND_FUNCTION(Octave){
 	OctaveAudioCommand command(command_);
@@ -466,14 +486,7 @@ DEFINE_COMMAND_FUNCTION(End){
 }
 
 bool CppRedAudioProgram::Channel::disable_channel_output(AbstractAudioRenderer &renderer){
-	static const byte_t masks[] = {
-		BITMAP(11101110),
-		BITMAP(11011101),
-		BITMAP(10111011),
-		BITMAP(01110111),
-	};
-
-	renderer.set_NR51(renderer.get_NR51() & masks[this->channel_no % 4]);
+	renderer.set_NR51(renderer.get_NR51() & disable_channel_masks[this->channel_no % 4]);
 	return this->disable_channel_output_sub(renderer);
 }
 

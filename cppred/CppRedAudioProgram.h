@@ -152,7 +152,9 @@ class CppRedAudioProgram : public AudioProgram{
 	void load_commands();
 	void load_resources();
 	enum class RegisterId{
+		VolumeEnvelope = 2,
 		FrequencyLow = 3,
+		VolumeEnvelopePlus1 = 4,
 	};
 	typedef byte_t (*register_function)(AbstractAudioRenderer &, byte_t);
 	register_function get_register_pointer(RegisterId);
