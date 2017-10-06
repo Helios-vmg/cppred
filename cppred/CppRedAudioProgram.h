@@ -87,6 +87,8 @@ class CppRedAudioProgram : public AudioProgram{
 		int octave = 0;
 		int duty = 0;
 		int duty_cycle = 0;
+		int pitch_bend_length = 0;
+		int pitch_bend_target_frequency = 0;
 		bool do_rotate_duty = false;
 		bool do_execute_music = false;
 		bool do_noise_or_sfx = false;

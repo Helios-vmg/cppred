@@ -14,6 +14,27 @@ static const char * const hash_key = "generate_audio";
 static const char * const date_string = __DATE__ __TIME__;
 static const u32 invalid_u32 = std::numeric_limits<u32>::max();
 
+std::uint32_t calculate_frequency(std::uint32_t note, std::uint32_t octave){
+	const std::uint32_t pitches[] = {
+		63532,
+		63645,
+		63751,
+		63851,
+		63946,
+		64035,
+		64119,
+		64199,
+		64274,
+		64344,
+		64411,
+		64474,
+	};
+	auto pitch = pitches[note];
+	while (octave++ < 7)
+		pitch = ((pitch << 15) & 0x8000) | ((pitch >> 1) & 0x7FFF);
+	return (pitch + 0x0800) & 0xFFFF;
+}
+
 class AudioCommand{
 protected:
 	u32 params[4];
@@ -142,7 +163,15 @@ DEFINE_SEQUENCE_CLASS(UnknownSfx10, 1, 13);
 DEFINE_SEQUENCE_CLASS(UnknownSfx20, 4, 14);
 DEFINE_SEQUENCE_CLASS(UnknownNoise20, 3, 15);
 DEFINE_SEQUENCE_CLASS(ExecuteMusic, 0, 16);
-DEFINE_SEQUENCE_CLASS(PitchBend, 2, 17);
+//DEFINE_SEQUENCE_CLASS(PitchBend, 2, 17);
+class PitchBendCommand : public AudioCommand{
+public:
+	PitchBendCommand(std::istream &stream): AudioCommand(stream, 2){
+		this->params[1] = calculate_frequency(this->params[1], this->params[2]);
+		this->parameter_count = 2;
+	}
+	u32 command_id() const override{ return 17; }
+};
 DEFINE_SEQUENCE_CLASS(Triangle, 2, 18);
 DEFINE_SEQUENCE_CLASS(StereoPanning, 1, 19);
 DEFINE_SEQUENCE_CLASS(Cymbal, 2, 20);

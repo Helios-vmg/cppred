@@ -372,7 +372,14 @@ DEFINE_COMMAND_FUNCTION(ExecuteMusic){
 	return true;
 }
 
-//DEFINE_COMMAND_FUNCTION(PitchBend)
+DEFINE_COMMAND_FUNCTION(PitchBend){
+	PitchBendAudioCommand command(command_);
+	this->pitch_bend_length = command.length;
+	this->pitch_bend_target_frequency = command.frequency;
+	this->do_pitch_bend = true;
+	return true;
+}
+
 //DEFINE_COMMAND_FUNCTION(Triangle)
 
 DEFINE_COMMAND_FUNCTION(StereoPanning){
