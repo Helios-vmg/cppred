@@ -1,5 +1,6 @@
 #include "code_generators.h"
 #include "../FreeImage/Source/ZLib/zlib.h"
+#include "../common/calculate_frequency.h"
 #include <iostream>
 #include <memory>
 #include <set>
@@ -13,27 +14,6 @@ static const std::vector<std::string> input_files = {
 static const char * const hash_key = "generate_audio";
 static const char * const date_string = __DATE__ __TIME__;
 static const u32 invalid_u32 = std::numeric_limits<u32>::max();
-
-std::uint32_t calculate_frequency(std::uint32_t note, std::uint32_t octave){
-	const std::uint32_t pitches[] = {
-		63532,
-		63645,
-		63751,
-		63851,
-		63946,
-		64035,
-		64119,
-		64199,
-		64274,
-		64344,
-		64411,
-		64474,
-	};
-	auto pitch = pitches[note];
-	while (octave++ < 7)
-		pitch = ((pitch << 15) & 0x8000) | ((pitch >> 1) & 0x7FFF);
-	return (pitch + 0x0800) & 0xFFFF;
-}
 
 class AudioCommand{
 protected:

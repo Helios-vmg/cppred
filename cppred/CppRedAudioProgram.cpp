@@ -1,6 +1,7 @@
 #include "CppRedAudioProgram.h"
 #include "CppRedData.h"
 #include "utility.h"
+#include "../common/calculate_frequency.h"
 #include <set>
 
 const byte_t command_parameter_counts[] = { 1, 2, 1, 1, 3, 0, 3, 1, 1, 2, 1, 2, 2, 1, 4, 3, 0, 2, 2, 1, 2, 2, 1, 1, 0, 0, 0, 0, };
@@ -90,7 +91,7 @@ DEFINE_AC_STRUCT1(DSpeed, dspeed);
 DEFINE_AC_STRUCT2(Snare, type, length);
 DEFINE_AC_STRUCT2(MutedSnare, type, length);
 DEFINE_AC_STRUCT1(UnknownSfx10, nr10);
-DEFINE_AC_STRUCT4(UnknownSfx20, param1, param2, param3, param4);
+DEFINE_AC_STRUCT4(UnknownSfx20, length, param2, param3, param4);
 DEFINE_AC_STRUCT3(UnknownNoise20, param1, param2, param3);
 DEFINE_AC_STRUCT0(ExecuteMusic);
 DEFINE_AC_STRUCT2(PitchBend, length, frequency);
@@ -293,12 +294,18 @@ bool CppRedAudioProgram::Channel::continue_execution(AbstractAudioRenderer &rend
 
 DEFINE_COMMAND_FUNCTION(Tempo){
 	TempoAudioCommand command(command_);
+	int offset;
 	if (this->channel_no < 4){
 		this->program->music_tempo = command.tempo;
-		this->program->music_note_delay_counter_fractional_part = 0;
+		offset = 0;
 	}else{
 		this->program->sfx_tempo = command.tempo;
-		this->program->sfx_note_delay_counter_fractional_part = 0;
+		offset = 4;
+	}
+	for (int i = 0; i < 4; i++){
+		auto &channel = this->program->channels[i + offset];
+		if (channel)
+			channel->note_delay_counter_fractional_part = 0;
 	}
 	return true;
 }
@@ -360,12 +367,11 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 
 DEFINE_COMMAND_FUNCTION(Rest){
 	RestAudioCommand command(command_);
+	this->set_delay_counters(renderer, command.length);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return true;
 	if (this->channel_no == 2 || this->channel_no == 6){
-		auto r = renderer.get_NR51();
-		r &= disable_channel_masks[this->channel_no % 4];
-		renderer.set_NR51(r);
+		this->disable_this_hardware_channel(renderer);
 	}else{
 		this->program->get_register_pointer(RegisterId::VolumeEnvelope)(renderer, 0x08);
 		this->program->get_register_pointer(RegisterId::VolumeEnvelopePlus1)(renderer, 0x80);
@@ -385,14 +391,21 @@ DEFINE_COMMAND_FUNCTION(Octave){
 //DEFINE_COMMAND_FUNCTION(MutedSnare)
 
 DEFINE_COMMAND_FUNCTION(UnknownSfx10){
-	UnknownSfx10AudioCommand command(command_);
 	if (this->channel_no < 4 || this->do_execute_music)
 		return true;
+	UnknownSfx10AudioCommand command(command_);
 	renderer.set_NR10((byte_t)command.nr10);
 	return true;
 }
 
-//DEFINE_COMMAND_FUNCTION(UnknownSfx20)
+DEFINE_COMMAND_FUNCTION(UnknownSfx20){
+	if (this->channel_no < 3 || this->do_execute_music)
+		return true;
+	UnknownSfx20AudioCommand command(command_);
+	this->note_length(renderer, command.length, 2);
+	/**/
+}
+
 //DEFINE_COMMAND_FUNCTION(UnknownNoise20)
 
 DEFINE_COMMAND_FUNCTION(ExecuteMusic){
@@ -494,7 +507,7 @@ DEFINE_COMMAND_FUNCTION(End){
 }
 
 bool CppRedAudioProgram::Channel::disable_channel_output(AbstractAudioRenderer &renderer){
-	renderer.set_NR51(renderer.get_NR51() & disable_channel_masks[this->channel_no % 4]);
+	this->disable_this_hardware_channel(renderer);
 	return this->disable_channel_output_sub(renderer);
 }
 
@@ -513,4 +526,70 @@ bool CppRedAudioProgram::Channel::go_back_one_command_if_cry(AbstractAudioRender
 		return false;
 	this->program_counter--;
 	return true;
+}
+
+void CppRedAudioProgram::Channel::note_length(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter){
+	this->set_delay_counters(renderer, length_parameter);
+	if (this->do_execute_music | this->do_noise_or_sfx)
+		this->note_pitch(renderer, length_parameter, note_parameter);
+}
+
+void CppRedAudioProgram::Channel::set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter){
+	auto length = this->note_speed * length_parameter;
+	std::uint32_t tempo;
+	if (this->channel_no < 4)
+		tempo = this->program->music_tempo;
+	else if (this->channel_no != 7)
+		tempo = this->program->sfx_tempo;
+	else
+		tempo = 0x0100;
+	auto i = tempo * length + this->note_delay_counter_fractional_part;
+	this->note_delay_counter_fractional_part = i & 0xFF;
+	this->note_delay_counter = (i >> 8) & 0xFF;
+}
+
+void CppRedAudioProgram::Channel::disable_this_hardware_channel(AbstractAudioRenderer &renderer){
+	auto r = renderer.get_NR51();
+	r &= disable_channel_masks[this->channel_no % 4];
+	renderer.set_NR51(r);
+}
+
+void CppRedAudioProgram::Channel::note_pitch(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter){
+	int frequency = calculate_frequency(note_parameter, this->octave);
+	if (this->do_pitch_bend)
+		this->init_pitch_bend_variables(frequency);
+	if (this->channel_no < 4 && this->program->channels[4])
+		return;
+	this->program->get_register_pointer(RegisterId::VolumeEnvelope)(renderer, this->volume);
+	this->apply_duty_and_sound_length(renderer);
+	this->enable_channel_output(renderer);
+	if (this->perfect_pitch)
+		frequency++;
+	this->channel_frequency = frequency;
+	this->apply_wave_pattern_and_frequency(renderer);
+}
+
+void CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
+	this->pitch_bend_current_frequency = frequency;
+	this->pitch_bend_length = this->note_delay_counter - this->pitch_bend_length;
+	if (this->pitch_bend_length < 0)
+		this->pitch_bend_length = 1;
+	int delta = this->pitch_bend_target_frequency - this->pitch_bend_current_frequency;
+	if (delta >= 0)
+		this->pitch_bend_decreasing = false;
+	else{
+		this->pitch_bend_decreasing = true;
+		delta = -delta;
+	}
+	int quotient = 0;
+	int remainder = delta;
+	assert(this->pitch_bend_length >= 0 && this->pitch_bend_length < 0x100);
+	do{
+		quotient++;
+		remainder -= this->pitch_bend_length;
+	}while (remainder >= 0x100);
+	this->pitch_bend_frequency_steps = quotient;
+	this->pitch_bend_current_frequency_fractional_part =
+		this->pitch_bend_frequency_steps_fractional_part =
+			(remainder + this->pitch_bend_length) & 0xFF;
 }

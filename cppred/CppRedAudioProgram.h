@@ -63,14 +63,13 @@ class CppRedAudioProgram : public AudioProgram{
 	std::uint32_t stereo_panning = 0;
 	std::uint32_t music_tempo = 0;
 	std::uint32_t sfx_tempo = 0;
-	std::uint32_t music_note_delay_counter_fractional_part = 0;
-	std::uint32_t sfx_note_delay_counter_fractional_part = 0;
 	class Channel{
 		std::vector<int> call_stack;
 		CppRedAudioProgram *program;
 		int channel_no = std::numeric_limits<int>::min();
 		AudioResourceId sound_id = AudioResourceId::None;
-		int note_delay_counter = 0;
+		byte_t note_delay_counter = 0;
+		byte_t note_delay_counter_fractional_part = 0;
 		int vibrato_delay_counter = 0;
 		int vibrato_extent = 0;
 		int vibrato_counter = 0;
@@ -89,6 +88,10 @@ class CppRedAudioProgram : public AudioProgram{
 		int duty_cycle = 0;
 		int pitch_bend_length = 0;
 		int pitch_bend_target_frequency = 0;
+		int pitch_bend_current_frequency = 0;
+		int pitch_bend_current_frequency_fractional_part = 0;
+		int pitch_bend_frequency_steps = 0;
+		int pitch_bend_frequency_steps_fractional_part = 0;
 		bool do_rotate_duty = false;
 		bool do_execute_music = false;
 		bool do_noise_or_sfx = false;
@@ -100,13 +103,21 @@ class CppRedAudioProgram : public AudioProgram{
 
 		bool apply_effects(AbstractAudioRenderer &renderer);
 		bool play_next_note(AbstractAudioRenderer &renderer);
+		void enable_channel_output(AbstractAudioRenderer &renderer);
 		void apply_duty_cycle(AbstractAudioRenderer &renderer);
 		void apply_pitch_bend(AbstractAudioRenderer &renderer);
+		void apply_duty_and_sound_length(AbstractAudioRenderer &renderer);
+		void apply_wave_pattern_and_frequency(AbstractAudioRenderer &renderer);
 		void apply_vibrato(AbstractAudioRenderer &renderer);
 		bool continue_execution(AbstractAudioRenderer &renderer);
 		bool disable_channel_output(AbstractAudioRenderer &renderer);
 		bool disable_channel_output_sub(AbstractAudioRenderer &renderer);
 		bool go_back_one_command_if_cry(AbstractAudioRenderer &renderer);
+		void note_length(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter);
+		void note_pitch(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter);
+		void disable_this_hardware_channel(AbstractAudioRenderer &renderer);
+		void set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter);
+		void init_pitch_bend_variables(int frequency);
 
 		typedef bool (Channel::*command_function)(const AudioCommand &, AbstractAudioRenderer &, bool &);
 #define DECLARE_COMMAND_FUNCTION(x) bool command_##x(const AudioCommand &, AbstractAudioRenderer &renderer, bool &)
