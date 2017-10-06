@@ -276,11 +276,25 @@ namespace process_audio
 
     class PitchBendCommand : AudioCommand
     {
+        private int _param2;
         public int Param1;
-        public int Param2;
+        public int Param2
+        {
+            set
+            {
+                _param2 = value;
+                Param3 = (_param2 >> 4) & 0x0F;
+                _param2 &= 0x0F;
+            }
+            get
+            {
+                return _param2;
+            }
+        }
+        public int Param3;
         public override void Write(TextWriter tw)
         {
-            tw.WriteLine($"pitch_bend {Param1} {Param2}");
+            tw.WriteLine($"pitch_bend {Param1} {Param2} {Param3}");
         }
         public override int TotalSize => 1 + EstimateSize(Param1) + EstimateSize(Param2);
     }

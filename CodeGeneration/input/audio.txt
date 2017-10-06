@@ -4907,16 +4907,16 @@
 	toggle_perfect_pitch
 	note_type 12 8 1
 	rest 2
-	pitch_bend 0 75
+	pitch_bend 0 11 4
 	note 11 2
-	pitch_bend 0 84
+	pitch_bend 0 4 5
 	note 11 2
-	pitch_bend 0 68
+	pitch_bend 0 4 4
 	note 4 2
 	rest 4
-	pitch_bend 0 59
+	pitch_bend 0 11 3
 	note 4 4
-	pitch_bend 0 75
+	pitch_bend 0 11 4
 	note 11 4
 	end
 
@@ -12091,13 +12091,13 @@
 	duty 2
 	note_type 12 9 2
 	octave 3
-	pitch_bend 0 73
+	pitch_bend 0 9 4
 	note 0 1
-	pitch_bend 0 73
+	pitch_bend 0 9 4
 	note 7 1
-	pitch_bend 0 73
+	pitch_bend 0 9 4
 	note 0 1
-	pitch_bend 0 73
+	pitch_bend 0 9 4
 	note 7 1
 	rest 4
 	duty 3
@@ -22130,14 +22130,14 @@
 	note 9 3
 	call Music_TitleScreen_branch_7e6e5
 	octave 5
-	pitch_bend 0 66
+	pitch_bend 0 2 4
 	note 2 4
 	rest 4
 	octave 6
-	pitch_bend 0 50
+	pitch_bend 0 2 3
 	note 2 4
 	octave 5
-	pitch_bend 0 66
+	pitch_bend 0 2 4
 	note 2 4
 	rest 2
 	note_type 8 1 0
@@ -22147,11 +22147,11 @@
 	note 1 4
 	call Music_TitleScreen_branch_7e6e5
 	octave 6
-	pitch_bend 0 50
+	pitch_bend 0 2 3
 	note 2 4
 	rest 4
 	octave 5
-	pitch_bend 0 66
+	pitch_bend 0 2 4
 	note 2 4
 	rest 6
 	note_type 8 1 0
