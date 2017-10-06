@@ -89,7 +89,7 @@ DEFINE_AC_STRUCT2(Note, pitch, length);
 DEFINE_AC_STRUCT1(DSpeed, dspeed);
 DEFINE_AC_STRUCT2(Snare, type, length);
 DEFINE_AC_STRUCT2(MutedSnare, type, length);
-DEFINE_AC_STRUCT1(UnknownSfx10, param);
+DEFINE_AC_STRUCT1(UnknownSfx10, nr10);
 DEFINE_AC_STRUCT4(UnknownSfx20, param1, param2, param3, param4);
 DEFINE_AC_STRUCT3(UnknownNoise20, param1, param2, param3);
 DEFINE_AC_STRUCT0(ExecuteMusic);
@@ -383,7 +383,15 @@ DEFINE_COMMAND_FUNCTION(Octave){
 //DEFINE_COMMAND_FUNCTION(DSpeed)
 //DEFINE_COMMAND_FUNCTION(Snare)
 //DEFINE_COMMAND_FUNCTION(MutedSnare)
-//DEFINE_COMMAND_FUNCTION(UnknownSfx10)
+
+DEFINE_COMMAND_FUNCTION(UnknownSfx10){
+	UnknownSfx10AudioCommand command(command_);
+	if (this->channel_no < 4 || this->do_execute_music)
+		return true;
+	renderer.set_NR10((byte_t)command.nr10);
+	return true;
+}
+
 //DEFINE_COMMAND_FUNCTION(UnknownSfx20)
 //DEFINE_COMMAND_FUNCTION(UnknownNoise20)
 
