@@ -248,7 +248,7 @@ namespace process_audio
         public int Param4;
         public override void Write(TextWriter tw)
         {
-            tw.WriteLine($"unknown_sfx_20 {Param1} {Param2} {Param3} {Param4}");
+            tw.WriteLine($"unknown_sfx_20 {Param1} {Param2} {Param3 + 256*Param4}");
         }
         public override int TotalSize => 1 + EstimateSize(Param1) + EstimateSize(Param2) + EstimateSize(Param3) + EstimateSize(Param4);
     }
