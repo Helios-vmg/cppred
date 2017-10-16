@@ -198,6 +198,9 @@ public:
 		write_varint(headers, this->dst);
 		write_varint(headers, this->channel_no);
 	}
+	u32 get_channel_no() const{
+		return this->channel_no;
+	}
 };
 
 class AudioHeader{
@@ -446,6 +449,30 @@ public:
 	const std::vector<AudioHeader> &get_headers() const{
 		return this->headers;
 	}
+
+	void verify_sfx_20() const{
+		for (auto &header : this->headers){
+			for (auto &channel : header.get_channels()){
+				auto ch = channel.get_channel_no();
+				auto &sequence = *this->sequences.find(channel.get_referenced_sequence())->second;
+				for (auto &command : sequence.get_commands()){
+					auto cmd = command->command_id();
+					if (cmd == 14 && ch % 4 == 3){
+						std::stringstream stream;
+						stream << "Error: UnknownSfx20 used in channel 7 or 3. Sequence: \"" << sequence.get_name()
+							<< "\", channel: " << channel.get_channel_no() << ", header: \"" << header.get_name() << "\".\n";
+						throw std::runtime_error(stream.str());
+					}
+					if (cmd == 15 && ch % 4 != 3){
+						std::stringstream stream;
+						stream << "Error: UnknownNoise20 used in channel other than 7 or 3. Sequence: \"" << sequence.get_name()
+							<< "\", channel: " << channel.get_channel_no() << ", header: \"" << header.get_name() << "\".\n";
+						throw std::runtime_error(stream.str());
+					}
+				}
+			}
+		}
+	}
 };
 
 static void write_header(const char *path, const std::vector<AudioHeader> &headers){
@@ -494,6 +521,8 @@ static void generate_audio_internal(known_hashes_t &known_hashes){
 
 	std::ofstream log_file("output/audio_generation.log");
 	AudioData data(log_file);
+
+	data.verify_sfx_20();
 	
 	write_header("output/audio.h", data.get_headers());
 	write_source("output/audio.inl", data);
