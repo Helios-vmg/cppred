@@ -34,6 +34,7 @@ class CppRedAudioProgram : public AudioProgram{
 	std::uint32_t music_tempo = 0;
 	std::uint32_t sfx_tempo = 0;
 	int tempo_modifier = 0;
+	bool stop_when_sfx_ends = false;
 	class Channel{
 		std::vector<int> call_stack;
 		CppRedAudioProgram *program;
@@ -85,12 +86,13 @@ class CppRedAudioProgram : public AudioProgram{
 		bool disable_channel_output_sub(AbstractAudioRenderer &renderer);
 		bool go_back_one_command_if_cry(AbstractAudioRenderer &renderer);
 		void note_length(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter);
-		void note_pitch(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter);
+		void note_pitch(AbstractAudioRenderer &renderer, std::uint32_t note_parameter);
 		void disable_this_hardware_channel(AbstractAudioRenderer &renderer);
 		void set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter);
 		void init_pitch_bend_variables(int frequency);
 		void set_sfx_tempo();
 		bool is_cry();
+		void play_sound();
 
 		typedef bool (Channel::*command_function)(const AudioCommand &, AbstractAudioRenderer &, bool &);
 #define DECLARE_COMMAND_FUNCTION(x) bool command_##x(const AudioCommand &, AbstractAudioRenderer &renderer, bool &)
@@ -105,16 +107,13 @@ class CppRedAudioProgram : public AudioProgram{
 		DECLARE_COMMAND_FUNCTION(Octave);
 		DECLARE_COMMAND_FUNCTION(Note);
 		DECLARE_COMMAND_FUNCTION(DSpeed);
-		DECLARE_COMMAND_FUNCTION(Snare);
-		DECLARE_COMMAND_FUNCTION(MutedSnare);
+		DECLARE_COMMAND_FUNCTION(NoiseInstrument);
 		DECLARE_COMMAND_FUNCTION(UnknownSfx10);
 		DECLARE_COMMAND_FUNCTION(UnknownSfx20);
 		DECLARE_COMMAND_FUNCTION(UnknownNoise20);
 		DECLARE_COMMAND_FUNCTION(ExecuteMusic);
 		DECLARE_COMMAND_FUNCTION(PitchBend);
-		DECLARE_COMMAND_FUNCTION(Triangle);
 		DECLARE_COMMAND_FUNCTION(StereoPanning);
-		DECLARE_COMMAND_FUNCTION(Cymbal);
 		DECLARE_COMMAND_FUNCTION(Loop);
 		DECLARE_COMMAND_FUNCTION(Call);
 		DECLARE_COMMAND_FUNCTION(Goto);

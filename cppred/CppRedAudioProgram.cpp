@@ -4,7 +4,7 @@
 #include "../common/calculate_frequency.h"
 #include <set>
 
-const byte_t command_parameter_counts[] = { 1, 2, 1, 1, 3, 0, 3, 1, 1, 2, 1, 2, 2, 1, 4, 3, 0, 2, 2, 1, 2, 2, 1, 1, 0, 0, 0, 0, };
+const byte_t command_parameter_counts[] = { 1, 2, 1, 1, 3, 0, 3, 1, 1, 2, 1, 2, 1, 4, 3, 0, 2, 1, 2, 1, 1, 0, 0, 0, 0, };
 
 #define DECLARE_COMMAND_FUNCTION_IN_ARRAY(x) &CppRedAudioProgram::Channel::command_##x
 
@@ -20,16 +20,13 @@ const CppRedAudioProgram::Channel::command_function CppRedAudioProgram::Channel:
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Octave),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Note),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(DSpeed),
-	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Snare),
-	DECLARE_COMMAND_FUNCTION_IN_ARRAY(MutedSnare),
+	DECLARE_COMMAND_FUNCTION_IN_ARRAY(NoiseInstrument),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(UnknownSfx10),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(UnknownSfx20),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(UnknownNoise20),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(ExecuteMusic),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(PitchBend),
-	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Triangle),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(StereoPanning),
-	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Cymbal),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Loop),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Call),
 	DECLARE_COMMAND_FUNCTION_IN_ARRAY(Goto),
@@ -88,16 +85,13 @@ DEFINE_AC_STRUCT1(Rest, length);
 DEFINE_AC_STRUCT1(Octave, octave);
 DEFINE_AC_STRUCT2(Note, pitch, length);
 DEFINE_AC_STRUCT1(DSpeed, speed);
-DEFINE_AC_STRUCT2(Snare, type, length);
-DEFINE_AC_STRUCT2(MutedSnare, type, length);
+DEFINE_AC_STRUCT2(NoiseInstrument, pitch, length);
 DEFINE_AC_STRUCT1(UnknownSfx10, nr10);
 DEFINE_AC_STRUCT3(UnknownSfx20, length, envelope, frequency);
 DEFINE_AC_STRUCT3(UnknownNoise20, length, envelope, frequency);
 DEFINE_AC_STRUCT0(ExecuteMusic);
 DEFINE_AC_STRUCT2(PitchBend, length, frequency);
-DEFINE_AC_STRUCT2(Triangle, type, length);
 DEFINE_AC_STRUCT1(StereoPanning, value);
-DEFINE_AC_STRUCT2(Cymbal, type, length);
 DEFINE_AC_STRUCT2(Loop, times, dst);
 DEFINE_AC_STRUCT1(Call, dst);
 DEFINE_AC_STRUCT1(Goto, dst);
@@ -167,7 +161,7 @@ CppRedAudioProgram::CppRedAudioProgram(){
 }
 
 void CppRedAudioProgram::load_commands(){
-	static_assert(array_length(command_parameter_counts) == (size_t)AudioCommandType::End + 1, "");
+	static_assert(array_length(command_parameter_counts) == (size_t)AudioCommandType::End + 1, "Error: command_parameter_counts must have as many elements as there are command types!");
 	auto buffer = audio_sequence_data;
 	size_t offset = 0;
 	const size_t size = audio_sequence_data_size;
@@ -403,8 +397,8 @@ DEFINE_COMMAND_FUNCTION(Note){
 	product = this->note_delay_counter_fractional_part + tempo * product;
 	this->note_delay_counter_fractional_part = product % 256;
 	this->note_delay_counter = product / 256;
-	if (this->do_execute_music || this->do_noise_or_sfx)
-		this->note_pitch(renderer, command.length, command.pitch);
+	if (this->do_execute_music | this->do_noise_or_sfx)
+		this->note_pitch(renderer, command.pitch);
 	return true;
 }
 
@@ -414,8 +408,13 @@ DEFINE_COMMAND_FUNCTION(DSpeed){
 	return true;
 }
 
-//DEFINE_COMMAND_FUNCTION(Snare)
-//DEFINE_COMMAND_FUNCTION(MutedSnare)
+DEFINE_COMMAND_FUNCTION(NoiseInstrument){
+	NoiseInstrumentAudioCommand command(command_);
+	if (!this->program->stop_when_sfx_ends)
+		this->play_sound();
+	this->note_length(renderer, command.length, command.pitch);
+	return true;
+}
 
 DEFINE_COMMAND_FUNCTION(UnknownSfx10){
 	if (this->channel_no < 4 || this->do_execute_music)
@@ -459,15 +458,11 @@ DEFINE_COMMAND_FUNCTION(PitchBend){
 	return true;
 }
 
-//DEFINE_COMMAND_FUNCTION(Triangle)
-
 DEFINE_COMMAND_FUNCTION(StereoPanning){
 	StereoPanningAudioCommand command(command_);
 	this->program->stereo_panning = command.value;
 	return true;
 }
-
-//DEFINE_COMMAND_FUNCTION(Cymbal)
 
 DEFINE_COMMAND_FUNCTION(Loop){
 	LoopAudioCommand command(command_);
@@ -569,7 +564,7 @@ bool CppRedAudioProgram::Channel::go_back_one_command_if_cry(AbstractAudioRender
 void CppRedAudioProgram::Channel::note_length(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter){
 	this->set_delay_counters(renderer, length_parameter);
 	if (this->do_execute_music | this->do_noise_or_sfx)
-		this->note_pitch(renderer, length_parameter, note_parameter);
+		this->note_pitch(renderer, note_parameter);
 }
 
 void CppRedAudioProgram::Channel::set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter){
@@ -592,7 +587,7 @@ void CppRedAudioProgram::Channel::disable_this_hardware_channel(AbstractAudioRen
 	renderer.set_NR51(r);
 }
 
-void CppRedAudioProgram::Channel::note_pitch(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter){
+void CppRedAudioProgram::Channel::note_pitch(AbstractAudioRenderer &renderer, std::uint32_t note_parameter){
 	int frequency = calculate_frequency(note_parameter, this->octave);
 	if (this->do_pitch_bend)
 		this->init_pitch_bend_variables(frequency);
