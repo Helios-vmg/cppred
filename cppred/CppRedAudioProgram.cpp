@@ -657,3 +657,34 @@ void CppRedAudioProgram::Channel::set_sfx_tempo(){
 	}
 	this->program->sfx_tempo = tempo;
 }
+
+void CppRedAudioProgram::Channel::apply_duty_cycle(AbstractAudioRenderer &renderer){
+	this->duty_cycle &= 0xFF;
+	this->duty_cycle = (this->duty_cycle << 2) | (this->duty_cycle >> 2);
+	this->duty_cycle &= 0xFF;
+	auto f = this->program->get_register_pointer(RegisterId::DutySoundLength);
+	auto reg = f(renderer, -1);
+	f(renderer, (this->duty_cycle & BITMAP(11000000)) | (reg & BITMAP(00111111)));
+}
+
+void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioRenderer &renderer){
+	bool reached_target = false;
+	auto sum1 = this->pitch_bend_frequency_steps + this->pitch_bend_current_frequency;
+	auto sum2 = this->pitch_bend_frequency_steps_fractional_part + this->pitch_bend_current_frequency_fractional_part;
+	this->pitch_bend_current_frequency_fractional_part = sum2 & 0xFF;
+	auto whole_part = sum1 + sum2 >> 8;
+	
+	if (!this->pitch_bend_decreasing)
+		reached_target = whole_part >= this->pitch_bend_target_frequency;
+	else
+		reached_target = whole_part <= this->pitch_bend_target_frequency;
+
+	if (!reached_target){
+		this->pitch_bend_current_frequency = whole_part;
+		this->program->get_register_pointer(RegisterId::FrequencyLow)(renderer, whole_part & 0xFF);
+		this->program->get_register_pointer(RegisterId::FrequencyHigh)(renderer, (whole_part >> 8) & 0xFF);
+		return;
+	}
+	this->do_pitch_bend = false;
+	this->pitch_bend_decreasing = false;
+}

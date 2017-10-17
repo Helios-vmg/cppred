@@ -140,8 +140,9 @@ class CppRedAudioProgram : public AudioProgram{
 		VolumeEnvelope = 2,
 		FrequencyLow = 3,
 		VolumeEnvelopePlus1 = 4,
+		FrequencyHigh = 5,
 	};
-	typedef byte_t (*register_function)(AbstractAudioRenderer &, byte_t);
+	typedef byte_t (*register_function)(AbstractAudioRenderer &, int);
 	register_function get_register_pointer(RegisterId);
 public:
 	CppRedAudioProgram();
