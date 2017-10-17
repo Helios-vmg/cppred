@@ -1,6 +1,7 @@
 #include "code_generators.h"
 #include "../FreeImage/Source/ZLib/zlib.h"
 #include "../common/calculate_frequency.h"
+#include "../common/AudioCommandType.h"
 #include <iostream>
 #include <memory>
 #include <set>
@@ -91,6 +92,9 @@ public:
 	std::vector<std::unique_ptr<AudioCommand>> &get_commands(){
 		return this->commands;
 	}
+	const std::vector<std::unique_ptr<AudioCommand>> &get_commands() const{
+		return this->commands;
+	}
 	void serialize(std::vector<std::uint8_t> &sequences){
 		//write_varint(sequences, (u32)this->commands.size());
 		for (auto &c : this->commands)
@@ -98,31 +102,30 @@ public:
 	}
 };
 
-#define DEFINE_SEQUENCE_CLASS(name, parameter_count, id)                            \
+#define DEFINE_SEQUENCE_CLASS(name, parameter_count)                                \
 	class name##Command : public AudioCommand{                                      \
 	public:                                                                         \
-		name##Command(std::istream &stream): AudioCommand(stream, parameter_count){ \
-		}                                                                           \
-		u32 command_id() const override{ return id; }                               \
+		name##Command(std::istream &stream): AudioCommand(stream, parameter_count){}\
+		u32 command_id() const override{ return (u32)AudioCommandType::name; }      \
 	}
 
-DEFINE_SEQUENCE_CLASS(Tempo, 1, 0);
-DEFINE_SEQUENCE_CLASS(Volume, 2, 1);
-//DEFINE_SEQUENCE_CLASS(Duty, 1, 2);
+DEFINE_SEQUENCE_CLASS(Tempo, 1);
+DEFINE_SEQUENCE_CLASS(Volume, 2);
+//DEFINE_SEQUENCE_CLASS(Duty, 1);
 class DutyCommand : public AudioCommand{
 public:
 	DutyCommand(std::istream &stream): AudioCommand(stream, 1){
 		this->params[0] <<= 6;
 		this->params[0] &= 0xC0;
 	}
-	u32 command_id() const override{ return 3; }
+	u32 command_id() const override{ return (u32)AudioCommandType::Duty; }
 };
-DEFINE_SEQUENCE_CLASS(DutyCycle, 1, 3);
-DEFINE_SEQUENCE_CLASS(Vibrato, 3, 4);
-DEFINE_SEQUENCE_CLASS(TogglePerfectPitch, 0, 5);
-DEFINE_SEQUENCE_CLASS(NoteType, 3, 6);
-DEFINE_SEQUENCE_CLASS(Rest, 1, 7);
-//DEFINE_SEQUENCE_CLASS(Octave, 1, 8);
+DEFINE_SEQUENCE_CLASS(DutyCycle, 1);
+DEFINE_SEQUENCE_CLASS(Vibrato, 3);
+DEFINE_SEQUENCE_CLASS(TogglePerfectPitch, 0);
+DEFINE_SEQUENCE_CLASS(NoteType, 3);
+DEFINE_SEQUENCE_CLASS(Rest, 1);
+//DEFINE_SEQUENCE_CLASS(Octave, 1);
 class OctaveCommand : public AudioCommand{
 public:
 	OctaveCommand(std::istream &stream): AudioCommand(stream, 1){
@@ -133,35 +136,35 @@ public:
 		}
 		this->params[0] = 8 - this->params[0];
 	}
-	u32 command_id() const override{ return 8; }
+	u32 command_id() const override{ return (u32)AudioCommandType::Octave; }
 };
-DEFINE_SEQUENCE_CLASS(Note, 2, 9);
-DEFINE_SEQUENCE_CLASS(DSpeed, 1, 10);
-DEFINE_SEQUENCE_CLASS(Snare, 2, 11);
-DEFINE_SEQUENCE_CLASS(MutedSnare, 2, 12);
-DEFINE_SEQUENCE_CLASS(UnknownSfx10, 1, 13);
-DEFINE_SEQUENCE_CLASS(UnknownSfx20, 4, 14);
-DEFINE_SEQUENCE_CLASS(UnknownNoise20, 3, 15);
-DEFINE_SEQUENCE_CLASS(ExecuteMusic, 0, 16);
-//DEFINE_SEQUENCE_CLASS(PitchBend, 2, 17);
+DEFINE_SEQUENCE_CLASS(Note, 2);
+DEFINE_SEQUENCE_CLASS(DSpeed, 1);
+DEFINE_SEQUENCE_CLASS(Snare, 2);
+DEFINE_SEQUENCE_CLASS(MutedSnare, 2);
+DEFINE_SEQUENCE_CLASS(UnknownSfx10, 1);
+DEFINE_SEQUENCE_CLASS(UnknownSfx20, 3);
+DEFINE_SEQUENCE_CLASS(UnknownNoise20, 3);
+DEFINE_SEQUENCE_CLASS(ExecuteMusic, 0);
+//DEFINE_SEQUENCE_CLASS(PitchBend, 2);
 class PitchBendCommand : public AudioCommand{
 public:
 	PitchBendCommand(std::istream &stream): AudioCommand(stream, 2){
 		this->params[1] = calculate_frequency(this->params[1], this->params[2]);
 		this->parameter_count = 2;
 	}
-	u32 command_id() const override{ return 17; }
+	u32 command_id() const override{ return (u32)AudioCommandType::PitchBend; }
 };
-DEFINE_SEQUENCE_CLASS(Triangle, 2, 18);
-DEFINE_SEQUENCE_CLASS(StereoPanning, 1, 19);
-DEFINE_SEQUENCE_CLASS(Cymbal, 2, 20);
-DEFINE_SEQUENCE_CLASS(Loop, 2, 21);
-DEFINE_SEQUENCE_CLASS(Call, 1, 22);
-DEFINE_SEQUENCE_CLASS(Goto, 1, 23);
-DEFINE_SEQUENCE_CLASS(IfRed, 0, 24);
-DEFINE_SEQUENCE_CLASS(Else, 0, 25);
-DEFINE_SEQUENCE_CLASS(EndIf, 0, 26);
-DEFINE_SEQUENCE_CLASS(End, 0, 27);
+DEFINE_SEQUENCE_CLASS(Triangle, 2);
+DEFINE_SEQUENCE_CLASS(StereoPanning, 1);
+DEFINE_SEQUENCE_CLASS(Cymbal, 2);
+DEFINE_SEQUENCE_CLASS(Loop, 2);
+DEFINE_SEQUENCE_CLASS(Call, 1);
+DEFINE_SEQUENCE_CLASS(Goto, 1);
+DEFINE_SEQUENCE_CLASS(IfRed, 0);
+DEFINE_SEQUENCE_CLASS(Else, 0);
+DEFINE_SEQUENCE_CLASS(EndIf, 0);
+DEFINE_SEQUENCE_CLASS(End, 0);
 
 class AudioChannel{
 	u32 channel_no;
@@ -321,6 +324,59 @@ static std::vector<AudioHeader> parse_headers(const std::vector<std::string> &in
 	return ret;
 }
 
+void throw_channel_error(bool three, const char *command, const AudioSequence &sequence, const AudioChannel &channel, const AudioHeader &header){
+	std::stringstream stream;
+	stream << "Error: " << command << " used in channel";
+	if (!three)
+		stream << " other than";
+	stream << " 3 or 7. Sequence: \"" << sequence.get_name()
+		<< "\", channel: " << channel.get_channel_no() << ", header: \"" << header.get_name() << "\".\n";
+	throw std::runtime_error(stream.str());
+}
+
+void throw_error_non_ch3(const char *command, const AudioSequence &sequence, const AudioChannel &channel, const AudioHeader &header){
+	throw_channel_error(false, command, sequence, channel, header);
+}
+
+void throw_error_ch3(const char *command, const AudioSequence &sequence, const AudioChannel &channel, const AudioHeader &header){
+	throw_channel_error(true, command, sequence, channel, header);
+}
+
+const char *to_string(AudioCommandType type){
+	const char * const strings[] = {
+		"Tempo",
+		"Volume",
+		"Duty",
+		"DutyCycle",
+		"Vibrato",
+		"TogglePerfectPitch",
+		"NoteType",
+		"Rest",
+		"Octave",
+		"Note",
+		"DSpeed",
+		"Snare",
+		"MutedSnare",
+		"UnknownSfx10",
+		"UnknownSfx20",
+		"UnknownNoise20",
+		"ExecuteMusic",
+		"PitchBend",
+		"Triangle",
+		"StereoPanning",
+		"Cymbal",
+		"Loop",
+		"Call",
+		"Goto",
+		"IfRed",
+		"Else",
+		"EndIf",
+		"End",
+	};
+	assert((int)type < sizeof(strings) / sizeof(*strings));
+	return strings[(int)type];
+}
+
 class AudioData{
 	std::map<std::string, std::unique_ptr<AudioSequence>> sequences;
 	std::vector<AudioHeader> headers;
@@ -425,10 +481,52 @@ class AudioData{
 			}
 		}
 	}
+	void verify_sequence(const AudioSequence &sequence, const AudioChannel &channel, const AudioHeader &header, std::set<std::string> &stack){
+		auto ch = channel.get_channel_no();
+		for (auto &command : sequence.get_commands()){
+			auto cmd = (AudioCommandType)command->command_id();
+			switch (cmd){
+				case AudioCommandType::UnknownSfx20:
+				case AudioCommandType::NoteType:
+				case AudioCommandType::Note:
+					if (ch % 4 == 3)
+						throw_error_ch3(to_string(cmd), sequence, channel, header);
+					break;
+				case AudioCommandType::UnknownNoise20:
+				case AudioCommandType::Cymbal:
+				case AudioCommandType::Snare:
+				case AudioCommandType::MutedSnare:
+				case AudioCommandType::Triangle:
+					if (ch % 4 != 3)
+						throw_error_non_ch3(to_string(cmd), sequence, channel, header);
+					break;
+
+
+				case AudioCommandType::Goto:
+					this->verify_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);
+					return;
+				case AudioCommandType::Call:
+				case AudioCommandType::Loop:
+					if (stack.find(command->get_referenced_sequence()) != stack.end())
+						break;
+					stack.insert(command->get_referenced_sequence());
+					this->verify_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);
+					stack.erase(command->get_referenced_sequence());
+					break;
+				case AudioCommandType::End:
+					return;
+
+
+				default:
+					break;
+			}
+		}
+	}
 public:
 	AudioData(std::ostream &log_file){
 		this->load_secondary_file(input_files[1]);
 		this->load_main_file(input_files[0]);
+		this->verify();
 		this->remove_unreachable_sequences(log_file);
 		this->place_sequences();
 	}
@@ -450,26 +548,12 @@ public:
 		return this->headers;
 	}
 
-	void verify_sfx_20() const{
+	void verify(){
 		for (auto &header : this->headers){
 			for (auto &channel : header.get_channels()){
-				auto ch = channel.get_channel_no();
-				auto &sequence = *this->sequences.find(channel.get_referenced_sequence())->second;
-				for (auto &command : sequence.get_commands()){
-					auto cmd = command->command_id();
-					if (cmd == 14 && ch % 4 == 3){
-						std::stringstream stream;
-						stream << "Error: UnknownSfx20 used in channel 7 or 3. Sequence: \"" << sequence.get_name()
-							<< "\", channel: " << channel.get_channel_no() << ", header: \"" << header.get_name() << "\".\n";
-						throw std::runtime_error(stream.str());
-					}
-					if (cmd == 15 && ch % 4 != 3){
-						std::stringstream stream;
-						stream << "Error: UnknownNoise20 used in channel other than 7 or 3. Sequence: \"" << sequence.get_name()
-							<< "\", channel: " << channel.get_channel_no() << ", header: \"" << header.get_name() << "\".\n";
-						throw std::runtime_error(stream.str());
-					}
-				}
+				std::set<std::string> stack;
+				stack.insert(channel.get_referenced_sequence());
+				this->verify_sequence(*this->sequences.find(channel.get_referenced_sequence())->second, channel, header, stack);
 			}
 		}
 	}
@@ -522,8 +606,6 @@ static void generate_audio_internal(known_hashes_t &known_hashes){
 	std::ofstream log_file("output/audio_generation.log");
 	AudioData data(log_file);
 
-	data.verify_sfx_20();
-	
 	write_header("output/audio.h", data.get_headers());
 	write_source("output/audio.inl", data);
 

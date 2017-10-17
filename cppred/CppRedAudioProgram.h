@@ -1,38 +1,8 @@
 #pragma once
 #include "Audio.h"
 #include "CppRedData.h"
+#include "../common/AudioCommandType.h"
 #include <set>
-
-enum class AudioCommandType : byte_t{
-	Tempo = 0,
-	Volume,
-	Duty,
-	DutyCycle,
-	Vibrato,
-	TogglePerfectPitch,
-	NoteType,
-	Rest,
-	Octave,
-	Note,
-	DSpeed,
-	Snare,
-	MutedSnare,
-	UnknownSfx10,
-	UnknownSfx20,
-	UnknownNoise20,
-	ExecuteMusic,
-	PitchBend,
-	Triangle,
-	StereoPanning,
-	Cymbal,
-	Loop,
-	Call,
-	Goto,
-	IfRed,
-	Else,
-	EndIf,
-	End,
-};
 
 struct AudioCommand{
 	AudioCommandType type;
@@ -63,6 +33,7 @@ class CppRedAudioProgram : public AudioProgram{
 	std::uint32_t stereo_panning = 0;
 	std::uint32_t music_tempo = 0;
 	std::uint32_t sfx_tempo = 0;
+	int tempo_modifier = 0;
 	class Channel{
 		std::vector<int> call_stack;
 		CppRedAudioProgram *program;
@@ -107,7 +78,7 @@ class CppRedAudioProgram : public AudioProgram{
 		void apply_duty_cycle(AbstractAudioRenderer &renderer);
 		void apply_pitch_bend(AbstractAudioRenderer &renderer);
 		void apply_duty_and_sound_length(AbstractAudioRenderer &renderer);
-		void apply_wave_pattern_and_frequency(AbstractAudioRenderer &renderer);
+		void apply_wave_pattern_and_frequency(AbstractAudioRenderer &renderer, int frequency);
 		void apply_vibrato(AbstractAudioRenderer &renderer);
 		bool continue_execution(AbstractAudioRenderer &renderer);
 		bool disable_channel_output(AbstractAudioRenderer &renderer);
@@ -118,6 +89,8 @@ class CppRedAudioProgram : public AudioProgram{
 		void disable_this_hardware_channel(AbstractAudioRenderer &renderer);
 		void set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter);
 		void init_pitch_bend_variables(int frequency);
+		void set_sfx_tempo();
+		bool is_cry();
 
 		typedef bool (Channel::*command_function)(const AudioCommand &, AbstractAudioRenderer &, bool &);
 #define DECLARE_COMMAND_FUNCTION(x) bool command_##x(const AudioCommand &, AbstractAudioRenderer &renderer, bool &)
@@ -149,6 +122,7 @@ class CppRedAudioProgram : public AudioProgram{
 		DECLARE_COMMAND_FUNCTION(Else);
 		DECLARE_COMMAND_FUNCTION(EndIf);
 		DECLARE_COMMAND_FUNCTION(End);
+		bool unknown20(const AudioCommand &, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel, bool noise);
 		static const command_function command_functions[28];
 		static const std::set<AudioResourceId> pokemon_cries;
 	public:
@@ -163,6 +137,7 @@ class CppRedAudioProgram : public AudioProgram{
 	void load_commands();
 	void load_resources();
 	enum class RegisterId{
+		DutySoundLength = 1,
 		VolumeEnvelope = 2,
 		FrequencyLow = 3,
 		VolumeEnvelopePlus1 = 4,
