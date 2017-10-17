@@ -140,8 +140,56 @@ public:
 };
 DEFINE_SEQUENCE_CLASS(Note, 2);
 DEFINE_SEQUENCE_CLASS(DSpeed, 1);
-DEFINE_SEQUENCE_CLASS(Snare, 2);
-DEFINE_SEQUENCE_CLASS(MutedSnare, 2);
+//DEFINE_SEQUENCE_CLASS(NoiseInstrument, 2);
+class SnareCommand : public AudioCommand{
+public:
+	SnareCommand(std::istream &stream): AudioCommand(stream, 2){
+		switch (this->params[0]){
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				break;
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+				this->params[0] += 2;
+				break;
+			default:
+				{
+					std::stringstream error_stream;
+					error_stream << "First snare argument must be in the range [1; 9]. Encountered: " << this->params[0];
+					throw std::runtime_error(error_stream.str());
+				}
+		}
+	}
+	u32 command_id() const override{ return (u32)AudioCommandType::NoiseInstrument; }
+};
+//DEFINE_SEQUENCE_CLASS(MutedSnare, 2);
+class MutedSnareCommand : public AudioCommand{
+public:
+	MutedSnareCommand(std::istream &stream): AudioCommand(stream, 2){
+		switch (this->params[0]){
+			case 1:
+				this->params[0] = 15;
+				break;
+			case 2:
+			case 3:
+			case 4:
+				this->params[0] += 15;
+				break;
+			default:
+				{
+					std::stringstream error_stream;
+					error_stream << "First muted_snare argument must be one of [1; 4]. Encountered: " << this->params[0];
+					throw std::runtime_error(error_stream.str());
+				}
+		}
+	}
+	u32 command_id() const override{ return (u32)AudioCommandType::NoiseInstrument; }
+};
 DEFINE_SEQUENCE_CLASS(UnknownSfx10, 1);
 DEFINE_SEQUENCE_CLASS(UnknownSfx20, 3);
 DEFINE_SEQUENCE_CLASS(UnknownNoise20, 3);
@@ -155,9 +203,51 @@ public:
 	}
 	u32 command_id() const override{ return (u32)AudioCommandType::PitchBend; }
 };
-DEFINE_SEQUENCE_CLASS(Triangle, 2);
+//DEFINE_SEQUENCE_CLASS(Triangle, 2);
+class TriangleCommand : public AudioCommand{
+public:
+	TriangleCommand(std::istream &stream): AudioCommand(stream, 2){
+		switch (this->params[0]){
+			case 1:
+				this->params[0] = 6;
+				break;
+			case 2:
+				this->params[0] = 7;
+				break;
+			case 3:
+				this->params[0] = 16;
+				break;
+			default:
+				{
+					std::stringstream error_stream;
+					error_stream << "First triangle argument must be one of [1, 2, 3]. Encountered: " << this->params[0];
+					throw std::runtime_error(error_stream.str());
+				}
+		}
+	}
+	u32 command_id() const override{ return (u32)AudioCommandType::NoiseInstrument; }
+};
 DEFINE_SEQUENCE_CLASS(StereoPanning, 1);
-DEFINE_SEQUENCE_CLASS(Cymbal, 2);
+//DEFINE_SEQUENCE_CLASS(Cymbal, 2);
+class CymbalCommand : public AudioCommand{
+public:
+	CymbalCommand(std::istream &stream): AudioCommand(stream, 2){
+		switch (this->params[0]){
+			case 1:
+			case 2:
+			case 3:
+				this->params[0] += 11;
+				break;
+			default:
+				{
+					std::stringstream error_stream;
+					error_stream << "First cymbal argument must be one of [1, 2, 3]. Encountered: " << this->params[0];
+					throw std::runtime_error(error_stream.str());
+				}
+		}
+	}
+	u32 command_id() const override{ return (u32)AudioCommandType::NoiseInstrument; }
+};
 DEFINE_SEQUENCE_CLASS(Loop, 2);
 DEFINE_SEQUENCE_CLASS(Call, 1);
 DEFINE_SEQUENCE_CLASS(Goto, 1);
@@ -493,10 +583,7 @@ class AudioData{
 						throw_error_ch3(to_string(cmd), sequence, channel, header);
 					break;
 				case AudioCommandType::UnknownNoise20:
-				case AudioCommandType::Cymbal:
-				case AudioCommandType::Snare:
-				case AudioCommandType::MutedSnare:
-				case AudioCommandType::Triangle:
+				case AudioCommandType::NoiseInstrument:
 					if (ch % 4 != 3)
 						throw_error_non_ch3(to_string(cmd), sequence, channel, header);
 					break;
