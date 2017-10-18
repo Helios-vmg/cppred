@@ -1,850 +1,850 @@
-.Music_PalletTown 1
+.Music_PalletTown 1 1
 	channel Music_PalletTown_Ch0 0
 	channel Music_PalletTown_Ch1 1
 	channel Music_PalletTown_Ch2 2
 
-.Music_Pokecenter 1
+.Music_Pokecenter 1 1
 	channel Music_Pokecenter_Ch0 0
 	channel Music_Pokecenter_Ch1 1
 	channel Music_Pokecenter_Ch2 2
 
-.Music_Gym 1
+.Music_Gym 1 1
 	channel Music_Gym_Ch0 0
 	channel Music_Gym_Ch1 1
 	channel Music_Gym_Ch2 2
 
-.Music_Cities1 1
+.Music_Cities1 1 1
 	channel Music_Cities1_Ch0 0
 	channel Music_Cities1_Ch1 1
 	channel Music_Cities1_Ch2 2
 	channel Music_Cities1_Ch3 3
 
-.Music_Cities2 1
+.Music_Cities2 1 1
 	channel Music_Cities2_Ch0 0
 	channel Music_Cities2_Ch1 1
 	channel Music_Cities2_Ch2 2
 
-.Music_Celadon 1
+.Music_Celadon 1 1
 	channel Music_Celadon_Ch0 0
 	channel Music_Celadon_Ch1 1
 	channel Music_Celadon_Ch2 2
 
-.Music_Cinnabar 1
+.Music_Cinnabar 1 1
 	channel Music_Cinnabar_Ch0 0
 	channel Music_Cinnabar_Ch1 1
 	channel Music_Cinnabar_Ch2 2
 
-.Music_Vermilion 1
+.Music_Vermilion 1 1
 	channel Music_Vermilion_Ch0 0
 	channel Music_Vermilion_Ch1 1
 	channel Music_Vermilion_Ch2 2
 	channel Music_Vermilion_Ch3 3
 
-.Music_Lavender 1
+.Music_Lavender 1 1
 	channel Music_Lavender_Ch0 0
 	channel Music_Lavender_Ch1 1
 	channel Music_Lavender_Ch2 2
 	channel Music_Lavender_Ch3 3
 
-.Music_SSAnne 1
+.Music_SSAnne 1 1
 	channel Music_SSAnne_Ch0 0
 	channel Music_SSAnne_Ch1 1
 	channel Music_SSAnne_Ch2 2
 
-.Music_MeetProfOak 1
+.Music_MeetProfOak 1 1
 	channel Music_MeetProfOak_Ch0 0
 	channel Music_MeetProfOak_Ch1 1
 	channel Music_MeetProfOak_Ch2 2
 
-.Music_MeetRival 1
+.Music_MeetRival 1 1
 	channel Music_MeetRival_Ch0 0
 	channel Music_MeetRival_Ch1 1
 	channel Music_MeetRival_Ch2 2
 
-.Music_MuseumGuy 1
+.Music_MuseumGuy 1 1
 	channel Music_MuseumGuy_Ch0 0
 	channel Music_MuseumGuy_Ch1 1
 	channel Music_MuseumGuy_Ch2 2
 	channel Music_MuseumGuy_Ch3 3
 
-.Music_SafariZone 1
+.Music_SafariZone 1 1
 	channel Music_SafariZone_Ch0 0
 	channel Music_SafariZone_Ch1 1
 	channel Music_SafariZone_Ch2 2
 
-.Music_PkmnHealed 1
+.Music_PkmnHealed 1 1
 	channel Music_PkmnHealed_Ch0 0
 	channel Music_PkmnHealed_Ch1 1
 	channel Music_PkmnHealed_Ch2 2
 
-.Music_Routes1 1
+.Music_Routes1 1 1
 	channel Music_Routes1_Ch0 0
 	channel Music_Routes1_Ch1 1
 	channel Music_Routes1_Ch2 2
 	channel Music_Routes1_Ch3 3
 
-.Music_Routes2 1
+.Music_Routes2 1 1
 	channel Music_Routes2_Ch0 0
 	channel Music_Routes2_Ch1 1
 	channel Music_Routes2_Ch2 2
 	channel Music_Routes2_Ch3 3
 
-.Music_Routes3 1
+.Music_Routes3 1 1
 	channel Music_Routes3_Ch0 0
 	channel Music_Routes3_Ch1 1
 	channel Music_Routes3_Ch2 2
 	channel Music_Routes3_Ch3 3
 
-.Music_Routes4 1
+.Music_Routes4 1 1
 	channel Music_Routes4_Ch0 0
 	channel Music_Routes4_Ch1 1
 	channel Music_Routes4_Ch2 2
 	channel Music_Routes4_Ch3 3
 
-.Music_IndigoPlateau 1
+.Music_IndigoPlateau 1 1
 	channel Music_IndigoPlateau_Ch0 0
 	channel Music_IndigoPlateau_Ch1 1
 	channel Music_IndigoPlateau_Ch2 2
 	channel Music_IndigoPlateau_Ch3 3
 
-.Music_GymLeaderBattle 2
+.Music_GymLeaderBattle 2 1
 	channel Music_GymLeaderBattle_Ch0 0
 	channel Music_GymLeaderBattle_Ch1 1
 	channel Music_GymLeaderBattle_Ch2 2
 
-.Music_TrainerBattle 2
+.Music_TrainerBattle 2 1
 	channel Music_TrainerBattle_Ch0 0
 	channel Music_TrainerBattle_Ch1 1
 	channel Music_TrainerBattle_Ch2 2
 
-.Music_WildBattle 2
+.Music_WildBattle 2 1
 	channel Music_WildBattle_Ch0 0
 	channel Music_WildBattle_Ch1 1
 	channel Music_WildBattle_Ch2 2
 
-.Music_FinalBattle 2
+.Music_FinalBattle 2 1
 	channel Music_FinalBattle_Ch0 0
 	channel Music_FinalBattle_Ch1 1
 	channel Music_FinalBattle_Ch2 2
 
-.Music_DefeatedTrainer 2
+.Music_DefeatedTrainer 2 1
 	channel Music_DefeatedTrainer_Ch0 0
 	channel Music_DefeatedTrainer_Ch1 1
 	channel Music_DefeatedTrainer_Ch2 2
 
-.Music_DefeatedWildMon 2
+.Music_DefeatedWildMon 2 1
 	channel Music_DefeatedWildMon_Ch0 0
 	channel Music_DefeatedWildMon_Ch1 1
 	channel Music_DefeatedWildMon_Ch2 2
 
-.Music_DefeatedGymLeader 2
+.Music_DefeatedGymLeader 2 1
 	channel Music_DefeatedGymLeader_Ch0 0
 	channel Music_DefeatedGymLeader_Ch1 1
 	channel Music_DefeatedGymLeader_Ch2 2
 
-.Music_TitleScreen 3
+.Music_TitleScreen 3 1
 	channel Music_TitleScreen_Ch0 0
 	channel Music_TitleScreen_Ch1 1
 	channel Music_TitleScreen_Ch2 2
 	channel Music_TitleScreen_Ch3 3
 
-.Music_Credits 3
+.Music_Credits 3 1
 	channel Music_Credits_Ch0 0
 	channel Music_Credits_Ch1 1
 	channel Music_Credits_Ch2 2
 
-.Music_HallOfFame 3
+.Music_HallOfFame 3 1
 	channel Music_HallOfFame_Ch0 0
 	channel Music_HallOfFame_Ch1 1
 	channel Music_HallOfFame_Ch2 2
 
-.Music_OaksLab 3
+.Music_OaksLab 3 1
 	channel Music_OaksLab_Ch0 0
 	channel Music_OaksLab_Ch1 1
 	channel Music_OaksLab_Ch2 2
 
-.Music_JigglypuffSong 3
+.Music_JigglypuffSong 3 1
 	channel Music_JigglypuffSong_Ch0 0
 	channel Music_JigglypuffSong_Ch1 1
 
-.Music_BikeRiding 3
+.Music_BikeRiding 3 1
 	channel Music_BikeRiding_Ch0 0
 	channel Music_BikeRiding_Ch1 1
 	channel Music_BikeRiding_Ch2 2
 	channel Music_BikeRiding_Ch3 3
 
-.Music_Surfing 3
+.Music_Surfing 3 1
 	channel Music_Surfing_Ch0 0
 	channel Music_Surfing_Ch1 1
 	channel Music_Surfing_Ch2 2
 
-.Music_GameCorner 3
+.Music_GameCorner 3 1
 	channel Music_GameCorner_Ch0 0
 	channel Music_GameCorner_Ch1 1
 	channel Music_GameCorner_Ch2 2
 
-.Music_IntroBattle 3
+.Music_IntroBattle 3 1
 	channel Music_IntroBattle_Ch0 0
 	channel Music_IntroBattle_Ch1 1
 	channel Music_IntroBattle_Ch2 2
 	channel Music_IntroBattle_Ch3 3
 
-.Music_Dungeon1 3
+.Music_Dungeon1 3 1
 	channel Music_Dungeon1_Ch0 0
 	channel Music_Dungeon1_Ch1 1
 	channel Music_Dungeon1_Ch2 2
 	channel Music_Dungeon1_Ch3 3
 
-.Music_Dungeon2 3
+.Music_Dungeon2 3 1
 	channel Music_Dungeon2_Ch0 0
 	channel Music_Dungeon2_Ch1 1
 	channel Music_Dungeon2_Ch2 2
 	channel Music_Dungeon2_Ch3 3
 
-.Music_Dungeon3 3
+.Music_Dungeon3 3 1
 	channel Music_Dungeon3_Ch0 0
 	channel Music_Dungeon3_Ch1 1
 	channel Music_Dungeon3_Ch2 2
 	channel Music_Dungeon3_Ch3 3
 
-.Music_CinnabarMansion 3
+.Music_CinnabarMansion 3 1
 	channel Music_CinnabarMansion_Ch0 0
 	channel Music_CinnabarMansion_Ch1 1
 	channel Music_CinnabarMansion_Ch2 2
 	channel Music_CinnabarMansion_Ch3 3
 
-.Music_PokemonTower 3
+.Music_PokemonTower 3 1
 	channel Music_PokemonTower_Ch0 0
 	channel Music_PokemonTower_Ch1 1
 	channel Music_PokemonTower_Ch2 2
 
-.Music_SilphCo 3
+.Music_SilphCo 3 1
 	channel Music_SilphCo_Ch0 0
 	channel Music_SilphCo_Ch1 1
 	channel Music_SilphCo_Ch2 2
 
-.Music_MeetEvilTrainer 3
+.Music_MeetEvilTrainer 3 1
 	channel Music_MeetEvilTrainer_Ch0 0
 	channel Music_MeetEvilTrainer_Ch1 1
 	channel Music_MeetEvilTrainer_Ch2 2
 
-.Music_MeetFemaleTrainer 3
+.Music_MeetFemaleTrainer 3 1
 	channel Music_MeetFemaleTrainer_Ch0 0
 	channel Music_MeetFemaleTrainer_Ch1 1
 	channel Music_MeetFemaleTrainer_Ch2 2
 
-.Music_MeetMaleTrainer 3
+.Music_MeetMaleTrainer 3 1
 	channel Music_MeetMaleTrainer_Ch0 0
 	channel Music_MeetMaleTrainer_Ch1 1
 	channel Music_MeetMaleTrainer_Ch2 2
 
-.SFX_Snare1 1
+.SFX_Snare1 1 0
 	channel SFX_Snare1_1_Ch7 7
 
-.SFX_Snare2 1
+.SFX_Snare2 1 0
 	channel SFX_Snare2_1_Ch7 7
 
-.SFX_Snare3 1
+.SFX_Snare3 1 0
 	channel SFX_Snare3_1_Ch7 7
 
-.SFX_Snare4 1
+.SFX_Snare4 1 0
 	channel SFX_Snare4_1_Ch7 7
 
-.SFX_Snare5 1
+.SFX_Snare5 1 0
 	channel SFX_Snare5_1_Ch7 7
 
-.SFX_Triangle1 1
+.SFX_Triangle1 1 0
 	channel SFX_Triangle1_1_Ch7 7
 
-.SFX_Triangle2 1
+.SFX_Triangle2 1 0
 	channel SFX_Triangle2_1_Ch7 7
 
-.SFX_Snare6 1
+.SFX_Snare6 1 0
 	channel SFX_Snare6_1_Ch7 7
 
-.SFX_Snare7 1
+.SFX_Snare7 1 0
 	channel SFX_Snare7_1_Ch7 7
 
-.SFX_Snare8 1
+.SFX_Snare8 1 0
 	channel SFX_Snare8_1_Ch7 7
 
-.SFX_Snare9 1
+.SFX_Snare9 1 0
 	channel SFX_Snare9_1_Ch7 7
 
-.SFX_Cymbal1 1
+.SFX_Cymbal1 1 0
 	channel SFX_Cymbal1_1_Ch7 7
 
-.SFX_Cymbal2 1
+.SFX_Cymbal2 1 0
 	channel SFX_Cymbal2_1_Ch7 7
 
-.SFX_Cymbal3 1
+.SFX_Cymbal3 1 0
 	channel SFX_Cymbal3_1_Ch7 7
 
-.SFX_Muted_Snare1 1
+.SFX_Muted_Snare1 1 0
 	channel SFX_Muted_Snare1_1_Ch7 7
 
-.SFX_Triangle3 1
+.SFX_Triangle3 1 0
 	channel SFX_Triangle3_1_Ch7 7
 
-.SFX_Muted_Snare2 1
+.SFX_Muted_Snare2 1 0
 	channel SFX_Muted_Snare2_1_Ch7 7
 
-.SFX_Muted_Snare3 1
+.SFX_Muted_Snare3 1 0
 	channel SFX_Muted_Snare3_1_Ch7 7
 
-.SFX_Muted_Snare4 1
+.SFX_Muted_Snare4 1 0
 	channel SFX_Muted_Snare4_1_Ch7 7
 
-.SFX_Cry00 1
+.SFX_Cry00 1 0
 	channel SFX_Cry00_1_Ch4 4
 	channel SFX_Cry00_1_Ch5 5
 	channel SFX_Cry00_1_Ch7 7
 
-.SFX_Cry01 1
+.SFX_Cry01 1 0
 	channel SFX_Cry01_1_Ch4 4
 	channel SFX_Cry01_1_Ch5 5
 	channel SFX_Cry01_1_Ch7 7
 
-.SFX_Cry02 1
+.SFX_Cry02 1 0
 	channel SFX_Cry02_1_Ch4 4
 	channel SFX_Cry02_1_Ch5 5
 	channel SFX_Cry02_1_Ch7 7
 
-.SFX_Cry03 1
+.SFX_Cry03 1 0
 	channel SFX_Cry03_1_Ch4 4
 	channel SFX_Cry03_1_Ch5 5
 	channel SFX_Cry03_1_Ch7 7
 
-.SFX_Cry04 1
+.SFX_Cry04 1 0
 	channel SFX_Cry04_1_Ch4 4
 	channel SFX_Cry04_1_Ch5 5
 	channel SFX_Cry04_1_Ch7 7
 
-.SFX_Cry05 1
+.SFX_Cry05 1 0
 	channel SFX_Cry05_1_Ch4 4
 	channel SFX_Cry05_1_Ch5 5
 	channel SFX_Cry05_1_Ch7 7
 
-.SFX_Cry06 1
+.SFX_Cry06 1 0
 	channel SFX_Cry06_1_Ch4 4
 	channel SFX_Cry06_1_Ch5 5
 	channel SFX_Cry06_1_Ch7 7
 
-.SFX_Cry07 1
+.SFX_Cry07 1 0
 	channel SFX_Cry07_1_Ch4 4
 	channel SFX_Cry07_1_Ch5 5
 	channel SFX_Cry07_1_Ch7 7
 
-.SFX_Cry08 1
+.SFX_Cry08 1 0
 	channel SFX_Cry08_1_Ch4 4
 	channel SFX_Cry08_1_Ch5 5
 	channel SFX_Cry08_1_Ch7 7
 
-.SFX_Cry09 1
+.SFX_Cry09 1 0
 	channel SFX_Cry09_1_Ch4 4
 	channel SFX_Cry09_1_Ch5 5
 	channel SFX_Cry09_1_Ch7 7
 
-.SFX_Cry0A 1
+.SFX_Cry0A 1 0
 	channel SFX_Cry0A_1_Ch4 4
 	channel SFX_Cry0A_1_Ch5 5
 	channel SFX_Cry0A_1_Ch7 7
 
-.SFX_Cry0B 1
+.SFX_Cry0B 1 0
 	channel SFX_Cry0B_1_Ch4 4
 	channel SFX_Cry0B_1_Ch5 5
 	channel SFX_Cry0B_1_Ch7 7
 
-.SFX_Cry0C 1
+.SFX_Cry0C 1 0
 	channel SFX_Cry0C_1_Ch4 4
 	channel SFX_Cry0C_1_Ch5 5
 	channel SFX_Cry0C_1_Ch7 7
 
-.SFX_Cry0D 1
+.SFX_Cry0D 1 0
 	channel SFX_Cry0D_1_Ch4 4
 	channel SFX_Cry0D_1_Ch5 5
 	channel SFX_Cry0D_1_Ch7 7
 
-.SFX_Cry0E 1
+.SFX_Cry0E 1 0
 	channel SFX_Cry0E_1_Ch4 4
 	channel SFX_Cry0E_1_Ch5 5
 	channel SFX_Cry0E_1_Ch7 7
 
-.SFX_Cry0F 1
+.SFX_Cry0F 1 0
 	channel SFX_Cry0F_1_Ch4 4
 	channel SFX_Cry0F_1_Ch5 5
 	channel SFX_Cry0F_1_Ch7 7
 
-.SFX_Cry10 1
+.SFX_Cry10 1 0
 	channel SFX_Cry10_1_Ch4 4
 	channel SFX_Cry10_1_Ch5 5
 	channel SFX_Cry10_1_Ch7 7
 
-.SFX_Cry11 1
+.SFX_Cry11 1 0
 	channel SFX_Cry11_1_Ch4 4
 	channel SFX_Cry11_1_Ch5 5
 	channel SFX_Cry11_1_Ch7 7
 
-.SFX_Cry12 1
+.SFX_Cry12 1 0
 	channel SFX_Cry12_1_Ch4 4
 	channel SFX_Cry12_1_Ch5 5
 	channel SFX_Cry12_1_Ch7 7
 
-.SFX_Cry13 1
+.SFX_Cry13 1 0
 	channel SFX_Cry13_1_Ch4 4
 	channel SFX_Cry13_1_Ch5 5
 	channel SFX_Cry13_1_Ch7 7
 
-.SFX_Cry14 1
+.SFX_Cry14 1 0
 	channel SFX_Cry14_1_Ch4 4
 	channel SFX_Cry14_1_Ch5 5
 	channel SFX_Cry14_1_Ch7 7
 
-.SFX_Cry15 1
+.SFX_Cry15 1 0
 	channel SFX_Cry15_1_Ch4 4
 	channel SFX_Cry15_1_Ch5 5
 	channel SFX_Cry15_1_Ch7 7
 
-.SFX_Cry16 1
+.SFX_Cry16 1 0
 	channel SFX_Cry16_1_Ch4 4
 	channel SFX_Cry16_1_Ch5 5
 	channel SFX_Cry16_1_Ch7 7
 
-.SFX_Cry17 1
+.SFX_Cry17 1 0
 	channel SFX_Cry17_1_Ch4 4
 	channel SFX_Cry17_1_Ch5 5
 	channel SFX_Cry17_1_Ch7 7
 
-.SFX_Cry18 1
+.SFX_Cry18 1 0
 	channel SFX_Cry18_1_Ch4 4
 	channel SFX_Cry18_1_Ch5 5
 	channel SFX_Cry18_1_Ch7 7
 
-.SFX_Cry19 1
+.SFX_Cry19 1 0
 	channel SFX_Cry19_1_Ch4 4
 	channel SFX_Cry19_1_Ch5 5
 	channel SFX_Cry19_1_Ch7 7
 
-.SFX_Cry1A 1
+.SFX_Cry1A 1 0
 	channel SFX_Cry1A_1_Ch4 4
 	channel SFX_Cry1A_1_Ch5 5
 	channel SFX_Cry1A_1_Ch7 7
 
-.SFX_Cry1B 1
+.SFX_Cry1B 1 0
 	channel SFX_Cry1B_1_Ch4 4
 	channel SFX_Cry1B_1_Ch5 5
 	channel SFX_Cry1B_1_Ch7 7
 
-.SFX_Cry1C 1
+.SFX_Cry1C 1 0
 	channel SFX_Cry1C_1_Ch4 4
 	channel SFX_Cry1C_1_Ch5 5
 	channel SFX_Cry1C_1_Ch7 7
 
-.SFX_Cry1D 1
+.SFX_Cry1D 1 0
 	channel SFX_Cry1D_1_Ch4 4
 	channel SFX_Cry1D_1_Ch5 5
 	channel SFX_Cry1D_1_Ch7 7
 
-.SFX_Cry1E 1
+.SFX_Cry1E 1 0
 	channel SFX_Cry1E_1_Ch4 4
 	channel SFX_Cry1E_1_Ch5 5
 	channel SFX_Cry1E_1_Ch7 7
 
-.SFX_Cry1F 1
+.SFX_Cry1F 1 0
 	channel SFX_Cry1F_1_Ch4 4
 	channel SFX_Cry1F_1_Ch5 5
 	channel SFX_Cry1F_1_Ch7 7
 
-.SFX_Cry20 1
+.SFX_Cry20 1 0
 	channel SFX_Cry20_1_Ch4 4
 	channel SFX_Cry20_1_Ch5 5
 	channel SFX_Cry20_1_Ch7 7
 
-.SFX_Cry21 1
+.SFX_Cry21 1 0
 	channel SFX_Cry21_1_Ch4 4
 	channel SFX_Cry21_1_Ch5 5
 	channel SFX_Cry21_1_Ch7 7
 
-.SFX_Cry22 1
+.SFX_Cry22 1 0
 	channel SFX_Cry22_1_Ch4 4
 	channel SFX_Cry22_1_Ch5 5
 	channel SFX_Cry22_1_Ch7 7
 
-.SFX_Cry23 1
+.SFX_Cry23 1 0
 	channel SFX_Cry23_1_Ch4 4
 	channel SFX_Cry23_1_Ch5 5
 	channel SFX_Cry23_1_Ch7 7
 
-.SFX_Cry24 1
+.SFX_Cry24 1 0
 	channel SFX_Cry24_1_Ch4 4
 	channel SFX_Cry24_1_Ch5 5
 	channel SFX_Cry24_1_Ch7 7
 
-.SFX_Cry25 1
+.SFX_Cry25 1 0
 	channel SFX_Cry25_1_Ch4 4
 	channel SFX_Cry25_1_Ch5 5
 	channel SFX_Cry25_1_Ch7 7
 
-.SFX_Get_Item1 1
+.SFX_Get_Item1 1 0
 	channel SFX_Get_Item1_1_Ch4 4
 	channel SFX_Get_Item1_1_Ch5 5
 	channel SFX_Get_Item1_1_Ch6 6
 
-.SFX_Get_Item2 1
+.SFX_Get_Item2 1 0
 	channel SFX_Get_Item2_1_Ch4 4
 	channel SFX_Get_Item2_1_Ch5 5
 	channel SFX_Get_Item2_1_Ch6 6
 
-.SFX_Tink 1
+.SFX_Tink 1 0
 	channel SFX_Tink_1_Ch4 4
 
-.SFX_Heal_HP 1
+.SFX_Heal_HP 1 0
 	channel SFX_Heal_HP_1_Ch4 4
 
-.SFX_Heal_Ailment 1
+.SFX_Heal_Ailment 1 0
 	channel SFX_Heal_Ailment_1_Ch4 4
 
-.SFX_Start_Menu 1
+.SFX_Start_Menu 1 0
 	channel SFX_Start_Menu_1_Ch7 7
 
-.SFX_Press_AB 1
+.SFX_Press_AB 1 0
 	channel SFX_Press_AB_1_Ch4 4
 
-.SFX_Pokedex_Rating 1
+.SFX_Pokedex_Rating 1 0
 	channel SFX_Pokedex_Rating_1_Ch4 4
 	channel SFX_Pokedex_Rating_1_Ch5 5
 	channel SFX_Pokedex_Rating_1_Ch6 6
 
-.SFX_Get_Key_Item 1
+.SFX_Get_Key_Item 1 0
 	channel SFX_Get_Key_Item_1_Ch4 4
 	channel SFX_Get_Key_Item_1_Ch5 5
 	channel SFX_Get_Key_Item_1_Ch6 6
 
-.SFX_Poisoned 1
+.SFX_Poisoned 1 0
 	channel SFX_Poisoned_1_Ch4 4
 
-.SFX_Trade_Machine 1
+.SFX_Trade_Machine 1 0
 	channel SFX_Trade_Machine_1_Ch4 4
 
-.SFX_Turn_On_PC 1
+.SFX_Turn_On_PC 1 0
 	channel SFX_Turn_On_PC_1_Ch4 4
 
-.SFX_Turn_Off_PC 1
+.SFX_Turn_Off_PC 1 0
 	channel SFX_Turn_Off_PC_1_Ch4 4
 
-.SFX_Enter_PC 1
+.SFX_Enter_PC 1 0
 	channel SFX_Enter_PC_1_Ch4 4
 
-.SFX_Shrink 1
+.SFX_Shrink 1 0
 	channel SFX_Shrink_1_Ch4 4
 
-.SFX_Switch 1
+.SFX_Switch 1 0
 	channel SFX_Switch_1_Ch4 4
 
-.SFX_Healing_Machine 1
+.SFX_Healing_Machine 1 0
 	channel SFX_Healing_Machine_1_Ch4 4
 
-.SFX_Teleport_Exit1 1
+.SFX_Teleport_Exit1 1 0
 	channel SFX_Teleport_Exit1_1_Ch4 4
 
-.SFX_Teleport_Enter1 1
+.SFX_Teleport_Enter1 1 0
 	channel SFX_Teleport_Enter1_1_Ch4 4
 
-.SFX_Teleport_Exit2 1
+.SFX_Teleport_Exit2 1 0
 	channel SFX_Teleport_Exit2_1_Ch4 4
 
-.SFX_Ledge 1
+.SFX_Ledge 1 0
 	channel SFX_Ledge_1_Ch4 4
 
-.SFX_Teleport_Enter2 1
+.SFX_Teleport_Enter2 1 0
 	channel SFX_Teleport_Enter2_1_Ch7 7
 
-.SFX_Fly 1
+.SFX_Fly 1 0
 	channel SFX_Fly_1_Ch7 7
 
-.SFX_Denied 1
+.SFX_Denied 1 0
 	channel SFX_Denied_1_Ch4 4
 	channel SFX_Denied_1_Ch5 5
 
-.SFX_Arrow_Tiles 1
+.SFX_Arrow_Tiles 1 0
 	channel SFX_Arrow_Tiles_1_Ch4 4
 
-.SFX_Push_Boulder 1
+.SFX_Push_Boulder 1 0
 	channel SFX_Push_Boulder_1_Ch7 7
 
-.SFX_SS_Anne_Horn 1
+.SFX_SS_Anne_Horn 1 0
 	channel SFX_SS_Anne_Horn_1_Ch4 4
 	channel SFX_SS_Anne_Horn_1_Ch5 5
 
-.SFX_Withdraw_Deposit 1
+.SFX_Withdraw_Deposit 1 0
 	channel SFX_Withdraw_Deposit_1_Ch4 4
 
-.SFX_Cut 1
+.SFX_Cut 1 0
 	channel SFX_Cut_1_Ch7 7
 
-.SFX_Go_Inside 1
+.SFX_Go_Inside 1 0
 	channel SFX_Go_Inside_1_Ch7 7
 
-.SFX_Swap 1
+.SFX_Swap 1 0
 	channel SFX_Swap_1_Ch4 4
 	channel SFX_Swap_1_Ch5 5
 
-.SFX_59 1
+.SFX_59 1 0
 	channel SFX_59_1_Ch4 4
 	channel SFX_59_1_Ch5 5
 
-.SFX_Purchase 1
+.SFX_Purchase 1 0
 	channel SFX_Purchase_1_Ch4 4
 	channel SFX_Purchase_1_Ch5 5
 
-.SFX_Collision 1
+.SFX_Collision 1 0
 	channel SFX_Collision_1_Ch4 4
 
-.SFX_Go_Outside 1
+.SFX_Go_Outside 1 0
 	channel SFX_Go_Outside_1_Ch7 7
 
-.SFX_Save 1
+.SFX_Save 1 0
 	channel SFX_Save_1_Ch4 4
 	channel SFX_Save_1_Ch5 5
 
-.SFX_Pokeflute 1
+.SFX_Pokeflute 1 0
 	channel SFX_Pokeflute_Ch2 2
 
-.SFX_Safari_Zone_PA 1
+.SFX_Safari_Zone_PA 1 0
 	channel SFX_Safari_Zone_PA_Ch4 4
 
-.SFX_Level_Up 2
+.SFX_Level_Up 2 0
 	channel SFX_Level_Up_Ch4 4
 	channel SFX_Level_Up_Ch5 5
 	channel SFX_Level_Up_Ch6 6
 
-.SFX_Ball_Toss 2
+.SFX_Ball_Toss 2 0
 	channel SFX_Ball_Toss_Ch4 4
 	channel SFX_Ball_Toss_Ch5 5
 
-.SFX_Ball_Poof 2
+.SFX_Ball_Poof 2 0
 	channel SFX_Ball_Poof_Ch4 4
 	channel SFX_Ball_Poof_Ch7 7
 
-.SFX_Faint_Thud 2
+.SFX_Faint_Thud 2 0
 	channel SFX_Faint_Thud_Ch4 4
 	channel SFX_Faint_Thud_Ch7 7
 
-.SFX_Run 2
+.SFX_Run 2 0
 	channel SFX_Run_Ch7 7
 
-.SFX_Dex_Page_Added 2
+.SFX_Dex_Page_Added 2 0
 	channel SFX_Dex_Page_Added_Ch4 4
 	channel SFX_Dex_Page_Added_Ch5 5
 
-.SFX_Caught_Mon 2
+.SFX_Caught_Mon 2 0
 	channel SFX_Caught_Mon_Ch4 4
 	channel SFX_Caught_Mon_Ch5 5
 	channel SFX_Caught_Mon_Ch6 6
 
-.SFX_Peck 2
+.SFX_Peck 2 0
 	channel SFX_Peck_Ch7 7
 
-.SFX_Faint_Fall 2
+.SFX_Faint_Fall 2 0
 	channel SFX_Faint_Fall_Ch4 4
 
-.SFX_Battle_09 2
+.SFX_Battle_09 2 0
 	channel SFX_Battle_09_Ch4 4
 
-.SFX_Pound 2
+.SFX_Pound 2 0
 	channel SFX_Pound_Ch7 7
 
-.SFX_Battle_0B 2
+.SFX_Battle_0B 2 0
 	channel SFX_Battle_0B_Ch7 7
 
-.SFX_Battle_0C 2
+.SFX_Battle_0C 2 0
 	channel SFX_Battle_0C_Ch7 7
 
-.SFX_Battle_0D 2
+.SFX_Battle_0D 2 0
 	channel SFX_Battle_0D_Ch7 7
 
-.SFX_Battle_0E 2
+.SFX_Battle_0E 2 0
 	channel SFX_Battle_0E_Ch7 7
 
-.SFX_Battle_0F 2
+.SFX_Battle_0F 2 0
 	channel SFX_Battle_0F_Ch7 7
 
-.SFX_Damage 2
+.SFX_Damage 2 0
 	channel SFX_Damage_Ch7 7
 
-.SFX_Not_Very_Effective 2
+.SFX_Not_Very_Effective 2 0
 	channel SFX_Not_Very_Effective_Ch7 7
 
-.SFX_Battle_12 2
+.SFX_Battle_12 2 0
 	channel SFX_Battle_12_Ch7 7
 
-.SFX_Battle_13 2
+.SFX_Battle_13 2 0
 	channel SFX_Battle_13_Ch7 7
 
-.SFX_Battle_14 2
+.SFX_Battle_14 2 0
 	channel SFX_Battle_14_Ch7 7
 
-.SFX_Vine_Whip 2
+.SFX_Vine_Whip 2 0
 	channel SFX_Vine_Whip_Ch7 7
 
-.SFX_Battle_16 2
+.SFX_Battle_16 2 0
 	channel SFX_Battle_16_Ch7 7
 
-.SFX_Battle_17 2
+.SFX_Battle_17 2 0
 	channel SFX_Battle_17_Ch7 7
 
-.SFX_Battle_18 2
+.SFX_Battle_18 2 0
 	channel SFX_Battle_18_Ch7 7
 
-.SFX_Battle_19 2
+.SFX_Battle_19 2 0
 	channel SFX_Battle_19_Ch7 7
 
-.SFX_Super_Effective 2
+.SFX_Super_Effective 2 0
 	channel SFX_Super_Effective_Ch7 7
 
-.SFX_Battle_1B 2
+.SFX_Battle_1B 2 0
 	channel SFX_Battle_1B_Ch7 7
 
-.SFX_Battle_1C 2
+.SFX_Battle_1C 2 0
 	channel SFX_Battle_1C_Ch7 7
 
-.SFX_Doubleslap 2
+.SFX_Doubleslap 2 0
 	channel SFX_Doubleslap_Ch7 7
 
-.SFX_Battle_1E 2
+.SFX_Battle_1E 2 0
 	channel SFX_Battle_1E_Ch4 4
 	channel SFX_Battle_1E_Ch7 7
 
-.SFX_Horn_Drill 2
+.SFX_Horn_Drill 2 0
 	channel SFX_Horn_Drill_Ch7 7
 
-.SFX_Battle_20 2
+.SFX_Battle_20 2 0
 	channel SFX_Battle_20_Ch7 7
 
-.SFX_Battle_21 2
+.SFX_Battle_21 2 0
 	channel SFX_Battle_21_Ch7 7
 
-.SFX_Battle_22 2
+.SFX_Battle_22 2 0
 	channel SFX_Battle_22_Ch7 7
 
-.SFX_Battle_23 2
+.SFX_Battle_23 2 0
 	channel SFX_Battle_23_Ch7 7
 
-.SFX_Battle_24 2
+.SFX_Battle_24 2 0
 	channel SFX_Battle_24_Ch4 4
 	channel SFX_Battle_24_Ch7 7
 
-.SFX_Battle_25 2
+.SFX_Battle_25 2 0
 	channel SFX_Battle_25_Ch7 7
 
-.SFX_Battle_26 2
+.SFX_Battle_26 2 0
 	channel SFX_Battle_26_Ch7 7
 
-.SFX_Battle_27 2
+.SFX_Battle_27 2 0
 	channel SFX_Battle_27_Ch4 4
 	channel SFX_Battle_27_Ch5 5
 	channel SFX_Battle_27_Ch7 7
 
-.SFX_Battle_28 2
+.SFX_Battle_28 2 0
 	channel SFX_Battle_28_Ch4 4
 	channel SFX_Battle_28_Ch5 5
 	channel SFX_Battle_28_Ch7 7
 
-.SFX_Battle_29 2
+.SFX_Battle_29 2 0
 	channel SFX_Battle_29_Ch4 4
 	channel SFX_Battle_29_Ch7 7
 
-.SFX_Battle_2A 2
+.SFX_Battle_2A 2 0
 	channel SFX_Battle_2A_Ch4 4
 	channel SFX_Battle_2A_Ch5 5
 	channel SFX_Battle_2A_Ch7 7
 
-.SFX_Battle_2B 2
+.SFX_Battle_2B 2 0
 	channel SFX_Battle_2B_Ch4 4
 	channel SFX_Battle_2B_Ch7 7
 
-.SFX_Battle_2C 2
+.SFX_Battle_2C 2 0
 	channel SFX_Battle_2C_Ch4 4
 	channel SFX_Battle_2C_Ch5 5
 	channel SFX_Battle_2C_Ch7 7
 
-.SFX_Psybeam 2
+.SFX_Psybeam 2 0
 	channel SFX_Psybeam_Ch4 4
 	channel SFX_Psybeam_Ch5 5
 	channel SFX_Psybeam_Ch7 7
 
-.SFX_Battle_2E 2
+.SFX_Battle_2E 2 0
 	channel SFX_Battle_2E_Ch4 4
 	channel SFX_Battle_2E_Ch5 5
 	channel SFX_Battle_2E_Ch7 7
 
-.SFX_Battle_2F 2
+.SFX_Battle_2F 2 0
 	channel SFX_Battle_2F_Ch4 4
 	channel SFX_Battle_2F_Ch5 5
 	channel SFX_Battle_2F_Ch7 7
 
-.SFX_Psychic_M 2
+.SFX_Psychic_M 2 0
 	channel SFX_Psychic_M_Ch4 4
 	channel SFX_Psychic_M_Ch5 5
 	channel SFX_Psychic_M_Ch7 7
 
-.SFX_Battle_31 2
+.SFX_Battle_31 2 0
 	channel SFX_Battle_31_Ch4 4
 	channel SFX_Battle_31_Ch5 5
 
-.SFX_Battle_32 2
+.SFX_Battle_32 2 0
 	channel SFX_Battle_32_Ch4 4
 	channel SFX_Battle_32_Ch5 5
 
-.SFX_Battle_33 2
+.SFX_Battle_33 2 0
 	channel SFX_Battle_33_Ch4 4
 	channel SFX_Battle_33_Ch5 5
 
-.SFX_Battle_34 2
+.SFX_Battle_34 2 0
 	channel SFX_Battle_34_Ch4 4
 	channel SFX_Battle_34_Ch5 5
 	channel SFX_Battle_34_Ch7 7
 
-.SFX_Battle_35 2
+.SFX_Battle_35 2 0
 	channel SFX_Battle_35_Ch4 4
 	channel SFX_Battle_35_Ch5 5
 
-.SFX_Battle_36 2
+.SFX_Battle_36 2 0
 	channel SFX_Battle_36_Ch4 4
 	channel SFX_Battle_36_Ch5 5
 	channel SFX_Battle_36_Ch7 7
 
-.SFX_Silph_Scope 2
+.SFX_Silph_Scope 2 0
 	channel SFX_Silph_Scope_Ch4 4
 
-.SFX_Intro_Lunge 3
+.SFX_Intro_Lunge 3 0
 	channel SFX_Intro_Lunge_Ch7 7
 
-.SFX_Intro_Hip 3
+.SFX_Intro_Hip 3 0
 	channel SFX_Intro_Hip_Ch4 4
 
-.SFX_Intro_Hop 3
+.SFX_Intro_Hop 3 0
 	channel SFX_Intro_Hop_Ch4 4
 
-.SFX_Intro_Raise 3
+.SFX_Intro_Raise 3 0
 	channel SFX_Intro_Raise_Ch7 7
 
-.SFX_Intro_Crash 3
+.SFX_Intro_Crash 3 0
 	channel SFX_Intro_Crash_Ch7 7
 
-.SFX_Intro_Whoosh 3
+.SFX_Intro_Whoosh 3 0
 	channel SFX_Intro_Whoosh_Ch7 7
 
-.SFX_Slots_Stop_Wheel 3
+.SFX_Slots_Stop_Wheel 3 0
 	channel SFX_Slots_Stop_Wheel_Ch4 4
 
-.SFX_Slots_Reward 3
+.SFX_Slots_Reward 3 0
 	channel SFX_Slots_Reward_Ch4 4
 
-.SFX_Slots_New_Spin 3
+.SFX_Slots_New_Spin 3 0
 	channel SFX_Slots_New_Spin_Ch4 4
 	channel SFX_Slots_New_Spin_Ch5 5
 
-.SFX_Shooting_Star 3
+.SFX_Shooting_Star 3 0
 	channel SFX_Shooting_Star_Ch4 4
 
