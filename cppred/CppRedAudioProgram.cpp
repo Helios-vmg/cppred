@@ -155,6 +155,52 @@ static const byte_t enable_channel_masks[] = {
 	BITMAP(10001000),
 };
 
+typedef std::array<byte_t, 16> instrument_data_t;
+
+static const instrument_data_t instruments[] = {
+	{ 0x02, 0x46, 0x8A, 0xCE, 0xFF, 0xFE, 0xED, 0xDC, 0xCB, 0xA9, 0x87, 0x65, 0x44, 0x33, 0x22, 0x11, },
+	{ 0x02, 0x46, 0x8A, 0xCE, 0xEF, 0xFF, 0xFE, 0xEE, 0xDD, 0xCB, 0xA9, 0x87, 0x65, 0x43, 0x22, 0x11, },
+	{ 0x13, 0x69, 0xBD, 0xEE, 0xEE, 0xFF, 0xFF, 0xED, 0xDE, 0xFF, 0xFF, 0xEE, 0xEE, 0xDB, 0x96, 0x31, },
+	{ 0x02, 0x46, 0x8A, 0xCD, 0xEF, 0xFE, 0xDE, 0xFF, 0xEE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10, },
+	{ 0x01, 0x23, 0x45, 0x67, 0x8A, 0xCD, 0xEE, 0xF7, 0x7F, 0xEE, 0xDC, 0xA8, 0x76, 0x54, 0x32, 0x10, },
+	{ 0x21, 0xE2, 0x33, 0x28, 0xE1, 0x22, 0xFF, 0xEA, 0x10, 0x14, 0xDC, 0x10, 0xE3, 0x41, 0x51, 0x73, },
+	{ 0xEC, 0x02, 0x20, 0x91, 0xC0, 0x07, 0x20, 0x81, 0xD0, 0x07, 0x20, 0x91, 0xC0, 0x07, 0x2C, 0xA1, },
+	{ 0x21, 0xE2, 0x33, 0x28, 0xE1, 0x22, 0xFF, 0x22, 0xF7, 0x24, 0x22, 0xF7, 0x34, 0x24, 0xF7, 0x44, },
+};
+
+static const instrument_data_t * const instruments_bank_1[] = {
+	instruments + 0,
+	instruments + 1,
+	instruments + 2,
+	instruments + 3,
+	instruments + 4,
+	instruments + 5,
+};
+
+static const instrument_data_t * const instruments_bank_2[] = {
+	instruments + 0,
+	instruments + 1,
+	instruments + 2,
+	instruments + 3,
+	instruments + 4,
+	instruments + 6,
+};
+
+static const instrument_data_t * const instruments_bank_3[] = {
+	instruments + 0,
+	instruments + 1,
+	instruments + 2,
+	instruments + 3,
+	instruments + 4,
+	instruments + 7,
+};
+
+static const instrument_data_t * const * const instruments_by_bank[] = {
+	instruments_bank_1,
+	instruments_bank_2,
+	instruments_bank_3,
+};
+
 CppRedAudioProgram::CppRedAudioProgram(){
 	this->load_commands();
 	this->load_resources();
@@ -630,8 +676,8 @@ void CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
 void CppRedAudioProgram::Channel::apply_duty_and_sound_length(AbstractAudioRenderer &renderer){
 	auto temp = this->note_delay_counter;
 	if (this->channel_no % 4 != 2)
-		temp = (temp % 64) | this->duty;
-	this->program->get_register_pointer(RegisterId::DutySoundLength)(renderer, (byte_t)temp);
+		temp = (temp & BITMAP(00111111)) | this->duty;
+	this->program->get_register_pointer(RegisterId::DutySoundLength)(renderer, temp);
 }
 
 void CppRedAudioProgram::Channel::enable_channel_output(AbstractAudioRenderer &renderer){
@@ -672,7 +718,7 @@ void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioRenderer &render
 	auto sum1 = this->pitch_bend_frequency_steps + this->pitch_bend_current_frequency;
 	auto sum2 = this->pitch_bend_frequency_steps_fractional_part + this->pitch_bend_current_frequency_fractional_part;
 	this->pitch_bend_current_frequency_fractional_part = sum2 & 0xFF;
-	auto whole_part = sum1 + sum2 >> 8;
+	auto whole_part = sum1 + (sum2 >> 8);
 	
 	if (!this->pitch_bend_decreasing)
 		reached_target = whole_part >= this->pitch_bend_target_frequency;
@@ -687,4 +733,29 @@ void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioRenderer &render
 	}
 	this->do_pitch_bend = false;
 	this->pitch_bend_decreasing = false;
+}
+
+void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudioRenderer &renderer, int frequency){
+	if (this->channel_no % 4 == 2){
+		auto instrument_no = this->program->music_wave_instrument;
+		if (this->channel_no != 2){
+			assert(this->channel_no == 6);
+			instrument_no = this->program->sfx_wave_instrument;
+		}
+		static_assert(array_length(instruments_bank_1) == array_length(instruments_bank_2) && array_length(instruments_bank_2) == array_length(instruments_bank_3), "");
+		assert(instrument_no < array_length(instruments_bank_1));
+		auto &instrument = instruments_by_bank[this->bank - 1][instrument_no];
+		renderer.set_NR30(0);
+		renderer.copy_voluntary_wave(instrument);
+		renderer.set_NR30(0x80);
+	}
+	assert(frequency < 0x10000 && frequency >= 0);
+	if (this->is_cry()){
+		frequency += this->program->frequency_modifier;
+		frequency &= 0xFFFF;
+	}
+	byte_t hi = (byte_t)(frequency >> 8);
+	byte_t lo = (byte_t)(frequency & 0xFF);
+	this->program->get_register_pointer(RegisterId::FrequencyLow)(renderer, lo);
+	this->program->get_register_pointer(RegisterId::FrequencyHigh)(renderer, (hi | BITMAP(1000000)) & BITMAP(11000111));
 }

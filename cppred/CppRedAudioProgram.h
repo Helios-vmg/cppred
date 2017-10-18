@@ -34,10 +34,12 @@ class CppRedAudioProgram : public AudioProgram{
 	std::uint32_t music_tempo = 0;
 	std::uint32_t sfx_tempo = 0;
 	int tempo_modifier = 0;
+	int frequency_modifier = 0;
 	bool stop_when_sfx_ends = false;
 	class Channel{
 		std::vector<int> call_stack;
 		CppRedAudioProgram *program;
+		int bank = 1;
 		int channel_no = std::numeric_limits<int>::min();
 		AudioResourceId sound_id = AudioResourceId::None;
 		byte_t note_delay_counter = 0;

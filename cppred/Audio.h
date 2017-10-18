@@ -94,6 +94,8 @@ public:
 	virtual void set_NR50(byte_t) = 0;
 	virtual void set_NR51(byte_t) = 0;
 	virtual byte_t get_NR51() = 0;
+	//Assumption: size of buffer is 16.
+	virtual void copy_voluntary_wave(const void *buffer) = 0;
 };
 
 class AudioProgram{
