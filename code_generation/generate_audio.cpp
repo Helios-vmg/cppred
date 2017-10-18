@@ -300,18 +300,22 @@ class AudioHeader{
 	std::string name;
 	u32 bank;
 	std::vector<AudioChannel> channels;
+	bool is_music;
 public:
-	AudioHeader(const std::string &name, u32 bank):
+	AudioHeader(const std::string &name, u32 bank, bool is_music):
 		name(name),
-		bank(bank){}
+		bank(bank),
+		is_music(is_music){}
 	AudioHeader(AudioHeader &&other):
 		name(std::move(other.name)),
 		bank(other.bank),
-		channels(std::move(other.channels)){}
+		channels(std::move(other.channels)),
+		is_music(other.is_music){}
 	const AudioHeader &operator=(const AudioHeader &other){
 		this->name = other.name;
 		this->bank = other.bank;
 		this->channels = other.channels;
+		this->is_music = other.is_music;
 		return *this;
 	}
 	void add_channel(AudioChannel &&channel){
@@ -326,6 +330,7 @@ public:
 	void serialize(std::vector<std::uint8_t> &headers) const{
 		write_ascii_string(headers, this->name);
 		write_varint(headers, this->bank);
+		write_varint(headers, (u32)this->is_music);
 		write_varint(headers, this->channels.size());
 		for (auto &c : this->channels)
 			c.serialize(headers);
@@ -398,8 +403,9 @@ static std::vector<AudioHeader> parse_headers(const std::vector<std::string> &in
 			std::stringstream stream(s.substr(1));
 			std::string name;
 			u32 bank;
-			stream >> name >> bank;
-			ret.emplace_back(name, bank);
+			int is_music;
+			stream >> name >> bank >> is_music;
+			ret.emplace_back(name, bank, !!is_music);
 			current_header = &ret.back();
 			continue;
 		}
