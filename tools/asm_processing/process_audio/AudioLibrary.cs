@@ -384,14 +384,14 @@ namespace process_audio
             "audio/music/credits.asm",
         };
 
-        public Tuple<int, string>[] HeaderPaths =
+        public Tuple<int, string, bool>[] HeaderPaths =
         {
-            new Tuple<int, string>(1, "audio/headers/musicheaders1.asm"),
-            new Tuple<int, string>(2, "audio/headers/musicheaders2.asm"),
-            new Tuple<int, string>(3, "audio/headers/musicheaders3.asm"),
-            new Tuple<int, string>(1, "audio/headers/sfxheaders1.asm"),
-            new Tuple<int, string>(2, "audio/headers/sfxheaders2.asm"),
-            new Tuple<int, string>(3, "audio/headers/sfxheaders3.asm"),
+            new Tuple<int, string, bool>(1, "audio/headers/musicheaders1.asm", true),
+            new Tuple<int, string, bool>(2, "audio/headers/musicheaders2.asm", true),
+            new Tuple<int, string, bool>(3, "audio/headers/musicheaders3.asm", true),
+            new Tuple<int, string, bool>(1, "audio/headers/sfxheaders1.asm", false),
+            new Tuple<int, string, bool>(2, "audio/headers/sfxheaders2.asm", false),
+            new Tuple<int, string, bool>(3, "audio/headers/sfxheaders3.asm", false),
         };
 
         #endregion
@@ -426,7 +426,7 @@ namespace process_audio
             var parser = new AudioHeadersParser();
             foreach (var path in HeaderPaths)
             {
-                foreach (var header in parser.ParseFile(basePath + path.Item2, path.Item1))
+                foreach (var header in parser.ParseFile(basePath + path.Item2, path.Item1, path.Item3))
                 {
                     if (behavior != DuplicateBehavior.LeaveEverythingUntouched)
                     {

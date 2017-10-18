@@ -70,8 +70,11 @@ namespace process_audio
             return null;
         }
 
-        public List<AudioHeader> ParseFile(string path, int bank)
+        private bool CurrentHeaderIsMusic = false;
+
+        public List<AudioHeader> ParseFile(string path, int bank, bool isMusic)
         {
+            CurrentHeaderIsMusic = isMusic;
             var ret = new List<AudioHeader>();
             var lines = LoadFile(path);
             int lineNo = 0;
@@ -105,6 +108,7 @@ namespace process_audio
             {
                 Name = state.LineMatch.Groups[1].ToString(),
                 Bank = state.Bank,
+                IsMusic = CurrentHeaderIsMusic,
             };
             state.FinalResult.Add(state.CurrentHeader);
         }

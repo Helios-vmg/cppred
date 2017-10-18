@@ -11,11 +11,13 @@ namespace process_audio
     {
         public string Name;
         public int Bank;
+        public bool IsMusic;
         public List<Channel> Channels = new List<Channel>();
 
         public void Write(TextWriter tw)
         {
-            tw.WriteLine($".{Name} {Bank}");
+            var isMusic = IsMusic ? 1 : 0;
+            tw.WriteLine($".{Name} {Bank} {isMusic}");
             foreach (var channel in Channels)
                 tw.WriteLine($"\tchannel {channel.Sequence} {channel.ChannelNo}");
             tw.WriteLine();
