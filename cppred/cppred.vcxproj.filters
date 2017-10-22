@@ -134,6 +134,9 @@
     <ClInclude Include="CppRedAudioProgram.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="StaticSet.h">
+      <Filter>Other\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">

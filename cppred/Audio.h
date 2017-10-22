@@ -90,9 +90,18 @@ class AbstractAudioRenderer{
 public:
 	virtual ~AbstractAudioRenderer(){}
 	virtual void set_NR10(byte_t) = 0;
+	virtual void set_NR12(byte_t) = 0;
+	virtual void set_NR14(byte_t) = 0;
+	virtual void set_NR22(byte_t) = 0;
+	virtual void set_NR24(byte_t) = 0;
+	virtual void set_NR42(byte_t) = 0;
+	virtual void set_NR44(byte_t) = 0;
 	virtual void set_NR30(byte_t) = 0;
+	virtual void set_NR32(byte_t) = 0;
 	virtual void set_NR50(byte_t) = 0;
 	virtual void set_NR51(byte_t) = 0;
+	virtual void set_NR52(byte_t) = 0;
+	virtual byte_t get_NR50() = 0;
 	virtual byte_t get_NR51() = 0;
 	//Assumption: size of buffer is 16.
 	virtual void copy_voluntary_wave(const void *buffer) = 0;

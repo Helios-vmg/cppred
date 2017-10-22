@@ -54,6 +54,7 @@
     <ClInclude Include="RendererStructs.h" />
     <ClInclude Include="SoundGenerators.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="StaticSet.h" />
     <ClInclude Include="threads.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>

@@ -2,7 +2,7 @@
 #include "Audio.h"
 #include "CppRedData.h"
 #include "../common/AudioCommandType.h"
-#include <set>
+#include "../common/AudioResourceType.h"
 
 struct AudioCommand{
 	AudioCommandType type;
@@ -18,6 +18,7 @@ struct AudioResource{
 	Channel channels[8];
 	byte_t channel_count;
 	byte_t bank;
+	AudioResourceType type;
 };
 
 class CppRedAudioProgram : public AudioProgram{
@@ -25,7 +26,15 @@ class CppRedAudioProgram : public AudioProgram{
 	double last_update = -1;
 	std::vector<AudioCommand> commands;
 	std::vector<AudioResource> resources;
-	byte_t mute_audio_and_pause_music = 0;
+
+	AbstractAudioRenderer *renderer;
+	AudioResourceId sound_id = AudioResourceId::None;
+	enum class PauseMusicState{
+		NotPaused,
+		PauseRequested,
+		PauseRequestFulfilled,
+	};
+	PauseMusicState pause_music_state = PauseMusicState::PauseRequestFulfilled;
 	byte_t saved_volume = 0xFF;
 	int disable_channel_output_when_sfx_ends = 0;
 	int music_wave_instrument = 0;
@@ -36,13 +45,15 @@ class CppRedAudioProgram : public AudioProgram{
 	int tempo_modifier = 0;
 	int frequency_modifier = 0;
 	bool stop_when_sfx_ends = false;
+	const AudioResource *current_resource = nullptr;
 	class Channel{
-		std::vector<int> call_stack;
 		CppRedAudioProgram *program;
+		AudioResourceId sound_id = AudioResourceId::None;
+		std::vector<int> call_stack;
+		int program_counter = 0;
 		int bank = 1;
 		int channel_no = std::numeric_limits<int>::min();
-		AudioResourceId sound_id = AudioResourceId::None;
-		byte_t note_delay_counter = 0;
+		byte_t note_delay_counter = 1;
 		byte_t note_delay_counter_fractional_part = 0;
 		int vibrato_delay_counter = 0;
 		int vibrato_extent = 0;
@@ -52,8 +63,7 @@ class CppRedAudioProgram : public AudioProgram{
 		int vibrato_depth_reload = 0;
 		int channel_frequency = 0;
 		int vibrato_delay_counter_reload_value = 0;
-		int program_counter = 0;
-		int note_speed = 0;
+		int note_speed = 1;
 		std::uint32_t loop_counter = 1;
 		int volume = 0;
 		int fade = 0;
@@ -93,8 +103,6 @@ class CppRedAudioProgram : public AudioProgram{
 		void set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter);
 		void init_pitch_bend_variables(int frequency);
 		void set_sfx_tempo();
-		bool is_cry();
-		void play_sound();
 
 		typedef bool (Channel::*command_function)(const AudioCommand &, AbstractAudioRenderer &, bool &);
 #define DECLARE_COMMAND_FUNCTION(x) bool command_##x(const AudioCommand &, AbstractAudioRenderer &renderer, bool &)
@@ -125,18 +133,29 @@ class CppRedAudioProgram : public AudioProgram{
 		DECLARE_COMMAND_FUNCTION(End);
 		bool unknown20(const AudioCommand &, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel, bool noise);
 		static const command_function command_functions[28];
-		static const std::set<AudioResourceId> pokemon_cries;
 	public:
-		Channel(CppRedAudioProgram &program);
+		Channel(CppRedAudioProgram &program, int channel_no, AudioResourceId resource_id, int entry_point, int bank);
 		bool update(AbstractAudioRenderer &renderer);
 		//int get_sound_id() const{
 		//	return this->sound_id;
 		//}
+		bool is_cry();
+		void reset(AudioResourceId resource_id, int entry_point, int bank);
+		AudioResourceId get_sound_id() const{
+			return this->sound_id;
+		}
+		int get_program_counter() const{
+			return this->program_counter;
+		}
+		void set_program_counter(int pc){
+			this->program_counter = pc;
+		}
 	};
 	std::unique_ptr<Channel> channels[8];
 
 	void load_commands();
 	void load_resources();
+	bool is_cry();
 	enum class RegisterId{
 		DutySoundLength = 1,
 		VolumeEnvelope = 2,
@@ -146,7 +165,12 @@ class CppRedAudioProgram : public AudioProgram{
 	};
 	typedef byte_t (*register_function)(AbstractAudioRenderer &, int);
 	register_function get_register_pointer(RegisterId);
+	void perform_update();
+	void update_channel(int);
 public:
-	CppRedAudioProgram();
-	void update(double now, AbstractAudioRenderer &renderer);
+	CppRedAudioProgram(AbstractAudioRenderer &renderer);
+	void update(double now);
+	void play_sound(AudioResourceId);
+	void pause_music();
+	void unpause_music();
 };
