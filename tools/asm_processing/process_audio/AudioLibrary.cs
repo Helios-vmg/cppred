@@ -421,6 +421,71 @@ namespace process_audio
                     Sequences[sequence.Name] = sequence;
         }
 
+        private static HashSet<string> NoiseInstruments = new HashSet<string>
+        {
+            "SFX_Snare1",
+            "SFX_Snare2",
+            "SFX_Snare3",
+            "SFX_Snare4",
+            "SFX_Snare5",
+            "SFX_Triangle1",
+            "SFX_Triangle2",
+            "SFX_Snare6",
+            "SFX_Snare7",
+            "SFX_Snare8",
+            "SFX_Snare9",
+            "SFX_Cymbal1",
+            "SFX_Cymbal2",
+            "SFX_Cymbal3",
+            "SFX_Muted_Snare1",
+            "SFX_Triangle3",
+            "SFX_Muted_Snare2",
+            "SFX_Muted_Snare3",
+            "SFX_Muted_Snare4",
+        };
+
+        private static HashSet<string> PokemonCries = new HashSet<string>
+        {
+            "SFX_Cry00",
+            "SFX_Cry01",
+            "SFX_Cry02",
+            "SFX_Cry03",
+            "SFX_Cry04",
+            "SFX_Cry05",
+            "SFX_Cry06",
+            "SFX_Cry07",
+            "SFX_Cry08",
+            "SFX_Cry09",
+            "SFX_Cry0A",
+            "SFX_Cry0B",
+            "SFX_Cry0C",
+            "SFX_Cry0D",
+            "SFX_Cry0E",
+            "SFX_Cry0F",
+            "SFX_Cry10",
+            "SFX_Cry11",
+            "SFX_Cry12",
+            "SFX_Cry13",
+            "SFX_Cry14",
+            "SFX_Cry15",
+            "SFX_Cry16",
+            "SFX_Cry17",
+            "SFX_Cry18",
+            "SFX_Cry19",
+            "SFX_Cry1A",
+            "SFX_Cry1B",
+            "SFX_Cry1C",
+            "SFX_Cry1D",
+            "SFX_Cry1E",
+            "SFX_Cry1F",
+            "SFX_Cry20",
+            "SFX_Cry21",
+            "SFX_Cry22",
+            "SFX_Cry23",
+            "SFX_Cry24",
+            "SFX_Cry25",
+        };
+
         public void LoadAudioHeaders(string basePath, DuplicateBehavior behavior)
         {
             var parser = new AudioHeadersParser();
@@ -428,20 +493,29 @@ namespace process_audio
             {
                 foreach (var header in parser.ParseFile(basePath + path.Item2, path.Item1, path.Item3))
                 {
+                    var reducedName = header.Name;
+                    bool reduced = reducedName.EndsWith($"_{header.Bank}");
+                    if (reduced)
+                        reducedName = reducedName.Substring(0, reducedName.Length - 2);
+
                     if (behavior != DuplicateBehavior.LeaveEverythingUntouched)
                     {
-                        var renamed = header.Name;
-                        if (renamed.EndsWith($"_{header.Bank}"))
+                        if (reduced)
                         {
-                            renamed = renamed.Substring(0, renamed.Length - 2);
-                            if (Headers.ContainsKey(renamed) && behavior == DuplicateBehavior.NormalizeAndRemoveDuplicates)
+                            if (Headers.ContainsKey(reducedName) && behavior == DuplicateBehavior.NormalizeAndRemoveDuplicates)
                             {
                                 Console.WriteLine($"Ignoring duplicate header {header.Name}");
                                 continue;
                             }
-                            header.Name = renamed;
+                            header.Name = reducedName;
                         }
                     }
+
+                    if (NoiseInstruments.Contains(reducedName))
+                        header.ResourceType = ResourceType.NoiseInstrument;
+                    else if (PokemonCries.Contains(reducedName))
+                        header.ResourceType = ResourceType.Cry;
+
                     Headers[header.Name] = header;
                 }
             }
@@ -452,6 +526,11 @@ namespace process_audio
             foreach (var sequence in Sequences.Values)
                 sequence.Write(tw);
             tw.WriteLine(":headers");
+            OutputHeaders(tw);
+        }
+
+        public void OutputHeaders(TextWriter tw)
+        {
             foreach (var header in Headers.Values)
                 header.Write(tw);
         }

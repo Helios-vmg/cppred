@@ -7,17 +7,41 @@ using System.Threading.Tasks;
 
 namespace process_audio
 {
+    enum ResourceType
+    {
+        Music,
+        NoiseInstrument,
+        Cry,
+        Sfx,
+    }
+
     class AudioHeader
     {
         public string Name;
         public int Bank;
-        public bool IsMusic;
         public List<Channel> Channels = new List<Channel>();
+        public ResourceType ResourceType;
+
+        private string TypeToString()
+        {
+            switch (ResourceType)
+            {
+                case ResourceType.Music:
+                    return "music";
+                case ResourceType.NoiseInstrument:
+                    return "noise";
+                case ResourceType.Cry:
+                    return "cry";
+                case ResourceType.Sfx:
+                    return "sfx";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
 
         public void Write(TextWriter tw)
         {
-            var isMusic = IsMusic ? 1 : 0;
-            tw.WriteLine($".{Name} {Bank} {isMusic}");
+            tw.WriteLine($".{Name} {Bank} {TypeToString()}");
             foreach (var channel in Channels)
                 tw.WriteLine($"\tchannel {channel.Sequence} {channel.ChannelNo}");
             tw.WriteLine();

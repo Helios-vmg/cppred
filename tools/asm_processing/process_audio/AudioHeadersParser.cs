@@ -108,7 +108,7 @@ namespace process_audio
             {
                 Name = state.LineMatch.Groups[1].ToString(),
                 Bank = state.Bank,
-                IsMusic = CurrentHeaderIsMusic,
+                ResourceType = CurrentHeaderIsMusic ? ResourceType.Music : ResourceType.Sfx,
             };
             state.FinalResult.Add(state.CurrentHeader);
         }
