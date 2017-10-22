@@ -2,6 +2,7 @@
 #include "../FreeImage/Source/ZLib/zlib.h"
 #include "../common/calculate_frequency.h"
 #include "../common/AudioCommandType.h"
+#include "../common/AudioResourceType.h"
 #include <iostream>
 #include <memory>
 #include <set>
@@ -300,22 +301,22 @@ class AudioHeader{
 	std::string name;
 	u32 bank;
 	std::vector<AudioChannel> channels;
-	bool is_music;
+	AudioResourceType type;
 public:
-	AudioHeader(const std::string &name, u32 bank, bool is_music):
+	AudioHeader(const std::string &name, u32 bank, AudioResourceType type):
 		name(name),
 		bank(bank),
-		is_music(is_music){}
+		type(type){}
 	AudioHeader(AudioHeader &&other):
 		name(std::move(other.name)),
 		bank(other.bank),
 		channels(std::move(other.channels)),
-		is_music(other.is_music){}
+		type(other.type){}
 	const AudioHeader &operator=(const AudioHeader &other){
 		this->name = other.name;
 		this->bank = other.bank;
 		this->channels = other.channels;
-		this->is_music = other.is_music;
+		this->type = other.type;
 		return *this;
 	}
 	void add_channel(AudioChannel &&channel){
@@ -330,13 +331,20 @@ public:
 	void serialize(std::vector<std::uint8_t> &headers) const{
 		write_ascii_string(headers, this->name);
 		write_varint(headers, this->bank);
-		write_varint(headers, (u32)this->is_music);
+		write_varint(headers, (u32)this->type);
 		write_varint(headers, this->channels.size());
 		for (auto &c : this->channels)
 			c.serialize(headers);
 	}
 	const std::string &get_name() const{
 		return this->name;
+	}
+	AudioResourceType get_type() const{
+		return this->type;
+	}
+
+	bool get_is_music() const{
+		return this->type == AudioResourceType::Music;
 	}
 };
 
@@ -394,6 +402,18 @@ static std::map<std::string, std::unique_ptr<AudioSequence>> parse_sequences(con
 	return ret;
 }
 
+static AudioResourceType to_AudioResourceType(const std::string &s){
+	if (s == "music")
+		return AudioResourceType::Music;
+	if (s == "noise")
+		return AudioResourceType::NoiseInstrument;
+	if (s == "cry")
+		return AudioResourceType::Cry;
+	if (s == "sfx")
+		return AudioResourceType::Sfx;
+	throw std::runtime_error("Error: Invalid audio resource type: \"" + s + "\". Must be \"music\", \"noise\", \"cry\", or \"sfx\".");
+}
+
 static std::vector<AudioHeader> parse_headers(const std::vector<std::string> &input){
 	std::vector<AudioHeader> ret;
 
@@ -403,9 +423,9 @@ static std::vector<AudioHeader> parse_headers(const std::vector<std::string> &in
 			std::stringstream stream(s.substr(1));
 			std::string name;
 			u32 bank;
-			int is_music;
-			stream >> name >> bank >> is_music;
-			ret.emplace_back(name, bank, !!is_music);
+			std::string header_type;
+			stream >> name >> bank >> header_type;
+			ret.emplace_back(name, bank, to_AudioResourceType(header_type));
 			current_header = &ret.back();
 			continue;
 		}
@@ -577,7 +597,30 @@ class AudioData{
 			}
 		}
 	}
-	void verify_sequence(const AudioSequence &sequence, const AudioChannel &channel, const AudioHeader &header, std::set<std::string> &stack){
+	void check_header(const AudioHeader &header){
+		std::vector<const AudioChannel *> lt_4;
+		std::vector<const AudioChannel *> geq_4;
+		for (auto &channel : header.get_channels()){
+			if (header.get_type() == AudioResourceType::Cry && channel.get_channel_no() == 6)
+				throw std::runtime_error("Error: Resource " + header.get_name() + " is marked as 'cry', but allocates audio channel 6. Pokemon cries cannot use channel 6.");
+
+			(channel.get_channel_no() < 4 ? lt_4 : geq_4).push_back(&channel);
+			std::set<std::string> stack;
+			stack.insert(channel.get_referenced_sequence());
+			this->check_sequence(*this->sequences.find(channel.get_referenced_sequence())->second, channel, header, stack);
+		}
+		if (header.get_is_music() && geq_4.size()){
+			std::cerr << "Warning: Header " << header.get_name() << " is marked as music, but allocates channels greater than channel No. 3. See the following channels:\n";
+			for (auto channel : geq_4)
+				std::cerr << "  * " << channel->get_referenced_sequence() << " => " << channel->get_channel_no() << std::endl;
+		}
+		if (!header.get_is_music() && lt_4.size()){
+			std::cerr << "Warning: Header " << header.get_name() << " is marked as non-music, but allocates channels less than channel No. 4. See the following channels:\n";
+			for (auto channel : lt_4)
+				std::cerr << "  * " << channel->get_referenced_sequence() << " => " << channel->get_channel_no() << std::endl;
+		}
+	}
+	void check_sequence(const AudioSequence &sequence, const AudioChannel &channel, const AudioHeader &header, std::set<std::string> &stack){
 		auto ch = channel.get_channel_no();
 		for (auto &command : sequence.get_commands()){
 			auto cmd = (AudioCommandType)command->command_id();
@@ -596,14 +639,14 @@ class AudioData{
 
 
 				case AudioCommandType::Goto:
-					this->verify_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);
+					this->check_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);
 					return;
 				case AudioCommandType::Call:
 				case AudioCommandType::Loop:
 					if (stack.find(command->get_referenced_sequence()) != stack.end())
 						break;
 					stack.insert(command->get_referenced_sequence());
-					this->verify_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);
+					this->check_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);
 					stack.erase(command->get_referenced_sequence());
 					break;
 				case AudioCommandType::End:
@@ -619,7 +662,7 @@ public:
 	AudioData(std::ostream &log_file){
 		this->load_secondary_file(input_files[1]);
 		this->load_main_file(input_files[0]);
-		this->verify();
+		this->consistency_check();
 		this->remove_unreachable_sequences(log_file);
 		this->place_sequences();
 	}
@@ -641,14 +684,9 @@ public:
 		return this->headers;
 	}
 
-	void verify(){
-		for (auto &header : this->headers){
-			for (auto &channel : header.get_channels()){
-				std::set<std::string> stack;
-				stack.insert(channel.get_referenced_sequence());
-				this->verify_sequence(*this->sequences.find(channel.get_referenced_sequence())->second, channel, header, stack);
-			}
-		}
+	void consistency_check(){
+		for (auto &header : this->headers)
+			this->check_header(header);
 	}
 };
 
