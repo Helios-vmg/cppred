@@ -18,6 +18,7 @@ Engine::Engine():
 }
 
 Engine::~Engine(){
+	this->audio.reset();
 	SDL_Quit();
 }
 
@@ -44,7 +45,6 @@ void Engine::run(){
 	this->yielder = nullptr;
 
 	CppRedAudioProgram crap(*this->audio);
-	this->audio->start_audio_processing(crap);
 
 	//Main loop.
 	while (this->handle_events()){

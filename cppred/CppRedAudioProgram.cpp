@@ -1,5 +1,6 @@
 #include "CppRedAudioProgram.h"
 #include "CppRedData.h"
+#include "Audio.h"
 #include "utility.h"
 #include "../common/calculate_frequency.h"
 #include <set>
@@ -188,8 +189,13 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 };
 
 CppRedAudioProgram::CppRedAudioProgram(AbstractAudioRenderer &renderer): renderer(&renderer){
+	this->renderer->start_audio_processing(*this);
 	this->load_commands();
 	this->load_resources();
+}
+
+CppRedAudioProgram::~CppRedAudioProgram(){
+	this->renderer->stop_audio_processing();
 }
 
 void CppRedAudioProgram::load_commands(){
@@ -214,9 +220,14 @@ void CppRedAudioProgram::load_resources(){
 	auto buffer = audio_header_data;
 	size_t offset = 0;
 	const size_t size = audio_header_data_size;
-	this->resources.resize(read_varint(buffer, offset, size));
-	assert(this->resources.size() == (size_t)AudioResourceId::Stop - 1);
+	this->resources.resize(read_varint(buffer, offset, size) + 1);
+	assert(this->resources.size() == (size_t)AudioResourceId::Stop);
+	bool skip = true;
 	for (auto &resource : this->resources){
+		if (skip){
+			skip = false;
+			continue;
+		}
 		resource.name = read_string(buffer, offset, size);
 		resource.bank = (byte_t)read_varint(buffer, offset, size);
 		resource.type = (AudioResourceType)read_varint(buffer, offset, size);
@@ -232,7 +243,11 @@ const double CppRedAudioProgram::update_threshold = 4389.0 / 262144.0;
 
 void CppRedAudioProgram::update(double now){
 	auto delta = now - this->last_update;
-	if (this->last_update > 0 || delta < update_threshold)
+	if (this->last_update < 0){
+		this->last_update = now;
+		return;
+	}
+	if (delta < update_threshold)
 		return;
 	delta *= 1.0 / update_threshold;
 	int n = (int)(delta * (1.0 / update_threshold));
@@ -832,7 +847,6 @@ void CppRedAudioProgram::play_sound(AudioResourceId id){
 	}
 	auto offset = (size_t)id;
 	assert(!!offset);
-	offset--;
 	if (offset >= this->resources.size()){
 		std::stringstream stream;
 		stream << "Invalid AudioResourceId: " << offset + 1;

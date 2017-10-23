@@ -88,6 +88,8 @@ struct AudioFrame{
 	StereoSampleFinal buffer[length];
 };
 
+class AudioProgram;
+
 class AbstractAudioRenderer{
 public:
 	virtual ~AbstractAudioRenderer(){}
@@ -132,6 +134,8 @@ public:
 	virtual byte_t get_NR51() = 0;
 	//Assumption: size of buffer is 16.
 	virtual void copy_voluntary_wave(const void *buffer) = 0;
+	virtual void start_audio_processing(AudioProgram &) = 0;
+	virtual void stop_audio_processing() = 0;
 };
 
 class AudioProgram{
@@ -173,7 +177,8 @@ class AudioRenderer : public AbstractAudioRenderer{
 public:
 	AudioRenderer(Engine &);
 	~AudioRenderer();
-	void start_audio_processing(AudioProgram &);
+	void start_audio_processing(AudioProgram &) override;
+	void stop_audio_processing() override;
 	void set_NR10(byte_t) override;
 	void set_NR11(byte_t) override;
 	void set_NR12(byte_t) override;

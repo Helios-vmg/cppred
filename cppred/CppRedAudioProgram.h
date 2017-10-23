@@ -168,6 +168,7 @@ class CppRedAudioProgram : public AudioProgram{
 	void update_channel(int);
 public:
 	CppRedAudioProgram(AbstractAudioRenderer &renderer);
+	~CppRedAudioProgram();
 	void update(double now) override;
 	void play_sound(AudioResourceId) override;
 	void pause_music();

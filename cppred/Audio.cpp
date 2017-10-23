@@ -51,11 +51,7 @@ AudioRenderer::AudioRenderer(Engine &engine): engine(&engine){
 }
 
 AudioRenderer::~AudioRenderer(){
-	if (this->thread){
-		this->continue_running = false;
-		this->thread->join();
-		this->thread.reset();
-	}
+	this->AudioRenderer::stop_audio_processing();
 	if (this->timer_id)
 		SDL_RemoveTimer(this->timer_id);
 	if (this->audio_device){
@@ -106,8 +102,18 @@ void AudioRenderer::return_used_frame(AudioFrame *frame){
 }
 
 void AudioRenderer::start_audio_processing(AudioProgram &program){
+	if (this->thread)
+		this->stop_audio_processing();
 	this->continue_running = true;
 	this->thread.reset(new std::thread([this, &program](){ this->processor(program); }));
+}
+
+void AudioRenderer::stop_audio_processing(){
+	if (this->thread){
+		this->continue_running = false;
+		this->thread->join();
+		this->thread.reset();
+	}
 }
 
 void AudioRenderer::process_queue(AudioProgram &program){
