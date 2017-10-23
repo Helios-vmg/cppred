@@ -2,6 +2,7 @@
 #include "SoundGenerators.h"
 #include "Engine.h"
 #include "ActualAudioRenderer.h"
+#include "utility.h"
 #include <cstring>
 #include <algorithm>
 
@@ -67,7 +68,7 @@ AudioRenderer::~AudioRenderer(){
 void SDLCALL AudioRenderer::audio_callback(void *userdata, Uint8 *stream, int len){
 	auto This = (AudioRenderer *)userdata;
 	{
-		std::lock_guard<std::mutex> lg(This->mutex);
+		LOCK_MUTEX(This->mutex);
 		auto frame = This->get_current_frame();
 		if (frame){
 			if (frame->frame_no < This->next_frame){
@@ -109,9 +110,20 @@ void AudioRenderer::start_audio_processing(AudioProgram &program){
 	this->thread.reset(new std::thread([this, &program](){ this->processor(program); }));
 }
 
+void AudioRenderer::process_queue(AudioProgram &program){
+	decltype(this->request_queue) queue;
+	{
+		LOCK_MUTEX(this->queue_mutex);
+		queue = std::move(this->request_queue);
+	}
+	for (auto request : queue)
+		this->play_sound_internal(program, request);
+}
+
 void AudioRenderer::processor(AudioProgram &program){
 	while (this->continue_running){
 		auto now = this->engine->get_clock();
+		this->process_queue(program);
 		program.update(now);
 		this->renderer->update(now);
 		//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
@@ -279,4 +291,28 @@ byte_t AudioRenderer::get_NR51(){
 void AudioRenderer::copy_voluntary_wave(const void *buffer){
 	for (int i = 16; i--;)
 		this->renderer->wave.set_wave_table(i, ((const byte *)buffer)[i]);
+}
+
+void AudioRenderer::play_sound(AudioResourceId sound){
+	LOCK_MUTEX(this->queue_mutex);
+	this->request_queue.push_back(sound);
+}
+
+void AudioRenderer::play_sound_internal(AudioProgram &program, AudioResourceId sound){
+	if (this->new_sound_id != AudioResourceId::None)
+		for (int i = 4; i < 8; i++)
+			program.clear_channel(i);
+	if (this->fade_out_control){
+		if (this->new_sound_id == AudioResourceId::None)
+			return;
+		this->new_sound_id = AudioResourceId::None;
+		if (this->last_music_sound_id == AudioResourceId::Stop){
+			this->after_fade_out_play_this = this->last_music_sound_id = sound;
+			this->fade_out_counter = this->fade_out_counter_reload_value = this->fade_out_control;
+			return;
+		}
+		this->fade_out_control = 0;
+	}
+	this->new_sound_id = AudioResourceId::None;
+	program.play_sound(sound);
 }

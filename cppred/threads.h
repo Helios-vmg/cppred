@@ -4,8 +4,6 @@
 #include <mutex>
 #include <thread>
 
-typedef std::lock_guard<std::mutex> automutex_t;
-
 class Event{
 	bool signalled = false;
 	std::mutex mutex;

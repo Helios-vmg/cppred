@@ -6,7 +6,9 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <queue>
 #include "common_types.h"
+#include "../CodeGeneration/output/audio.h"
 
 class Engine;
 
@@ -135,6 +137,8 @@ public:
 class AudioProgram{
 public:
 	virtual void update(double now) = 0;
+	virtual void clear_channel(int channel) = 0;
+	virtual void play_sound(AudioResourceId) = 0;
 };
 
 class AudioRenderer : public AbstractAudioRenderer{
@@ -148,12 +152,24 @@ class AudioRenderer : public AbstractAudioRenderer{
 	Event timer_event;
 	class ActualRenderer;
 	std::unique_ptr<ActualRenderer> renderer;
+	std::mutex queue_mutex;
+	std::deque<AudioResourceId> request_queue;
+
+	//Original program analogs:
+	AudioResourceId new_sound_id = AudioResourceId::None;
+	AudioResourceId last_music_sound_id = AudioResourceId::None;
+	AudioResourceId after_fade_out_play_this = AudioResourceId::None;
+	int fade_out_control = 0;
+	int fade_out_counter = 0;
+	int fade_out_counter_reload_value = 0;
 
 	static Uint32 SDLCALL timer_callback(Uint32 interval, void *param);
 	static void SDLCALL audio_callback(void *userdata, Uint8 *stream, int len);
 	AudioFrame *get_current_frame();
 	void return_used_frame(AudioFrame *);
 	void processor(AudioProgram &program);
+	void process_queue(AudioProgram &program);
+	void play_sound_internal(AudioProgram &program, AudioResourceId sound);
 public:
 	AudioRenderer(Engine &);
 	~AudioRenderer();
@@ -198,4 +214,5 @@ public:
 	byte_t get_NR50() override;
 	byte_t get_NR51() override;
 	void copy_voluntary_wave(const void *buffer) override;
+	void play_sound(AudioResourceId sound);
 };

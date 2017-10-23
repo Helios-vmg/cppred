@@ -17,7 +17,7 @@ class PublishingResource{
 
 	T *reuse_or_allocate(){
 		{
-			std::lock_guard<std::mutex> lg(this->ready_mutex);
+			LOCK_MUTEX(this->ready_mutex);
 			if (this->ready.size()){
 				auto ret = this->ready.back();
 				this->ready.pop_back();
@@ -47,7 +47,7 @@ public:
 		return (T *)std::atomic_exchange(&this->public_resource, (T *)nullptr);
 	}
 	void return_resource_as_ready(T *r){
-		std::lock_guard<std::mutex> lg(this->ready_mutex);
+		LOCK_MUTEX(this->ready_mutex);
 		this->ready.push_back(r);
 	}
 	void return_resource_as_private(T *r){
@@ -59,7 +59,7 @@ public:
 	void clear_public_resource(){
 		auto frame = (T *)std::atomic_exchange(&this->public_resource, (T *)nullptr);
 		if (frame){
-			std::lock_guard<std::mutex> lg(this->ready_mutex);
+			LOCK_MUTEX(this->ready_mutex);
 			this->ready.push_back(frame);
 		}
 	}

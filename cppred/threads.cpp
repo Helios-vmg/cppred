@@ -1,7 +1,8 @@
 #include "threads.h"
+#include "utility.h"
 
 void Event::signal(){
-	std::lock_guard<std::mutex> lock(this->mutex);
+	LOCK_MUTEX(this->mutex);
 	this->signalled = true;
 	this->cv.notify_one();
 }

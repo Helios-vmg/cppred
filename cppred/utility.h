@@ -5,6 +5,8 @@
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 
+#define LOCK_MUTEX(x) std::lock_guard<decltype(x)> lg_##__COUNTER__(x)
+
 #define DEFINE_GETTER(x) \
 	const decltype(x) &get_##x() const{ \
 		return this->x; \

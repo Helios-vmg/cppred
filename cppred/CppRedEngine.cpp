@@ -33,7 +33,7 @@ void CppRedEngine::clear_screen(){
 }
 
 void CppRedEngine::play_sound(AudioResourceId sound){
-	//TODO
+	this->engine->play_sound(sound);
 }
 
 void CppRedEngine::play_cry(SpeciesId){
