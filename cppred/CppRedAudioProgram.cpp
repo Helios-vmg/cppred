@@ -249,7 +249,6 @@ void CppRedAudioProgram::update(double now){
 	}
 	if (delta < update_threshold)
 		return;
-	delta *= 1.0 / update_threshold;
 	int n = (int)(delta * (1.0 / update_threshold));
 	
 	for (int i = n; i--;)
@@ -360,9 +359,13 @@ bool CppRedAudioProgram::Channel::continue_execution(AbstractAudioRenderer &rend
 }
 
 #define DEFINE_COMMAND_FUNCTION(x) bool CppRedAudioProgram::Channel::command_##x(const AudioCommand &command_, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel)
+#define LOG_COMMAND_EXECUTION
 
 DEFINE_COMMAND_FUNCTION(Tempo){
 	TempoAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "tempo " << command.tempo << std::endl;
+#endif
 	int offset;
 	if (this->channel_no < 4){
 		this->program->music_tempo = command.tempo;
@@ -381,18 +384,27 @@ DEFINE_COMMAND_FUNCTION(Tempo){
 
 DEFINE_COMMAND_FUNCTION(Volume){
 	VolumeAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "volume " << command.vol1 << " " << command.vol2 << std::endl;
+#endif
 	renderer.set_NR50((byte_t)((command.vol1 & 0x0F) | ((command.vol2 & 0x0F) << 4)));
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(Duty){
 	DutyAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "duty " << command.duty << std::endl;
+#endif
 	this->duty = command.duty;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(DutyCycle){
 	DutyCycleAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "duty_cycle " << command.duty << std::endl;
+#endif
 	this->duty_cycle = command.duty;
 	this->duty = command.duty & 0xC0;
 	this->do_rotate_duty = true;
@@ -401,6 +413,9 @@ DEFINE_COMMAND_FUNCTION(DutyCycle){
 
 DEFINE_COMMAND_FUNCTION(Vibrato){
 	VibratoAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "vibrato " << command.delay << " " << command.rate << " " << command.depth << std::endl;
+#endif
 	this->vibrato_delay_counter_reload_value = this->vibrato_delay_counter = command.delay;
 	this->vibrato_extent = (command.rate + 1) / 2;
 	this->vibrato_extent |= this->vibrato_extent << 4;
@@ -409,12 +424,18 @@ DEFINE_COMMAND_FUNCTION(Vibrato){
 }
 
 DEFINE_COMMAND_FUNCTION(TogglePerfectPitch){
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "toggle_perfect_pitch\n";
+#endif
 	this->perfect_pitch = !this->perfect_pitch;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(NoteType){
 	NoteTypeAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "note_type " << command.speed << " " << command.volume << " " << command.fade << std::endl;
+#endif
 	this->note_speed = command.speed;
 
 	int *dst = nullptr;
@@ -434,6 +455,9 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 
 DEFINE_COMMAND_FUNCTION(Rest){
 	RestAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "rest " << command.length << std::endl;
+#endif
 	this->set_delay_counters(renderer, command.length);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return true;
@@ -444,29 +468,41 @@ DEFINE_COMMAND_FUNCTION(Rest){
 		//Restart sound on current channel.
 		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, 0x80);
 	}
-	return true;
+	return false;
 }
 
 DEFINE_COMMAND_FUNCTION(Octave){
 	OctaveAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "octave " << command.octave << std::endl;
+#endif
 	this->octave = command.octave;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(Note){
 	NoteAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "note " << command.pitch << " " << command.length << std::endl;
+#endif
 	this->note_length(renderer, command.length, command.pitch);
-	return true;
+	return false;
 }
 
 DEFINE_COMMAND_FUNCTION(DSpeed){
 	DSpeedAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "dspeed " << command.speed << std::endl;
+#endif
 	this->note_speed = command.speed;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 	NoiseInstrumentAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "noise_instrument " << command.pitch << " " << command.length << std::endl;
+#endif
 	if (!this->program->stop_when_sfx_ends){
 		static const AudioResourceId noises[] = {
 			AudioResourceId::SFX_Snare1,
@@ -489,21 +525,29 @@ DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 			AudioResourceId::SFX_Muted_Snare3,
 			AudioResourceId::SFX_Muted_Snare4,
 		};
-		if (command.pitch < 1 || command.pitch - 1 >= array_length(noises)){
+		auto pitch = command.pitch - 1;
+		if (pitch < 0 || pitch >= array_length(noises)){
 			std::stringstream stream;
-			stream << "Bad noise instrument command. Attempt to call invalid noise " << command.pitch;
+			stream << "Bad noise instrument command. Attempt to call invalid noise " << pitch;
 			throw std::runtime_error(stream.str());
 		}
-		this->program->play_sound(noises[command.pitch]);
+		this->program->play_sound(noises[pitch]);
 	}
 	this->note_length(renderer, command.length, command.pitch);
-	return true;
+	return false;
 }
 
 DEFINE_COMMAND_FUNCTION(UnknownSfx10){
+#ifndef LOG_COMMAND_EXECUTION
 	if (this->channel_no < 4 || this->do_execute_music)
 		return true;
 	UnknownSfx10AudioCommand command(command_);
+#else
+	UnknownSfx10AudioCommand command(command_);
+	std::cout << "unknown_sfx_10 " << command.nr10 << std::endl;
+	if (this->channel_no < 4 || this->do_execute_music)
+		return true;
+#endif
 	renderer.set_NR10((byte_t)command.nr10);
 	return true;
 }
@@ -517,25 +561,40 @@ DEFINE_COMMAND_FUNCTION(UnknownNoise20){
 }
 
 bool CppRedAudioProgram::Channel::unknown20(const AudioCommand &command_, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel, bool noise){
+#ifndef LOG_COMMAND_EXECUTION
 	if (this->channel_no < 3 || this->do_execute_music)
 		return true;
 	UnknownSfx20AudioCommand command(command_);
+#else
+	UnknownSfx20AudioCommand command(command_);
+	std::cout << (noise ? "unknown_noise_20 " : "unknown_sfx_20 ") << command.length << " " << command.envelope << " " << command.frequency << std::endl;
+	if (this->channel_no < 3 || this->do_execute_music)
+		return true;
+#endif
+	//if (!command.length)
+	//	__debugbreak();
 	this->note_length(renderer, command.length, 2);
 	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(renderer, this->duty | this->note_delay_counter);
 	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, command.envelope);
 	this->apply_duty_and_sound_length(renderer);
 	this->enable_channel_output(renderer);
 	this->apply_wave_pattern_and_frequency(renderer, command.frequency);
-	return true;
+	return false;
 }
 
 DEFINE_COMMAND_FUNCTION(ExecuteMusic){
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "execute_music\n";
+#endif
 	this->do_execute_music = true;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(PitchBend){
 	PitchBendAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "pitch_bend " << command.length << " " << command.frequency << std::endl;
+#endif
 	this->pitch_bend_length = command.length;
 	this->pitch_bend_target_frequency = command.frequency;
 	this->do_pitch_bend = true;
@@ -544,12 +603,18 @@ DEFINE_COMMAND_FUNCTION(PitchBend){
 
 DEFINE_COMMAND_FUNCTION(StereoPanning){
 	StereoPanningAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "stereo_panning " << command.value << std::endl;
+#endif
 	this->program->stereo_panning = command.value;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(Loop){
 	LoopAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "loop " << command.times << " " << command.dst << std::endl;
+#endif
 	if (!command.times){
 		this->program_counter = command.dst;
 		return true;
@@ -565,6 +630,9 @@ DEFINE_COMMAND_FUNCTION(Loop){
 
 DEFINE_COMMAND_FUNCTION(Call){
 	CallAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "call " << command.dst << std::endl;
+#endif
 	if (this->call_stack.size())
 		std::cout << "Assumption in audio program might have been invalidated.\n";
 	this->call_stack.push_back(this->program_counter);
@@ -574,11 +642,17 @@ DEFINE_COMMAND_FUNCTION(Call){
 
 DEFINE_COMMAND_FUNCTION(Goto){
 	GotoAudioCommand command(command_);
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "goto " << command.dst << std::endl;
+#endif
 	this->program_counter = command.dst;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(IfRed){
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "ifred\n";
+#endif
 #if POKEMON_VERSION == RED
 	this->ifred_execute_bit = true;
 #elif POKEMON_VERSION == BLUE
@@ -588,16 +662,25 @@ DEFINE_COMMAND_FUNCTION(IfRed){
 }
 
 DEFINE_COMMAND_FUNCTION(Else){
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "else\n";
+#endif
 	this->ifred_execute_bit = !ifred_execute_bit;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(EndIf){
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "endif\n";
+#endif
 	this->ifred_execute_bit = true;
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(End){
+#ifdef LOG_COMMAND_EXECUTION
+	std::cout << "end\n";
+#endif
 	if (this->call_stack.size()){
 		this->program_counter = this->call_stack.back();
 		this->call_stack.pop_back();
@@ -647,7 +730,7 @@ bool CppRedAudioProgram::Channel::go_back_one_command_if_cry(AbstractAudioRender
 
 void CppRedAudioProgram::Channel::note_length(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter){
 	this->set_delay_counters(renderer, length_parameter);
-	if (this->do_execute_music | this->do_noise_or_sfx)
+	if (this->do_execute_music | !this->do_noise_or_sfx)
 		this->note_pitch(renderer, note_parameter);
 }
 
@@ -656,9 +739,10 @@ void CppRedAudioProgram::Channel::set_delay_counters(AbstractAudioRenderer &rend
 	std::uint32_t tempo;
 	if (this->channel_no < 4)
 		tempo = this->program->music_tempo;
-	else if (this->channel_no != 7)
+	else if (this->channel_no != 7){
+		this->set_sfx_tempo();
 		tempo = this->program->sfx_tempo;
-	else
+	}else
 		tempo = 0x0100;
 	auto i = tempo * length + this->note_delay_counter_fractional_part;
 	this->note_delay_counter_fractional_part = i & 0xFF;
@@ -677,7 +761,7 @@ void CppRedAudioProgram::Channel::note_pitch(AbstractAudioRenderer &renderer, st
 		this->init_pitch_bend_variables(frequency);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return;
-	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, this->volume);
+	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, ((this->volume << 4) & 0xF0)|(this->fade & 0x0F));
 	this->apply_duty_and_sound_length(renderer);
 	this->enable_channel_output(renderer);
 	if (this->perfect_pitch)
@@ -871,13 +955,15 @@ void CppRedAudioProgram::play_sound(AudioResourceId id){
 		this->renderer->set_NR30(0x80);
 		this->renderer->set_NR50(0x77);
 
-		for (auto &channel : this->current_resource->channels){
+		for (size_t i = 0; i < this->current_resource->channel_count; i++){
+			auto &channel = this->current_resource->channels[i];
 			auto &c = this->channels[channel.channel];
 			c.reset(new Channel(*this, channel.channel, id, channel.entry_point, this->current_resource->bank));
 		}
 	}else{
 		//play SFX
-		for (auto &channel : this->current_resource->channels){
+		for (size_t i = 0; i < this->current_resource->channel_count; i++){
+			auto &channel = this->current_resource->channels[i];
 			auto &c = this->channels[channel.channel];
 			if (c){
 				bool skip_check = false;

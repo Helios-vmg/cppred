@@ -2,6 +2,9 @@
 #include "Audio.h"
 #include "SoundGenerators.h"
 #include "PublishingResource.h"
+#include <fstream>
+
+//#define OUTPUT_AUDIO_TO_FILE
 
 struct Panning{
 	bool left = true,
@@ -34,6 +37,11 @@ class AudioRenderer::ActualRenderer{
 	std::uint64_t speed_counter_b = 0;
 	std::uint64_t internal_sample_counter = 0;
 	StereoSampleFinal last_sample;
+#ifdef OUTPUT_AUDIO_TO_FILE
+	std::unique_ptr<std::ofstream> output_file;
+	std::unique_ptr<std::ofstream> output_files_by_channel[4];
+	std::unique_ptr<AudioFrame> output_buffers_by_channel[4];
+#endif
 
 	static void sample_callback(void *, std::uint64_t);
 	static void frame_sequencer_callback(void *, std::uint64_t);

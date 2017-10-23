@@ -5,6 +5,8 @@
 #include "utility.h"
 #include <cstring>
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
 
 bool operator==(const SDL_AudioSpec &a, const SDL_AudioSpec &b){
 	return
@@ -29,6 +31,9 @@ basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_a
 }
 
 AudioRenderer::AudioRenderer(Engine &engine): engine(&engine){
+#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+	this->audio_recording.open("audio_output.txt");
+#endif
 	this->renderer.reset(new ActualRenderer);
 	this->continue_running = false;
 	SDL_AudioSpec desired, actual;
@@ -128,6 +133,7 @@ void AudioRenderer::process_queue(AudioProgram &program){
 
 void AudioRenderer::processor(AudioProgram &program){
 	this->renderer->set_NR52(0xFF);
+	this->renderer->set_NR50(0x77);
 	while (this->continue_running){
 		auto now = this->engine->get_clock();
 		this->process_queue(program);
@@ -139,87 +145,120 @@ void AudioRenderer::processor(AudioProgram &program){
 	}
 }
 
+#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+#define OUTPUT_AUDIO(x) { \
+	std::stringstream stream; \
+	stream << "NR" #x " = " << std::hex << std::setw(2) << std::setfill('0') << (int)value; \
+	auto s = stream.str(); \
+	std::cout << s << std::endl; \
+	this->audio_recording << s << std::endl; \
+}
+#else
+#define OUTPUT_AUDIO(x)
+#endif
+
 void AudioRenderer::set_NR10(byte_t value){
+	OUTPUT_AUDIO(10);
 	this->renderer->square1.set_register0(value);
 }
 
 void AudioRenderer::set_NR11(byte_t value){
+	OUTPUT_AUDIO(11);
 	this->renderer->square1.set_register1(value);
 }
 
 void AudioRenderer::set_NR12(byte_t value){
+	OUTPUT_AUDIO(12);
 	this->renderer->square1.set_register2(value);
 }
 
 void AudioRenderer::set_NR13(byte_t value){
+	OUTPUT_AUDIO(13);
 	this->renderer->square1.set_register3(value);
 }
 
 void AudioRenderer::set_NR14(byte_t value){
+	OUTPUT_AUDIO(14);
 	this->renderer->square1.set_register4(value);
 }
 
 void AudioRenderer::set_NR21(byte_t value){
+	OUTPUT_AUDIO(21);
 	this->renderer->square2.set_register1(value);
 }
 
 void AudioRenderer::set_NR22(byte_t value){
+	OUTPUT_AUDIO(22);
 	this->renderer->square2.set_register2(value);
 }
 
 void AudioRenderer::set_NR23(byte_t value){
+	OUTPUT_AUDIO(23);
 	this->renderer->square2.set_register3(value);
 }
 
 void AudioRenderer::set_NR24(byte_t value){
+	OUTPUT_AUDIO(24);
 	this->renderer->square2.set_register4(value);
 }
 
 void AudioRenderer::set_NR30(byte_t value){
+	OUTPUT_AUDIO(30);
 	this->renderer->wave.set_register0(value);
 }
 
 void AudioRenderer::set_NR31(byte_t value){
+	OUTPUT_AUDIO(31);
 	this->renderer->wave.set_register1(value);
 }
 
 void AudioRenderer::set_NR32(byte_t value){
+	OUTPUT_AUDIO(32);
 	this->renderer->wave.set_register2(value);
 }
 
 void AudioRenderer::set_NR33(byte_t value){
+	OUTPUT_AUDIO(33);
 	this->renderer->wave.set_register3(value);
 }
 
 void AudioRenderer::set_NR34(byte_t value){
+	OUTPUT_AUDIO(34);
 	this->renderer->wave.set_register4(value);
 }
 
 void AudioRenderer::set_NR41(byte_t value){
+	OUTPUT_AUDIO(41);
 	this->renderer->noise.set_register1(value);
 }
 
 void AudioRenderer::set_NR42(byte_t value){
+	OUTPUT_AUDIO(42);
 	this->renderer->noise.set_register2(value);
 }
 
 void AudioRenderer::set_NR43(byte_t value){
+	OUTPUT_AUDIO(43);
 	this->renderer->noise.set_register3(value);
 }
 
 void AudioRenderer::set_NR44(byte_t value){
+	OUTPUT_AUDIO(44);
 	this->renderer->noise.set_register4(value);
 }
 
 void AudioRenderer::set_NR50(byte_t value){
+	OUTPUT_AUDIO(50);
 	this->renderer->set_NR50(value);
 }
 
 void AudioRenderer::set_NR51(byte_t value){
+	OUTPUT_AUDIO(51);
 	this->renderer->set_NR51(value);
 }
 
 void AudioRenderer::set_NR52(byte_t value){
+	OUTPUT_AUDIO(52);
 	this->renderer->set_NR52(value);
 }
 
@@ -296,6 +335,15 @@ byte_t AudioRenderer::get_NR51(){
 }
 
 void AudioRenderer::copy_voluntary_wave(const void *buffer){
+#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+	for (int i = 0; i < 16; i++){
+		std::stringstream stream;
+		stream << "WAVE[" << std::hex << std::setw(2) << std::setfill('0') << i << "] = " << std::setw(2) << std::setfill('0') << (int)((const byte *)buffer)[i];
+		auto s = stream.str();
+		std::cout << s << std::endl;
+		this->audio_recording << s << std::endl;
+	}
+#endif
 	for (int i = 16; i--;)
 		this->renderer->wave.set_wave_table(i, ((const byte *)buffer)[i]);
 }

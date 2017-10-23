@@ -34,7 +34,7 @@ class CppRedAudioProgram : public AudioProgram{
 		PauseRequested,
 		PauseRequestFulfilled,
 	};
-	PauseMusicState pause_music_state = PauseMusicState::PauseRequestFulfilled;
+	PauseMusicState pause_music_state = PauseMusicState::NotPaused;
 	byte_t saved_volume = 0xFF;
 	int disable_channel_output_when_sfx_ends = 0;
 	int music_wave_instrument = 0;

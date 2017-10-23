@@ -1,5 +1,6 @@
 #include "ActualAudioRenderer.h"
 #include "utility.h"
+#include <sstream>
 
 #define CHANNEL_SELECTION 0xF
 #define CHANNEL1 (1 << 0)
@@ -16,7 +17,32 @@ AudioRenderer::ActualRenderer::ActualRenderer():
 		frame_sequencer_clock(gb_cpu_frequency_power, 512, frame_sequencer_callback, this)
 #endif
 {
-	
+#ifdef OUTPUT_AUDIO_TO_FILE
+	this->output_file.reset(new std::ofstream("output-0.raw", std::ios::binary));
+	bool abort = false;
+	if (*this->output_file){
+		int i = 0;
+		for (auto &file : this->output_files_by_channel){
+			std::stringstream stream;
+			stream << "output-" << i + 1 << ".raw";
+			file.reset(new std::ofstream(stream.str().c_str(), std::ios::binary));
+			if (!*file){
+				abort = true;
+				break;
+			}
+			this->output_buffers_by_channel[i].reset(new AudioFrame);
+			i++;
+		}
+	} else
+		abort = true;
+	if (abort){
+		this->output_file.reset();
+		for (auto &file : this->output_files_by_channel)
+			file.reset();
+		for (auto &buffer : this->output_buffers_by_channel)
+			buffer.reset();
+	}
+#endif
 }
 
 void AudioRenderer::ActualRenderer::update(double now){

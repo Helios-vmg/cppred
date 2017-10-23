@@ -7,6 +7,7 @@
 #include <mutex>
 #include <atomic>
 #include <queue>
+#include <fstream>
 #include "common_types.h"
 #include "../CodeGeneration/output/audio.h"
 
@@ -145,6 +146,8 @@ public:
 	virtual void play_sound(AudioResourceId) = 0;
 };
 
+//#define AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+
 class AudioRenderer : public AbstractAudioRenderer{
 	Engine *engine;
 	SDL_AudioDeviceID audio_device = 0;
@@ -158,6 +161,9 @@ class AudioRenderer : public AbstractAudioRenderer{
 	std::unique_ptr<ActualRenderer> renderer;
 	std::mutex queue_mutex;
 	std::deque<AudioResourceId> request_queue;
+#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+	std::ofstream audio_recording;
+#endif
 
 	//Original program analogs:
 	AudioResourceId new_sound_id = AudioResourceId::None;
