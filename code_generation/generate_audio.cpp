@@ -628,6 +628,7 @@ class AudioData{
 				case AudioCommandType::UnknownSfx20:
 				case AudioCommandType::NoteType:
 				case AudioCommandType::Note:
+				case AudioCommandType::Vibrato:
 					if (ch % 4 == 3)
 						throw_error_ch3(to_string(cmd), sequence, channel, header);
 					break;
@@ -636,7 +637,6 @@ class AudioData{
 					if (ch % 4 != 3)
 						throw_error_non_ch3(to_string(cmd), sequence, channel, header);
 					break;
-
 
 				case AudioCommandType::Goto:
 					this->check_sequence(*this->sequences.find(command->get_referenced_sequence())->second, channel, header, stack);

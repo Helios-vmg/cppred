@@ -295,7 +295,7 @@ void CppRedAudioProgram::Channel::apply_vibrato(AbstractAudioRenderer &renderer)
 		if (diff > 255)
 			diff = 255;
 	}
-	this->program->get_register_pointer(RegisterId::FrequencyLow)(renderer, (byte_t)diff);
+	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, (byte_t)diff);
 }
 
 bool CppRedAudioProgram::Channel::play_next_note(AbstractAudioRenderer &renderer){
@@ -399,8 +399,9 @@ DEFINE_COMMAND_FUNCTION(Rest){
 	if (this->channel_no % 4 == 2){
 		this->disable_this_hardware_channel(renderer);
 	}else{
-		this->program->get_register_pointer(RegisterId::VolumeEnvelope)(renderer, 0x08);
-		this->program->get_register_pointer(RegisterId::VolumeEnvelopePlus1)(renderer, 0x80);
+		this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, 0x08);
+		//Restart sound on current channel.
+		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, 0x80);
 	}
 	return true;
 }
@@ -479,8 +480,8 @@ bool CppRedAudioProgram::Channel::unknown20(const AudioCommand &command_, Abstra
 		return true;
 	UnknownSfx20AudioCommand command(command_);
 	this->note_length(renderer, command.length, 2);
-	this->program->get_register_pointer(RegisterId::DutySoundLength)(renderer, this->duty | this->note_delay_counter);
-	this->program->get_register_pointer(RegisterId::VolumeEnvelope)(renderer, command.envelope);
+	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(renderer, this->duty | this->note_delay_counter);
+	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, command.envelope);
 	this->apply_duty_and_sound_length(renderer);
 	this->enable_channel_output(renderer);
 	this->apply_wave_pattern_and_frequency(renderer, command.frequency);
@@ -635,7 +636,7 @@ void CppRedAudioProgram::Channel::note_pitch(AbstractAudioRenderer &renderer, st
 		this->init_pitch_bend_variables(frequency);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return;
-	this->program->get_register_pointer(RegisterId::VolumeEnvelope)(renderer, this->volume);
+	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, this->volume);
 	this->apply_duty_and_sound_length(renderer);
 	this->enable_channel_output(renderer);
 	if (this->perfect_pitch)
@@ -673,7 +674,7 @@ void CppRedAudioProgram::Channel::apply_duty_and_sound_length(AbstractAudioRende
 	auto temp = this->note_delay_counter;
 	if (this->channel_no % 4 != 2)
 		temp = (temp & BITMAP(00111111)) | this->duty;
-	this->program->get_register_pointer(RegisterId::DutySoundLength)(renderer, temp);
+	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(renderer, temp);
 }
 
 void CppRedAudioProgram::Channel::enable_channel_output(AbstractAudioRenderer &renderer){
@@ -704,7 +705,7 @@ void CppRedAudioProgram::Channel::apply_duty_cycle(AbstractAudioRenderer &render
 	this->duty_cycle &= 0xFF;
 	this->duty_cycle = (this->duty_cycle << 2) | (this->duty_cycle >> 2);
 	this->duty_cycle &= 0xFF;
-	auto f = this->program->get_register_pointer(RegisterId::DutySoundLength);
+	auto f = this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no);
 	auto reg = f(renderer, -1);
 	f(renderer, (this->duty_cycle & BITMAP(11000000)) | (reg & BITMAP(00111111)));
 }
@@ -723,8 +724,8 @@ void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioRenderer &render
 
 	if (!reached_target){
 		this->pitch_bend_current_frequency = whole_part;
-		this->program->get_register_pointer(RegisterId::FrequencyLow)(renderer, whole_part & 0xFF);
-		this->program->get_register_pointer(RegisterId::FrequencyHigh)(renderer, (whole_part >> 8) & 0xFF);
+		this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, whole_part & 0xFF);
+		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, (whole_part >> 8) & 0xFF);
 		return;
 	}
 	this->do_pitch_bend = false;
@@ -752,8 +753,8 @@ void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudio
 	}
 	byte_t hi = (byte_t)(frequency >> 8);
 	byte_t lo = (byte_t)(frequency & 0xFF);
-	this->program->get_register_pointer(RegisterId::FrequencyLow)(renderer, lo);
-	this->program->get_register_pointer(RegisterId::FrequencyHigh)(renderer, (hi | BITMAP(1000000)) & BITMAP(11000111));
+	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, lo);
+	this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, (hi | BITMAP(1000000)) & BITMAP(11000111));
 }
 
 bool CppRedAudioProgram::is_cry(){
@@ -927,4 +928,64 @@ void CppRedAudioProgram::Channel::reset(AudioResourceId resource_id, int entry_p
 	this->octave = 0;
 	this->do_rotate_duty = false;
 	this->ifred_execute_bit = true;
+}
+
+#define DEFINE_REGISTER_FUNCTION(reg, ch, dst) \
+static byte_t register_function_##reg##_##ch(AbstractAudioRenderer &renderer, int i){ \
+	if (i < 0) \
+		return renderer.get_NR##dst(); \
+	renderer.set_NR##dst(i); \
+	return 0; \
+}
+
+#define DEFINE_INVALID_REGISTER_FUNCTION(reg, ch) \
+static byte_t register_function_##reg##_##ch(AbstractAudioRenderer &renderer, int i){ \
+	throw std::runtime_error("Attempt to use an invalid register."); \
+}
+
+DEFINE_REGISTER_FUNCTION(DutySoundLength, 0, 11)
+DEFINE_REGISTER_FUNCTION(DutySoundLength, 1, 21)
+DEFINE_REGISTER_FUNCTION(DutySoundLength, 2, 31)
+DEFINE_REGISTER_FUNCTION(DutySoundLength, 3, 41)
+
+DEFINE_REGISTER_FUNCTION(VolumeEnvelope, 0, 12)
+DEFINE_REGISTER_FUNCTION(VolumeEnvelope, 1, 22)
+DEFINE_REGISTER_FUNCTION(VolumeEnvelope, 2, 32)
+DEFINE_REGISTER_FUNCTION(VolumeEnvelope, 3, 42)
+
+DEFINE_REGISTER_FUNCTION(FrequencyLow, 0, 13)
+DEFINE_REGISTER_FUNCTION(FrequencyLow, 1, 23)
+DEFINE_REGISTER_FUNCTION(FrequencyLow, 2, 33)
+DEFINE_INVALID_REGISTER_FUNCTION(FrequencyLow, 3)
+
+DEFINE_REGISTER_FUNCTION(FrequencyHigh, 0, 14)
+DEFINE_REGISTER_FUNCTION(FrequencyHigh, 1, 24)
+DEFINE_REGISTER_FUNCTION(FrequencyHigh, 2, 34)
+DEFINE_REGISTER_FUNCTION(FrequencyHigh, 3, 44)
+
+CppRedAudioProgram::register_function CppRedAudioProgram::get_register_pointer(RegisterId id, int channel_no){
+	assert(channel_no >= 0 && channel_no < 8);
+	channel_no %= 4;
+	auto index = channel_no + ((int)id - 1) * 4;
+	static const register_function functions[] = {
+		register_function_DutySoundLength_0,
+		register_function_DutySoundLength_1,
+		register_function_DutySoundLength_2,
+		register_function_DutySoundLength_3,
+		register_function_VolumeEnvelope_0,
+		register_function_VolumeEnvelope_1,
+		register_function_VolumeEnvelope_2,
+		register_function_VolumeEnvelope_3,
+		register_function_FrequencyLow_0,
+		register_function_FrequencyLow_1,
+		register_function_FrequencyLow_2,
+		register_function_FrequencyLow_3,
+		register_function_FrequencyHigh_0,
+		register_function_FrequencyHigh_1,
+		register_function_FrequencyHigh_2,
+		register_function_FrequencyHigh_3,
+	};
+	if (index < 0 || index >= array_length(functions))
+		throw std::exception();
+	return functions[index];
 }

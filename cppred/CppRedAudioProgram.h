@@ -160,16 +160,15 @@ class CppRedAudioProgram : public AudioProgram{
 		DutySoundLength = 1,
 		VolumeEnvelope = 2,
 		FrequencyLow = 3,
-		VolumeEnvelopePlus1 = 4,
-		FrequencyHigh = 5,
+		FrequencyHigh = 4,
 	};
 	typedef byte_t (*register_function)(AbstractAudioRenderer &, int);
-	register_function get_register_pointer(RegisterId);
+	register_function get_register_pointer(RegisterId, int channel_no);
 	void perform_update();
 	void update_channel(int);
 public:
 	CppRedAudioProgram(AbstractAudioRenderer &renderer);
-	void update(double now);
+	void update(double now) override;
 	void play_sound(AudioResourceId);
 	void pause_music();
 	void unpause_music();

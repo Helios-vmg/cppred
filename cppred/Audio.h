@@ -90,17 +90,42 @@ class AbstractAudioRenderer{
 public:
 	virtual ~AbstractAudioRenderer(){}
 	virtual void set_NR10(byte_t) = 0;
+	virtual void set_NR11(byte_t) = 0;
 	virtual void set_NR12(byte_t) = 0;
+	virtual void set_NR13(byte_t) = 0;
 	virtual void set_NR14(byte_t) = 0;
+	virtual void set_NR21(byte_t) = 0;
 	virtual void set_NR22(byte_t) = 0;
+	virtual void set_NR23(byte_t) = 0;
 	virtual void set_NR24(byte_t) = 0;
-	virtual void set_NR42(byte_t) = 0;
-	virtual void set_NR44(byte_t) = 0;
 	virtual void set_NR30(byte_t) = 0;
+	virtual void set_NR31(byte_t) = 0;
 	virtual void set_NR32(byte_t) = 0;
+	virtual void set_NR33(byte_t) = 0;
+	virtual void set_NR34(byte_t) = 0;
+	virtual void set_NR41(byte_t) = 0;
+	virtual void set_NR42(byte_t) = 0;
+	virtual void set_NR43(byte_t) = 0;
+	virtual void set_NR44(byte_t) = 0;
 	virtual void set_NR50(byte_t) = 0;
 	virtual void set_NR51(byte_t) = 0;
 	virtual void set_NR52(byte_t) = 0;
+	virtual byte_t get_NR11() = 0;
+	virtual byte_t get_NR12() = 0;
+	virtual byte_t get_NR13() = 0;
+	virtual byte_t get_NR14() = 0;
+	virtual byte_t get_NR21() = 0;
+	virtual byte_t get_NR22() = 0;
+	virtual byte_t get_NR23() = 0;
+	virtual byte_t get_NR24() = 0;
+	virtual byte_t get_NR31() = 0;
+	virtual byte_t get_NR32() = 0;
+	virtual byte_t get_NR33() = 0;
+	virtual byte_t get_NR34() = 0;
+	virtual byte_t get_NR41() = 0;
+	virtual byte_t get_NR42() = 0;
+	virtual byte_t get_NR43() = 0;
+	virtual byte_t get_NR44() = 0;
 	virtual byte_t get_NR50() = 0;
 	virtual byte_t get_NR51() = 0;
 	//Assumption: size of buffer is 16.
@@ -109,7 +134,7 @@ public:
 
 class AudioProgram{
 public:
-	virtual void update(double now, AbstractAudioRenderer &) = 0;
+	virtual void update(double now) = 0;
 };
 
 class AudioRenderer : public AbstractAudioRenderer{
