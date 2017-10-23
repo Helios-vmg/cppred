@@ -5,7 +5,33 @@
 #include <set>
 #include <sstream>
 
-const byte_t command_parameter_counts[] = { 1, 2, 1, 1, 3, 0, 3, 1, 1, 2, 1, 2, 1, 4, 3, 0, 2, 1, 2, 1, 1, 0, 0, 0, 0, };
+const byte_t command_parameter_counts[] = {
+	1, //tempo
+	2, //volume
+	1, //duty
+	1, //duty_cycle
+	3, //vibrato
+	0, //toggle_perfect_pitch
+	3, //note_type
+	1, //rest
+	1, //octave
+	2, //note
+	1, //dspeed
+	2, //noise_instrument
+	1, //unknown_sfx_10
+	4, //unknown_sfx_20
+	3, //unknown_noise_20
+	0, //execute_music
+	2, //pitch_bend
+	1, //stereo_panning
+	2, //loop
+	1, //call
+	1, //goto
+	0, //ifred
+	0, //else
+	0, //endif
+	0, //end
+};
 
 #define DECLARE_COMMAND_FUNCTION_IN_ARRAY(x) &CppRedAudioProgram::Channel::command_##x
 
@@ -988,4 +1014,8 @@ CppRedAudioProgram::register_function CppRedAudioProgram::get_register_pointer(R
 	if (index < 0 || index >= array_length(functions))
 		throw std::exception();
 	return functions[index];
+}
+
+void CppRedAudioProgram::clear_channel(int channel){
+	this->channels[euclidean_modulo(channel, (int)array_length(this->channels))].reset();
 }
