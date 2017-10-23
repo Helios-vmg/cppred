@@ -35,11 +35,6 @@ class AudioRenderer::ActualRenderer{
 	std::uint64_t internal_sample_counter = 0;
 	StereoSampleFinal last_sample;
 
-	Square1Generator square1;
-	Square2Generator square2;
-	VoluntaryWaveGenerator wave;
-	NoiseGenerator noise;
-
 	static void sample_callback(void *, std::uint64_t);
 	static void frame_sequencer_callback(void *, std::uint64_t);
 	void sample_callback(std::uint64_t);
@@ -55,13 +50,16 @@ class AudioRenderer::ActualRenderer{
 	void volume_event();
 	void sweep_event();
 public:
+
+	Square1Generator square1;
+	Square2Generator square2;
+	VoluntaryWaveGenerator wave;
+	NoiseGenerator noise;
+
 	ActualRenderer();
 	void update(double now);
 
 	QueuedPublishingResource<AudioFrame> publishing_frames;
-	void set_NR30(byte_t value){
-		this->wave.set_register0(value);
-	}
 	void set_NR50(byte_t);
 	void set_NR51(byte_t);
 	void set_NR52(byte_t);

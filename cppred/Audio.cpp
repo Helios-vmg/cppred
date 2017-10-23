@@ -112,7 +112,7 @@ void AudioRenderer::start_audio_processing(AudioProgram &program){
 void AudioRenderer::processor(AudioProgram &program){
 	while (this->continue_running){
 		auto now = this->engine->get_clock();
-		program.update(now, *this);
+		program.update(now);
 		this->renderer->update(now);
 		//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
 		//actual wait can last up to a few ms.
@@ -120,10 +120,163 @@ void AudioRenderer::processor(AudioProgram &program){
 	}
 }
 
+void AudioRenderer::set_NR10(byte_t value){
+	this->renderer->square1.set_register0(value);
+}
+
+void AudioRenderer::set_NR11(byte_t value){
+	this->renderer->square1.set_register1(value);
+}
+
+void AudioRenderer::set_NR12(byte_t value){
+	this->renderer->square1.set_register2(value);
+}
+
+void AudioRenderer::set_NR13(byte_t value){
+	this->renderer->square1.set_register3(value);
+}
+
+void AudioRenderer::set_NR14(byte_t value){
+	this->renderer->square1.set_register4(value);
+}
+
+void AudioRenderer::set_NR21(byte_t value){
+	this->renderer->square2.set_register1(value);
+}
+
+void AudioRenderer::set_NR22(byte_t value){
+	this->renderer->square2.set_register2(value);
+}
+
+void AudioRenderer::set_NR23(byte_t value){
+	this->renderer->square2.set_register3(value);
+}
+
+void AudioRenderer::set_NR24(byte_t value){
+	this->renderer->square2.set_register4(value);
+}
+
 void AudioRenderer::set_NR30(byte_t value){
-	this->renderer->set_NR30(value);
+	this->renderer->wave.set_register0(value);
+}
+
+void AudioRenderer::set_NR31(byte_t value){
+	this->renderer->wave.set_register1(value);
+}
+
+void AudioRenderer::set_NR32(byte_t value){
+	this->renderer->wave.set_register2(value);
+}
+
+void AudioRenderer::set_NR33(byte_t value){
+	this->renderer->wave.set_register3(value);
+}
+
+void AudioRenderer::set_NR34(byte_t value){
+	this->renderer->wave.set_register4(value);
+}
+
+void AudioRenderer::set_NR41(byte_t value){
+	this->renderer->noise.set_register1(value);
+}
+
+void AudioRenderer::set_NR42(byte_t value){
+	this->renderer->noise.set_register2(value);
+}
+
+void AudioRenderer::set_NR43(byte_t value){
+	this->renderer->noise.set_register3(value);
+}
+
+void AudioRenderer::set_NR44(byte_t value){
+	this->renderer->noise.set_register4(value);
+}
+
+void AudioRenderer::set_NR50(byte_t value){
+	this->renderer->set_NR50(value);
 }
 
 void AudioRenderer::set_NR51(byte_t value){
 	this->renderer->set_NR51(value);
+}
+
+void AudioRenderer::set_NR52(byte_t value){
+	this->renderer->set_NR52(value);
+}
+
+byte_t AudioRenderer::get_NR11(){
+	return this->renderer->square1.get_register1();
+}
+
+byte_t AudioRenderer::get_NR12(){
+	return this->renderer->square1.get_register2();
+}
+
+byte_t AudioRenderer::get_NR13(){
+	return this->renderer->square1.get_register3();
+}
+
+byte_t AudioRenderer::get_NR14(){
+	return this->renderer->square1.get_register4();
+}
+
+byte_t AudioRenderer::get_NR21(){
+	return this->renderer->square2.get_register1();
+}
+
+byte_t AudioRenderer::get_NR22(){
+	return this->renderer->square2.get_register2();
+}
+
+byte_t AudioRenderer::get_NR23(){
+	return this->renderer->square2.get_register3();
+}
+
+byte_t AudioRenderer::get_NR24(){
+	return this->renderer->square2.get_register4();
+}
+
+byte_t AudioRenderer::get_NR31(){
+	return this->renderer->wave.get_register1();
+}
+
+byte_t AudioRenderer::get_NR32(){
+	return this->renderer->wave.get_register2();
+}
+
+byte_t AudioRenderer::get_NR33(){
+	return this->renderer->wave.get_register3();
+}
+
+byte_t AudioRenderer::get_NR34(){
+	return this->renderer->wave.get_register4();
+}
+
+byte_t AudioRenderer::get_NR41(){
+	return this->renderer->noise.get_register1();
+}
+
+byte_t AudioRenderer::get_NR42(){
+	return this->renderer->noise.get_register2();
+}
+
+byte_t AudioRenderer::get_NR43(){
+	return this->renderer->noise.get_register3();
+}
+
+byte_t AudioRenderer::get_NR44(){
+	return this->renderer->noise.get_register4();
+}
+
+byte_t AudioRenderer::get_NR50(){
+	return this->renderer->get_NR50();
+}
+
+byte_t AudioRenderer::get_NR51(){
+	return this->renderer->get_NR51();
+}
+
+void AudioRenderer::copy_voluntary_wave(const void *buffer){
+	for (int i = 16; i--;)
+		this->renderer->wave.set_wave_table(i, ((const byte *)buffer)[i]);
 }

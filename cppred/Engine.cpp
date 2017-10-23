@@ -43,7 +43,7 @@ void Engine::run(){
 	auto yielder = this->yielder;
 	this->yielder = nullptr;
 
-	CppRedAudioProgram crap;
+	CppRedAudioProgram crap(*this->audio);
 	this->audio->start_audio_processing(crap);
 
 	//Main loop.
