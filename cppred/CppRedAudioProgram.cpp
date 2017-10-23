@@ -19,7 +19,7 @@ const byte_t command_parameter_counts[] = {
 	1, //dspeed
 	2, //noise_instrument
 	1, //unknown_sfx_10
-	4, //unknown_sfx_20
+	3, //unknown_sfx_20
 	3, //unknown_noise_20
 	0, //execute_music
 	2, //pitch_bend
