@@ -978,11 +978,6 @@ static byte_t register_function_##reg##_##ch(AbstractAudioRenderer &renderer, in
 	return 0; \
 }
 
-#define DEFINE_INVALID_REGISTER_FUNCTION(reg, ch) \
-static byte_t register_function_##reg##_##ch(AbstractAudioRenderer &renderer, int i){ \
-	throw std::runtime_error("Attempt to use an invalid register."); \
-}
-
 DEFINE_REGISTER_FUNCTION(DutySoundLength, 0, 11)
 DEFINE_REGISTER_FUNCTION(DutySoundLength, 1, 21)
 DEFINE_REGISTER_FUNCTION(DutySoundLength, 2, 31)
@@ -996,7 +991,7 @@ DEFINE_REGISTER_FUNCTION(VolumeEnvelope, 3, 42)
 DEFINE_REGISTER_FUNCTION(FrequencyLow, 0, 13)
 DEFINE_REGISTER_FUNCTION(FrequencyLow, 1, 23)
 DEFINE_REGISTER_FUNCTION(FrequencyLow, 2, 33)
-DEFINE_INVALID_REGISTER_FUNCTION(FrequencyLow, 3)
+DEFINE_REGISTER_FUNCTION(FrequencyLow, 3, 43)
 
 DEFINE_REGISTER_FUNCTION(FrequencyHigh, 0, 14)
 DEFINE_REGISTER_FUNCTION(FrequencyHigh, 1, 24)

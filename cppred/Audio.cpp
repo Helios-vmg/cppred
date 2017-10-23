@@ -127,6 +127,7 @@ void AudioRenderer::process_queue(AudioProgram &program){
 }
 
 void AudioRenderer::processor(AudioProgram &program){
+	this->renderer->set_NR52(0xFF);
 	while (this->continue_running){
 		auto now = this->engine->get_clock();
 		this->process_queue(program);

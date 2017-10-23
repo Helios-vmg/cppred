@@ -21,8 +21,10 @@ AudioRenderer::ActualRenderer::ActualRenderer():
 
 void AudioRenderer::ActualRenderer::update(double now){
 	this->current_clock = cast_round_u64(now * gb_cpu_frequency);
-	if (this->set_audio_turned_on_at_at_next_update)
+	if (this->set_audio_turned_on_at_at_next_update){
 		this->audio_turned_on_at = current_clock;
+		this->set_audio_turned_on_at_at_next_update = false;
+	}
 	auto t = this->current_clock - this->audio_turned_on_at;
 
 	this->noise.update_state_before_render(t);
