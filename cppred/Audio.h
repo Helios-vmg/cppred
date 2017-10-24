@@ -144,6 +144,7 @@ public:
 	virtual void update(double now) = 0;
 	virtual void clear_channel(int channel) = 0;
 	virtual void play_sound(AudioResourceId) = 0;
+	virtual std::vector<std::string> get_resource_strings() = 0;
 };
 
 #ifndef _DEBUG
@@ -175,6 +176,7 @@ class AudioSystem : public AbstractAudioSystem{
 	int fade_out_control = 0;
 	int fade_out_counter = 0;
 	int fade_out_counter_reload_value = 0;
+	AudioProgram *program = nullptr;
 
 	static Uint32 SDLCALL timer_callback(Uint32 interval, void *param);
 	static void SDLCALL audio_callback(void *userdata, Uint8 *stream, int len);
@@ -188,6 +190,9 @@ public:
 	~AudioSystem();
 	void start_audio_processing(AudioProgram &) override;
 	void stop_audio_processing() override;
+	AudioProgram &get_program(){
+		return *this->program;
+	}
 	void set_NR10(byte_t) override;
 	void set_NR11(byte_t) override;
 	void set_NR12(byte_t) override;

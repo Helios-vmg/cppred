@@ -60,6 +60,9 @@ public:
 	~Renderer();
 	Renderer(const Renderer &) = delete;
 	Renderer(Renderer &&) = delete;
+	SDL_Renderer *get_renderer() const{
+		return this->renderer;
+	}
 	void operator=(const Renderer &) = delete;
 	void operator=(Renderer &&) = delete;
 	void set_palette(PaletteRegion region, Palette value);
@@ -67,6 +70,7 @@ public:
 	Tile &get_tile(TileRegion, const Point &p);
 	Tilemap &get_tilemap(TileRegion);
 	void render();
+	void present();
 	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	std::vector<Point> draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
@@ -90,6 +94,7 @@ public:
 	DEFINE_GETTER_SETTER(window_global_offset)
 	void set_y_bg_offset(int y0, int y1, const Point &);
 	void set_y_window_offset(int y0, int y1, const Point &);
+	SDL_Texture *request_texture(int width, int height);
 };
 
 static const std::uint16_t white_arrow = (std::uint16_t)('A' + 128);

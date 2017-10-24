@@ -18,6 +18,7 @@
 
 class XorShift128;
 class Renderer;
+class Console;
 
 class Engine{
 	HighResolutionClock clock;
@@ -33,6 +34,8 @@ class Engine{
 	InputState input_state;
 	std::function<void()> on_yield;
 	std::unique_ptr<AudioSystem> audio;
+	std::unique_ptr<Console> console;
+	bool debug_mode = false;
 
 	void initialize_window();
 	void initialize_video();
@@ -51,6 +54,9 @@ public:
 	Renderer &get_renderer(){
 		return *this->renderer;
 	}
+	AudioSystem &get_audio(){
+		return *this->audio;
+	}
 	void yield();
 	void wait(double seconds);
 	//Note: Doesn't actually wait a specific number of frames. It multiplies
@@ -66,6 +72,7 @@ public:
 	void play_sound(AudioResourceId sound){
 		this->audio->play_sound(sound);
 	}
+	void go_to_debug();
 	static const int screen_scale = 4;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;

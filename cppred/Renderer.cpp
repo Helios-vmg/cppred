@@ -26,7 +26,7 @@ void Renderer::initialize_sdl(SDL_Window *window){
 	this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	if (!this->renderer)
 		throw std::runtime_error("Failed to initialize SDL renderer.");
-	this->main_texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, logical_screen_width, logical_screen_height);
+	this->main_texture = this->request_texture(logical_screen_width, logical_screen_height);
 	if (!this->main_texture)
 		throw std::runtime_error("Failed to create main texture.");
 
@@ -37,6 +37,10 @@ void Renderer::initialize_sdl(SDL_Window *window){
 		memset(void_pixels, 0xFF, pitch * logical_screen_height);
 		SDL_UnlockTexture(this->main_texture);
 	}
+}
+
+SDL_Texture *Renderer::request_texture(int width, int height){
+	return SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, width, height);
 }
 
 void Renderer::initialize_assets(){
@@ -254,10 +258,13 @@ void Renderer::do_software_rendering(){
 #endif
 }
 
+void Renderer::present(){
+	SDL_RenderPresent(this->renderer);
+}
+
 void Renderer::render(){
 	this->do_software_rendering();
 	SDL_RenderCopy(this->renderer, this->main_texture, nullptr, nullptr);
-	SDL_RenderPresent(this->renderer);
 	this->skip_rendering = true;
 }
 

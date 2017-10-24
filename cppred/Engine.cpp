@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "CppRedEntryPoint.h"
 #include "CppRedAudioProgram.h"
+#include "Console.h"
 #include <stdexcept>
 #include <cassert>
 
@@ -30,6 +31,7 @@ void Engine::initialize_window(){
 
 void Engine::initialize_video(){
 	this->renderer.reset(new Renderer(*this, this->window));
+	this->console.reset(new Console(*this));
 }
 
 void Engine::initialize_audio(){
@@ -48,16 +50,20 @@ void Engine::run(){
 
 	//Main loop.
 	while (this->handle_events()){
-		//Resume game code.
-		std::swap(yielder, this->yielder);
-		auto stop = !(*this->coroutine)();
-		std::swap(yielder, this->yielder);
-		if (stop)
-			break;
+		if (!this->debug_mode){
+			//Resume game code.
+			std::swap(yielder, this->yielder);
+			auto stop = !(*this->coroutine)();
+			std::swap(yielder, this->yielder);
+			if (stop)
+				break;
+		}
 
-		//Process audio.
+		this->console->update();
 
 		this->renderer->render();
+		this->console->render();
+		this->renderer->present();
 	}
 
 	this->coroutine.reset();
@@ -139,12 +145,21 @@ bool Engine::handle_events(){
 	bool button_down = false;
 	bool button_up = false;
 	while (SDL_PollEvent(&event)){
+		if (this->console->handle_event(event))
+			continue;
 		switch (event.type){
 			case SDL_QUIT:
 				return false;
 			case SDL_KEYDOWN:
-				if (!event.key.repeat)
-					handle_event<true>(state, event, button_down);
+				if (!event.key.repeat){
+					switch (event.key.keysym.sym){
+						case SDLK_ESCAPE:
+							this->console->toggle_visible();
+							break;
+						default:
+							handle_event<true>(state, event, button_down);
+					}
+				}
 				break;
 			case SDL_KEYUP:
 				if (!event.key.repeat)
@@ -167,4 +182,8 @@ void Engine::wait_frames(int frames){
 
 void Engine::set_on_yield(std::function<void()> &&callback){
 	this->on_yield = std::move(callback);
+}
+
+void Engine::go_to_debug(){
+	this->debug_mode = true;
 }

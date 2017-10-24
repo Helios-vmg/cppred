@@ -140,6 +140,9 @@
     <ClInclude Include="HeliosRenderer.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -203,6 +206,9 @@
       <Filter>Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="HeliosRenderer.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

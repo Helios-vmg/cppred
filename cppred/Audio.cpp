@@ -109,6 +109,7 @@ void AudioSystem::return_used_frame(AudioFrame *frame){
 void AudioSystem::start_audio_processing(AudioProgram &program){
 	if (this->thread)
 		this->stop_audio_processing();
+	this->program = &program;
 	this->continue_running = true;
 	this->thread.reset(new std::thread([this, &program](){ this->processor(program); }));
 }

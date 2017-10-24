@@ -30,6 +30,7 @@
     <ClInclude Include="AudioRenderer.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="common_types.h" />
+    <ClInclude Include="Console.h" />
     <ClInclude Include="CppRedAudioProgram.h" />
     <ClInclude Include="CppRedClearSave.h" />
     <ClInclude Include="CppRedCommonFunctions.h" />
@@ -60,6 +61,7 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="HeliosRenderer.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="CppRedAudioProgram.cpp" />

@@ -173,4 +173,5 @@ public:
 	void pause_music();
 	void unpause_music();
 	void clear_channel(int channel) override;
+	std::vector<std::string> get_resource_strings() override;
 };

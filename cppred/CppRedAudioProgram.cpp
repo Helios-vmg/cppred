@@ -1120,3 +1120,11 @@ CppRedAudioProgram::register_function CppRedAudioProgram::get_register_pointer(R
 void CppRedAudioProgram::clear_channel(int channel){
 	this->channels[euclidean_modulo(channel, (int)array_length(this->channels))].reset();
 }
+
+std::vector<std::string> CppRedAudioProgram::get_resource_strings(){
+	std::vector<std::string> ret;
+	ret.reserve(this->resources.size());
+	for (auto &r : this->resources)
+		ret.push_back(r.name);
+	return ret;
+}
