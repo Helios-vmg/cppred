@@ -17,7 +17,8 @@ inline std::uint32_t calculate_frequency(std::uint32_t note, std::uint32_t octav
 		64474,
 	};
 	auto pitch = pitches[note];
-	while (octave++ < 7)
-		pitch = ((pitch << 15) & 0x8000) | ((pitch >> 1) & 0x7FFF);
+	for (; octave != 7; octave = (octave + 1) % 256)
+		//16-bit arithmetic shift. All the frequencies have bit 15 turned on.
+		pitch = (pitch >> 1) | 0x8000;
 	return (pitch + 0x0800) & 0xFFFF;
 }
