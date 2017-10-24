@@ -48,7 +48,7 @@ AudioRenderer::ActualRenderer::ActualRenderer():
 void AudioRenderer::ActualRenderer::update(double now){
 	this->current_clock = cast_round_u64(now * gb_cpu_frequency);
 	if (this->set_audio_turned_on_at_at_next_update){
-		this->audio_turned_on_at = current_clock;
+		this->audio_turned_on_at = this->current_clock;
 		this->set_audio_turned_on_at_at_next_update = false;
 	}
 	auto t = this->current_clock - this->audio_turned_on_at;
@@ -110,7 +110,7 @@ StereoSampleFinal AudioRenderer::ActualRenderer::compute_sample(){
 	}
 	sample /= 4;
 	sample.left = this->filter_left.update(sample.left);
-	sample.right = this->filter_left.update(sample.right);
+	sample.right = this->filter_right.update(sample.right);
 
 	sample.left *= this->left_volume;
 	sample.right *= this->right_volume;
