@@ -2,11 +2,19 @@
 #include "utility.h"
 #include "InputState.h"
 #include "Renderer.h"
+#include "Audio.h"
 #include "HighResolutionClock.h"
 #include <SDL.h>
 #include <boost/coroutine2/all.hpp>
 #include <thread>
 #include <memory>
+
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
 
 class XorShift128;
 class Renderer;
@@ -24,6 +32,7 @@ class Engine{
 	double wait_remainder = 0;
 	InputState input_state;
 	std::function<void()> on_yield;
+	std::unique_ptr<AudioSystem> audio;
 
 	void initialize_window();
 	void initialize_video();
@@ -54,6 +63,9 @@ public:
 	void set_on_yield(std::function<void()> &&);
 	DEFINE_GETTER(input_state)
 
+	void play_sound(AudioResourceId sound){
+		this->audio->play_sound(sound);
+	}
 	static const int screen_scale = 4;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;

@@ -53,6 +53,10 @@ int cast_round(double x){
 	return (int)round(x);
 }
 
+std::uint64_t cast_round_u64(double x){
+	return (std::uint64_t)round(x);
+}
+
 std::uint32_t read_u32(const void *void_buffer){
 	auto buffer = (const byte_t *)void_buffer;
 	std::uint32_t ret = 0;
@@ -60,6 +64,35 @@ std::uint32_t read_u32(const void *void_buffer){
 	while (buffer != (const byte_t *)void_buffer){
 		ret <<= 8;
 		ret |= *--buffer;
+	}
+	return ret;
+}
+
+std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size){
+	std::uint32_t ret = 0;
+	int shift = 0;
+	bool terminate = false;
+	do{
+		if (offset >= size)
+			throw std::runtime_error("read_varint(): Invalid read.");
+		auto byte = buffer[offset++];
+		terminate = !(byte & BITMAP(10000000));
+		byte &= BITMAP(01111111);
+		ret |= (std::uint32_t)byte << shift;
+		shift += 7;
+	}while (!terminate);
+	return ret;
+}
+
+std::string read_string(const byte_t *buffer, size_t &offset, size_t size){
+	std::string ret;
+	while (true){
+		if (offset >= size)
+			throw std::runtime_error("read_string(): Invalid read.");
+		auto byte = buffer[offset++];
+		if (!byte)
+			break;
+		ret.push_back((char)byte);
 	}
 	return ret;
 }

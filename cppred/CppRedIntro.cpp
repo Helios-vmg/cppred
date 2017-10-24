@@ -153,7 +153,7 @@ static bool animate_falling_stars(CppRedEngine &cppred, shooting_star_graphics &
 
 static bool shooting_star_scene(CppRedEngine &cppred){
 	shooting_star_graphics graphics(cppred.get_engine());
-	cppred.play_sound(SoundId::SFX_Shooting_Star);
+	cppred.play_sound(AudioResourceId::SFX_Shooting_Star);
 	return animate_big_star(cppred, graphics) || cycle_logo_palettes(cppred, graphics) || animate_falling_stars(cppred, graphics);
 }
 
@@ -178,7 +178,7 @@ double parabola_func(double x){
 #define nidorino_parabola4 parabola_func<1, -85, 25>
 
 template <double Parabola(double)>
-void hop_sprite(CppRedEngine &cppred, Sprite &sprite, SoundId sfx, Point &position, int sign, double x_multiplier){
+void hop_sprite(CppRedEngine &cppred, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
 	auto &engine = cppred.get_engine();
 	cppred.play_sound(sfx);
 	auto t0 = engine.get_clock();
@@ -233,7 +233,7 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
-	cppred.play_sound(SoundId::Music_IntroBattle);
+	cppred.play_sound(AudioResourceId::Music_IntroBattle);
 	clear_middle_of_screen<4>(engine);
 	engine.wait_frames(3);
 	renderer.set_default_palettes();
@@ -266,9 +266,9 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	if (move_gengar<true>(cppred, *nidorino, nidorino_position, 80))
 		return ret;
 
-	static const SoundId hophop[] = {
-		SoundId::SFX_Intro_Hip,
-		SoundId::SFX_Intro_Hop,
+	static const AudioResourceId hophop[] = {
+		AudioResourceId::SFX_Intro_Hip,
+		AudioResourceId::SFX_Intro_Hop,
 	};
 
 	//Nidorino then hops once to the left, then to the right, then repeats once.
@@ -292,7 +292,7 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	//Nidorino dodges.
 	nidorino->set_visible(false);
 	nidorino2->set_visible(true);
-	hop_sprite<nidorino_parabola2>(cppred, *nidorino2, SoundId::SFX_Intro_Hip, nidorino_position, 1, 1);
+	hop_sprite<nidorino_parabola2>(cppred, *nidorino2, AudioResourceId::SFX_Intro_Hip, nidorino_position, 1, 1);
 	if (cppred.check_for_user_interruption(0.5))
 		return ret;
 
@@ -337,7 +337,7 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 		return ret;
 
 	//Lunge Nidorino.
-	cppred.play_sound(SoundId::SFX_Intro_Lunge);
+	cppred.play_sound(AudioResourceId::SFX_Intro_Lunge);
 	nidorino2->set_visible(false);
 	nidorino3->set_visible(true);
 	{

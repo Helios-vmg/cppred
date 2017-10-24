@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine.h"
-#include "../CodeGeneration/output/sounds.h"
 #include "utility.h"
 #include "CppRedData.h"
 #include "CppRedSavableData.h"
@@ -8,10 +7,6 @@
 #include <string>
 #include <unordered_map>
 #include <queue>
-
-#ifdef max
-#undef max
-#endif
 
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
@@ -56,7 +51,7 @@ public:
 	Engine &get_engine(){
 		return *this->engine;
 	}
-	void play_sound(SoundId);
+	void play_sound(AudioResourceId);
 	void play_cry(SpeciesId);
 	void fade_out_to_white();
 	void palette_whiteout();

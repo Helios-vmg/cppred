@@ -67,7 +67,7 @@ static void bounce_logo(CppRedEngine &cppred){
 		//The easing function is designed to reach the first zero at exactly x = 1.
 		//Therefore play the sound effect the first time the logo bounces.
 		if (!played && x > 1){
-			cppred.play_sound(SoundId::SFX_Intro_Crash);
+			cppred.play_sound(AudioResourceId::SFX_Intro_Crash);
 			played = true;
 		}
 		renderer.set_y_bg_offset(0, 64, { 0, cast_round(64 * EasingCurve::f(x, base)) });
@@ -248,7 +248,7 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	bounce_logo(cppred);
 
 	engine.wait_frames(36);
-	cppred.play_sound(SoundId::SFX_Intro_Whoosh);
+	cppred.play_sound(AudioResourceId::SFX_Intro_Whoosh);
 
 	draw_image_from_offsets(renderer, { 7, 8 }, RedBlueVersion, version_offsets);
 	//Scroll version from the right.

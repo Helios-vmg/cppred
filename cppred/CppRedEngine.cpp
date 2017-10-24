@@ -3,10 +3,6 @@
 #include "Renderer.h"
 #include <iostream>
 
-#ifdef min
-#undef min
-#endif
-
 struct FadePaletteData{
 	Palette background_palette;
 	Palette obp0_palette;
@@ -36,8 +32,8 @@ void CppRedEngine::clear_screen(){
 	this->engine->wait_frames(3);
 }
 
-void CppRedEngine::play_sound(SoundId sound){
-	//TODO
+void CppRedEngine::play_sound(AudioResourceId sound){
+	this->engine->play_sound(sound);
 }
 
 void CppRedEngine::play_cry(SpeciesId){

@@ -5,6 +5,8 @@
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 
+#define LOCK_MUTEX(x) std::lock_guard<decltype(x)> lg_##__COUNTER__(x)
+
 #define DEFINE_GETTER(x) \
 	const decltype(x) &get_##x() const{ \
 		return this->x; \
@@ -81,8 +83,15 @@ inline char make_apostrophe(char c){
 	return c + 128;
 }
 
+constexpr std::uint32_t bit(std::uint32_t i){
+	return (std::uint32_t)1 << i;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);
 int cast_round(double);
+std::uint64_t cast_round_u64(double);
 std::uint32_t read_u32(const void *);
+std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size);
+std::string read_string(const byte_t *buffer, size_t &offset, size_t size);

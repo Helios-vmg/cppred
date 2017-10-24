@@ -139,11 +139,11 @@ const char *bool_to_string(bool value){
 	return value ? "true" : "false";
 }
 
-void write_buffer_to_stream(std::ostream &stream, const void *void_buffer, size_t size){
+void write_buffer_to_stream(std::ostream &stream, const std::vector<std::uint8_t> &buffer){
 	stream << "{\n";
 	bool new_line = true;
 	int line_width = 0;
-	auto buffer = (const unsigned char *)void_buffer;
+	auto size = buffer.size();
 	for (size_t i = 0; i < size; i++){
 		if (new_line){
 			stream << "   ";
@@ -161,4 +161,22 @@ void write_buffer_to_stream(std::ostream &stream, const void *void_buffer, size_
 	if (!new_line)
 		stream << std::endl;
 	stream << "}";
+}
+
+void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t n){
+	do{
+		auto m = n & 0x7F;
+		n >>= 7;
+		m |= (1 << 7) * !!n;
+		dst.push_back(m);
+	}while (n);
+}
+
+void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &s){
+	for (auto c : s){
+		if (!c)
+			break;
+		dst.push_back(c);
+	}
+	dst.push_back(0);
 }

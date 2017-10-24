@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("get_gfx_names")]
+[assembly: AssemblyTitle("ParseRgbdsObj")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("get_gfx_names")]
+[assembly: AssemblyProduct("ParseRgbdsObj")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5e6a2678-fb4a-40b8-bdf2-40913efb7235")]
+[assembly: Guid("2518267f-8009-47ed-b6de-d1c207ec476b")]
 
 // Version information for an assembly consists of the following four values:
 //

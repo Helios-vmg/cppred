@@ -224,7 +224,7 @@ static void generate_text_internal(known_hashes_t &known_hashes){
 	text_inl << generated_file_warning <<
 		"\n"
 		"const byte_t packed_text_data[] = ";
-	write_buffer_to_stream(text_inl, &binary_data[0], binary_data.size());
+	write_buffer_to_stream(text_inl, binary_data);
 	text_inl << ";\n";
 
 	std::ofstream text_h("output/text.h");
@@ -244,11 +244,6 @@ static void generate_text_internal(known_hashes_t &known_hashes){
 	}
 	text_h << "};\n";
 
-	{
-		std::ofstream file("output/text.bin", std::ios::binary);
-		file.write((const char *)&binary_data[0], binary_data.size());
-	}
-		
 	known_hashes[hash_key] = current_hash;
 }
 
