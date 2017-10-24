@@ -128,14 +128,14 @@
     <ClInclude Include="SoundGenerators.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ActualAudioRenderer.h">
-      <Filter>Engine code\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="CppRedAudioProgram.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="StaticSet.h">
       <Filter>Other\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer.h">
+      <Filter>Engine code\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,11 +196,11 @@
     <ClCompile Include="SoundGenerators.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="ActualAudioRenderer.cpp">
-      <Filter>Engine code\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="CppRedAudioProgram.cpp">
       <Filter>Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer.cpp">
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

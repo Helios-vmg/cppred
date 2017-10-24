@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActualAudioRenderer.h" />
+    <ClInclude Include="AudioRenderer.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="CppRedAudioProgram.h" />
@@ -59,7 +59,7 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ActualAudioRenderer.cpp" />
+    <ClCompile Include="AudioRenderer.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="CppRedAudioProgram.cpp" />
     <ClCompile Include="CppRedCommonFunctions.cpp" />

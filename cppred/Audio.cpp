@@ -1,7 +1,7 @@
 #include "Audio.h"
 #include "SoundGenerators.h"
 #include "Engine.h"
-#include "ActualAudioRenderer.h"
+#include "AudioRenderer.h"
 #include "utility.h"
 #include <cstring>
 #include <algorithm>
