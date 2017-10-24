@@ -137,6 +137,9 @@
     <ClInclude Include="AudioRenderer.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="HeliosRenderer.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -199,7 +202,7 @@
     <ClCompile Include="CppRedAudioProgram.cpp">
       <Filter>Game code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="AudioRenderer.cpp">
+    <ClCompile Include="HeliosRenderer.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

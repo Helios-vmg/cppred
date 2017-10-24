@@ -43,6 +43,7 @@
     <ClInclude Include="CppRedTitleScreen.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GraphicsAsset.h" />
+    <ClInclude Include="HeliosRenderer.h" />
     <ClInclude Include="HighResolutionClock.h" />
     <ClInclude Include="CppRedIntro.h" />
     <ClInclude Include="InputState.h" />
@@ -59,7 +60,7 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AudioRenderer.cpp" />
+    <ClCompile Include="HeliosRenderer.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="CppRedAudioProgram.cpp" />
     <ClCompile Include="CppRedCommonFunctions.cpp" />
