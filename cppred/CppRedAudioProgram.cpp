@@ -337,7 +337,7 @@ void CppRedAudioProgram::Channel::apply_vibrato(AbstractAudioRenderer &renderer)
 			diff = 0;
 	}else{
 		this->vibrato_direction = true;
-		diff = this->channel_frequency + this->vibrato_extent / 16;
+		diff = this->channel_frequency % 256 + this->vibrato_extent / 16;
 		if (diff > 255)
 			diff = 255;
 	}
