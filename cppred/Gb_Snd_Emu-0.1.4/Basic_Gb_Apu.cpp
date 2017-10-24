@@ -18,7 +18,6 @@ gb_time_t const frame_length = 70224;
 
 Basic_Gb_Apu::Basic_Gb_Apu()
 {
-	time = 0;
 	
 	// Adjust frequency equalization to make it sound like a tiny speaker
 	apu.treble_eq( -20.0 ); // lower values muffle it more
@@ -36,19 +35,18 @@ blargg_err_t Basic_Gb_Apu::set_sample_rate( long rate )
 	return buf.set_sample_rate( rate );
 }
 
-void Basic_Gb_Apu::write_register( gb_addr_t addr, int data )
+void Basic_Gb_Apu::write_register(gb_time_t clock, gb_addr_t addr, int data )
 {
-	apu.write_register( clock(), addr, data );
+	apu.write_register( clock, addr, data );
 }
 
-int Basic_Gb_Apu::read_register( gb_addr_t addr )
+int Basic_Gb_Apu::read_register(gb_time_t clock, gb_addr_t addr )
 {
-	return apu.read_register( clock(), addr );
+	return apu.read_register( clock, addr );
 }
 
 void Basic_Gb_Apu::end_frame()
 {
-	time = 0;
 	bool stereo = apu.end_frame( frame_length );
 	buf.end_frame( frame_length, stereo );
 }

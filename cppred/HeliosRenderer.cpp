@@ -69,7 +69,7 @@ void HeliosRenderer::frame_sequencer_callback(void *This, std::uint64_t clock){
 void HeliosRenderer::sample_callback(std::uint64_t sample_no){
 	StereoSampleFinal *buffer = this->publishing_frames.get_private_resource()->buffer;
 	this->last_sample = this->compute_sample();
-	this->write_sample(buffer);
+	this->write_sample(buffer, this->last_sample);
 }
 
 void HeliosRenderer::frame_sequencer_callback(std::uint64_t clock){
@@ -117,32 +117,6 @@ StereoSampleFinal HeliosRenderer::compute_sample(){
 	sample /= 15;
 
 	return convert(sample);
-}
-
-void HeliosRenderer::write_sample(StereoSampleFinal *&buffer){
-	buffer[this->current_frame_position++] = this->last_sample;
-	if (this->current_frame_position >= AudioFrame::length){
-#ifdef OUTPUT_AUDIO_TO_FILE
-		if (this->output_file)
-			this->output_file->write((const char *)buffer, AudioFrame::length * sizeof(StereoSampleFinal));
-		for (int i = 4; i--;){
-			auto &buffer2 = this->output_buffers_by_channel[i]->buffer;
-			if (this->output_files_by_channel[i])
-				this->output_files_by_channel[i]->write((const char *)buffer2, sizeof(buffer2));
-		}
-#endif
-		this->current_frame_position = 0;
-		this->publishing_frames.publish();
-		this->initialize_new_frame();
-		buffer = this->publishing_frames.get_private_resource()->buffer;
-	}
-}
-
-void HeliosRenderer::initialize_new_frame(){
-	auto frame = this->publishing_frames.get_private_resource();
-	frame->frame_no = this->frame_no++;
-	auto &buffer = frame->buffer;
-	memset(buffer, 0, sizeof(buffer));
 }
 
 template <typename T1, typename T2>
@@ -398,12 +372,4 @@ byte_t HeliosRenderer::get_NR52() const{
 void HeliosRenderer::copy_voluntary_wave(const void *buffer){
 	for (int i = 16; i--;)
 		this->wave.set_wave_table(i, ((const byte_t *)buffer)[i]);
-}
-
-AudioFrame *HeliosRenderer::get_current_frame(){
-	return this->publishing_frames.get_public_resource();
-}
-
-void HeliosRenderer::return_used_frame(AudioFrame *frame){
-	this->publishing_frames.return_resource(frame);
 }

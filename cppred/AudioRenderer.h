@@ -13,6 +13,13 @@ struct Panning{
 };
 
 class AudioRenderer{
+	unsigned current_frame_position = 0;
+	std::uint64_t frame_no = 0;
+protected:
+	QueuedPublishingResource<AudioFrame> publishing_frames;
+
+	void write_sample(StereoSampleFinal *&buffer, const StereoSampleFinal &sample);
+	void initialize_new_frame();
 public:
 	virtual ~AudioRenderer(){}
 	virtual void update(double now) = 0;
@@ -58,6 +65,6 @@ public:
 	virtual byte_t get_NR52() const = 0;
 	virtual void copy_voluntary_wave(const void *buffer) = 0;
 
-	virtual AudioFrame *get_current_frame() = 0;
-	virtual void return_used_frame(AudioFrame *frame) = 0;
+	virtual AudioFrame *get_current_frame();
+	virtual void return_used_frame(AudioFrame *frame);
 };

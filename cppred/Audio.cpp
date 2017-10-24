@@ -2,6 +2,7 @@
 #include "SoundGenerators.h"
 #include "Engine.h"
 #include "HeliosRenderer.h"
+#include "BlarggRenderer.h"
 #include "utility.h"
 #include <cstring>
 #include <algorithm>
@@ -34,7 +35,7 @@ AudioSystem::AudioSystem(Engine &engine): engine(&engine){
 #ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
 	this->audio_recording.open("audio_output.txt");
 #endif
-	this->renderer.reset(new HeliosRenderer);
+	this->renderer.reset(new BlarggRenderer);
 	this->continue_running = false;
 	SDL_AudioSpec desired, actual;
 	memset(&desired, 0, sizeof(desired));

@@ -45,6 +45,9 @@
     <Filter Include="Game code\Headers">
       <UniqueIdentifier>{2f9d52fe-86db-4f6c-90a7-3a38fd65dd3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Blargg">
+      <UniqueIdentifier>{fd49a489-81e9-4344-8d77-aba4672d9f9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -140,6 +143,36 @@
     <ClInclude Include="HeliosRenderer.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="BlarggRenderer.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\Basic_Gb_Apu.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\Sound_Queue.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\blargg_common.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\blargg_source.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Blip_Buffer.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Blip_Synth.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Apu.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Oscs.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Multi_Buffer.h">
+      <Filter>Blargg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -204,6 +237,30 @@
     </ClCompile>
     <ClCompile Include="HeliosRenderer.cpp">
       <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BlarggRenderer.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\Basic_Gb_Apu.cpp">
+      <Filter>Blargg</Filter>
+    </ClCompile>
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\Sound_Queue.cpp">
+      <Filter>Blargg</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Blip_Buffer.cpp">
+      <Filter>Blargg</Filter>
+    </ClCompile>
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Apu.cpp">
+      <Filter>Blargg</Filter>
+    </ClCompile>
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Oscs.cpp">
+      <Filter>Blargg</Filter>
+    </ClCompile>
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Multi_Buffer.cpp">
+      <Filter>Blargg</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

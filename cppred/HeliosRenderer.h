@@ -2,8 +2,6 @@
 #include "AudioRenderer.h"
 
 class HeliosRenderer : public AudioRenderer{
-	unsigned current_frame_position = 0;
-	std::uint64_t frame_no = 0;
 	std::uint64_t audio_turned_on_at = 0;
 	bool set_audio_turned_on_at_at_next_update = false;
 	std::uint64_t current_clock = 0;
@@ -35,15 +33,12 @@ class HeliosRenderer : public AudioRenderer{
 	Square2Generator square2;
 	VoluntaryWaveGenerator wave;
 	NoiseGenerator noise;
-	QueuedPublishingResource<AudioFrame> publishing_frames;
 
 	static void sample_callback(void *, std::uint64_t);
 	static void frame_sequencer_callback(void *, std::uint64_t);
 	void sample_callback(std::uint64_t);
 	void frame_sequencer_callback(std::uint64_t);
 	StereoSampleFinal compute_sample();
-	void write_sample(StereoSampleFinal *&buffer);
-	void initialize_new_frame();
 	StereoSampleIntermediate render_square1(std::uint64_t time);
 	StereoSampleIntermediate render_square2(std::uint64_t time);
 	StereoSampleIntermediate render_voluntary(std::uint64_t time);
@@ -100,7 +95,4 @@ public:
 	}
 	byte_t get_NR52() const override;
 	void copy_voluntary_wave(const void *buffer) override;
-
-	AudioFrame *get_current_frame() override;
-	void return_used_frame(AudioFrame *frame) override;
 };

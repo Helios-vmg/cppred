@@ -18,8 +18,8 @@ public:
 	blargg_err_t set_sample_rate( long rate );
 	
 	// Pass reads and writes in the range 0xff10-0xff3f
-	void write_register( gb_addr_t, int data );
-	int read_register( gb_addr_t );
+	void write_register(gb_time_t clock, gb_addr_t, int data );
+	int read_register(gb_time_t clock, gb_addr_t );
 	
 	// End a 1/60 sound frame and add samples to buffer
 	void end_frame();
@@ -37,10 +37,6 @@ public:
 private:
 	Gb_Apu apu;
 	Stereo_Buffer buf;
-	blip_time_t time;
-	
-	// faked CPU timing
-	blip_time_t clock() { return time += 4; }
 };
 
 #endif

@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="AudioRenderer.h" />
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="BlarggRenderer.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="CppRedAudioProgram.h" />
     <ClInclude Include="CppRedClearSave.h" />
@@ -42,6 +43,15 @@
     <ClInclude Include="CppRedTextResources.h" />
     <ClInclude Include="CppRedTitleScreen.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\Basic_Gb_Apu.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\blargg_common.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\blargg_source.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Blip_Buffer.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Blip_Synth.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Apu.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Oscs.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\gb_apu\Multi_Buffer.h" />
+    <ClInclude Include="Gb_Snd_Emu-0.1.4\Sound_Queue.h" />
     <ClInclude Include="GraphicsAsset.h" />
     <ClInclude Include="HeliosRenderer.h" />
     <ClInclude Include="HighResolutionClock.h" />
@@ -60,6 +70,14 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioRenderer.cpp" />
+    <ClCompile Include="BlarggRenderer.cpp" />
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\Basic_Gb_Apu.cpp" />
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Blip_Buffer.cpp" />
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Apu.cpp" />
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Gb_Oscs.cpp" />
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\gb_apu\Multi_Buffer.cpp" />
+    <ClCompile Include="Gb_Snd_Emu-0.1.4\Sound_Queue.cpp" />
     <ClCompile Include="HeliosRenderer.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="CppRedAudioProgram.cpp" />
