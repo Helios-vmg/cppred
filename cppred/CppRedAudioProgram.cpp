@@ -264,7 +264,13 @@ void CppRedAudioProgram::update_channel(int i){
 		c.reset();
 }
 
+void CppRedAudioProgram::compute_fade_out(){
+	//TODO
+	this->renderer->set_NR50(0x77);
+}
+
 void CppRedAudioProgram::perform_update(){
+	this->compute_fade_out();
 	int c = 0;
 	if (this->pause_music_state == PauseMusicState::NotPaused){
 		for (; c < 4; c++)
@@ -301,7 +307,7 @@ bool CppRedAudioProgram::Channel::apply_effects(AbstractAudioRenderer &renderer)
 		return true;
 	if (this->do_rotate_duty)
 		this->apply_duty_cycle(renderer);
-	if (!this->do_execute_music && !this->do_noise_or_sfx)
+	if (!this->do_execute_music && this->do_noise_or_sfx)
 		return true;
 	if (this->do_pitch_bend){
 		this->apply_pitch_bend(renderer);
@@ -359,7 +365,7 @@ bool CppRedAudioProgram::Channel::continue_execution(AbstractAudioRenderer &rend
 }
 
 #define DEFINE_COMMAND_FUNCTION(x) bool CppRedAudioProgram::Channel::command_##x(const AudioCommand &command_, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel)
-#define LOG_COMMAND_EXECUTION
+//#define LOG_COMMAND_EXECUTION
 
 DEFINE_COMMAND_FUNCTION(Tempo){
 	TempoAudioCommand command(command_);
@@ -417,9 +423,9 @@ DEFINE_COMMAND_FUNCTION(Vibrato){
 	std::cout << "vibrato " << command.delay << " " << command.rate << " " << command.depth << std::endl;
 #endif
 	this->vibrato_delay_counter_reload_value = this->vibrato_delay_counter = command.delay;
-	this->vibrato_extent = (command.rate + 1) / 2;
-	this->vibrato_extent |= this->vibrato_extent << 4;
-	this->vibrato_depth_reload = this->vibrato_depth = command.depth;
+	this->vibrato_extent = command.rate / 2;
+	this->vibrato_extent += (this->vibrato_extent + command.rate % 2) << 4;
+	this->vibrato_length = this->vibrato_counter = command.depth;
 	return true;
 }
 
@@ -828,7 +834,7 @@ void CppRedAudioProgram::Channel::set_sfx_tempo(){
 
 void CppRedAudioProgram::Channel::apply_duty_cycle(AbstractAudioRenderer &renderer){
 	this->duty_cycle &= 0xFF;
-	this->duty_cycle = (this->duty_cycle << 2) | (this->duty_cycle >> 2);
+	this->duty_cycle = (this->duty_cycle << 2) | (this->duty_cycle >> 6);
 	this->duty_cycle &= 0xFF;
 	auto f = this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no);
 	auto reg = f(renderer, -1);
@@ -879,7 +885,7 @@ void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudio
 	byte_t hi = (byte_t)(frequency >> 8);
 	byte_t lo = (byte_t)(frequency & 0xFF);
 	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, lo);
-	this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, (hi | BITMAP(1000000)) & BITMAP(11000111));
+	this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, (hi | BITMAP(10000000)) & BITMAP(11000111));
 }
 
 bool CppRedAudioProgram::is_cry(){
@@ -1029,7 +1035,7 @@ void CppRedAudioProgram::Channel::reset(AudioResourceId resource_id, int entry_p
 	this->duty_cycle = 0;
 	this->vibrato_delay_counter = 0;
 	this->vibrato_extent = 0;
-	this->vibrato_depth_reload = this->vibrato_depth = 0;
+	this->vibrato_length = this->vibrato_counter = 0;
 	this->channel_frequency = 0;
 	this->vibrato_delay_counter_reload_value = 0;
 	this->pitch_bend_length = 0;

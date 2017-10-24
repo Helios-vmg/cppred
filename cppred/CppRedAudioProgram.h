@@ -59,8 +59,6 @@ class CppRedAudioProgram : public AudioProgram{
 		int vibrato_extent = 0;
 		int vibrato_counter = 0;
 		int vibrato_length = 0;
-		int vibrato_depth = 0;
-		int vibrato_depth_reload = 0;
 		int channel_frequency = 0;
 		int vibrato_delay_counter_reload_value = 0;
 		int note_speed = 1;
@@ -166,6 +164,7 @@ class CppRedAudioProgram : public AudioProgram{
 	register_function get_register_pointer(RegisterId, int channel_no);
 	void perform_update();
 	void update_channel(int);
+	void compute_fade_out();
 public:
 	CppRedAudioProgram(AbstractAudioRenderer &renderer);
 	~CppRedAudioProgram();
