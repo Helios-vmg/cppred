@@ -188,14 +188,14 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 	instruments_bank_3,
 };
 
-CppRedAudioProgram::CppRedAudioProgram(AbstractAudioRenderer &renderer): renderer(&renderer){
-	this->renderer->start_audio_processing(*this);
+CppRedAudioProgram::CppRedAudioProgram(AbstractAudioSystem &audio): audio(&audio){
+	this->audio->start_audio_processing(*this);
 	this->load_commands();
 	this->load_resources();
 }
 
 CppRedAudioProgram::~CppRedAudioProgram(){
-	this->renderer->stop_audio_processing();
+	this->audio->stop_audio_processing();
 }
 
 void CppRedAudioProgram::load_commands(){
@@ -260,13 +260,13 @@ void CppRedAudioProgram::update_channel(int i){
 	auto &c = this->channels[i];
 	if (!c)
 		return;
-	if (!c->update(*this->renderer))
+	if (!c->update(*this->audio))
 		c.reset();
 }
 
 void CppRedAudioProgram::compute_fade_out(){
 	//TODO
-	this->renderer->set_NR50(0x77);
+	this->audio->set_NR50(0x77);
 }
 
 void CppRedAudioProgram::perform_update(){
@@ -280,9 +280,9 @@ void CppRedAudioProgram::perform_update(){
 	for (; c < array_length(this->channels); c++)
 		this->update_channel(c);
 	if (this->pause_music_state == PauseMusicState::PauseRequested){
-		this->renderer->set_NR51(0);
-		this->renderer->set_NR30(0);
-		this->renderer->set_NR30(0x80);
+		this->audio->set_NR51(0);
+		this->audio->set_NR30(0);
+		this->audio->set_NR30(0x80);
 		this->pause_music_state = PauseMusicState::PauseRequestFulfilled;
 	}
 }
@@ -295,29 +295,29 @@ void CppRedAudioProgram::unpause_music(){
 	this->pause_music_state = PauseMusicState::NotPaused;
 }
 
-bool CppRedAudioProgram::Channel::update(AbstractAudioRenderer &renderer){
-	return this->apply_effects(renderer);
+bool CppRedAudioProgram::Channel::update(AbstractAudioSystem &audio){
+	return this->apply_effects(audio);
 }
 
-bool CppRedAudioProgram::Channel::apply_effects(AbstractAudioRenderer &renderer){
+bool CppRedAudioProgram::Channel::apply_effects(AbstractAudioSystem &audio){
 	if (this->note_delay_counter == 1)
-		return this->play_next_note(renderer);
+		return this->play_next_note(audio);
 	this->note_delay_counter--;
 	if (this->channel_no < 4 && this->program->channels[4 + this->channel_no])
 		return true;
 	if (this->do_rotate_duty)
-		this->apply_duty_cycle(renderer);
+		this->apply_duty_cycle(audio);
 	if (!this->do_execute_music && this->do_noise_or_sfx)
 		return true;
 	if (this->do_pitch_bend){
-		this->apply_pitch_bend(renderer);
+		this->apply_pitch_bend(audio);
 		return true;
 	}
-	this->apply_vibrato(renderer);
+	this->apply_vibrato(audio);
 	return true;
 }
 
-void CppRedAudioProgram::Channel::apply_vibrato(AbstractAudioRenderer &renderer){
+void CppRedAudioProgram::Channel::apply_vibrato(AbstractAudioSystem &audio){
 	if (this->vibrato_delay_counter){
 		this->vibrato_delay_counter--;
 		return;
@@ -341,30 +341,30 @@ void CppRedAudioProgram::Channel::apply_vibrato(AbstractAudioRenderer &renderer)
 		if (diff > 255)
 			diff = 255;
 	}
-	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, (byte_t)diff);
+	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(audio, (byte_t)diff);
 }
 
-bool CppRedAudioProgram::Channel::play_next_note(AbstractAudioRenderer &renderer){
+bool CppRedAudioProgram::Channel::play_next_note(AbstractAudioSystem &audio){
 	this->vibrato_delay_counter = this->vibrato_delay_counter_reload_value;
 	this->do_pitch_bend = false;
 	this->pitch_bend_decreasing = false;
-	return this->continue_execution(renderer);
+	return this->continue_execution(audio);
 }
 
-bool CppRedAudioProgram::Channel::continue_execution(AbstractAudioRenderer &renderer){
+bool CppRedAudioProgram::Channel::continue_execution(AbstractAudioSystem &audio){
 	bool ret = true;
 	while (true){
 		auto &command = this->program->commands[this->program_counter++];
 		this->program_counter %= this->program->commands.size();
 		if (!this->ifred_execute_bit)
 			continue;
-		if (!(this->*this->command_functions[(int)command.type])(command, renderer, ret))
+		if (!(this->*this->command_functions[(int)command.type])(command, audio, ret))
 			break;
 	}
 	return ret;
 }
 
-#define DEFINE_COMMAND_FUNCTION(x) bool CppRedAudioProgram::Channel::command_##x(const AudioCommand &command_, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel)
+#define DEFINE_COMMAND_FUNCTION(x) bool CppRedAudioProgram::Channel::command_##x(const AudioCommand &command_, AbstractAudioSystem &audio, bool &dont_stop_this_channel)
 //#define LOG_COMMAND_EXECUTION
 
 DEFINE_COMMAND_FUNCTION(Tempo){
@@ -393,7 +393,7 @@ DEFINE_COMMAND_FUNCTION(Volume){
 #ifdef LOG_COMMAND_EXECUTION
 	std::cout << "volume " << command.vol1 << " " << command.vol2 << std::endl;
 #endif
-	renderer.set_NR50((byte_t)((command.vol1 & 0x0F) | ((command.vol2 & 0x0F) << 4)));
+	audio.set_NR50((byte_t)((command.vol1 & 0x0F) | ((command.vol2 & 0x0F) << 4)));
 	return true;
 }
 
@@ -464,15 +464,15 @@ DEFINE_COMMAND_FUNCTION(Rest){
 #ifdef LOG_COMMAND_EXECUTION
 	std::cout << "rest " << command.length << std::endl;
 #endif
-	this->set_delay_counters(renderer, command.length);
+	this->set_delay_counters(audio, command.length);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return true;
 	if (this->channel_no % 4 == 2){
-		this->disable_this_hardware_channel(renderer);
+		this->disable_this_hardware_channel(audio);
 	}else{
-		this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, 0x08);
+		this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(audio, 0x08);
 		//Restart sound on current channel.
-		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, 0x80);
+		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(audio, 0x80);
 	}
 	return false;
 }
@@ -491,7 +491,7 @@ DEFINE_COMMAND_FUNCTION(Note){
 #ifdef LOG_COMMAND_EXECUTION
 	std::cout << "note " << command.pitch << " " << command.length << std::endl;
 #endif
-	this->note_length(renderer, command.length, command.pitch);
+	this->note_length(audio, command.length, command.pitch);
 	return false;
 }
 
@@ -539,7 +539,7 @@ DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 		}
 		this->program->play_sound(noises[pitch]);
 	}
-	this->note_length(renderer, command.length, command.pitch);
+	this->note_length(audio, command.length, command.pitch);
 	return false;
 }
 
@@ -554,19 +554,19 @@ DEFINE_COMMAND_FUNCTION(UnknownSfx10){
 	if (this->channel_no < 4 || this->do_execute_music)
 		return true;
 #endif
-	renderer.set_NR10((byte_t)command.nr10);
+	audio.set_NR10((byte_t)command.nr10);
 	return true;
 }
 
 DEFINE_COMMAND_FUNCTION(UnknownSfx20){
-	return this->unknown20(command_, renderer, dont_stop_this_channel, false);
+	return this->unknown20(command_, audio, dont_stop_this_channel, false);
 }
 
 DEFINE_COMMAND_FUNCTION(UnknownNoise20){
-	return this->unknown20(command_, renderer, dont_stop_this_channel, true);
+	return this->unknown20(command_, audio, dont_stop_this_channel, true);
 }
 
-bool CppRedAudioProgram::Channel::unknown20(const AudioCommand &command_, AbstractAudioRenderer &renderer, bool &dont_stop_this_channel, bool noise){
+bool CppRedAudioProgram::Channel::unknown20(const AudioCommand &command_, AbstractAudioSystem &audio, bool &dont_stop_this_channel, bool noise){
 #ifndef LOG_COMMAND_EXECUTION
 	if (this->channel_no < 3 || this->do_execute_music)
 		return true;
@@ -579,12 +579,12 @@ bool CppRedAudioProgram::Channel::unknown20(const AudioCommand &command_, Abstra
 #endif
 	//if (!command.length)
 	//	__debugbreak();
-	this->note_length(renderer, command.length, 2);
-	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(renderer, this->duty | this->note_delay_counter);
-	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, command.envelope);
-	this->apply_duty_and_sound_length(renderer);
-	this->enable_channel_output(renderer);
-	this->apply_wave_pattern_and_frequency(renderer, command.frequency);
+	this->note_length(audio, command.length, 2);
+	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(audio, this->duty | this->note_delay_counter);
+	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(audio, command.envelope);
+	this->apply_duty_and_sound_length(audio);
+	this->enable_channel_output(audio);
+	this->apply_wave_pattern_and_frequency(audio, command.frequency);
 	return false;
 }
 
@@ -694,53 +694,53 @@ DEFINE_COMMAND_FUNCTION(End){
 	}
 
 	if (this->channel_no < 3){
-		dont_stop_this_channel = !this->disable_channel_output(renderer);
+		dont_stop_this_channel = !this->disable_channel_output(audio);
 		return dont_stop_this_channel;
 	}
 	this->do_noise_or_sfx = false;
 	this->do_execute_music = false;
 	if (this->channel_no == 6){
-		renderer.set_NR30(0);
-		renderer.set_NR30(0x80);
+		audio.set_NR30(0);
+		audio.set_NR30(0x80);
 		if (this->program->disable_channel_output_when_sfx_ends){
 			this->program->disable_channel_output_when_sfx_ends = 0;
-			dont_stop_this_channel = !this->disable_channel_output(renderer);
+			dont_stop_this_channel = !this->disable_channel_output(audio);
 			return dont_stop_this_channel;
 		}
 	}
-	dont_stop_this_channel = !this->disable_channel_output_sub(renderer);
+	dont_stop_this_channel = !this->disable_channel_output_sub(audio);
 	return dont_stop_this_channel;
 }
 
-bool CppRedAudioProgram::Channel::disable_channel_output(AbstractAudioRenderer &renderer){
-	this->disable_this_hardware_channel(renderer);
-	return this->disable_channel_output_sub(renderer);
+bool CppRedAudioProgram::Channel::disable_channel_output(AbstractAudioSystem &audio){
+	this->disable_this_hardware_channel(audio);
+	return this->disable_channel_output_sub(audio);
 }
 
-bool CppRedAudioProgram::Channel::disable_channel_output_sub(AbstractAudioRenderer &renderer){
+bool CppRedAudioProgram::Channel::disable_channel_output_sub(AbstractAudioSystem &audio){
 	if (this->program->channels[4] && this->program->is_cry()){
-		if (this->channel_no == 4 && this->go_back_one_command_if_cry(renderer))
+		if (this->channel_no == 4 && this->go_back_one_command_if_cry(audio))
 			return false;
-		renderer.set_NR50(this->program->saved_volume);
+		audio.set_NR50(this->program->saved_volume);
 		this->program->saved_volume = 0;
 	}
 	return true;
 }
 
-bool CppRedAudioProgram::Channel::go_back_one_command_if_cry(AbstractAudioRenderer &renderer){
+bool CppRedAudioProgram::Channel::go_back_one_command_if_cry(AbstractAudioSystem &audio){
 	if (!this->program->is_cry())
 		return false;
 	this->program_counter--;
 	return true;
 }
 
-void CppRedAudioProgram::Channel::note_length(AbstractAudioRenderer &renderer, std::uint32_t length_parameter, std::uint32_t note_parameter){
-	this->set_delay_counters(renderer, length_parameter);
+void CppRedAudioProgram::Channel::note_length(AbstractAudioSystem &audio, std::uint32_t length_parameter, std::uint32_t note_parameter){
+	this->set_delay_counters(audio, length_parameter);
 	if (this->do_execute_music | !this->do_noise_or_sfx)
-		this->note_pitch(renderer, note_parameter);
+		this->note_pitch(audio, note_parameter);
 }
 
-void CppRedAudioProgram::Channel::set_delay_counters(AbstractAudioRenderer &renderer, std::uint32_t length_parameter){
+void CppRedAudioProgram::Channel::set_delay_counters(AbstractAudioSystem &audio, std::uint32_t length_parameter){
 	auto length = this->note_speed * length_parameter;
 	std::uint32_t tempo;
 	if (this->channel_no < 4)
@@ -755,25 +755,25 @@ void CppRedAudioProgram::Channel::set_delay_counters(AbstractAudioRenderer &rend
 	this->note_delay_counter = (i >> 8) & 0xFF;
 }
 
-void CppRedAudioProgram::Channel::disable_this_hardware_channel(AbstractAudioRenderer &renderer){
-	auto r = renderer.get_NR51();
+void CppRedAudioProgram::Channel::disable_this_hardware_channel(AbstractAudioSystem &audio){
+	auto r = audio.get_NR51();
 	r &= disable_channel_masks[this->channel_no % 4];
-	renderer.set_NR51(r);
+	audio.set_NR51(r);
 }
 
-void CppRedAudioProgram::Channel::note_pitch(AbstractAudioRenderer &renderer, std::uint32_t note_parameter){
+void CppRedAudioProgram::Channel::note_pitch(AbstractAudioSystem &audio, std::uint32_t note_parameter){
 	int frequency = calculate_frequency(note_parameter, this->octave);
 	if (this->do_pitch_bend)
 		this->init_pitch_bend_variables(frequency);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return;
-	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(renderer, ((this->volume << 4) & 0xF0)|(this->fade & 0x0F));
-	this->apply_duty_and_sound_length(renderer);
-	this->enable_channel_output(renderer);
+	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(audio, ((this->volume << 4) & 0xF0)|(this->fade & 0x0F));
+	this->apply_duty_and_sound_length(audio);
+	this->enable_channel_output(audio);
 	if (this->perfect_pitch)
 		frequency++;
 	this->channel_frequency = frequency;
-	this->apply_wave_pattern_and_frequency(renderer, frequency);
+	this->apply_wave_pattern_and_frequency(audio, frequency);
 }
 
 void CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
@@ -801,22 +801,22 @@ void CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
 			(remainder + this->pitch_bend_length) & 0xFF;
 }
 
-void CppRedAudioProgram::Channel::apply_duty_and_sound_length(AbstractAudioRenderer &renderer){
+void CppRedAudioProgram::Channel::apply_duty_and_sound_length(AbstractAudioSystem &audio){
 	auto temp = this->note_delay_counter;
 	if (this->channel_no % 4 != 2)
 		temp = (temp & BITMAP(00111111)) | this->duty;
-	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(renderer, temp);
+	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(audio, temp);
 }
 
-void CppRedAudioProgram::Channel::enable_channel_output(AbstractAudioRenderer &renderer){
-	auto nr51 = renderer.get_NR51();
+void CppRedAudioProgram::Channel::enable_channel_output(AbstractAudioSystem &audio){
+	auto nr51 = audio.get_NR51();
 	byte_t value;
 	if (this->channel_no >= 4 || this->program->channels[4])
 		value = nr51 | enable_channel_masks[this->channel_no % 4];
 	else
 		value = nr51 & disable_channel_masks[this->channel_no % 4]
 			| this->program->stereo_panning & enable_channel_masks[this->channel_no % 4];
-	renderer.set_NR51(value);
+	audio.set_NR51(value);
 }
 
 void CppRedAudioProgram::Channel::set_sfx_tempo(){
@@ -832,16 +832,16 @@ void CppRedAudioProgram::Channel::set_sfx_tempo(){
 	this->program->sfx_tempo = tempo;
 }
 
-void CppRedAudioProgram::Channel::apply_duty_cycle(AbstractAudioRenderer &renderer){
+void CppRedAudioProgram::Channel::apply_duty_cycle(AbstractAudioSystem &audio){
 	this->duty_cycle &= 0xFF;
 	this->duty_cycle = (this->duty_cycle << 2) | (this->duty_cycle >> 6);
 	this->duty_cycle &= 0xFF;
 	auto f = this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no);
-	auto reg = f(renderer, -1);
-	f(renderer, (this->duty_cycle & BITMAP(11000000)) | (reg & BITMAP(00111111)));
+	auto reg = f(audio, -1);
+	f(audio, (this->duty_cycle & BITMAP(11000000)) | (reg & BITMAP(00111111)));
 }
 
-void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioRenderer &renderer){
+void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioSystem &audio){
 	bool reached_target = false;
 	auto sum1 = this->pitch_bend_frequency_steps + this->pitch_bend_current_frequency;
 	auto sum2 = this->pitch_bend_frequency_steps_fractional_part + this->pitch_bend_current_frequency_fractional_part;
@@ -855,15 +855,15 @@ void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioRenderer &render
 
 	if (!reached_target){
 		this->pitch_bend_current_frequency = whole_part;
-		this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, whole_part & 0xFF);
-		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, (whole_part >> 8) & 0xFF);
+		this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(audio, whole_part & 0xFF);
+		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(audio, (whole_part >> 8) & 0xFF);
 		return;
 	}
 	this->do_pitch_bend = false;
 	this->pitch_bend_decreasing = false;
 }
 
-void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudioRenderer &renderer, int frequency){
+void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudioSystem &audio, int frequency){
 	if (this->channel_no % 4 == 2){
 		auto instrument_no = this->program->music_wave_instrument;
 		if (this->channel_no != 2){
@@ -873,9 +873,9 @@ void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudio
 		static_assert(array_length(instruments_bank_1) == array_length(instruments_bank_2) && array_length(instruments_bank_2) == array_length(instruments_bank_3), "");
 		assert(instrument_no < array_length(instruments_bank_1));
 		auto &instrument = instruments_by_bank[this->bank - 1][instrument_no];
-		renderer.set_NR30(0);
-		renderer.copy_voluntary_wave(instrument);
-		renderer.set_NR30(0x80);
+		audio.set_NR30(0);
+		audio.copy_voluntary_wave(instrument);
+		audio.set_NR30(0x80);
 	}
 	assert(frequency < 0x10000 && frequency >= 0);
 	if (this->program->is_cry()){
@@ -884,8 +884,8 @@ void CppRedAudioProgram::Channel::apply_wave_pattern_and_frequency(AbstractAudio
 	}
 	byte_t hi = (byte_t)(frequency >> 8);
 	byte_t lo = (byte_t)(frequency & 0xFF);
-	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(renderer, lo);
-	this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(renderer, (hi | BITMAP(10000000)) & BITMAP(11000111));
+	this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(audio, lo);
+	this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(audio, (hi | BITMAP(10000000)) & BITMAP(11000111));
 }
 
 bool CppRedAudioProgram::is_cry(){
@@ -902,26 +902,26 @@ void CppRedAudioProgram::play_sound(AudioResourceId id){
 	this->sound_id = id;
 	if (id == AudioResourceId::Stop){
 		//Turn on sound hardware.
-		this->renderer->set_NR52(0x80);
+		this->audio->set_NR52(0x80);
 		//Turn on voluntary wave.
-		this->renderer->set_NR30(0x80);
+		this->audio->set_NR30(0x80);
 		//Mute using stereo panning register.
-		this->renderer->set_NR51(0);
+		this->audio->set_NR51(0);
 		//Mute voluntary wave.
-		this->renderer->set_NR32(0);
+		this->audio->set_NR32(0);
 		//Disable frequency sweep of square wave 1.
-		this->renderer->set_NR10(8);
+		this->audio->set_NR10(8);
 		//Mute square wave 1.
-		this->renderer->set_NR12(8);
+		this->audio->set_NR12(8);
 		//Mute square wave 2.
-		this->renderer->set_NR22(8);
+		this->audio->set_NR22(8);
 		//Mute noise.
-		this->renderer->set_NR42(8);
-		this->renderer->set_NR14(0x40);
-		this->renderer->set_NR24(0x40);
-		this->renderer->set_NR44(0x40);
+		this->audio->set_NR42(8);
+		this->audio->set_NR14(0x40);
+		this->audio->set_NR24(0x40);
+		this->audio->set_NR44(0x40);
 		//Set full volume.
-		this->renderer->set_NR50(0x77);
+		this->audio->set_NR50(0x77);
 
 		this->disable_channel_output_when_sfx_ends = false;
 		this->pause_music_state = PauseMusicState::NotPaused;
@@ -954,12 +954,12 @@ void CppRedAudioProgram::play_sound(AudioResourceId id){
 			c.reset();
 		this->music_tempo = 1;
 		this->stereo_panning = 0xFF;
-		this->renderer->set_NR50(0);
-		this->renderer->set_NR10(8);
-		this->renderer->set_NR51(0);
-		this->renderer->set_NR30(0);
-		this->renderer->set_NR30(0x80);
-		this->renderer->set_NR50(0x77);
+		this->audio->set_NR50(0);
+		this->audio->set_NR10(8);
+		this->audio->set_NR51(0);
+		this->audio->set_NR30(0);
+		this->audio->set_NR30(0x80);
+		this->audio->set_NR50(0x77);
 
 		for (size_t i = 0; i < this->current_resource->channel_count; i++){
 			auto &channel = this->current_resource->channels[i];
@@ -985,7 +985,7 @@ void CppRedAudioProgram::play_sound(AudioResourceId id){
 			}else
 				c.reset(new Channel(*this, channel.channel, id, channel.entry_point, this->current_resource->bank));
 			if (channel.channel == 4)
-				this->renderer->set_NR10(8);
+				this->audio->set_NR10(8);
 		}
 	}
 	if (this->current_resource->type == AudioResourceType::Cry && this->channels[6]){
@@ -1005,9 +1005,9 @@ void CppRedAudioProgram::play_sound(AudioResourceId id){
 		}
 	}
 	if (!this->saved_volume){
-		this->saved_volume = this->renderer->get_NR50();
+		this->saved_volume = this->audio->get_NR50();
 		//Set full volume.
-		this->renderer->set_NR50(0x77);
+		this->audio->set_NR50(0x77);
 	}
 }
 
@@ -1063,10 +1063,10 @@ void CppRedAudioProgram::Channel::reset(AudioResourceId resource_id, int entry_p
 }
 
 #define DEFINE_REGISTER_FUNCTION(reg, ch, dst) \
-static byte_t register_function_##reg##_##ch(AbstractAudioRenderer &renderer, int i){ \
+static byte_t register_function_##reg##_##ch(AbstractAudioSystem &audio, int i){ \
 	if (i < 0) \
-		return renderer.get_NR##dst(); \
-	renderer.set_NR##dst(i); \
+		return audio.get_NR##dst(); \
+	audio.set_NR##dst(i); \
 	return 0; \
 }
 

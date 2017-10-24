@@ -32,7 +32,7 @@ class Engine{
 	double wait_remainder = 0;
 	InputState input_state;
 	std::function<void()> on_yield;
-	std::unique_ptr<AudioRenderer> audio;
+	std::unique_ptr<AudioSystem> audio;
 
 	void initialize_window();
 	void initialize_video();

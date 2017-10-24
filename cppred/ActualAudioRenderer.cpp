@@ -8,7 +8,7 @@
 #define CHANNEL3 (1 << 2)
 #define CHANNEL4 (1 << 3)
 
-AudioRenderer::ActualRenderer::ActualRenderer():
+HeliosRenderer::HeliosRenderer():
 #ifdef USE_STD_FUNCTION
 		audio_sample_clock(gb_cpu_frequency_power, sampling_frequency, [this](std::uint64_t n){ this->sample_callback(n); }),
 		frame_sequencer_clock(gb_cpu_frequency_power, 512, [this](std::uint64_t n){ this->frame_sequencer_callback(n); })
@@ -45,7 +45,7 @@ AudioRenderer::ActualRenderer::ActualRenderer():
 #endif
 }
 
-void AudioRenderer::ActualRenderer::update(double now){
+void HeliosRenderer::update(double now){
 	this->current_clock = cast_round_u64(now * gb_cpu_frequency);
 	if (this->set_audio_turned_on_at_at_next_update){
 		this->audio_turned_on_at = this->current_clock;
@@ -58,21 +58,21 @@ void AudioRenderer::ActualRenderer::update(double now){
 	this->audio_sample_clock.update(t);
 }
 
-void AudioRenderer::ActualRenderer::sample_callback(void *This, std::uint64_t sample_no){
-	((ActualRenderer *)This)->sample_callback(sample_no);
+void HeliosRenderer::sample_callback(void *This, std::uint64_t sample_no){
+	((HeliosRenderer *)This)->sample_callback(sample_no);
 }
 
-void AudioRenderer::ActualRenderer::frame_sequencer_callback(void *This, std::uint64_t clock){
-	((ActualRenderer *)This)->frame_sequencer_callback(clock);
+void HeliosRenderer::frame_sequencer_callback(void *This, std::uint64_t clock){
+	((HeliosRenderer *)This)->frame_sequencer_callback(clock);
 }
 
-void AudioRenderer::ActualRenderer::sample_callback(std::uint64_t sample_no){
+void HeliosRenderer::sample_callback(std::uint64_t sample_no){
 	StereoSampleFinal *buffer = this->publishing_frames.get_private_resource()->buffer;
 	this->last_sample = this->compute_sample();
 	this->write_sample(buffer);
 }
 
-void AudioRenderer::ActualRenderer::frame_sequencer_callback(std::uint64_t clock){
+void HeliosRenderer::frame_sequencer_callback(std::uint64_t clock){
 	if (!this->master_toggle)
 		return;
 
@@ -84,7 +84,7 @@ void AudioRenderer::ActualRenderer::frame_sequencer_callback(std::uint64_t clock
 		this->sweep_event();
 }
 
-StereoSampleFinal AudioRenderer::ActualRenderer::compute_sample(){
+StereoSampleFinal HeliosRenderer::compute_sample(){
 	std::uint64_t sample_no = this->internal_sample_counter++;
 	if (!this->master_toggle){
 		StereoSampleFinal ret;
@@ -119,7 +119,7 @@ StereoSampleFinal AudioRenderer::ActualRenderer::compute_sample(){
 	return convert(sample);
 }
 
-void AudioRenderer::ActualRenderer::write_sample(StereoSampleFinal *&buffer){
+void HeliosRenderer::write_sample(StereoSampleFinal *&buffer){
 	buffer[this->current_frame_position++] = this->last_sample;
 	if (this->current_frame_position >= AudioFrame::length){
 #ifdef OUTPUT_AUDIO_TO_FILE
@@ -138,7 +138,7 @@ void AudioRenderer::ActualRenderer::write_sample(StereoSampleFinal *&buffer){
 	}
 }
 
-void AudioRenderer::ActualRenderer::initialize_new_frame(){
+void HeliosRenderer::initialize_new_frame(){
 	auto frame = this->publishing_frames.get_private_resource();
 	frame->frame_no = this->frame_no++;
 	auto &buffer = frame->buffer;
@@ -159,7 +159,7 @@ StereoSampleIntermediate compute_channel_panning_and_silence(const T1 &generator
 	return ret;
 }
 
-StereoSampleIntermediate AudioRenderer::ActualRenderer::render_square1(std::uint64_t time){
+StereoSampleIntermediate HeliosRenderer::render_square1(std::uint64_t time){
 	this->square1.update_state_before_render(time);
 #if CHANNEL_SELECTION & CHANNEL1
 	return compute_channel_panning_and_silence(this->square1, time, this->stereo_panning[0]);
@@ -170,7 +170,7 @@ StereoSampleIntermediate AudioRenderer::ActualRenderer::render_square1(std::uint
 #endif
 }
 
-StereoSampleIntermediate AudioRenderer::ActualRenderer::render_square2(std::uint64_t time){
+StereoSampleIntermediate HeliosRenderer::render_square2(std::uint64_t time){
 	this->square2.update_state_before_render(time);
 #if CHANNEL_SELECTION & CHANNEL2
 	return compute_channel_panning_and_silence(this->square2, time, this->stereo_panning[1]);
@@ -181,7 +181,7 @@ StereoSampleIntermediate AudioRenderer::ActualRenderer::render_square2(std::uint
 #endif
 }
 
-StereoSampleIntermediate AudioRenderer::ActualRenderer::render_voluntary(std::uint64_t time){
+StereoSampleIntermediate HeliosRenderer::render_voluntary(std::uint64_t time){
 	this->wave.update_state_before_render(time);
 #if CHANNEL_SELECTION & CHANNEL3
 	return compute_channel_panning_and_silence(this->wave, time, this->stereo_panning[2]);
@@ -192,7 +192,7 @@ StereoSampleIntermediate AudioRenderer::ActualRenderer::render_voluntary(std::ui
 #endif
 }
 
-StereoSampleIntermediate AudioRenderer::ActualRenderer::render_noise(std::uint64_t time){
+StereoSampleIntermediate HeliosRenderer::render_noise(std::uint64_t time){
 #if CHANNEL_SELECTION & CHANNEL4
 	return compute_channel_panning_and_silence(this->noise, time, this->stereo_panning[3]);
 #else
@@ -202,30 +202,101 @@ StereoSampleIntermediate AudioRenderer::ActualRenderer::render_noise(std::uint64
 #endif
 }
 
-void AudioRenderer::ActualRenderer::length_counter_event(){
+void HeliosRenderer::length_counter_event(){
 	this->square1.length_counter_event();
 	this->square2.length_counter_event();
 	this->noise.length_counter_event();
 }
 
-void AudioRenderer::ActualRenderer::volume_event(){
+void HeliosRenderer::volume_event(){
 	this->square1.volume_event();
 	this->square2.volume_event();
 	this->noise.volume_event();
 }
 
-void AudioRenderer::ActualRenderer::sweep_event(){
+void HeliosRenderer::sweep_event(){
 	this->square1.sweep_event();
 }
 
-void AudioRenderer::ActualRenderer::set_NR50(byte_t value){
+void HeliosRenderer::set_NR10(byte_t value){
+	this->square1.set_register0(value);
+}
+
+void HeliosRenderer::set_NR11(byte_t value){
+	this->square1.set_register1(value);
+}
+
+void HeliosRenderer::set_NR12(byte_t value){
+	this->square1.set_register2(value);
+}
+
+void HeliosRenderer::set_NR13(byte_t value){
+	this->square1.set_register3(value);
+}
+
+void HeliosRenderer::set_NR14(byte_t value){
+	this->square1.set_register4(value);
+}
+
+void HeliosRenderer::set_NR21(byte_t value){
+	this->square2.set_register1(value);
+}
+
+void HeliosRenderer::set_NR22(byte_t value){
+	this->square2.set_register2(value);
+}
+
+void HeliosRenderer::set_NR23(byte_t value){
+	this->square2.set_register3(value);
+}
+
+void HeliosRenderer::set_NR24(byte_t value){
+	this->square2.set_register4(value);
+}
+
+void HeliosRenderer::set_NR30(byte_t value){
+	this->wave.set_register0(value);
+}
+
+void HeliosRenderer::set_NR31(byte_t value){
+	this->wave.set_register1(value);
+}
+void HeliosRenderer::set_NR32(byte_t value){
+	this->wave.set_register2(value);
+}
+
+void HeliosRenderer::set_NR33(byte_t value){
+	this->wave.set_register3(value);
+}
+
+void HeliosRenderer::set_NR34(byte_t value){
+	this->wave.set_register4(value);
+}
+
+void HeliosRenderer::set_NR41(byte_t value){
+	this->noise.set_register1(value);
+}
+
+void HeliosRenderer::set_NR42(byte_t value){
+	this->noise.set_register2(value);
+}
+
+void HeliosRenderer::set_NR43(byte_t value){
+	this->noise.set_register3(value);
+}
+
+void HeliosRenderer::set_NR44(byte_t value){
+	this->noise.set_register4(value);
+}
+
+void HeliosRenderer::set_NR50(byte_t value){
 	this->NR50 = value;
 
 	this->left_volume = (value >> 4) & 0x07;
 	this->right_volume = value & 0x07;
 }
 
-void AudioRenderer::ActualRenderer::set_NR51(byte_t value){
+void HeliosRenderer::set_NR51(byte_t value){
 	this->NR51 = value;
 
 	for (int channel = 0; channel < 4; channel++){
@@ -236,7 +307,7 @@ void AudioRenderer::ActualRenderer::set_NR51(byte_t value){
 	}
 }
 
-void AudioRenderer::ActualRenderer::set_NR52(byte_t value){
+void HeliosRenderer::set_NR52(byte_t value){
 	auto mt = this->master_toggle;
 	this->master_toggle = !!(value & bit(7));
 	if (this->master_toggle & !mt){
@@ -250,7 +321,71 @@ void AudioRenderer::ActualRenderer::set_NR52(byte_t value){
 	}
 }
 
-byte_t AudioRenderer::ActualRenderer::get_NR52() const{
+byte_t HeliosRenderer::get_NR11() const{
+	return this->square1.get_register1();
+}
+
+byte_t HeliosRenderer::get_NR12() const{
+	return this->square1.get_register2();
+}
+
+byte_t HeliosRenderer::get_NR13() const{
+	return this->square1.get_register3();
+}
+
+byte_t HeliosRenderer::get_NR14() const{
+	return this->square1.get_register4();
+}
+
+byte_t HeliosRenderer::get_NR21() const{
+	return this->square2.get_register1();
+}
+
+byte_t HeliosRenderer::get_NR22() const{
+	return this->square2.get_register2();
+}
+
+byte_t HeliosRenderer::get_NR23() const{
+	return this->square2.get_register3();
+}
+
+byte_t HeliosRenderer::get_NR24() const{
+	return this->square2.get_register4();
+}
+
+byte_t HeliosRenderer::get_NR31() const{
+	return this->wave.get_register1();
+}
+
+byte_t HeliosRenderer::get_NR32() const{
+	return this->wave.get_register2();
+}
+
+byte_t HeliosRenderer::get_NR33() const{
+	return this->wave.get_register3();
+}
+
+byte_t HeliosRenderer::get_NR34() const{
+	return this->wave.get_register4();
+}
+
+byte_t HeliosRenderer::get_NR41() const{
+	return this->noise.get_register1();
+}
+
+byte_t HeliosRenderer::get_NR42() const{
+	return this->noise.get_register2();
+}
+
+byte_t HeliosRenderer::get_NR43() const{
+	return this->noise.get_register3();
+}
+
+byte_t HeliosRenderer::get_NR44() const{
+	return this->noise.get_register4();
+}
+
+byte_t HeliosRenderer::get_NR52() const{
 	auto ret = (byte_t)this->master_toggle << 7;
 	ret |= 0x70;
 	ret |= (byte_t)this->square1.length_counter_has_not_finished() << 0;
@@ -258,4 +393,17 @@ byte_t AudioRenderer::ActualRenderer::get_NR52() const{
 	ret |= bit(2);
 	ret |= (byte_t)this->noise.length_counter_has_not_finished() << 3;
 	return ret;
+}
+
+void HeliosRenderer::copy_voluntary_wave(const void *buffer){
+	for (int i = 16; i--;)
+		this->wave.set_wave_table(i, ((const byte_t *)buffer)[i]);
+}
+
+AudioFrame *HeliosRenderer::get_current_frame(){
+	return this->publishing_frames.get_public_resource();
+}
+
+void HeliosRenderer::return_used_frame(AudioFrame *frame){
+	this->publishing_frames.return_resource(frame);
 }

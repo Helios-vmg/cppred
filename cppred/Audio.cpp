@@ -30,11 +30,11 @@ basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_a
 #endif
 }
 
-AudioRenderer::AudioRenderer(Engine &engine): engine(&engine){
+AudioSystem::AudioSystem(Engine &engine): engine(&engine){
 #ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
 	this->audio_recording.open("audio_output.txt");
 #endif
-	this->renderer.reset(new ActualRenderer);
+	this->renderer.reset(new HeliosRenderer);
 	this->continue_running = false;
 	SDL_AudioSpec desired, actual;
 	memset(&desired, 0, sizeof(desired));
@@ -55,8 +55,8 @@ AudioRenderer::AudioRenderer(Engine &engine): engine(&engine){
 	this->timer_id = SDL_AddTimer(1, timer_callback, this);
 }
 
-AudioRenderer::~AudioRenderer(){
-	this->AudioRenderer::stop_audio_processing();
+AudioSystem::~AudioSystem(){
+	this->AudioSystem::stop_audio_processing();
 	if (this->timer_id)
 		SDL_RemoveTimer(this->timer_id);
 	if (this->audio_device){
@@ -66,8 +66,8 @@ AudioRenderer::~AudioRenderer(){
 	}
 }
 
-void SDLCALL AudioRenderer::audio_callback(void *userdata, Uint8 *stream, int len){
-	auto This = (AudioRenderer *)userdata;
+void SDLCALL AudioSystem::audio_callback(void *userdata, Uint8 *stream, int len){
+	auto This = (AudioSystem *)userdata;
 	{
 		LOCK_MUTEX(This->mutex);
 		auto frame = This->get_current_frame();
@@ -92,28 +92,28 @@ void SDLCALL AudioRenderer::audio_callback(void *userdata, Uint8 *stream, int le
 	memset(stream, 0, len);
 }
 
-Uint32 SDLCALL AudioRenderer::timer_callback(Uint32 interval, void *param){
-	auto This = (AudioRenderer *)param;
+Uint32 SDLCALL AudioSystem::timer_callback(Uint32 interval, void *param){
+	auto This = (AudioSystem *)param;
 	This->timer_event.signal();
 	return interval;
 }
 
-AudioFrame *AudioRenderer::get_current_frame(){
-	return this->renderer->publishing_frames.get_public_resource();
+AudioFrame *AudioSystem::get_current_frame(){
+	return this->renderer->get_current_frame();
 }
 
-void AudioRenderer::return_used_frame(AudioFrame *frame){
-	this->renderer->publishing_frames.return_resource(frame);
+void AudioSystem::return_used_frame(AudioFrame *frame){
+	this->renderer->return_used_frame(frame);
 }
 
-void AudioRenderer::start_audio_processing(AudioProgram &program){
+void AudioSystem::start_audio_processing(AudioProgram &program){
 	if (this->thread)
 		this->stop_audio_processing();
 	this->continue_running = true;
 	this->thread.reset(new std::thread([this, &program](){ this->processor(program); }));
 }
 
-void AudioRenderer::stop_audio_processing(){
+void AudioSystem::stop_audio_processing(){
 	if (this->thread){
 		this->continue_running = false;
 		this->thread->join();
@@ -121,7 +121,7 @@ void AudioRenderer::stop_audio_processing(){
 	}
 }
 
-void AudioRenderer::process_queue(AudioProgram &program){
+void AudioSystem::process_queue(AudioProgram &program){
 	decltype(this->request_queue) queue;
 	{
 		LOCK_MUTEX(this->queue_mutex);
@@ -131,7 +131,7 @@ void AudioRenderer::process_queue(AudioProgram &program){
 		this->play_sound_internal(program, request);
 }
 
-void AudioRenderer::processor(AudioProgram &program){
+void AudioSystem::processor(AudioProgram &program){
 	this->renderer->set_NR52(0xFF);
 	this->renderer->set_NR50(0x77);
 	while (this->continue_running){
@@ -145,215 +145,12 @@ void AudioRenderer::processor(AudioProgram &program){
 	}
 }
 
-#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
-#define OUTPUT_AUDIO(x) { \
-	std::stringstream stream; \
-	stream << "NR" #x " = " << std::hex << std::setw(2) << std::setfill('0') << (int)value; \
-	auto s = stream.str(); \
-	std::cout << s << std::endl; \
-	this->audio_recording << s << std::endl; \
-}
-#else
-#define OUTPUT_AUDIO(x)
-#endif
-
-void AudioRenderer::set_NR10(byte_t value){
-	OUTPUT_AUDIO(10);
-	this->renderer->square1.set_register0(value);
-}
-
-void AudioRenderer::set_NR11(byte_t value){
-	OUTPUT_AUDIO(11);
-	this->renderer->square1.set_register1(value);
-}
-
-void AudioRenderer::set_NR12(byte_t value){
-	OUTPUT_AUDIO(12);
-	this->renderer->square1.set_register2(value);
-}
-
-void AudioRenderer::set_NR13(byte_t value){
-	OUTPUT_AUDIO(13);
-	this->renderer->square1.set_register3(value);
-}
-
-void AudioRenderer::set_NR14(byte_t value){
-	OUTPUT_AUDIO(14);
-	this->renderer->square1.set_register4(value);
-}
-
-void AudioRenderer::set_NR21(byte_t value){
-	OUTPUT_AUDIO(21);
-	this->renderer->square2.set_register1(value);
-}
-
-void AudioRenderer::set_NR22(byte_t value){
-	OUTPUT_AUDIO(22);
-	this->renderer->square2.set_register2(value);
-}
-
-void AudioRenderer::set_NR23(byte_t value){
-	OUTPUT_AUDIO(23);
-	this->renderer->square2.set_register3(value);
-}
-
-void AudioRenderer::set_NR24(byte_t value){
-	OUTPUT_AUDIO(24);
-	this->renderer->square2.set_register4(value);
-}
-
-void AudioRenderer::set_NR30(byte_t value){
-	OUTPUT_AUDIO(30);
-	this->renderer->wave.set_register0(value);
-}
-
-void AudioRenderer::set_NR31(byte_t value){
-	OUTPUT_AUDIO(31);
-	this->renderer->wave.set_register1(value);
-}
-
-void AudioRenderer::set_NR32(byte_t value){
-	OUTPUT_AUDIO(32);
-	this->renderer->wave.set_register2(value);
-}
-
-void AudioRenderer::set_NR33(byte_t value){
-	OUTPUT_AUDIO(33);
-	this->renderer->wave.set_register3(value);
-}
-
-void AudioRenderer::set_NR34(byte_t value){
-	OUTPUT_AUDIO(34);
-	this->renderer->wave.set_register4(value);
-}
-
-void AudioRenderer::set_NR41(byte_t value){
-	OUTPUT_AUDIO(41);
-	this->renderer->noise.set_register1(value);
-}
-
-void AudioRenderer::set_NR42(byte_t value){
-	OUTPUT_AUDIO(42);
-	this->renderer->noise.set_register2(value);
-}
-
-void AudioRenderer::set_NR43(byte_t value){
-	OUTPUT_AUDIO(43);
-	this->renderer->noise.set_register3(value);
-}
-
-void AudioRenderer::set_NR44(byte_t value){
-	OUTPUT_AUDIO(44);
-	this->renderer->noise.set_register4(value);
-}
-
-void AudioRenderer::set_NR50(byte_t value){
-	OUTPUT_AUDIO(50);
-	this->renderer->set_NR50(value);
-}
-
-void AudioRenderer::set_NR51(byte_t value){
-	OUTPUT_AUDIO(51);
-	this->renderer->set_NR51(value);
-}
-
-void AudioRenderer::set_NR52(byte_t value){
-	OUTPUT_AUDIO(52);
-	this->renderer->set_NR52(value);
-}
-
-byte_t AudioRenderer::get_NR11(){
-	return this->renderer->square1.get_register1();
-}
-
-byte_t AudioRenderer::get_NR12(){
-	return this->renderer->square1.get_register2();
-}
-
-byte_t AudioRenderer::get_NR13(){
-	return this->renderer->square1.get_register3();
-}
-
-byte_t AudioRenderer::get_NR14(){
-	return this->renderer->square1.get_register4();
-}
-
-byte_t AudioRenderer::get_NR21(){
-	return this->renderer->square2.get_register1();
-}
-
-byte_t AudioRenderer::get_NR22(){
-	return this->renderer->square2.get_register2();
-}
-
-byte_t AudioRenderer::get_NR23(){
-	return this->renderer->square2.get_register3();
-}
-
-byte_t AudioRenderer::get_NR24(){
-	return this->renderer->square2.get_register4();
-}
-
-byte_t AudioRenderer::get_NR31(){
-	return this->renderer->wave.get_register1();
-}
-
-byte_t AudioRenderer::get_NR32(){
-	return this->renderer->wave.get_register2();
-}
-
-byte_t AudioRenderer::get_NR33(){
-	return this->renderer->wave.get_register3();
-}
-
-byte_t AudioRenderer::get_NR34(){
-	return this->renderer->wave.get_register4();
-}
-
-byte_t AudioRenderer::get_NR41(){
-	return this->renderer->noise.get_register1();
-}
-
-byte_t AudioRenderer::get_NR42(){
-	return this->renderer->noise.get_register2();
-}
-
-byte_t AudioRenderer::get_NR43(){
-	return this->renderer->noise.get_register3();
-}
-
-byte_t AudioRenderer::get_NR44(){
-	return this->renderer->noise.get_register4();
-}
-
-byte_t AudioRenderer::get_NR50(){
-	return this->renderer->get_NR50();
-}
-
-byte_t AudioRenderer::get_NR51(){
-	return this->renderer->get_NR51();
-}
-
-void AudioRenderer::copy_voluntary_wave(const void *buffer){
-#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
-	for (int i = 0; i < 16; i++){
-		std::stringstream stream;
-		stream << "WAVE[" << std::hex << std::setw(2) << std::setfill('0') << i << "] = " << std::setw(2) << std::setfill('0') << (int)((const byte *)buffer)[i];
-		auto s = stream.str();
-		std::cout << s << std::endl;
-		this->audio_recording << s << std::endl;
-	}
-#endif
-	for (int i = 16; i--;)
-		this->renderer->wave.set_wave_table(i, ((const byte *)buffer)[i]);
-}
-
-void AudioRenderer::play_sound(AudioResourceId sound){
+void AudioSystem::play_sound(AudioResourceId sound){
 	LOCK_MUTEX(this->queue_mutex);
 	this->request_queue.push_back(sound);
 }
 
-void AudioRenderer::play_sound_internal(AudioProgram &program, AudioResourceId sound){
+void AudioSystem::play_sound_internal(AudioProgram &program, AudioResourceId sound){
 	if (this->new_sound_id != AudioResourceId::None)
 		for (int i = 4; i < 8; i++)
 			program.clear_channel(i);
@@ -367,7 +164,95 @@ void AudioRenderer::play_sound_internal(AudioProgram &program, AudioResourceId s
 			return;
 		}
 		this->fade_out_control = 0;
-	}
+}
 	this->new_sound_id = AudioResourceId::None;
 	program.play_sound(sound);
+}
+
+//-----------------------------------------------------------------------------
+//Forwarders:
+
+#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+#define OUTPUT_AUDIO(x) { \
+	std::stringstream stream; \
+	stream << "NR" #x " = " << std::hex << std::setw(2) << std::setfill('0') << (int)value; \
+	auto s = stream.str(); \
+	std::cout << s << std::endl; \
+	this->audio_recording << s << std::endl; \
+}
+#else
+#define OUTPUT_AUDIO(x)
+#endif
+
+#define DEFINE_FORWARDING_REGISTER_SET(reg)  \
+void AudioSystem::set_NR##reg(byte_t value){ \
+	OUTPUT_AUDIO(reg);                       \
+	this->renderer->set_NR##reg(value);      \
+}
+
+#define DEFINE_FORWARDING_REGISTER_GET(reg)  \
+byte_t AudioSystem::get_NR##reg(){           \
+	return this->renderer->get_NR##reg();    \
+}
+
+DEFINE_FORWARDING_REGISTER_SET(10)
+DEFINE_FORWARDING_REGISTER_SET(11)
+DEFINE_FORWARDING_REGISTER_SET(12)
+DEFINE_FORWARDING_REGISTER_SET(13)
+DEFINE_FORWARDING_REGISTER_SET(14)
+
+DEFINE_FORWARDING_REGISTER_SET(21)
+DEFINE_FORWARDING_REGISTER_SET(22)
+DEFINE_FORWARDING_REGISTER_SET(23)
+DEFINE_FORWARDING_REGISTER_SET(24)
+
+DEFINE_FORWARDING_REGISTER_SET(30)
+DEFINE_FORWARDING_REGISTER_SET(31)
+DEFINE_FORWARDING_REGISTER_SET(32)
+DEFINE_FORWARDING_REGISTER_SET(33)
+DEFINE_FORWARDING_REGISTER_SET(34)
+
+DEFINE_FORWARDING_REGISTER_SET(41)
+DEFINE_FORWARDING_REGISTER_SET(42)
+DEFINE_FORWARDING_REGISTER_SET(43)
+DEFINE_FORWARDING_REGISTER_SET(44)
+
+DEFINE_FORWARDING_REGISTER_SET(50)
+DEFINE_FORWARDING_REGISTER_SET(51)
+DEFINE_FORWARDING_REGISTER_SET(52)
+
+DEFINE_FORWARDING_REGISTER_GET(11)
+DEFINE_FORWARDING_REGISTER_GET(12)
+DEFINE_FORWARDING_REGISTER_GET(13)
+DEFINE_FORWARDING_REGISTER_GET(14)
+
+DEFINE_FORWARDING_REGISTER_GET(21)
+DEFINE_FORWARDING_REGISTER_GET(22)
+DEFINE_FORWARDING_REGISTER_GET(23)
+DEFINE_FORWARDING_REGISTER_GET(24)
+
+DEFINE_FORWARDING_REGISTER_GET(31)
+DEFINE_FORWARDING_REGISTER_GET(32)
+DEFINE_FORWARDING_REGISTER_GET(33)
+DEFINE_FORWARDING_REGISTER_GET(34)
+
+DEFINE_FORWARDING_REGISTER_GET(41)
+DEFINE_FORWARDING_REGISTER_GET(42)
+DEFINE_FORWARDING_REGISTER_GET(43)
+DEFINE_FORWARDING_REGISTER_GET(44)
+
+DEFINE_FORWARDING_REGISTER_GET(50)
+DEFINE_FORWARDING_REGISTER_GET(51)
+
+void AudioSystem::copy_voluntary_wave(const void *buffer){
+#ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+	for (int i = 0; i < 16; i++){
+		std::stringstream stream;
+		stream << "WAVE[" << std::hex << std::setw(2) << std::setfill('0') << i << "] = " << std::setw(2) << std::setfill('0') << (int)((const byte *)buffer)[i];
+		auto s = stream.str();
+		std::cout << s << std::endl;
+		this->audio_recording << s << std::endl;
+	}
+#endif
+	this->renderer->copy_voluntary_wave(buffer);
 }

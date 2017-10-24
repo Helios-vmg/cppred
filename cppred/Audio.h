@@ -91,9 +91,9 @@ struct AudioFrame{
 
 class AudioProgram;
 
-class AbstractAudioRenderer{
+class AbstractAudioSystem{
 public:
-	virtual ~AbstractAudioRenderer(){}
+	virtual ~AbstractAudioSystem(){}
 	virtual void set_NR10(byte_t) = 0;
 	virtual void set_NR11(byte_t) = 0;
 	virtual void set_NR12(byte_t) = 0;
@@ -150,7 +150,9 @@ public:
 //#define AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
 #endif
 
-class AudioRenderer : public AbstractAudioRenderer{
+class AudioRenderer;
+
+class AudioSystem : public AbstractAudioSystem{
 	Engine *engine;
 	SDL_AudioDeviceID audio_device = 0;
 	std::mutex mutex;
@@ -159,8 +161,7 @@ class AudioRenderer : public AbstractAudioRenderer{
 	std::unique_ptr<std::thread> thread;
 	SDL_TimerID timer_id = 0;
 	Event timer_event;
-	class ActualRenderer;
-	std::unique_ptr<ActualRenderer> renderer;
+	std::unique_ptr<AudioRenderer> renderer;
 	std::mutex queue_mutex;
 	std::deque<AudioResourceId> request_queue;
 #ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
@@ -183,8 +184,8 @@ class AudioRenderer : public AbstractAudioRenderer{
 	void process_queue(AudioProgram &program);
 	void play_sound_internal(AudioProgram &program, AudioResourceId sound);
 public:
-	AudioRenderer(Engine &);
-	~AudioRenderer();
+	AudioSystem(Engine &);
+	~AudioSystem();
 	void start_audio_processing(AudioProgram &) override;
 	void stop_audio_processing() override;
 	void set_NR10(byte_t) override;
