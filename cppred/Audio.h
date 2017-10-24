@@ -146,7 +146,9 @@ public:
 	virtual void play_sound(AudioResourceId) = 0;
 };
 
+#ifndef _DEBUG
 //#define AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
+#endif
 
 class AudioRenderer : public AbstractAudioRenderer{
 	Engine *engine;
