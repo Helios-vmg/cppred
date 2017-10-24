@@ -142,7 +142,7 @@ public:
 };
 
 class NoiseGenerator : public EnvelopedGenerator{
-	unsigned width_mode = 0;
+	unsigned width_mode = 14;
 	unsigned noise_register = 1;
 	bool output = true;
 
