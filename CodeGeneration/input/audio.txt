@@ -1,90 +1,90 @@
 .SFX_Snare1_1_Ch7
-	unknown_noise_20 0 193 51
+	unknown_noise_20 1 193 51
 	end
 
 .SFX_Snare2_1_Ch7
-	unknown_noise_20 0 177 51
+	unknown_noise_20 1 177 51
 	end
 
 .SFX_Snare3_1_Ch7
-	unknown_noise_20 0 161 51
+	unknown_noise_20 1 161 51
 	end
 
 .SFX_Snare4_1_Ch7
-	unknown_noise_20 0 129 51
+	unknown_noise_20 1 129 51
 	end
 
 .SFX_Snare5_1_Ch7
-	unknown_noise_20 7 132 55
-	unknown_noise_20 6 132 54
-	unknown_noise_20 5 131 53
-	unknown_noise_20 4 131 52
-	unknown_noise_20 3 130 51
-	unknown_noise_20 2 129 50
+	unknown_noise_20 8 132 55
+	unknown_noise_20 7 132 54
+	unknown_noise_20 6 131 53
+	unknown_noise_20 5 131 52
+	unknown_noise_20 4 130 51
+	unknown_noise_20 3 129 50
 	end
 
 .SFX_Triangle1_1_Ch7
-	unknown_noise_20 0 81 42
+	unknown_noise_20 1 81 42
 	end
 
 .SFX_Triangle2_1_Ch7
-	unknown_noise_20 1 65 43
-	unknown_noise_20 0 97 42
+	unknown_noise_20 2 65 43
+	unknown_noise_20 1 97 42
 	end
 
 .SFX_Snare6_1_Ch7
-	unknown_noise_20 0 129 16
+	unknown_noise_20 1 129 16
 	end
 
 .SFX_Snare7_1_Ch7
-	unknown_noise_20 0 130 35
+	unknown_noise_20 1 130 35
 	end
 
 .SFX_Snare8_1_Ch7
-	unknown_noise_20 0 130 37
+	unknown_noise_20 1 130 37
 	end
 
 .SFX_Snare9_1_Ch7
-	unknown_noise_20 0 130 38
+	unknown_noise_20 1 130 38
 	end
 
 .SFX_Cymbal1_1_Ch7
-	unknown_noise_20 0 161 16
+	unknown_noise_20 1 161 16
 	end
 
 .SFX_Cymbal2_1_Ch7
-	unknown_noise_20 0 162 17
+	unknown_noise_20 1 162 17
 	end
 
 .SFX_Cymbal3_1_Ch7
-	unknown_noise_20 0 162 80
+	unknown_noise_20 1 162 80
 	end
 
 .SFX_Muted_Snare1_1_Ch7
-	unknown_noise_20 0 161 24
-	unknown_noise_20 0 49 51
+	unknown_noise_20 1 161 24
+	unknown_noise_20 1 49 51
 	end
 
 .SFX_Triangle3_1_Ch7
-	unknown_noise_20 2 145 40
-	unknown_noise_20 0 113 24
+	unknown_noise_20 3 145 40
+	unknown_noise_20 1 113 24
 	end
 
 .SFX_Muted_Snare2_1_Ch7
-	unknown_noise_20 0 145 34
+	unknown_noise_20 1 145 34
 	end
 
 .SFX_Muted_Snare3_1_Ch7
-	unknown_noise_20 0 113 34
+	unknown_noise_20 1 113 34
 	end
 
 .SFX_Muted_Snare4_1_Ch7
-	unknown_noise_20 0 97 34
+	unknown_noise_20 1 97 34
 	end
 
 .SFX_Start_Menu_1_Ch7
-	unknown_noise_20 1 226 51
-	unknown_noise_20 8 225 34
+	unknown_noise_20 2 226 51
+	unknown_noise_20 9 225 34
 	end
 
 .SFX_Pokeflute_Ch2
@@ -110,709 +110,709 @@
 	end
 
 .SFX_Cut_1_Ch7
-	unknown_noise_20 2 247 36
-	unknown_noise_20 2 247 52
-	unknown_noise_20 4 247 68
-	unknown_noise_20 8 244 85
-	unknown_noise_20 8 241 68
+	unknown_noise_20 3 247 36
+	unknown_noise_20 3 247 52
+	unknown_noise_20 5 247 68
+	unknown_noise_20 9 244 85
+	unknown_noise_20 9 241 68
 	end
 
 .SFX_Go_Inside_1_Ch7
-	unknown_noise_20 9 241 68
-	unknown_noise_20 8 209 67
+	unknown_noise_20 10 241 68
+	unknown_noise_20 9 209 67
 	end
 
 .SFX_Swap_1_Ch4
 	duty 2
-	unknown_sfx_20 8 225 1856
+	unknown_sfx_20 9 225 1856
 	end
 
 .SFX_Swap_1_Ch5
 	duty 2
-	unknown_sfx_20 2 8 0
-	unknown_sfx_20 8 177 1857
+	unknown_sfx_20 3 8 0
+	unknown_sfx_20 9 177 1857
 	end
 
 .SFX_Tink_1_Ch4
 	duty 2
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 512
+	unknown_sfx_20 5 242 512
 	unknown_sfx_10 34
-	unknown_sfx_20 8 226 512
+	unknown_sfx_20 9 226 512
 	unknown_sfx_10 8
 	end
 
 .SFX_59_1_Ch4
 	duty 2
-	unknown_sfx_20 4 241 1920
+	unknown_sfx_20 5 241 1920
 	end
 
 .SFX_59_1_Ch5
 	duty 2
-	unknown_sfx_20 1 8 0
-	unknown_sfx_20 4 161 1889
+	unknown_sfx_20 2 8 0
+	unknown_sfx_20 5 161 1889
 	end
 
 .SFX_Purchase_1_Ch4
 	duty 2
-	unknown_sfx_20 4 225 1792
-	unknown_sfx_20 8 242 2016
+	unknown_sfx_20 5 225 1792
+	unknown_sfx_20 9 242 2016
 	end
 
 .SFX_Purchase_1_Ch5
 	duty 2
-	unknown_sfx_20 1 8 0
-	unknown_sfx_20 4 145 1729
-	unknown_sfx_20 8 162 1953
+	unknown_sfx_20 2 8 0
+	unknown_sfx_20 5 145 1729
+	unknown_sfx_20 9 162 1953
 	end
 
 .SFX_Collision_1_Ch4
 	duty 2
 	unknown_sfx_10 90
-	unknown_sfx_20 15 241 768
+	unknown_sfx_20 16 241 768
 	unknown_sfx_10 8
 	end
 
 .SFX_Go_Outside_1_Ch7
-	unknown_noise_20 2 241 84
-	unknown_noise_20 12 113 35
-	unknown_noise_20 2 177 84
-	unknown_noise_20 12 97 35
-	unknown_noise_20 6 65 84
+	unknown_noise_20 3 241 84
+	unknown_noise_20 13 113 35
+	unknown_noise_20 3 177 84
+	unknown_noise_20 13 97 35
+	unknown_noise_20 7 65 84
 	end
 
 .SFX_Press_AB_1_Ch4
 	duty 2
-	unknown_sfx_20 0 145 1984
-	unknown_sfx_20 0 129 2000
-	unknown_sfx_20 0 145 1984
-	unknown_sfx_20 12 161 2000
+	unknown_sfx_20 1 145 1984
+	unknown_sfx_20 1 129 2000
+	unknown_sfx_20 1 145 1984
+	unknown_sfx_20 13 161 2000
 	end
 
 .SFX_Save_1_Ch4
 	duty 2
-	unknown_sfx_20 4 244 1792
-	unknown_sfx_20 2 228 1536
-	unknown_sfx_20 2 228 1664
-	unknown_sfx_20 2 228 1728
-	unknown_sfx_20 2 228 1792
-	unknown_sfx_20 2 228 1952
-	unknown_sfx_20 15 242 2016
+	unknown_sfx_20 5 244 1792
+	unknown_sfx_20 3 228 1536
+	unknown_sfx_20 3 228 1664
+	unknown_sfx_20 3 228 1728
+	unknown_sfx_20 3 228 1792
+	unknown_sfx_20 3 228 1952
+	unknown_sfx_20 16 242 2016
 	end
 
 .SFX_Save_1_Ch5
 	duty 2
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 2 212 1793
-	unknown_sfx_20 2 196 1537
-	unknown_sfx_20 2 196 1665
-	unknown_sfx_20 2 196 1729
-	unknown_sfx_20 2 196 1793
-	unknown_sfx_20 2 196 1953
-	unknown_sfx_20 15 210 2017
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 3 212 1793
+	unknown_sfx_20 3 196 1537
+	unknown_sfx_20 3 196 1665
+	unknown_sfx_20 3 196 1729
+	unknown_sfx_20 3 196 1793
+	unknown_sfx_20 3 196 1953
+	unknown_sfx_20 16 210 2017
 	end
 
 .SFX_Heal_HP_1_Ch4
 	duty 2
 	unknown_sfx_10 23
-	unknown_sfx_20 15 240 1264
-	unknown_sfx_20 15 242 1616
+	unknown_sfx_20 16 240 1264
+	unknown_sfx_20 16 242 1616
 	unknown_sfx_10 8
 	end
 
 .SFX_Poisoned_1_Ch4
 	duty 0
 	unknown_sfx_10 20
-	unknown_sfx_20 4 242 1536
+	unknown_sfx_20 5 242 1536
 	loop 4 SFX_Poisoned_1_Ch4
-	unknown_sfx_20 15 243 1536
+	unknown_sfx_20 16 243 1536
 	unknown_sfx_10 8
 	end
 
 .SFX_Heal_Ailment_1_Ch4
 	duty 2
 	unknown_sfx_10 20
-	unknown_sfx_20 4 242 1536
-	unknown_sfx_20 4 242 1536
+	unknown_sfx_20 5 242 1536
+	unknown_sfx_20 5 242 1536
 	unknown_sfx_10 23
-	unknown_sfx_20 15 242 1536
+	unknown_sfx_20 16 242 1536
 	unknown_sfx_10 8
 	end
 
 .SFX_Trade_Machine_1_Ch4
 	duty 2
 	unknown_sfx_10 21
-	unknown_sfx_20 15 240 1264
-	unknown_sfx_20 15 242 1616
+	unknown_sfx_20 16 240 1264
+	unknown_sfx_20 16 242 1616
 	unknown_sfx_10 8
 	end
 
 .SFX_Turn_On_PC_1_Ch4
 	duty 2
-	unknown_sfx_20 15 242 1984
-	unknown_sfx_20 15 0 0
-	unknown_sfx_20 3 161 1920
-	unknown_sfx_20 3 161 1792
-	unknown_sfx_20 3 161 1856
-	unknown_sfx_20 3 161 1792
-	unknown_sfx_20 3 161 1920
-	unknown_sfx_20 3 161 1792
-	unknown_sfx_20 3 161 1984
-	unknown_sfx_20 8 161 1792
+	unknown_sfx_20 16 242 1984
+	unknown_sfx_20 16 0 0
+	unknown_sfx_20 4 161 1920
+	unknown_sfx_20 4 161 1792
+	unknown_sfx_20 4 161 1856
+	unknown_sfx_20 4 161 1792
+	unknown_sfx_20 4 161 1920
+	unknown_sfx_20 4 161 1792
+	unknown_sfx_20 4 161 1984
+	unknown_sfx_20 9 161 1792
 	end
 
 .SFX_Turn_Off_PC_1_Ch4
 	duty 2
-	unknown_sfx_20 4 240 1536
-	unknown_sfx_20 4 240 1024
-	unknown_sfx_20 4 240 512
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 240 1536
+	unknown_sfx_20 5 240 1024
+	unknown_sfx_20 5 240 512
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Enter_PC_1_Ch4
 	duty 2
-	unknown_sfx_20 6 240 1792
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 6 240 1792
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 7 240 1792
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 7 240 1792
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Shrink_1_Ch4
 	duty 1
 	unknown_sfx_10 23
-	unknown_sfx_20 15 215 1536
-	unknown_sfx_20 15 183 1408
-	unknown_sfx_20 15 135 1280
-	unknown_sfx_20 15 71 1152
-	unknown_sfx_20 15 23 1024
+	unknown_sfx_20 16 215 1536
+	unknown_sfx_20 16 183 1408
+	unknown_sfx_20 16 135 1280
+	unknown_sfx_20 16 71 1152
+	unknown_sfx_20 16 23 1024
 	unknown_sfx_10 8
 	end
 
 .SFX_Switch_1_Ch4
 	duty 2
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 2 241 1664
-	unknown_sfx_20 1 0 0
-	unknown_sfx_20 4 241 1920
-	unknown_sfx_20 4 0 0
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 3 241 1664
+	unknown_sfx_20 2 0 0
+	unknown_sfx_20 5 241 1920
+	unknown_sfx_20 5 0 0
 	end
 
 .SFX_Healing_Machine_1_Ch4
 	duty 2
 	unknown_sfx_10 44
-	unknown_sfx_20 4 242 1280
+	unknown_sfx_20 5 242 1280
 	unknown_sfx_10 34
-	unknown_sfx_20 2 241 1280
+	unknown_sfx_20 3 241 1280
 	unknown_sfx_10 8
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Teleport_Exit1_1_Ch4
 	duty 1
 	unknown_sfx_10 23
-	unknown_sfx_20 15 215 1280
-	unknown_sfx_20 15 183 1408
-	unknown_sfx_20 15 135 1536
-	unknown_sfx_20 15 71 1664
-	unknown_sfx_20 15 23 1792
+	unknown_sfx_20 16 215 1280
+	unknown_sfx_20 16 183 1408
+	unknown_sfx_20 16 135 1536
+	unknown_sfx_20 16 71 1664
+	unknown_sfx_20 16 23 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Teleport_Enter1_1_Ch4
 	duty 1
 	unknown_sfx_10 23
-	unknown_sfx_20 15 215 1792
-	unknown_sfx_20 15 183 1664
-	unknown_sfx_20 15 135 1536
-	unknown_sfx_20 15 71 1408
-	unknown_sfx_20 15 23 1280
+	unknown_sfx_20 16 215 1792
+	unknown_sfx_20 16 183 1664
+	unknown_sfx_20 16 135 1536
+	unknown_sfx_20 16 71 1408
+	unknown_sfx_20 16 23 1280
 	unknown_sfx_10 8
 	end
 
 .SFX_Teleport_Exit2_1_Ch4
 	duty 1
 	unknown_sfx_10 22
-	unknown_sfx_20 15 210 1280
+	unknown_sfx_20 16 210 1280
 	unknown_sfx_10 8
 	end
 
 .SFX_Ledge_1_Ch4
 	duty 2
 	unknown_sfx_10 149
-	unknown_sfx_20 15 242 1024
+	unknown_sfx_20 16 242 1024
 	unknown_sfx_10 8
 	end
 
 .SFX_Teleport_Enter2_1_Ch7
-	unknown_noise_20 2 241 50
+	unknown_noise_20 3 241 50
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 241 34
 	unknown_noise_20 2 0 0
-	unknown_noise_20 2 241 34
-	unknown_noise_20 1 0 0
 	end
 
 .SFX_Fly_1_Ch7
-	unknown_noise_20 2 241 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 161 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 209 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 129 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 177 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 97 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 145 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 65 18
-	unknown_noise_20 2 0 0
+	unknown_noise_20 3 241 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 161 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 209 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 129 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 177 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 97 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 145 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 65 18
+	unknown_noise_20 3 0 0
 	end
 
 .SFX_Denied_1_Ch4
 	duty 3
 	unknown_sfx_10 90
-	unknown_sfx_20 4 240 1280
+	unknown_sfx_20 5 240 1280
 	unknown_sfx_10 8
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Denied_1_Ch5
 	duty 3
-	unknown_sfx_20 4 240 1025
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1025
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 240 1025
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1025
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Arrow_Tiles_1_Ch4
 	duty 0
 	unknown_sfx_10 23
-	unknown_sfx_20 15 210 1792
+	unknown_sfx_20 16 210 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Push_Boulder_1_Ch7
-	unknown_noise_20 4 162 35
-	unknown_noise_20 8 241 52
-	unknown_noise_20 15 0 0
-	unknown_noise_20 2 247 36
-	unknown_noise_20 2 247 52
-	unknown_noise_20 4 247 68
-	unknown_noise_20 8 244 85
-	unknown_noise_20 8 241 68
+	unknown_noise_20 5 162 35
+	unknown_noise_20 9 241 52
+	unknown_noise_20 16 0 0
+	unknown_noise_20 3 247 36
+	unknown_noise_20 3 247 52
+	unknown_noise_20 5 247 68
+	unknown_noise_20 9 244 85
+	unknown_noise_20 9 241 68
 	end
 
 .SFX_SS_Anne_Horn_1_Ch4
 	duty 2
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 242 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 242 1280
 	end
 
 .SFX_SS_Anne_Horn_1_Ch5
 	duty 3
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 242 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 242 1154
 	end
 
 .SFX_Withdraw_Deposit_1_Ch4
 	duty 1
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 1280
+	unknown_sfx_20 5 242 1280
 	unknown_sfx_10 34
-	unknown_sfx_20 4 226 1280
+	unknown_sfx_20 5 226 1280
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 1792
+	unknown_sfx_20 5 242 1792
 	unknown_sfx_10 34
-	unknown_sfx_20 15 226 1792
+	unknown_sfx_20 16 226 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Safari_Zone_PA_Ch4
 	duty 2
-	unknown_sfx_20 15 243 1840
-	unknown_sfx_20 8 101 1840
-	unknown_sfx_20 15 244 1792
-	unknown_sfx_20 15 116 1792
-	unknown_sfx_20 15 68 1792
-	unknown_sfx_20 15 36 1792
+	unknown_sfx_20 16 243 1840
+	unknown_sfx_20 9 101 1840
+	unknown_sfx_20 16 244 1792
+	unknown_sfx_20 16 116 1792
+	unknown_sfx_20 16 68 1792
+	unknown_sfx_20 16 36 1792
 	end
 
 .SFX_02_unused_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 224 1920
-	unknown_sfx_20 15 240 1924
-	unknown_sfx_20 15 195 1504
-	unknown_sfx_20 15 196 1536
-	unknown_sfx_20 10 108 1920
-	unknown_sfx_20 8 113 1924
+	unknown_sfx_20 16 224 1920
+	unknown_sfx_20 16 240 1924
+	unknown_sfx_20 16 195 1504
+	unknown_sfx_20 16 196 1536
+	unknown_sfx_20 11 108 1920
+	unknown_sfx_20 9 113 1924
 	end
 
 .SFX_02_unused_Ch5
 	dutycycle 5
-	unknown_sfx_20 15 160 1857
-	unknown_sfx_20 15 176 1859
-	unknown_sfx_20 15 147 1457
-	unknown_sfx_20 15 148 1473
-	unknown_sfx_20 10 76 1857
-	unknown_sfx_20 8 49 1862
+	unknown_sfx_20 16 160 1857
+	unknown_sfx_20 16 176 1859
+	unknown_sfx_20 16 147 1457
+	unknown_sfx_20 16 148 1473
+	unknown_sfx_20 11 76 1857
+	unknown_sfx_20 9 49 1862
 	end
 
 .SFX_02_unused_Ch7
-	unknown_noise_20 2 242 76
-	unknown_noise_20 6 224 58
-	unknown_noise_20 15 208 58
-	unknown_noise_20 8 208 44
-	unknown_noise_20 6 230 76
-	unknown_noise_20 12 125 76
-	unknown_noise_20 15 211 76
+	unknown_noise_20 3 242 76
+	unknown_noise_20 7 224 58
+	unknown_noise_20 16 208 58
+	unknown_noise_20 9 208 44
+	unknown_noise_20 7 230 76
+	unknown_noise_20 13 125 76
+	unknown_noise_20 16 211 76
 	end
 
 .SFX_Cry09_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1952
-	unknown_sfx_20 6 230 1955
-	unknown_sfx_20 10 244 1952
+	unknown_sfx_20 16 247 1952
+	unknown_sfx_20 7 230 1955
+	unknown_sfx_20 11 244 1952
 	dutycycle 165
-	unknown_sfx_20 10 246 2008
-	unknown_sfx_20 4 227 2007
-	unknown_sfx_20 15 242 2008
+	unknown_sfx_20 11 246 2008
+	unknown_sfx_20 5 227 2007
+	unknown_sfx_20 16 242 2008
 	end
 
 .SFX_Cry09_1_Ch5
 	dutycycle 5
-	unknown_sfx_20 2 8 0
-	unknown_sfx_20 15 167 1697
-	unknown_sfx_20 6 134 1698
-	unknown_sfx_20 10 116 1697
+	unknown_sfx_20 3 8 0
+	unknown_sfx_20 16 167 1697
+	unknown_sfx_20 7 134 1698
+	unknown_sfx_20 11 116 1697
 	dutycycle 95
-	unknown_sfx_20 10 118 1750
-	unknown_sfx_20 4 131 1753
-	unknown_sfx_20 15 162 1751
+	unknown_sfx_20 11 118 1750
+	unknown_sfx_20 5 131 1753
+	unknown_sfx_20 16 162 1751
 	end
 
 .SFX_Cry09_1_Ch7
-	unknown_noise_20 2 242 60
-	unknown_noise_20 8 228 62
-	unknown_noise_20 15 215 60
-	unknown_noise_20 6 197 59
-	unknown_noise_20 6 228 61
-	unknown_noise_20 8 182 60
-	unknown_noise_20 6 212 61
-	unknown_noise_20 8 193 59
+	unknown_noise_20 3 242 60
+	unknown_noise_20 9 228 62
+	unknown_noise_20 16 215 60
+	unknown_noise_20 7 197 59
+	unknown_noise_20 7 228 61
+	unknown_noise_20 9 182 60
+	unknown_noise_20 7 212 61
+	unknown_noise_20 9 193 59
 	end
 
 .SFX_Cry23_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1984
-	unknown_sfx_20 6 228 1985
-	unknown_sfx_20 10 246 1984
-	unknown_sfx_20 4 211 1986
-	unknown_sfx_20 8 193 1984
+	unknown_sfx_20 16 247 1984
+	unknown_sfx_20 7 228 1985
+	unknown_sfx_20 11 246 1984
+	unknown_sfx_20 5 211 1986
+	unknown_sfx_20 9 193 1984
 	end
 
 .SFX_Cry23_1_Ch5
 	dutycycle 95
-	unknown_sfx_20 15 151 1921
-	unknown_sfx_20 6 132 1920
-	unknown_sfx_20 10 150 1921
-	unknown_sfx_20 15 131 1921
+	unknown_sfx_20 16 151 1921
+	unknown_sfx_20 7 132 1920
+	unknown_sfx_20 11 150 1921
+	unknown_sfx_20 16 131 1921
 	end
 
 .SFX_Cry23_1_Ch7
-	unknown_noise_20 3 242 60
-	unknown_noise_20 13 230 44
-	unknown_noise_20 15 215 60
-	unknown_noise_20 8 193 44
+	unknown_noise_20 4 242 60
+	unknown_noise_20 14 230 44
+	unknown_noise_20 16 215 60
+	unknown_noise_20 9 193 44
 	end
 
 .SFX_Cry24_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1664
-	unknown_sfx_20 10 230 1668
-	unknown_sfx_20 15 215 1680
-	unknown_sfx_20 8 213 1680
-	unknown_sfx_20 6 196 1672
-	unknown_sfx_20 5 211 1648
-	unknown_sfx_20 4 211 1632
-	unknown_sfx_20 8 193 1600
+	unknown_sfx_20 16 247 1664
+	unknown_sfx_20 11 230 1668
+	unknown_sfx_20 16 215 1680
+	unknown_sfx_20 9 213 1680
+	unknown_sfx_20 7 196 1672
+	unknown_sfx_20 6 211 1648
+	unknown_sfx_20 5 211 1632
+	unknown_sfx_20 9 193 1600
 	end
 
 .SFX_Cry24_1_Ch5
 	dutycycle 5
-	unknown_sfx_20 15 183 1601
-	unknown_sfx_20 10 150 1602
-	unknown_sfx_20 15 167 1617
-	unknown_sfx_20 8 165 1617
-	unknown_sfx_20 6 148 1607
-	unknown_sfx_20 5 163 1585
-	unknown_sfx_20 4 147 1570
-	unknown_sfx_20 8 113 1537
+	unknown_sfx_20 16 183 1601
+	unknown_sfx_20 11 150 1602
+	unknown_sfx_20 16 167 1617
+	unknown_sfx_20 9 165 1617
+	unknown_sfx_20 7 148 1607
+	unknown_sfx_20 6 163 1585
+	unknown_sfx_20 5 147 1570
+	unknown_sfx_20 9 113 1537
 	end
 
 .SFX_Cry24_1_Ch7
-	unknown_noise_20 15 228 60
-	unknown_noise_20 10 199 76
-	unknown_noise_20 10 199 60
-	unknown_noise_20 12 183 76
-	unknown_noise_20 15 162 92
+	unknown_noise_20 16 228 60
+	unknown_noise_20 11 199 76
+	unknown_noise_20 11 199 60
+	unknown_noise_20 13 183 76
+	unknown_noise_20 16 162 92
 	end
 
 .SFX_Cry11_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1952
-	unknown_sfx_20 8 230 1956
-	unknown_sfx_20 4 214 1952
-	unknown_sfx_20 15 211 1824
-	unknown_sfx_20 8 195 1827
-	unknown_sfx_20 2 194 1832
-	unknown_sfx_20 8 177 1840
+	unknown_sfx_20 7 247 1952
+	unknown_sfx_20 9 230 1956
+	unknown_sfx_20 5 214 1952
+	unknown_sfx_20 16 211 1824
+	unknown_sfx_20 9 195 1827
+	unknown_sfx_20 3 194 1832
+	unknown_sfx_20 9 177 1840
 	end
 
 .SFX_Cry11_1_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 6 167 1857
-	unknown_sfx_20 8 134 1859
-	unknown_sfx_20 4 118 1857
-	unknown_sfx_20 13 131 1730
-	unknown_sfx_20 7 115 1729
-	unknown_sfx_20 3 130 1740
-	unknown_sfx_20 8 113 1752
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 7 167 1857
+	unknown_sfx_20 9 134 1859
+	unknown_sfx_20 5 118 1857
+	unknown_sfx_20 14 131 1730
+	unknown_sfx_20 8 115 1729
+	unknown_sfx_20 4 130 1740
+	unknown_sfx_20 9 113 1752
 	end
 
 .SFX_Cry11_1_Ch7
-	unknown_noise_20 2 242 76
-	unknown_noise_20 6 230 58
-	unknown_noise_20 4 215 58
-	unknown_noise_20 6 214 44
-	unknown_noise_20 8 229 60
-	unknown_noise_20 12 210 61
-	unknown_noise_20 8 209 44
+	unknown_noise_20 3 242 76
+	unknown_noise_20 7 230 58
+	unknown_noise_20 5 215 58
+	unknown_noise_20 7 214 44
+	unknown_noise_20 9 229 60
+	unknown_noise_20 13 210 61
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry25_1_Ch4
 	dutycycle 165
-	unknown_sfx_20 6 244 1856
-	unknown_sfx_20 15 227 1840
-	unknown_sfx_20 4 244 1856
-	unknown_sfx_20 5 179 1864
-	unknown_sfx_20 8 209 1872
+	unknown_sfx_20 7 244 1856
+	unknown_sfx_20 16 227 1840
+	unknown_sfx_20 5 244 1856
+	unknown_sfx_20 6 179 1864
+	unknown_sfx_20 9 209 1872
 	end
 
 .SFX_Cry25_1_Ch5
 	dutycycle 119
-	unknown_sfx_20 6 195 1810
-	unknown_sfx_20 15 179 1796
-	unknown_sfx_20 3 195 1810
-	unknown_sfx_20 4 195 1825
-	unknown_sfx_20 8 177 1842
+	unknown_sfx_20 7 195 1810
+	unknown_sfx_20 16 179 1796
+	unknown_sfx_20 4 195 1810
+	unknown_sfx_20 5 195 1825
+	unknown_sfx_20 9 177 1842
 	end
 
 .SFX_Cry25_1_Ch7
-	unknown_noise_20 8 214 44
-	unknown_noise_20 12 198 60
-	unknown_noise_20 10 182 44
-	unknown_noise_20 8 145 28
+	unknown_noise_20 9 214 44
+	unknown_noise_20 13 198 60
+	unknown_noise_20 11 182 44
+	unknown_noise_20 9 145 28
 	end
 
 .SFX_Cry03_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 247 1544
-	unknown_sfx_20 6 230 1536
-	unknown_sfx_20 6 215 1520
-	unknown_sfx_20 6 196 1504
-	unknown_sfx_20 5 211 1472
-	unknown_sfx_20 4 211 1440
-	unknown_sfx_20 8 225 1408
+	unknown_sfx_20 5 247 1544
+	unknown_sfx_20 7 230 1536
+	unknown_sfx_20 7 215 1520
+	unknown_sfx_20 7 196 1504
+	unknown_sfx_20 6 211 1472
+	unknown_sfx_20 5 211 1440
+	unknown_sfx_20 9 225 1408
 	end
 
 .SFX_Cry03_1_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 199 1284
-	unknown_sfx_20 6 166 1282
-	unknown_sfx_20 6 151 1265
-	unknown_sfx_20 4 180 1249
-	unknown_sfx_20 5 163 1218
-	unknown_sfx_20 4 179 1187
-	unknown_sfx_20 8 193 1154
+	unknown_sfx_20 5 199 1284
+	unknown_sfx_20 7 166 1282
+	unknown_sfx_20 7 151 1265
+	unknown_sfx_20 5 180 1249
+	unknown_sfx_20 6 163 1218
+	unknown_sfx_20 5 179 1187
+	unknown_sfx_20 9 193 1154
 	end
 
 .SFX_Cry03_1_Ch7
-	unknown_noise_20 12 228 76
-	unknown_noise_20 10 199 92
-	unknown_noise_20 12 182 76
-	unknown_noise_20 15 162 92
+	unknown_noise_20 13 228 76
+	unknown_noise_20 11 199 92
+	unknown_noise_20 13 182 76
+	unknown_noise_20 16 162 92
 	end
 
 .SFX_Cry0F_1_Ch4
 	dutycycle 241
-	unknown_sfx_20 4 247 1984
-	unknown_sfx_20 12 230 1986
-	unknown_sfx_20 6 181 1664
-	unknown_sfx_20 4 196 1648
-	unknown_sfx_20 4 181 1632
-	unknown_sfx_20 8 193 1600
+	unknown_sfx_20 5 247 1984
+	unknown_sfx_20 13 230 1986
+	unknown_sfx_20 7 181 1664
+	unknown_sfx_20 5 196 1648
+	unknown_sfx_20 5 181 1632
+	unknown_sfx_20 9 193 1600
 	end
 
 .SFX_Cry0F_1_Ch5
 	dutycycle 204
-	unknown_sfx_20 3 199 1921
-	unknown_sfx_20 12 182 1920
-	unknown_sfx_20 6 165 1601
-	unknown_sfx_20 4 196 1586
-	unknown_sfx_20 6 181 1569
-	unknown_sfx_20 8 161 1538
+	unknown_sfx_20 4 199 1921
+	unknown_sfx_20 13 182 1920
+	unknown_sfx_20 7 165 1601
+	unknown_sfx_20 5 196 1586
+	unknown_sfx_20 7 181 1569
+	unknown_sfx_20 9 161 1538
 	end
 
 .SFX_Cry0F_1_Ch7
-	unknown_noise_20 3 228 60
-	unknown_noise_20 12 214 44
 	unknown_noise_20 4 228 60
-	unknown_noise_20 8 183 92
-	unknown_noise_20 15 194 93
+	unknown_noise_20 13 214 44
+	unknown_noise_20 5 228 60
+	unknown_noise_20 9 183 92
+	unknown_noise_20 16 194 93
 	end
 
 .SFX_Cry10_1_Ch4
 	dutycycle 201
-	unknown_sfx_20 8 247 1664
-	unknown_sfx_20 2 247 1632
-	unknown_sfx_20 1 231 1600
-	unknown_sfx_20 1 231 1568
-	unknown_sfx_20 15 209 1536
-	unknown_sfx_20 4 199 1856
-	unknown_sfx_20 4 167 1840
-	unknown_sfx_20 15 145 1824
+	unknown_sfx_20 9 247 1664
+	unknown_sfx_20 3 247 1632
+	unknown_sfx_20 2 231 1600
+	unknown_sfx_20 2 231 1568
+	unknown_sfx_20 16 209 1536
+	unknown_sfx_20 5 199 1856
+	unknown_sfx_20 5 167 1840
+	unknown_sfx_20 16 145 1824
 	end
 
 .SFX_Cry10_1_Ch5
 	dutycycle 121
-	unknown_sfx_20 10 231 1666
-	unknown_sfx_20 2 231 1634
-	unknown_sfx_20 1 215 1602
-	unknown_sfx_20 1 215 1570
-	unknown_sfx_20 15 193 1538
-	unknown_sfx_20 4 183 1858
-	unknown_sfx_20 2 151 1842
-	unknown_sfx_20 15 129 1826
+	unknown_sfx_20 11 231 1666
+	unknown_sfx_20 3 231 1634
+	unknown_sfx_20 2 215 1602
+	unknown_sfx_20 2 215 1570
+	unknown_sfx_20 16 193 1538
+	unknown_sfx_20 5 183 1858
+	unknown_sfx_20 3 151 1842
+	unknown_sfx_20 16 129 1826
 	end
 
 .SFX_Cry10_1_Ch7
-	unknown_noise_20 4 116 33
-	unknown_noise_20 4 116 16
-	unknown_noise_20 4 113 32
+	unknown_noise_20 5 116 33
+	unknown_noise_20 5 116 16
+	unknown_noise_20 5 113 32
 	end
 
 .SFX_Cry00_1_Ch4
 	dutycycle 245
-	unknown_sfx_20 4 243 1816
-	unknown_sfx_20 15 229 1944
-	unknown_sfx_20 8 145 1880
+	unknown_sfx_20 5 243 1816
+	unknown_sfx_20 16 229 1944
+	unknown_sfx_20 9 145 1880
 	end
 
 .SFX_Cry00_1_Ch5
 	dutycycle 160
-	unknown_sfx_20 5 179 1800
-	unknown_sfx_20 15 197 1928
-	unknown_sfx_20 8 113 1864
+	unknown_sfx_20 6 179 1800
+	unknown_sfx_20 16 197 1928
+	unknown_sfx_20 9 113 1864
 	end
 
 .SFX_Cry00_1_Ch7
-	unknown_noise_20 3 161 28
-	unknown_noise_20 14 148 44
-	unknown_noise_20 8 129 28
+	unknown_noise_20 4 161 28
+	unknown_noise_20 15 148 44
+	unknown_noise_20 9 129 28
 	end
 
 .SFX_Cry0E_1_Ch4
 	dutycycle 165
-	unknown_sfx_20 4 225 1792
-	unknown_sfx_20 4 242 1920
-	unknown_sfx_20 2 146 1856
-	unknown_sfx_20 8 225 1536
+	unknown_sfx_20 5 225 1792
+	unknown_sfx_20 5 242 1920
+	unknown_sfx_20 3 146 1856
+	unknown_sfx_20 9 225 1536
 	end
 
 .SFX_Cry0E_1_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 177 1761
-	unknown_sfx_20 3 194 1761
-	unknown_sfx_20 3 98 1665
-	unknown_sfx_20 8 177 1505
+	unknown_sfx_20 5 177 1761
+	unknown_sfx_20 4 194 1761
+	unknown_sfx_20 4 98 1665
+	unknown_sfx_20 9 177 1505
 	end
 
 .SFX_Cry0E_1_Ch7
-	unknown_noise_20 2 97 50
-	unknown_noise_20 2 97 33
-	unknown_noise_20 8 97 17
+	unknown_noise_20 3 97 50
+	unknown_noise_20 3 97 33
+	unknown_noise_20 9 97 17
 	end
 
 .SFX_Cry06_1_Ch4
 	dutycycle 250
-	unknown_sfx_20 6 131 583
-	unknown_sfx_20 15 98 550
-	unknown_sfx_20 4 82 581
-	unknown_sfx_20 9 99 518
-	unknown_sfx_20 15 130 549
-	unknown_sfx_20 15 66 519
+	unknown_sfx_20 7 131 583
+	unknown_sfx_20 16 98 550
+	unknown_sfx_20 5 82 581
+	unknown_sfx_20 10 99 518
+	unknown_sfx_20 16 130 549
+	unknown_sfx_20 16 66 519
 	goto SFX_Cry06_1_Ch5
 
 .SFX_Cry06_1_Ch5
 	end
 
 .SFX_Cry06_1_Ch7
-	unknown_noise_20 8 212 140
-	unknown_noise_20 4 226 156
-	unknown_noise_20 15 198 140
-	unknown_noise_20 8 228 172
-	unknown_noise_20 15 215 156
-	unknown_noise_20 15 242 172
+	unknown_noise_20 9 212 140
+	unknown_noise_20 5 226 156
+	unknown_noise_20 16 198 140
+	unknown_noise_20 9 228 172
+	unknown_noise_20 16 215 156
+	unknown_noise_20 16 242 172
 	end
 
 .SFX_Cry07_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 243 1760
-	unknown_sfx_20 15 228 1600
-	unknown_sfx_20 8 193 1568
+	unknown_sfx_20 5 243 1760
+	unknown_sfx_20 16 228 1600
+	unknown_sfx_20 9 193 1568
 	end
 
 .SFX_Cry07_1_Ch5
 	dutycycle 10
-	unknown_sfx_20 3 195 1667
-	unknown_sfx_20 14 180 1538
-	unknown_sfx_20 8 161 1537
+	unknown_sfx_20 4 195 1667
+	unknown_sfx_20 15 180 1538
+	unknown_sfx_20 9 161 1537
 	end
 
 .SFX_Cry07_1_Ch7
-	unknown_noise_20 4 211 92
-	unknown_noise_20 15 230 76
-	unknown_noise_20 8 177 92
+	unknown_noise_20 5 211 92
+	unknown_noise_20 16 230 76
+	unknown_noise_20 9 177 92
 	end
 
 .SFX_Cry05_1_Ch4
 	dutycycle 10
-	unknown_sfx_20 6 226 1280
-	unknown_sfx_20 6 227 1408
-	unknown_sfx_20 6 211 1392
-	unknown_sfx_20 8 161 1376
+	unknown_sfx_20 7 226 1280
+	unknown_sfx_20 7 227 1408
+	unknown_sfx_20 7 211 1392
+	unknown_sfx_20 9 161 1376
 	end
 
 .SFX_Cry05_1_Ch5
 	dutycycle 245
-	unknown_sfx_20 6 226 1154
-	unknown_sfx_20 6 211 1281
-	unknown_sfx_20 6 178 1250
-	unknown_sfx_20 8 129 1217
+	unknown_sfx_20 7 226 1154
+	unknown_sfx_20 7 211 1281
+	unknown_sfx_20 7 178 1250
+	unknown_sfx_20 9 129 1217
 	goto SFX_Cry05_1_Ch7
 
 .SFX_Cry05_1_Ch7
@@ -820,64 +820,64 @@
 
 .SFX_Cry0B_1_Ch4
 	dutycycle 204
-	unknown_sfx_20 4 241 1792
-	unknown_sfx_20 4 225 1920
-	unknown_sfx_20 4 209 1856
-	unknown_sfx_20 4 225 1856
-	unknown_sfx_20 4 241 1920
-	unknown_sfx_20 4 209 1792
-	unknown_sfx_20 4 241 1793
-	unknown_sfx_20 4 209 1922
-	unknown_sfx_20 4 193 1858
-	unknown_sfx_20 8 177 1857
+	unknown_sfx_20 5 241 1792
+	unknown_sfx_20 5 225 1920
+	unknown_sfx_20 5 209 1856
+	unknown_sfx_20 5 225 1856
+	unknown_sfx_20 5 241 1920
+	unknown_sfx_20 5 209 1792
+	unknown_sfx_20 5 241 1793
+	unknown_sfx_20 5 209 1922
+	unknown_sfx_20 5 193 1858
+	unknown_sfx_20 9 177 1857
 	end
 
 .SFX_Cry0B_1_Ch5
 	dutycycle 68
-	unknown_sfx_20 12 8 0
-	unknown_sfx_20 4 241 1793
-	unknown_sfx_20 4 225 1922
-	unknown_sfx_20 4 209 1857
-	unknown_sfx_20 4 225 1857
-	unknown_sfx_20 4 241 1922
-	unknown_sfx_20 8 209 1793
+	unknown_sfx_20 13 8 0
+	unknown_sfx_20 5 241 1793
+	unknown_sfx_20 5 225 1922
+	unknown_sfx_20 5 209 1857
+	unknown_sfx_20 5 225 1857
+	unknown_sfx_20 5 241 1922
+	unknown_sfx_20 9 209 1793
 	end
 
 .SFX_Cry0B_1_Ch7
-	unknown_noise_20 15 8 0
-	unknown_noise_20 4 8 0
-	unknown_noise_20 4 209 76
-	unknown_noise_20 4 177 44
-	unknown_noise_20 4 209 60
-	unknown_noise_20 4 177 60
-	unknown_noise_20 4 193 44
-	unknown_noise_20 8 161 76
+	unknown_noise_20 16 8 0
+	unknown_noise_20 5 8 0
+	unknown_noise_20 5 209 76
+	unknown_noise_20 5 177 44
+	unknown_noise_20 5 209 60
+	unknown_noise_20 5 177 60
+	unknown_noise_20 5 193 44
+	unknown_noise_20 9 161 76
 	end
 
 .SFX_Cry0C_1_Ch4
 	dutycycle 204
-	unknown_sfx_20 8 245 1536
-	unknown_sfx_20 2 210 1592
-	unknown_sfx_20 2 194 1584
-	unknown_sfx_20 2 194 1576
-	unknown_sfx_20 2 178 1568
-	unknown_sfx_20 2 178 1552
-	unknown_sfx_20 2 162 1560
-	unknown_sfx_20 2 178 1552
-	unknown_sfx_20 8 193 1568
+	unknown_sfx_20 9 245 1536
+	unknown_sfx_20 3 210 1592
+	unknown_sfx_20 3 194 1584
+	unknown_sfx_20 3 194 1576
+	unknown_sfx_20 3 178 1568
+	unknown_sfx_20 3 178 1552
+	unknown_sfx_20 3 162 1560
+	unknown_sfx_20 3 178 1552
+	unknown_sfx_20 9 193 1568
 	end
 
 .SFX_Cry0C_1_Ch5
 	dutycycle 68
-	unknown_sfx_20 12 195 1472
-	unknown_sfx_20 3 177 1529
-	unknown_sfx_20 2 161 1521
-	unknown_sfx_20 2 161 1513
-	unknown_sfx_20 2 145 1505
-	unknown_sfx_20 2 145 1497
-	unknown_sfx_20 2 129 1489
-	unknown_sfx_20 2 145 1497
-	unknown_sfx_20 8 145 1505
+	unknown_sfx_20 13 195 1472
+	unknown_sfx_20 4 177 1529
+	unknown_sfx_20 3 161 1521
+	unknown_sfx_20 3 161 1513
+	unknown_sfx_20 3 145 1505
+	unknown_sfx_20 3 145 1497
+	unknown_sfx_20 3 129 1489
+	unknown_sfx_20 3 145 1497
+	unknown_sfx_20 9 145 1505
 	goto SFX_Cry0C_1_Ch7
 
 .SFX_Cry0C_1_Ch7
@@ -885,16 +885,16 @@
 
 .SFX_Cry02_1_Ch4
 	duty 0
-	unknown_sfx_20 8 245 1152
-	unknown_sfx_20 2 225 1504
-	unknown_sfx_20 8 209 1500
+	unknown_sfx_20 9 245 1152
+	unknown_sfx_20 3 225 1504
+	unknown_sfx_20 9 209 1500
 	end
 
 .SFX_Cry02_1_Ch5
 	dutycycle 165
-	unknown_sfx_20 7 149 1089
-	unknown_sfx_20 2 129 1313
-	unknown_sfx_20 8 97 1306
+	unknown_sfx_20 8 149 1089
+	unknown_sfx_20 3 129 1313
+	unknown_sfx_20 9 97 1306
 	goto SFX_Cry02_1_Ch7
 
 .SFX_Cry02_1_Ch7
@@ -902,166 +902,166 @@
 
 .SFX_Cry0D_1_Ch4
 	dutycycle 136
-	unknown_sfx_20 5 242 1616
-	unknown_sfx_20 9 209 1632
-	unknown_sfx_20 5 226 1554
-	unknown_sfx_20 9 193 1570
-	unknown_sfx_20 5 242 1552
-	unknown_sfx_20 6 209 1568
+	unknown_sfx_20 6 242 1616
+	unknown_sfx_20 10 209 1632
+	unknown_sfx_20 6 226 1554
+	unknown_sfx_20 10 193 1570
+	unknown_sfx_20 6 242 1552
+	unknown_sfx_20 7 209 1568
 	loop 2 SFX_Cry0D_1_Ch4
 	end
 
 .SFX_Cry0D_1_Ch5
 	dutycycle 64
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 5 242 1617
-	unknown_sfx_20 9 209 1633
-	unknown_sfx_20 5 226 1556
-	unknown_sfx_20 8 193 1572
-	unknown_sfx_20 5 242 1553
-	unknown_sfx_20 12 209 1569
-	unknown_sfx_20 5 226 1556
-	unknown_sfx_20 8 193 1572
-	unknown_sfx_20 5 242 1553
-	unknown_sfx_20 4 209 1569
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 6 242 1617
+	unknown_sfx_20 10 209 1633
+	unknown_sfx_20 6 226 1556
+	unknown_sfx_20 9 193 1572
+	unknown_sfx_20 6 242 1553
+	unknown_sfx_20 13 209 1569
+	unknown_sfx_20 6 226 1556
+	unknown_sfx_20 9 193 1572
+	unknown_sfx_20 6 242 1553
+	unknown_sfx_20 5 209 1569
 	end
 
 .SFX_Cry0D_1_Ch7
-	unknown_noise_20 6 210 28
-	unknown_noise_20 9 177 44
-	unknown_noise_20 8 194 44
-	unknown_noise_20 9 177 60
-	unknown_noise_20 6 194 44
-	unknown_noise_20 9 162 60
-	unknown_noise_20 7 194 44
-	unknown_noise_20 5 161 60
+	unknown_noise_20 7 210 28
+	unknown_noise_20 10 177 44
 	unknown_noise_20 9 194 44
-	unknown_noise_20 4 161 60
+	unknown_noise_20 10 177 60
+	unknown_noise_20 7 194 44
+	unknown_noise_20 10 162 60
+	unknown_noise_20 8 194 44
+	unknown_noise_20 6 161 60
+	unknown_noise_20 10 194 44
+	unknown_noise_20 5 161 60
 	end
 
 .SFX_Cry01_1_Ch4
 	dutycycle 160
-	unknown_sfx_20 4 243 1536
-	unknown_sfx_20 8 213 1888
-	unknown_sfx_20 3 226 1824
-	unknown_sfx_20 8 209 1808
+	unknown_sfx_20 5 243 1536
+	unknown_sfx_20 9 213 1888
+	unknown_sfx_20 4 226 1824
+	unknown_sfx_20 9 209 1808
 	end
 
 .SFX_Cry01_1_Ch5
 	dutycycle 90
-	unknown_sfx_20 5 179 1777
-	unknown_sfx_20 7 197 1874
-	unknown_sfx_20 3 162 1809
-	unknown_sfx_20 8 177 1537
+	unknown_sfx_20 6 179 1777
+	unknown_sfx_20 8 197 1874
+	unknown_sfx_20 4 162 1809
+	unknown_sfx_20 9 177 1537
 	end
 
 .SFX_Cry01_1_Ch7
-	unknown_noise_20 3 162 60
-	unknown_noise_20 12 148 44
-	unknown_noise_20 3 130 28
-	unknown_noise_20 8 113 44
+	unknown_noise_20 4 162 60
+	unknown_noise_20 13 148 44
+	unknown_noise_20 4 130 28
+	unknown_noise_20 9 113 44
 	end
 
 .SFX_Cry0A_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 8 247 1760
-	unknown_sfx_20 6 230 1765
-	unknown_sfx_20 3 244 1760
-	unknown_sfx_20 3 246 1744
-	unknown_sfx_20 3 227 1728
-	unknown_sfx_20 4 242 1712
-	unknown_sfx_20 15 162 1736
+	unknown_sfx_20 9 247 1760
+	unknown_sfx_20 7 230 1765
+	unknown_sfx_20 4 244 1760
+	unknown_sfx_20 4 246 1744
+	unknown_sfx_20 4 227 1728
+	unknown_sfx_20 5 242 1712
+	unknown_sfx_20 16 162 1736
 	end
 
 .SFX_Cry0A_1_Ch5
 	dutycycle 5
-	unknown_sfx_20 3 8 0
-	unknown_sfx_20 8 167 1697
-	unknown_sfx_20 6 134 1699
-	unknown_sfx_20 3 116 1697
-	unknown_sfx_20 3 118 1681
-	unknown_sfx_20 3 131 1666
-	unknown_sfx_20 4 162 1649
-	unknown_sfx_20 15 114 1673
+	unknown_sfx_20 4 8 0
+	unknown_sfx_20 9 167 1697
+	unknown_sfx_20 7 134 1699
+	unknown_sfx_20 4 116 1697
+	unknown_sfx_20 4 118 1681
+	unknown_sfx_20 4 131 1666
+	unknown_sfx_20 5 162 1649
+	unknown_sfx_20 16 114 1673
 	end
 
 .SFX_Cry0A_1_Ch7
-	unknown_noise_20 2 242 60
-	unknown_noise_20 8 228 62
-	unknown_noise_20 8 215 60
-	unknown_noise_20 5 197 59
-	unknown_noise_20 3 212 44
-	unknown_noise_20 2 182 60
-	unknown_noise_20 3 164 44
-	unknown_noise_20 8 145 60
+	unknown_noise_20 3 242 60
+	unknown_noise_20 9 228 62
+	unknown_noise_20 9 215 60
+	unknown_noise_20 6 197 59
+	unknown_noise_20 4 212 44
+	unknown_noise_20 3 182 60
+	unknown_noise_20 4 164 44
+	unknown_noise_20 9 145 60
 	end
 
 .SFX_Cry08_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 246 1381
-	unknown_sfx_20 10 228 1404
-	unknown_sfx_20 3 194 1372
-	unknown_sfx_20 15 178 1340
+	unknown_sfx_20 16 246 1381
+	unknown_sfx_20 11 228 1404
+	unknown_sfx_20 4 194 1372
+	unknown_sfx_20 16 178 1340
 	end
 
 .SFX_Cry08_1_Ch5
 	dutycycle 90
-	unknown_sfx_20 14 214 1283
-	unknown_sfx_20 9 180 1307
-	unknown_sfx_20 4 146 1274
-	unknown_sfx_20 15 162 1243
+	unknown_sfx_20 15 214 1283
+	unknown_sfx_20 10 180 1307
+	unknown_sfx_20 5 146 1274
+	unknown_sfx_20 16 162 1243
 	end
 
 .SFX_Cry08_1_Ch7
-	unknown_noise_20 12 230 76
-	unknown_noise_20 11 215 92
-	unknown_noise_20 15 194 76
+	unknown_noise_20 13 230 76
+	unknown_noise_20 12 215 92
+	unknown_noise_20 16 194 76
 	end
 
 .SFX_Cry04_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 247 1696
-	unknown_sfx_20 8 230 1700
-	unknown_sfx_20 4 214 1696
-	unknown_sfx_20 12 211 1568
-	unknown_sfx_20 8 195 1572
-	unknown_sfx_20 4 194 1568
-	unknown_sfx_20 8 177 1552
+	unknown_sfx_20 5 247 1696
+	unknown_sfx_20 9 230 1700
+	unknown_sfx_20 5 214 1696
+	unknown_sfx_20 13 211 1568
+	unknown_sfx_20 9 195 1572
+	unknown_sfx_20 5 194 1568
+	unknown_sfx_20 9 177 1552
 	end
 
 .SFX_Cry04_1_Ch5
 	dutycycle 90
-	unknown_sfx_20 4 231 1537
-	unknown_sfx_20 8 214 1539
-	unknown_sfx_20 4 198 1537
-	unknown_sfx_20 12 195 1409
-	unknown_sfx_20 8 179 1411
-	unknown_sfx_20 4 178 1410
-	unknown_sfx_20 8 161 1393
+	unknown_sfx_20 5 231 1537
+	unknown_sfx_20 9 214 1539
+	unknown_sfx_20 5 198 1537
+	unknown_sfx_20 13 195 1409
+	unknown_sfx_20 9 179 1411
+	unknown_sfx_20 5 178 1410
+	unknown_sfx_20 9 161 1393
 	end
 
 .SFX_Cry04_1_Ch7
-	unknown_noise_20 7 214 92
-	unknown_noise_20 8 230 76
-	unknown_noise_20 4 212 92
-	unknown_noise_20 4 212 76
-	unknown_noise_20 7 195 76
-	unknown_noise_20 8 161 92
+	unknown_noise_20 8 214 92
+	unknown_noise_20 9 230 76
+	unknown_noise_20 5 212 92
+	unknown_noise_20 5 212 76
+	unknown_noise_20 8 195 76
+	unknown_noise_20 9 161 92
 	end
 
 .SFX_Cry19_1_Ch4
 	dutycycle 27
-	unknown_sfx_20 7 210 1856
-	unknown_sfx_20 15 229 1888
-	unknown_sfx_20 15 193 1840
+	unknown_sfx_20 8 210 1856
+	unknown_sfx_20 16 229 1888
+	unknown_sfx_20 16 193 1840
 	end
 
 .SFX_Cry19_1_Ch5
 	dutycycle 129
-	unknown_sfx_20 2 194 1793
-	unknown_sfx_20 4 194 1800
-	unknown_sfx_20 15 215 1857
-	unknown_sfx_20 15 162 1793
+	unknown_sfx_20 3 194 1793
+	unknown_sfx_20 5 194 1800
+	unknown_sfx_20 16 215 1857
+	unknown_sfx_20 16 162 1793
 	goto SFX_Cry19_1_Ch7
 
 .SFX_Cry19_1_Ch7
@@ -1069,398 +1069,398 @@
 
 .SFX_Cry16_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 215 1920
-	unknown_sfx_20 4 230 1952
-	unknown_sfx_20 15 210 1856
+	unknown_sfx_20 16 215 1920
+	unknown_sfx_20 5 230 1952
+	unknown_sfx_20 16 210 1856
 	end
 
 .SFX_Cry16_1_Ch5
 	dutycycle 90
-	unknown_sfx_20 15 199 1875
-	unknown_sfx_20 5 182 1906
-	unknown_sfx_20 15 194 1809
+	unknown_sfx_20 16 199 1875
+	unknown_sfx_20 6 182 1906
+	unknown_sfx_20 16 194 1809
 	end
 
 .SFX_Cry16_1_Ch7
-	unknown_noise_20 13 246 76
-	unknown_noise_20 4 230 60
-	unknown_noise_20 15 242 76
+	unknown_noise_20 14 246 76
+	unknown_noise_20 5 230 60
+	unknown_noise_20 16 242 76
 	end
 
 .SFX_Cry1B_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1728
-	unknown_sfx_20 15 231 1792
-	unknown_sfx_20 4 244 1776
-	unknown_sfx_20 4 228 1760
-	unknown_sfx_20 8 209 1744
+	unknown_sfx_20 7 247 1728
+	unknown_sfx_20 16 231 1792
+	unknown_sfx_20 5 244 1776
+	unknown_sfx_20 5 228 1760
+	unknown_sfx_20 9 209 1744
 	end
 
 .SFX_Cry1B_1_Ch5
 	dutycycle 10
-	unknown_sfx_20 7 230 1665
-	unknown_sfx_20 14 213 1729
-	unknown_sfx_20 4 196 1713
-	unknown_sfx_20 4 212 1697
-	unknown_sfx_20 8 193 1681
+	unknown_sfx_20 8 230 1665
+	unknown_sfx_20 15 213 1729
+	unknown_sfx_20 5 196 1713
+	unknown_sfx_20 5 212 1697
+	unknown_sfx_20 9 193 1681
 	end
 
 .SFX_Cry1B_1_Ch7
-	unknown_noise_20 10 166 60
-	unknown_noise_20 14 148 44
-	unknown_noise_20 5 163 60
-	unknown_noise_20 8 145 44
+	unknown_noise_20 11 166 60
+	unknown_noise_20 15 148 44
+	unknown_noise_20 6 163 60
+	unknown_noise_20 9 145 44
 	end
 
 .SFX_Cry12_1_Ch4
 	dutycycle 165
-	unknown_sfx_20 12 242 1088
-	unknown_sfx_20 15 227 1184
-	unknown_sfx_20 4 210 1168
-	unknown_sfx_20 8 209 1152
+	unknown_sfx_20 13 242 1088
+	unknown_sfx_20 16 227 1184
+	unknown_sfx_20 5 210 1168
+	unknown_sfx_20 9 209 1152
 	end
 
 .SFX_Cry12_1_Ch5
 	dutycycle 238
-	unknown_sfx_20 11 210 1080
-	unknown_sfx_20 14 198 1176
-	unknown_sfx_20 3 178 1160
-	unknown_sfx_20 8 177 1144
+	unknown_sfx_20 12 210 1080
+	unknown_sfx_20 15 198 1176
+	unknown_sfx_20 4 178 1160
+	unknown_sfx_20 9 177 1144
 	end
 
 .SFX_Cry12_1_Ch7
-	unknown_noise_20 10 230 108
-	unknown_noise_20 15 210 92
-	unknown_noise_20 3 194 108
-	unknown_noise_20 8 209 92
+	unknown_noise_20 11 230 108
+	unknown_noise_20 16 210 92
+	unknown_noise_20 4 194 108
+	unknown_noise_20 9 209 92
 	end
 
 .SFX_Cry13_1_Ch4
 	dutycycle 51
-	unknown_sfx_20 15 246 1472
-	unknown_sfx_20 8 227 1468
-	unknown_sfx_20 6 210 1488
-	unknown_sfx_20 6 178 1504
-	unknown_sfx_20 6 194 1520
-	unknown_sfx_20 8 177 1536
+	unknown_sfx_20 16 246 1472
+	unknown_sfx_20 9 227 1468
+	unknown_sfx_20 7 210 1488
+	unknown_sfx_20 7 178 1504
+	unknown_sfx_20 7 194 1520
+	unknown_sfx_20 9 177 1536
 	end
 
 .SFX_Cry13_1_Ch5
 	dutycycle 153
-	unknown_sfx_20 14 198 1201
-	unknown_sfx_20 7 195 1197
-	unknown_sfx_20 5 178 1217
-	unknown_sfx_20 8 146 1233
-	unknown_sfx_20 6 162 1249
-	unknown_sfx_20 8 145 1265
+	unknown_sfx_20 15 198 1201
+	unknown_sfx_20 8 195 1197
+	unknown_sfx_20 6 178 1217
+	unknown_sfx_20 9 146 1233
+	unknown_sfx_20 7 162 1249
+	unknown_sfx_20 9 145 1265
 	end
 
 .SFX_Cry13_1_Ch7
-	unknown_noise_20 10 230 92
-	unknown_noise_20 10 214 108
-	unknown_noise_20 4 194 76
-	unknown_noise_20 6 211 92
-	unknown_noise_20 8 179 76
-	unknown_noise_20 8 161 92
+	unknown_noise_20 11 230 92
+	unknown_noise_20 11 214 108
+	unknown_noise_20 5 194 76
+	unknown_noise_20 7 211 92
+	unknown_noise_20 9 179 76
+	unknown_noise_20 9 161 92
 	end
 
 .SFX_Cry14_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 8 228 1936
-	unknown_sfx_20 15 245 1984
-	unknown_sfx_20 8 209 2008
+	unknown_sfx_20 9 228 1936
+	unknown_sfx_20 16 245 1984
+	unknown_sfx_20 9 209 2008
 	end
 
 .SFX_Cry14_1_Ch5
 	dutycycle 165
-	unknown_sfx_20 10 196 1905
-	unknown_sfx_20 15 182 1954
-	unknown_sfx_20 8 161 1975
+	unknown_sfx_20 11 196 1905
+	unknown_sfx_20 16 182 1954
+	unknown_sfx_20 9 161 1975
 	end
 
 .SFX_Cry14_1_Ch7
-	unknown_noise_20 8 228 76
-	unknown_noise_20 14 196 60
-	unknown_noise_20 8 209 44
+	unknown_noise_20 9 228 76
+	unknown_noise_20 15 196 60
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry1E_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 242 1536
-	unknown_sfx_20 6 226 1600
-	unknown_sfx_20 6 210 1664
-	unknown_sfx_20 6 226 1728
-	unknown_sfx_20 6 210 1792
-	unknown_sfx_20 6 194 1856
-	unknown_sfx_20 6 178 1920
-	unknown_sfx_20 8 161 1984
+	unknown_sfx_20 7 242 1536
+	unknown_sfx_20 7 226 1600
+	unknown_sfx_20 7 210 1664
+	unknown_sfx_20 7 226 1728
+	unknown_sfx_20 7 210 1792
+	unknown_sfx_20 7 194 1856
+	unknown_sfx_20 7 178 1920
+	unknown_sfx_20 9 161 1984
 	end
 
 .SFX_Cry1E_1_Ch5
 	dutycycle 17
-	unknown_sfx_20 3 8 1
-	unknown_sfx_20 6 194 1473
-	unknown_sfx_20 6 178 1538
-	unknown_sfx_20 6 162 1601
-	unknown_sfx_20 6 178 1666
-	unknown_sfx_20 6 162 1730
-	unknown_sfx_20 6 146 1793
-	unknown_sfx_20 6 162 1858
-	unknown_sfx_20 8 129 1921
+	unknown_sfx_20 4 8 1
+	unknown_sfx_20 7 194 1473
+	unknown_sfx_20 7 178 1538
+	unknown_sfx_20 7 162 1601
+	unknown_sfx_20 7 178 1666
+	unknown_sfx_20 7 162 1730
+	unknown_sfx_20 7 146 1793
+	unknown_sfx_20 7 162 1858
+	unknown_sfx_20 9 129 1921
 	end
 
 .SFX_Cry1E_1_Ch7
-	unknown_noise_20 6 8 1
-	unknown_noise_20 5 226 92
-	unknown_noise_20 5 194 76
-	unknown_noise_20 5 210 60
-	unknown_noise_20 5 178 44
-	unknown_noise_20 5 194 28
-	unknown_noise_20 5 162 27
-	unknown_noise_20 5 146 26
-	unknown_noise_20 8 129 24
+	unknown_noise_20 7 8 1
+	unknown_noise_20 6 226 92
+	unknown_noise_20 6 194 76
+	unknown_noise_20 6 210 60
+	unknown_noise_20 6 178 44
+	unknown_noise_20 6 194 28
+	unknown_noise_20 6 162 27
+	unknown_noise_20 6 146 26
+	unknown_noise_20 9 129 24
 	end
 
 .SFX_Cry15_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 243 1920
-	unknown_sfx_20 15 231 1792
-	unknown_sfx_20 8 211 1808
-	unknown_sfx_20 4 194 1792
-	unknown_sfx_20 4 210 1776
-	unknown_sfx_20 8 193 1760
+	unknown_sfx_20 5 243 1920
+	unknown_sfx_20 16 231 1792
+	unknown_sfx_20 9 211 1808
+	unknown_sfx_20 5 194 1792
+	unknown_sfx_20 5 210 1776
+	unknown_sfx_20 9 193 1760
 	end
 
 .SFX_Cry15_1_Ch5
 	dutycycle 90
-	unknown_sfx_20 6 195 1793
-	unknown_sfx_20 14 183 1665
-	unknown_sfx_20 7 179 1682
-	unknown_sfx_20 3 162 1665
-	unknown_sfx_20 4 178 1650
-	unknown_sfx_20 8 161 1633
+	unknown_sfx_20 7 195 1793
+	unknown_sfx_20 15 183 1665
+	unknown_sfx_20 8 179 1682
+	unknown_sfx_20 4 162 1665
+	unknown_sfx_20 5 178 1650
+	unknown_sfx_20 9 161 1633
 	end
 
 .SFX_Cry15_1_Ch7
-	unknown_noise_20 6 227 92
-	unknown_noise_20 14 214 76
-	unknown_noise_20 6 198 60
-	unknown_noise_20 3 179 76
-	unknown_noise_20 3 162 92
-	unknown_noise_20 8 177 108
+	unknown_noise_20 7 227 92
+	unknown_noise_20 15 214 76
+	unknown_noise_20 7 198 60
+	unknown_noise_20 4 179 76
+	unknown_noise_20 4 162 92
+	unknown_noise_20 9 177 108
 	end
 
 .SFX_Cry17_1_Ch4
 	dutycycle 15
-	unknown_sfx_20 15 247 1280
-	unknown_sfx_20 15 231 1288
-	unknown_sfx_20 8 180 1152
-	unknown_sfx_20 15 162 1120
+	unknown_sfx_20 16 247 1280
+	unknown_sfx_20 16 231 1288
+	unknown_sfx_20 9 180 1152
+	unknown_sfx_20 16 162 1120
 	end
 
 .SFX_Cry17_1_Ch5
 	dutycycle 68
-	unknown_sfx_20 14 215 1153
-	unknown_sfx_20 14 199 1161
-	unknown_sfx_20 10 180 1025
-	unknown_sfx_20 15 194 993
+	unknown_sfx_20 15 215 1153
+	unknown_sfx_20 15 199 1161
+	unknown_sfx_20 11 180 1025
+	unknown_sfx_20 16 194 993
 	end
 
 .SFX_Cry17_1_Ch7
-	unknown_noise_20 14 247 124
-	unknown_noise_20 12 246 108
-	unknown_noise_20 9 228 124
-	unknown_noise_20 15 226 108
+	unknown_noise_20 15 247 124
+	unknown_noise_20 13 246 108
+	unknown_noise_20 10 228 124
+	unknown_noise_20 16 226 108
 	end
 
 .SFX_Cry1C_1_Ch4
 	dutycycle 245
-	unknown_sfx_20 7 214 2017
-	unknown_sfx_20 6 198 2018
-	unknown_sfx_20 9 214 2017
-	unknown_sfx_20 7 198 2016
-	unknown_sfx_20 5 182 2018
-	unknown_sfx_20 7 198 2017
-	unknown_sfx_20 6 182 2016
-	unknown_sfx_20 8 161 2015
+	unknown_sfx_20 8 214 2017
+	unknown_sfx_20 7 198 2018
+	unknown_sfx_20 10 214 2017
+	unknown_sfx_20 8 198 2016
+	unknown_sfx_20 6 182 2018
+	unknown_sfx_20 8 198 2017
+	unknown_sfx_20 7 182 2016
+	unknown_sfx_20 9 161 2015
 	end
 
 .SFX_Cry1C_1_Ch5
 	dutycycle 68
-	unknown_sfx_20 6 195 1993
-	unknown_sfx_20 6 179 1991
-	unknown_sfx_20 10 196 1987
-	unknown_sfx_20 8 180 1991
-	unknown_sfx_20 6 195 1993
-	unknown_sfx_20 15 162 1989
+	unknown_sfx_20 7 195 1993
+	unknown_sfx_20 7 179 1991
+	unknown_sfx_20 11 196 1987
+	unknown_sfx_20 9 180 1991
+	unknown_sfx_20 7 195 1993
+	unknown_sfx_20 16 162 1989
 	end
 
 .SFX_Cry1C_1_Ch7
-	unknown_noise_20 13 25 124
-	unknown_noise_20 13 247 140
-	unknown_noise_20 12 214 124
-	unknown_noise_20 8 196 108
-	unknown_noise_20 15 179 92
+	unknown_noise_20 14 25 124
+	unknown_noise_20 14 247 140
+	unknown_noise_20 13 214 124
+	unknown_noise_20 9 196 108
+	unknown_noise_20 16 179 92
 	end
 
 .SFX_Cry1A_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1856
-	unknown_sfx_20 12 230 1860
-	unknown_sfx_20 6 213 1872
-	unknown_sfx_20 4 195 1888
-	unknown_sfx_20 3 195 1920
-	unknown_sfx_20 8 209 1952
+	unknown_sfx_20 7 247 1856
+	unknown_sfx_20 13 230 1860
+	unknown_sfx_20 7 213 1872
+	unknown_sfx_20 5 195 1888
+	unknown_sfx_20 4 195 1920
+	unknown_sfx_20 9 209 1952
 	end
 
 .SFX_Cry1A_1_Ch5
 	dutycycle 10
-	unknown_sfx_20 6 199 1793
-	unknown_sfx_20 11 182 1794
-	unknown_sfx_20 6 165 1809
-	unknown_sfx_20 4 147 1825
-	unknown_sfx_20 3 163 1857
-	unknown_sfx_20 8 145 1890
+	unknown_sfx_20 7 199 1793
+	unknown_sfx_20 12 182 1794
+	unknown_sfx_20 7 165 1809
+	unknown_sfx_20 5 147 1825
+	unknown_sfx_20 4 163 1857
+	unknown_sfx_20 9 145 1890
 	end
 
 .SFX_Cry1A_1_Ch7
+	unknown_noise_20 4 226 60
+	unknown_noise_20 9 214 76
+	unknown_noise_20 6 212 60
+	unknown_noise_20 13 199 76
 	unknown_noise_20 3 226 60
-	unknown_noise_20 8 214 76
-	unknown_noise_20 5 212 60
-	unknown_noise_20 12 199 76
-	unknown_noise_20 2 226 60
-	unknown_noise_20 8 209 44
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry1D_1_Ch4
 	dutycycle 244
-	unknown_sfx_20 15 240 1797
-	unknown_sfx_20 10 224 1792
-	unknown_sfx_20 6 180 1808
-	unknown_sfx_20 4 211 1792
-	unknown_sfx_20 6 178 1568
-	unknown_sfx_20 8 161 1572
+	unknown_sfx_20 16 240 1797
+	unknown_sfx_20 11 224 1792
+	unknown_sfx_20 7 180 1808
+	unknown_sfx_20 5 211 1792
+	unknown_sfx_20 7 178 1568
+	unknown_sfx_20 9 161 1572
 	end
 
 .SFX_Cry1D_1_Ch5
 	dutycycle 34
-	unknown_sfx_20 15 176 1731
-	unknown_sfx_20 10 160 1729
-	unknown_sfx_20 6 132 1746
-	unknown_sfx_20 4 147 1729
-	unknown_sfx_20 6 130 1505
-	unknown_sfx_20 8 97 1512
+	unknown_sfx_20 16 176 1731
+	unknown_sfx_20 11 160 1729
+	unknown_sfx_20 7 132 1746
+	unknown_sfx_20 5 147 1729
+	unknown_sfx_20 7 130 1505
+	unknown_sfx_20 9 97 1512
 	end
 
 .SFX_Cry1D_1_Ch7
-	unknown_noise_20 6 230 76
-	unknown_noise_20 15 214 60
-	unknown_noise_20 10 197 74
-	unknown_noise_20 1 178 91
-	unknown_noise_20 15 194 76
+	unknown_noise_20 7 230 76
+	unknown_noise_20 16 214 60
+	unknown_noise_20 11 197 74
+	unknown_noise_20 2 178 91
+	unknown_noise_20 16 194 76
 	end
 
 .SFX_Cry18_1_Ch4
 	dutycycle 80
-	unknown_sfx_20 10 245 1664
-	unknown_sfx_20 3 226 1696
-	unknown_sfx_20 3 242 1728
-	unknown_sfx_20 3 226 1760
-	unknown_sfx_20 3 210 1792
-	unknown_sfx_20 3 194 1760
-	unknown_sfx_20 3 210 1728
-	unknown_sfx_20 8 193 1696
+	unknown_sfx_20 11 245 1664
+	unknown_sfx_20 4 226 1696
+	unknown_sfx_20 4 242 1728
+	unknown_sfx_20 4 226 1760
+	unknown_sfx_20 4 210 1792
+	unknown_sfx_20 4 194 1760
+	unknown_sfx_20 4 210 1728
+	unknown_sfx_20 9 193 1696
 	end
 
 .SFX_Cry18_1_Ch5
 	dutycycle 15
-	unknown_sfx_20 9 213 1585
-	unknown_sfx_20 3 210 1618
-	unknown_sfx_20 3 226 1649
-	unknown_sfx_20 3 178 1681
-	unknown_sfx_20 3 194 1714
-	unknown_sfx_20 3 178 1681
-	unknown_sfx_20 3 194 1649
-	unknown_sfx_20 8 177 1617
+	unknown_sfx_20 10 213 1585
+	unknown_sfx_20 4 210 1618
+	unknown_sfx_20 4 226 1649
+	unknown_sfx_20 4 178 1681
+	unknown_sfx_20 4 194 1714
+	unknown_sfx_20 4 178 1681
+	unknown_sfx_20 4 194 1649
+	unknown_sfx_20 9 177 1617
 	end
 
 .SFX_Cry18_1_Ch7
-	unknown_noise_20 6 227 76
-	unknown_noise_20 4 195 60
-	unknown_noise_20 5 212 60
-	unknown_noise_20 4 196 44
-	unknown_noise_20 6 180 60
-	unknown_noise_20 8 193 44
+	unknown_noise_20 7 227 76
+	unknown_noise_20 5 195 60
+	unknown_noise_20 6 212 60
+	unknown_noise_20 5 196 44
+	unknown_noise_20 7 180 60
+	unknown_noise_20 9 193 44
 	end
 
 .SFX_Cry1F_1_Ch4
 	dutycycle 165
-	unknown_sfx_20 3 244 1601
-	unknown_sfx_20 13 214 1825
-	unknown_sfx_20 8 244 1817
-	unknown_sfx_20 8 193 1818
+	unknown_sfx_20 4 244 1601
+	unknown_sfx_20 14 214 1825
+	unknown_sfx_20 9 244 1817
+	unknown_sfx_20 9 193 1818
 	end
 
 .SFX_Cry1F_1_Ch5
 	dutycycle 204
-	unknown_sfx_20 4 244 1408
-	unknown_sfx_20 14 230 1760
-	unknown_sfx_20 8 213 1752
-	unknown_sfx_20 8 209 1756
+	unknown_sfx_20 5 244 1408
+	unknown_sfx_20 15 230 1760
+	unknown_sfx_20 9 213 1752
+	unknown_sfx_20 9 209 1756
 	end
 
 .SFX_Cry1F_1_Ch7
-	unknown_noise_20 5 196 70
-	unknown_noise_20 13 165 68
-	unknown_noise_20 8 196 69
-	unknown_noise_20 8 177 68
+	unknown_noise_20 6 196 70
+	unknown_noise_20 14 165 68
+	unknown_noise_20 9 196 69
+	unknown_noise_20 9 177 68
 	end
 
 .SFX_Cry20_1_Ch4
 	dutycycle 240
-	unknown_sfx_20 13 241 1297
-	unknown_sfx_20 13 225 1301
-	unknown_sfx_20 13 225 1297
-	unknown_sfx_20 8 209 1297
+	unknown_sfx_20 14 241 1297
+	unknown_sfx_20 14 225 1301
+	unknown_sfx_20 14 225 1297
+	unknown_sfx_20 9 209 1297
 	end
 
 .SFX_Cry20_1_Ch5
 	dutycycle 21
-	unknown_sfx_20 12 225 1292
-	unknown_sfx_20 12 209 1296
-	unknown_sfx_20 14 193 1292
-	unknown_sfx_20 8 193 1290
+	unknown_sfx_20 13 225 1292
+	unknown_sfx_20 13 209 1296
+	unknown_sfx_20 15 193 1292
+	unknown_sfx_20 9 193 1290
 	end
 
 .SFX_Cry20_1_Ch7
-	unknown_noise_20 14 242 101
-	unknown_noise_20 13 226 85
-	unknown_noise_20 14 210 86
-	unknown_noise_20 8 209 102
+	unknown_noise_20 15 242 101
+	unknown_noise_20 14 226 85
+	unknown_noise_20 15 210 86
+	unknown_noise_20 9 209 102
 	end
 
 .SFX_Cry21_1_Ch4
 	dutycycle 27
-	unknown_sfx_20 3 243 1380
-	unknown_sfx_20 2 226 1348
-	unknown_sfx_20 5 209 1314
-	unknown_sfx_20 2 178 1156
-	unknown_sfx_20 8 209 1186
-	unknown_sfx_20 3 243 1316
-	unknown_sfx_20 4 228 1252
-	unknown_sfx_20 8 209 1282
+	unknown_sfx_20 4 243 1380
+	unknown_sfx_20 3 226 1348
+	unknown_sfx_20 6 209 1314
+	unknown_sfx_20 3 178 1156
+	unknown_sfx_20 9 209 1186
+	unknown_sfx_20 4 243 1316
+	unknown_sfx_20 5 228 1252
+	unknown_sfx_20 9 209 1282
 	end
 
 .SFX_Cry21_1_Ch5
 	dutycycle 204
-	unknown_sfx_20 3 211 1376
-	unknown_sfx_20 2 194 1344
-	unknown_sfx_20 5 193 1312
-	unknown_sfx_20 2 146 1152
-	unknown_sfx_20 8 193 1184
-	unknown_sfx_20 3 211 1312
-	unknown_sfx_20 3 196 1248
-	unknown_sfx_20 8 193 1280
+	unknown_sfx_20 4 211 1376
+	unknown_sfx_20 3 194 1344
+	unknown_sfx_20 6 193 1312
+	unknown_sfx_20 3 146 1152
+	unknown_sfx_20 9 193 1184
+	unknown_sfx_20 4 211 1312
+	unknown_sfx_20 4 196 1248
+	unknown_sfx_20 9 193 1280
 	goto SFX_Cry21_1_Ch7
 
 .SFX_Cry21_1_Ch7
@@ -1468,221 +1468,221 @@
 
 .SFX_Cry22_1_Ch4
 	dutycycle 17
-	unknown_sfx_20 2 61 897
-	unknown_sfx_20 7 245 1537
-	unknown_sfx_20 1 194 1153
-	unknown_sfx_20 8 145 897
+	unknown_sfx_20 3 61 897
+	unknown_sfx_20 8 245 1537
+	unknown_sfx_20 2 194 1153
+	unknown_sfx_20 9 145 897
 	end
 
 .SFX_Cry22_1_Ch5
 	dutycycle 238
-	unknown_sfx_20 2 62 1456
-	unknown_sfx_20 7 213 1885
-	unknown_sfx_20 1 178 1712
-	unknown_sfx_20 8 97 1456
+	unknown_sfx_20 3 62 1456
+	unknown_sfx_20 8 213 1885
+	unknown_sfx_20 2 178 1712
+	unknown_sfx_20 9 97 1456
 	end
 
 .SFX_Cry22_1_Ch7
-	unknown_noise_20 2 146 73
-	unknown_noise_20 7 181 41
-	unknown_noise_20 1 162 57
-	unknown_noise_20 8 145 73
+	unknown_noise_20 3 146 73
+	unknown_noise_20 8 181 41
+	unknown_noise_20 2 162 57
+	unknown_noise_20 9 145 73
 	end
 
 .SFX_Snare1_2_Ch7
-	unknown_noise_20 0 193 51
+	unknown_noise_20 1 193 51
 	end
 
 .SFX_Snare2_2_Ch7
-	unknown_noise_20 0 177 51
+	unknown_noise_20 1 177 51
 	end
 
 .SFX_Snare3_2_Ch7
-	unknown_noise_20 0 161 51
+	unknown_noise_20 1 161 51
 	end
 
 .SFX_Snare4_2_Ch7
-	unknown_noise_20 0 129 51
+	unknown_noise_20 1 129 51
 	end
 
 .SFX_Snare5_2_Ch7
-	unknown_noise_20 7 132 55
-	unknown_noise_20 6 132 54
-	unknown_noise_20 5 131 53
-	unknown_noise_20 4 131 52
-	unknown_noise_20 3 130 51
-	unknown_noise_20 2 129 50
+	unknown_noise_20 8 132 55
+	unknown_noise_20 7 132 54
+	unknown_noise_20 6 131 53
+	unknown_noise_20 5 131 52
+	unknown_noise_20 4 130 51
+	unknown_noise_20 3 129 50
 	end
 
 .SFX_Triangle1_2_Ch7
-	unknown_noise_20 0 81 42
+	unknown_noise_20 1 81 42
 	end
 
 .SFX_Triangle2_2_Ch7
-	unknown_noise_20 1 65 43
-	unknown_noise_20 0 97 42
+	unknown_noise_20 2 65 43
+	unknown_noise_20 1 97 42
 	end
 
 .SFX_Snare6_2_Ch7
-	unknown_noise_20 0 129 16
+	unknown_noise_20 1 129 16
 	end
 
 .SFX_Snare7_2_Ch7
-	unknown_noise_20 0 130 35
+	unknown_noise_20 1 130 35
 	end
 
 .SFX_Snare8_2_Ch7
-	unknown_noise_20 0 130 37
+	unknown_noise_20 1 130 37
 	end
 
 .SFX_Snare9_2_Ch7
-	unknown_noise_20 0 130 38
+	unknown_noise_20 1 130 38
 	end
 
 .SFX_Cymbal1_2_Ch7
-	unknown_noise_20 0 161 16
+	unknown_noise_20 1 161 16
 	end
 
 .SFX_Cymbal2_2_Ch7
-	unknown_noise_20 0 162 17
+	unknown_noise_20 1 162 17
 	end
 
 .SFX_Cymbal3_2_Ch7
-	unknown_noise_20 0 162 80
+	unknown_noise_20 1 162 80
 	end
 
 .SFX_Muted_Snare1_2_Ch7
-	unknown_noise_20 0 161 24
-	unknown_noise_20 0 49 51
+	unknown_noise_20 1 161 24
+	unknown_noise_20 1 49 51
 	end
 
 .SFX_Triangle3_2_Ch7
-	unknown_noise_20 2 145 40
-	unknown_noise_20 0 113 24
+	unknown_noise_20 3 145 40
+	unknown_noise_20 1 113 24
 	end
 
 .SFX_Muted_Snare2_2_Ch7
-	unknown_noise_20 0 145 34
+	unknown_noise_20 1 145 34
 	end
 
 .SFX_Muted_Snare3_2_Ch7
-	unknown_noise_20 0 113 34
+	unknown_noise_20 1 113 34
 	end
 
 .SFX_Muted_Snare4_2_Ch7
-	unknown_noise_20 0 97 34
+	unknown_noise_20 1 97 34
 	end
 
 .SFX_Press_AB_2_Ch4
 	duty 2
-	unknown_sfx_20 0 145 1984
-	unknown_sfx_20 0 129 2000
-	unknown_sfx_20 0 145 1984
-	unknown_sfx_20 12 161 2000
+	unknown_sfx_20 1 145 1984
+	unknown_sfx_20 1 129 2000
+	unknown_sfx_20 1 145 1984
+	unknown_sfx_20 13 161 2000
 	end
 
 .SFX_Start_Menu_2_Ch7
-	unknown_noise_20 1 226 51
-	unknown_noise_20 8 225 34
+	unknown_noise_20 2 226 51
+	unknown_noise_20 9 225 34
 	end
 
 .SFX_Tink_2_Ch4
 	duty 2
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 512
+	unknown_sfx_20 5 242 512
 	unknown_sfx_10 34
-	unknown_sfx_20 8 226 512
+	unknown_sfx_20 9 226 512
 	unknown_sfx_10 8
 	end
 
 .SFX_Heal_HP_2_Ch4
 	duty 2
 	unknown_sfx_10 23
-	unknown_sfx_20 15 240 1264
-	unknown_sfx_20 15 242 1616
+	unknown_sfx_20 16 240 1264
+	unknown_sfx_20 16 242 1616
 	unknown_sfx_10 8
 	end
 
 .SFX_Heal_Ailment_2_Ch4
 	duty 2
 	unknown_sfx_10 20
-	unknown_sfx_20 4 242 1536
-	unknown_sfx_20 4 242 1536
+	unknown_sfx_20 5 242 1536
+	unknown_sfx_20 5 242 1536
 	unknown_sfx_10 23
-	unknown_sfx_20 15 242 1536
+	unknown_sfx_20 16 242 1536
 	unknown_sfx_10 8
 	end
 
 .SFX_Silph_Scope_Ch4
 	duty 0
-	unknown_sfx_20 0 210 1792
-	unknown_sfx_20 0 210 1856
-	unknown_sfx_20 0 210 1920
-	unknown_sfx_20 0 210 1984
-	unknown_sfx_20 10 225 2016
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 1 210 1792
+	unknown_sfx_20 1 210 1856
+	unknown_sfx_20 1 210 1920
+	unknown_sfx_20 1 210 1984
+	unknown_sfx_20 11 225 2016
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Ball_Toss_Ch4
 	duty 2
 	unknown_sfx_10 47
-	unknown_sfx_20 15 242 1920
+	unknown_sfx_20 16 242 1920
 	end
 
 .SFX_Ball_Toss_Ch5
 	duty 2
-	unknown_sfx_20 15 194 1922
+	unknown_sfx_20 16 194 1922
 	end
 
 .SFX_Ball_Poof_Ch4
 	duty 2
 	unknown_sfx_10 22
-	unknown_sfx_20 15 242 1024
+	unknown_sfx_20 16 242 1024
 	unknown_sfx_10 8
 	end
 
 .SFX_Ball_Poof_Ch7
-	unknown_noise_20 15 162 34
+	unknown_noise_20 16 162 34
 	end
 
 .SFX_Faint_Thud_Ch4
-	unknown_sfx_20 15 209 512
+	unknown_sfx_20 16 209 512
 	unknown_sfx_10 8
 	end
 
 .SFX_Faint_Thud_Ch7
-	unknown_noise_20 4 245 51
-	unknown_noise_20 8 244 34
-	unknown_noise_20 15 242 33
+	unknown_noise_20 5 245 51
+	unknown_noise_20 9 244 34
+	unknown_noise_20 16 242 33
 	end
 
 .SFX_Run_Ch7
-	unknown_noise_20 2 97 35
-	unknown_noise_20 2 161 51
-	unknown_noise_20 2 193 51
-	unknown_noise_20 2 81 17
-	unknown_noise_20 2 241 51
-	unknown_noise_20 2 65 17
-	unknown_noise_20 2 193 51
-	unknown_noise_20 2 49 17
-	unknown_noise_20 2 129 51
-	unknown_noise_20 2 49 17
-	unknown_noise_20 8 65 51
+	unknown_noise_20 3 97 35
+	unknown_noise_20 3 161 51
+	unknown_noise_20 3 193 51
+	unknown_noise_20 3 81 17
+	unknown_noise_20 3 241 51
+	unknown_noise_20 3 65 17
+	unknown_noise_20 3 193 51
+	unknown_noise_20 3 49 17
+	unknown_noise_20 3 129 51
+	unknown_noise_20 3 49 17
+	unknown_noise_20 9 65 51
 	end
 
 .SFX_Dex_Page_Added_Ch4
 	duty 2
 	unknown_sfx_10 68
-	unknown_sfx_20 15 240 1264
+	unknown_sfx_20 16 240 1264
 	unknown_sfx_10 23
-	unknown_sfx_20 15 242 1616
+	unknown_sfx_20 16 242 1616
 	unknown_sfx_10 8
 	end
 
 .SFX_Dex_Page_Added_Ch5
 	duty 2
-	unknown_sfx_20 15 146 1536
-	unknown_sfx_20 15 146 1922
+	unknown_sfx_20 16 146 1536
+	unknown_sfx_20 16 146 1922
 	end
 
 .SFX_08_PokeFlute_Ch6
@@ -1700,530 +1700,530 @@
 	end
 
 .SFX_Peck_Ch7
-	unknown_noise_20 2 161 18
+	unknown_noise_20 3 161 18
 	end
 
 .SFX_Faint_Fall_Ch4
 	duty 1
 	unknown_sfx_10 175
-	unknown_sfx_20 15 242 1920
+	unknown_sfx_20 16 242 1920
 	unknown_sfx_10 8
 	end
 
 .SFX_Battle_09_Ch4
 	duty 1
 	unknown_sfx_10 151
-	unknown_sfx_20 15 242 1280
+	unknown_sfx_20 16 242 1280
 	unknown_sfx_10 8
 	end
 
 .SFX_Pound_Ch7
-	unknown_noise_20 2 161 34
+	unknown_noise_20 3 161 34
 	end
 
 .SFX_Battle_0B_Ch7
-	unknown_noise_20 8 241 84
+	unknown_noise_20 9 241 84
 	end
 
 .SFX_Battle_0C_Ch7
-	unknown_noise_20 15 143 17
-	unknown_noise_20 4 255 18
-	unknown_noise_20 10 241 85
+	unknown_noise_20 16 143 17
+	unknown_noise_20 5 255 18
+	unknown_noise_20 11 241 85
 	end
 
 .SFX_Battle_0D_Ch7
-	unknown_noise_20 15 143 52
-	unknown_noise_20 8 242 53
-	unknown_noise_20 10 241 85
+	unknown_noise_20 16 143 52
+	unknown_noise_20 9 242 53
+	unknown_noise_20 11 241 85
 	end
 
 .SFX_Battle_0E_Ch7
-	unknown_noise_20 15 159 35
-	unknown_noise_20 8 241 33
+	unknown_noise_20 16 159 35
+	unknown_noise_20 9 241 33
 	end
 
 .SFX_Battle_0F_Ch7
-	unknown_noise_20 2 225 75
-	unknown_noise_20 10 241 68
-	unknown_noise_20 2 225 58
-	unknown_noise_20 6 241 52
+	unknown_noise_20 3 225 75
+	unknown_noise_20 11 241 68
+	unknown_noise_20 3 225 58
+	unknown_noise_20 7 241 52
 	end
 
 .SFX_Damage_Ch7
-	unknown_noise_20 2 244 68
-	unknown_noise_20 2 244 20
-	unknown_noise_20 15 241 50
+	unknown_noise_20 3 244 68
+	unknown_noise_20 3 244 20
+	unknown_noise_20 16 241 50
 	end
 
 .SFX_Not_Very_Effective_Ch7
-	unknown_noise_20 4 143 85
-	unknown_noise_20 2 244 68
-	unknown_noise_20 8 244 34
-	unknown_noise_20 15 242 33
+	unknown_noise_20 5 143 85
+	unknown_noise_20 3 244 68
+	unknown_noise_20 9 244 34
+	unknown_noise_20 16 242 33
 	end
 
 .SFX_Battle_12_Ch7
-	unknown_noise_20 8 79 35
-	unknown_noise_20 4 196 34
-	unknown_noise_20 6 242 35
+	unknown_noise_20 9 79 35
+	unknown_noise_20 5 196 34
+	unknown_noise_20 7 242 35
 	loop 4 SFX_Battle_12_Ch7
 	end
 
 .SFX_Battle_13_Ch7
-	unknown_noise_20 8 79 51
-	unknown_noise_20 4 196 34
-	unknown_noise_20 6 242 35
-	unknown_noise_20 15 242 34
+	unknown_noise_20 9 79 51
+	unknown_noise_20 5 196 34
+	unknown_noise_20 7 242 35
+	unknown_noise_20 16 242 34
 	end
 
 .SFX_Battle_14_Ch7
-	unknown_noise_20 8 255 50
-	unknown_noise_20 8 244 67
-	unknown_noise_20 8 242 84
-	unknown_noise_20 8 241 101
+	unknown_noise_20 9 255 50
+	unknown_noise_20 9 244 67
+	unknown_noise_20 9 242 84
+	unknown_noise_20 9 241 101
 	end
 
 .SFX_Vine_Whip_Ch7
-	unknown_noise_20 1 194 51
-	unknown_noise_20 2 242 33
-	unknown_noise_20 1 226 51
-	unknown_noise_20 1 194 50
-	unknown_noise_20 1 146 18
-	unknown_noise_20 1 178 49
-	unknown_noise_20 12 145 16
-	unknown_noise_20 8 242 65
+	unknown_noise_20 2 194 51
+	unknown_noise_20 3 242 33
+	unknown_noise_20 2 226 51
+	unknown_noise_20 2 194 50
+	unknown_noise_20 2 146 18
+	unknown_noise_20 2 178 49
+	unknown_noise_20 13 145 16
+	unknown_noise_20 9 242 65
 	end
 
 .SFX_Battle_16_Ch7
-	unknown_noise_20 1 148 35
-	unknown_noise_20 1 180 34
-	unknown_noise_20 8 241 68
+	unknown_noise_20 2 148 35
+	unknown_noise_20 2 180 34
+	unknown_noise_20 9 241 68
 	end
 
 .SFX_Battle_17_Ch7
-	unknown_noise_20 2 148 51
-	unknown_noise_20 4 180 34
-	unknown_noise_20 4 241 68
-	unknown_noise_20 8 241 85
+	unknown_noise_20 3 148 51
+	unknown_noise_20 5 180 34
+	unknown_noise_20 5 241 68
+	unknown_noise_20 9 241 85
 	end
 
 .SFX_Battle_18_Ch7
-	unknown_noise_20 4 255 85
-	unknown_noise_20 8 241 101
+	unknown_noise_20 5 255 85
+	unknown_noise_20 9 241 101
 	end
 
 .SFX_Battle_19_Ch7
-	unknown_noise_20 2 132 67
-	unknown_noise_20 2 196 34
-	unknown_noise_20 8 242 52
+	unknown_noise_20 3 132 67
+	unknown_noise_20 3 196 34
+	unknown_noise_20 9 242 52
 	end
 
 .SFX_Super_Effective_Ch7
-	unknown_noise_20 4 241 52
-	unknown_noise_20 15 242 100
+	unknown_noise_20 5 241 52
+	unknown_noise_20 16 242 100
 	end
 
 .SFX_Battle_1B_Ch7
-	unknown_noise_20 2 241 34
-	unknown_noise_20 15 242 18
+	unknown_noise_20 3 241 34
+	unknown_noise_20 16 242 18
 	end
 
 .SFX_Battle_1C_Ch7
-	unknown_noise_20 2 194 1
-	unknown_noise_20 15 244 1
-	unknown_noise_20 15 242 1
+	unknown_noise_20 3 194 1
+	unknown_noise_20 16 244 1
+	unknown_noise_20 16 242 1
 	end
 
 .SFX_Doubleslap_Ch7
-	unknown_noise_20 8 241 50
-	unknown_noise_20 8 241 51
+	unknown_noise_20 9 241 50
+	unknown_noise_20 9 241 51
 	end
 
 .SFX_Battle_1E_Ch4
 	duty 0
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 512
+	unknown_sfx_20 5 242 512
 	unknown_sfx_10 34
-	unknown_sfx_20 8 226 512
+	unknown_sfx_20 9 226 512
 	unknown_sfx_10 8
 	end
 
 .SFX_Battle_1E_Ch7
-	unknown_noise_20 0 209 66
-	unknown_noise_20 4 161 50
-	unknown_noise_20 0 209 34
-	unknown_noise_20 6 161 50
+	unknown_noise_20 1 209 66
+	unknown_noise_20 5 161 50
+	unknown_noise_20 1 209 34
+	unknown_noise_20 7 161 50
 	end
 
 .SFX_Horn_Drill_Ch7
-	unknown_noise_20 3 146 49
-	unknown_noise_20 3 178 50
-	unknown_noise_20 3 194 51
-	unknown_noise_20 8 241 84
+	unknown_noise_20 4 146 49
+	unknown_noise_20 4 178 50
+	unknown_noise_20 4 194 51
+	unknown_noise_20 9 241 84
 	end
 
 .SFX_Battle_20_Ch7
-	unknown_noise_20 12 241 84
-	unknown_noise_20 8 241 100
+	unknown_noise_20 13 241 84
+	unknown_noise_20 9 241 100
 	end
 
 .SFX_Battle_21_Ch7
-	unknown_noise_20 2 241 51
-	unknown_noise_20 2 193 50
-	unknown_noise_20 2 161 49
-	unknown_noise_20 15 130 50
-	unknown_noise_20 8 241 52
+	unknown_noise_20 3 241 51
+	unknown_noise_20 3 193 50
+	unknown_noise_20 3 161 49
+	unknown_noise_20 16 130 50
+	unknown_noise_20 9 241 52
 	end
 
 .SFX_Battle_22_Ch7
-	unknown_noise_20 2 210 50
-	unknown_noise_20 15 242 67
+	unknown_noise_20 3 210 50
+	unknown_noise_20 16 242 67
 	end
 
 .SFX_Battle_23_Ch7
-	unknown_noise_20 2 242 67
-	unknown_noise_20 4 181 50
-	unknown_noise_20 9 134 49
-	unknown_noise_20 7 100 0
-	unknown_noise_20 15 242 85
+	unknown_noise_20 3 242 67
+	unknown_noise_20 5 181 50
+	unknown_noise_20 10 134 49
+	unknown_noise_20 8 100 0
+	unknown_noise_20 16 242 85
 	end
 
 .SFX_Battle_24_Ch4
 	duty 1
 	unknown_sfx_10 151
-	unknown_sfx_20 15 242 1792
+	unknown_sfx_20 16 242 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Battle_24_Ch7
-	unknown_noise_20 15 63 34
-	unknown_noise_20 15 242 33
+	unknown_noise_20 16 63 34
+	unknown_noise_20 16 242 33
 	end
 
 .SFX_Battle_25_Ch7
-	unknown_noise_20 15 79 65
-	unknown_noise_20 8 143 65
-	unknown_noise_20 8 207 65
-	unknown_noise_20 8 242 66
-	unknown_noise_20 15 242 65
+	unknown_noise_20 16 79 65
+	unknown_noise_20 9 143 65
+	unknown_noise_20 9 207 65
+	unknown_noise_20 9 242 66
+	unknown_noise_20 16 242 65
 	end
 
 .SFX_Battle_26_Ch7
-	unknown_noise_20 10 255 80
-	unknown_noise_20 15 255 81
-	unknown_noise_20 8 242 81
-	unknown_noise_20 6 255 82
-	unknown_noise_20 6 255 83
-	unknown_noise_20 8 255 84
-	unknown_noise_20 15 242 84
+	unknown_noise_20 11 255 80
+	unknown_noise_20 16 255 81
+	unknown_noise_20 9 242 81
+	unknown_noise_20 7 255 82
+	unknown_noise_20 7 255 83
+	unknown_noise_20 9 255 84
+	unknown_noise_20 16 242 84
 	end
 
 .SFX_Battle_27_Ch4
 	duty 2
-	unknown_sfx_20 15 63 1984
+	unknown_sfx_20 16 63 1984
 	goto SFX_Battle_27_branch_2062a
 
 .SFX_Battle_27_branch_2062a
-	unknown_sfx_20 15 223 1984
+	unknown_sfx_20 16 223 1984
 	loop 4 SFX_Battle_27_branch_2062a
-	unknown_sfx_20 15 209 1984
+	unknown_sfx_20 16 209 1984
 	end
 
 .SFX_Battle_27_Ch5
 	dutycycle 179
-	unknown_sfx_20 15 47 1992
+	unknown_sfx_20 16 47 1992
 	goto SFX_Battle_27_branch_2063d
 
 .SFX_Battle_27_branch_2063d
-	unknown_sfx_20 15 207 1991
+	unknown_sfx_20 16 207 1991
 	loop 4 SFX_Battle_27_branch_2063d
-	unknown_sfx_20 15 193 1992
+	unknown_sfx_20 16 193 1992
 	end
 
 .SFX_Battle_27_Ch7
-	unknown_noise_20 3 151 18
-	unknown_noise_20 3 161 17
+	unknown_noise_20 4 151 18
+	unknown_noise_20 4 161 17
 	loop 10 SFX_Battle_27_Ch7
 	end
 
 .SFX_Battle_28_Ch4
 	duty 0
-	unknown_sfx_20 0 241 1984
-	unknown_sfx_20 0 241 1792
+	unknown_sfx_20 1 241 1984
+	unknown_sfx_20 1 241 1792
 	loop 12 SFX_Battle_28_Ch4
 	end
 
 .SFX_Battle_28_Ch5
 	dutycycle 179
-	unknown_sfx_20 0 225 1985
-	unknown_sfx_20 0 225 1793
+	unknown_sfx_20 1 225 1985
+	unknown_sfx_20 1 225 1793
 	loop 12 SFX_Battle_28_Ch5
 	end
 
 .SFX_Battle_28_Ch7
-	unknown_noise_20 1 209 73
-	unknown_noise_20 1 209 41
+	unknown_noise_20 2 209 73
+	unknown_noise_20 2 209 41
 	loop 6 SFX_Battle_28_Ch7
 	end
 
 .SFX_Battle_29_Ch4
 	dutycycle 201
-	unknown_sfx_20 11 243 288
-	unknown_sfx_20 9 211 336
+	unknown_sfx_20 12 243 288
+	unknown_sfx_20 10 211 336
 	loop 5 SFX_Battle_29_Ch4
-	unknown_sfx_20 8 227 304
-	unknown_sfx_20 15 194 272
+	unknown_sfx_20 9 227 304
+	unknown_sfx_20 16 194 272
 	end
 
 .SFX_Battle_29_Ch7
-	unknown_noise_20 10 243 53
-	unknown_noise_20 14 246 69
+	unknown_noise_20 11 243 53
+	unknown_noise_20 15 246 69
 	loop 4 SFX_Battle_29_Ch7
-	unknown_noise_20 12 244 188
-	unknown_noise_20 12 245 156
-	unknown_noise_20 15 244 172
+	unknown_noise_20 13 244 188
+	unknown_noise_20 13 245 156
+	unknown_noise_20 16 244 172
 	end
 
 .SFX_Battle_2A_Ch4
 	dutycycle 57
-	unknown_sfx_20 4 244 1536
-	unknown_sfx_20 3 196 1280
-	unknown_sfx_20 5 181 1536
-	unknown_sfx_20 13 226 1728
+	unknown_sfx_20 5 244 1536
+	unknown_sfx_20 4 196 1280
+	unknown_sfx_20 6 181 1536
+	unknown_sfx_20 14 226 1728
 	loop 3 SFX_Battle_2A_Ch4
-	unknown_sfx_20 8 209 1536
+	unknown_sfx_20 9 209 1536
 	end
 
 .SFX_Battle_2A_Ch5
 	dutycycle 141
-	unknown_sfx_20 5 228 1504
-	unknown_sfx_20 4 180 1248
-	unknown_sfx_20 6 165 1512
-	unknown_sfx_20 14 209 1696
+	unknown_sfx_20 6 228 1504
+	unknown_sfx_20 5 180 1248
+	unknown_sfx_20 7 165 1512
+	unknown_sfx_20 15 209 1696
 	loop 3 SFX_Battle_2A_Ch5
 	end
 
 .SFX_Battle_2A_Ch7
-	unknown_noise_20 5 195 51
-	unknown_noise_20 3 146 67
-	unknown_noise_20 10 181 51
-	unknown_noise_20 15 195 50
+	unknown_noise_20 6 195 51
+	unknown_noise_20 4 146 67
+	unknown_noise_20 11 181 51
+	unknown_noise_20 16 195 50
 	loop 2 SFX_Battle_2A_Ch7
 	end
 
 .SFX_Battle_2B_Ch4
 	dutycycle 210
-	unknown_sfx_20 3 129 768
-	unknown_sfx_20 3 193 1024
-	unknown_sfx_20 3 241 1280
-	unknown_sfx_20 3 177 1024
-	unknown_sfx_20 3 113 768
+	unknown_sfx_20 4 129 768
+	unknown_sfx_20 4 193 1024
+	unknown_sfx_20 4 241 1280
+	unknown_sfx_20 4 177 1024
+	unknown_sfx_20 4 113 768
 	loop 5 SFX_Battle_2B_Ch4
-	unknown_sfx_20 8 129 1024
+	unknown_sfx_20 9 129 1024
 	end
 
 .SFX_Battle_2B_Ch7
-	unknown_noise_20 3 98 34
-	unknown_noise_20 3 162 50
-	unknown_noise_20 3 210 51
-	unknown_noise_20 3 146 35
-	unknown_noise_20 3 82 18
+	unknown_noise_20 4 98 34
+	unknown_noise_20 4 162 50
+	unknown_noise_20 4 210 51
+	unknown_noise_20 4 146 35
+	unknown_noise_20 4 82 18
 	loop 5 SFX_Battle_2B_Ch7
-	unknown_noise_20 8 129 18
+	unknown_noise_20 9 129 18
 	end
 
 .SFX_Battle_2C_Ch4
 	dutycycle 57
-	unknown_sfx_20 15 244 1280
-	unknown_sfx_20 15 196 1024
-	unknown_sfx_20 15 226 1472
+	unknown_sfx_20 16 244 1280
+	unknown_sfx_20 16 196 1024
+	unknown_sfx_20 16 226 1472
 	loop 3 SFX_Battle_2C_Ch4
 	end
 
 .SFX_Battle_2C_Ch5
 	dutycycle 141
-	unknown_sfx_20 7 228 1072
-	unknown_sfx_20 15 180 816
-	unknown_sfx_20 15 162 1080
+	unknown_sfx_20 8 228 1072
+	unknown_sfx_20 16 180 816
+	unknown_sfx_20 16 162 1080
 	loop 4 SFX_Battle_2C_Ch5
 	end
 
 .SFX_Battle_2C_Ch7
-	unknown_noise_20 9 244 68
-	unknown_noise_20 9 242 67
-	unknown_noise_20 15 244 66
-	unknown_noise_20 15 244 65
+	unknown_noise_20 10 244 68
+	unknown_noise_20 10 242 67
+	unknown_noise_20 16 244 66
+	unknown_noise_20 16 244 65
 	loop 3 SFX_Battle_2C_Ch7
 	end
 
 .SFX_Psybeam_Ch4
 	dutycycle 161
-	unknown_sfx_20 10 241 1600
-	unknown_sfx_20 10 243 1664
-	unknown_sfx_20 10 242 1568
+	unknown_sfx_20 11 241 1600
+	unknown_sfx_20 11 243 1664
+	unknown_sfx_20 11 242 1568
 	loop 4 SFX_Psybeam_Ch4
-	unknown_sfx_20 10 241 1600
+	unknown_sfx_20 11 241 1600
 	end
 
 .SFX_Psybeam_Ch5
 	dutycycle 179
-	unknown_sfx_20 10 243 1393
-	unknown_sfx_20 7 227 1329
-	unknown_sfx_20 10 241 1361
+	unknown_sfx_20 11 243 1393
+	unknown_sfx_20 8 227 1329
+	unknown_sfx_20 11 241 1361
 	loop 4 SFX_Psybeam_Ch5
-	unknown_sfx_20 10 241 1393
+	unknown_sfx_20 11 241 1393
 	end
 
 .SFX_Psybeam_Ch7
-	unknown_noise_20 2 209 74
-	unknown_noise_20 2 210 42
+	unknown_noise_20 3 209 74
+	unknown_noise_20 3 210 42
 	loop 21 SFX_Psybeam_Ch7
 	end
 
 .SFX_Battle_2E_Ch4
 	duty 0
-	unknown_sfx_20 2 241 512
-	unknown_sfx_20 3 241 1792
-	unknown_sfx_20 4 241 1280
-	unknown_sfx_20 5 241 2032
+	unknown_sfx_20 3 241 512
+	unknown_sfx_20 4 241 1792
+	unknown_sfx_20 5 241 1280
+	unknown_sfx_20 6 241 2032
 	loop 8 SFX_Battle_2E_Ch4
 	end
 
 .SFX_Battle_2E_Ch5
 	dutycycle 179
-	unknown_sfx_20 2 225 770
-	unknown_sfx_20 3 225 2034
-	unknown_sfx_20 4 225 1538
-	unknown_sfx_20 5 225 1794
+	unknown_sfx_20 3 225 770
+	unknown_sfx_20 4 225 2034
+	unknown_sfx_20 5 225 1538
+	unknown_sfx_20 6 225 1794
 	loop 8 SFX_Battle_2E_Ch5
 	end
 
 .SFX_Battle_2E_Ch7
-	unknown_noise_20 2 211 16
-	unknown_noise_20 3 211 17
-	unknown_noise_20 2 210 16
-	unknown_noise_20 5 210 18
+	unknown_noise_20 3 211 16
+	unknown_noise_20 4 211 17
+	unknown_noise_20 3 210 16
+	unknown_noise_20 6 210 18
 	loop 9 SFX_Battle_2E_Ch7
 	end
 
 .SFX_Battle_2F_Ch4
 	dutycycle 43
-	unknown_sfx_20 3 241 2032
-	unknown_sfx_20 4 242 512
+	unknown_sfx_20 4 241 2032
+	unknown_sfx_20 5 242 512
 	loop 8 SFX_Battle_2F_Ch4
 	end
 
 .SFX_Battle_2F_Ch5
 	dutycycle 179
-	unknown_sfx_20 4 226 514
-	unknown_sfx_20 4 225 2018
+	unknown_sfx_20 5 226 514
+	unknown_sfx_20 5 225 2018
 	loop 9 SFX_Battle_2F_Ch5
 	end
 
 .SFX_Battle_2F_Ch7
-	unknown_noise_20 4 255 67
-	unknown_noise_20 4 242 68
+	unknown_noise_20 5 255 67
+	unknown_noise_20 5 242 68
 	loop 9 SFX_Battle_2F_Ch7
 	end
 
 .SFX_Psychic_M_Ch4
 	duty 2
 	unknown_sfx_10 247
-	unknown_sfx_20 8 196 1981
-	unknown_sfx_20 8 196 1982
-	unknown_sfx_20 8 196 1983
-	unknown_sfx_20 8 196 1984
-	unknown_sfx_20 15 196 1985
-	unknown_sfx_20 15 242 1984
+	unknown_sfx_20 9 196 1981
+	unknown_sfx_20 9 196 1982
+	unknown_sfx_20 9 196 1983
+	unknown_sfx_20 9 196 1984
+	unknown_sfx_20 16 196 1985
+	unknown_sfx_20 16 242 1984
 	unknown_sfx_10 8
 	end
 
 .SFX_Psychic_M_Ch5
 	duty 2
-	unknown_sfx_20 8 196 1904
-	unknown_sfx_20 8 196 1889
-	unknown_sfx_20 8 196 1890
-	unknown_sfx_20 8 196 1891
-	unknown_sfx_20 15 196 1892
-	unknown_sfx_20 15 242 1892
+	unknown_sfx_20 9 196 1904
+	unknown_sfx_20 9 196 1889
+	unknown_sfx_20 9 196 1890
+	unknown_sfx_20 9 196 1891
+	unknown_sfx_20 16 196 1892
+	unknown_sfx_20 16 242 1892
 	end
 
 .SFX_Psychic_M_Ch7
-	unknown_noise_20 15 63 20
-	unknown_noise_20 15 207 19
-	unknown_noise_20 15 207 18
-	unknown_noise_20 15 207 17
-	unknown_noise_20 15 207 16
-	unknown_noise_20 15 194 16
+	unknown_noise_20 16 63 20
+	unknown_noise_20 16 207 19
+	unknown_noise_20 16 207 18
+	unknown_noise_20 16 207 17
+	unknown_noise_20 16 207 16
+	unknown_noise_20 16 194 16
 	end
 
 .SFX_Battle_31_Ch4
 	duty 2
-	unknown_sfx_20 15 255 2016
-	unknown_sfx_20 15 255 2016
-	unknown_sfx_20 15 255 2016
-	unknown_sfx_20 15 255 2016
-	unknown_sfx_20 15 242 2016
+	unknown_sfx_20 16 255 2016
+	unknown_sfx_20 16 255 2016
+	unknown_sfx_20 16 255 2016
+	unknown_sfx_20 16 255 2016
+	unknown_sfx_20 16 242 2016
 	end
 
 .SFX_Battle_31_Ch5
 	duty 3
-	unknown_sfx_20 15 255 2018
-	unknown_sfx_20 15 255 2017
-	unknown_sfx_20 15 255 2018
-	unknown_sfx_20 15 255 2017
-	unknown_sfx_20 15 242 2018
+	unknown_sfx_20 16 255 2018
+	unknown_sfx_20 16 255 2017
+	unknown_sfx_20 16 255 2018
+	unknown_sfx_20 16 255 2017
+	unknown_sfx_20 16 242 2018
 	end
 
 .SFX_Battle_32_Ch4
 	duty 2
 	unknown_sfx_10 175
-	unknown_sfx_20 8 241 1792
+	unknown_sfx_20 9 241 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Battle_32_Ch5
 	duty 3
-	unknown_sfx_20 8 241 1793
+	unknown_sfx_20 9 241 1793
 	end
 
 .SFX_Battle_33_Ch4
 	duty 2
-	unknown_sfx_20 6 241 1280
-	unknown_sfx_20 6 241 1408
-	unknown_sfx_20 6 241 1536
-	unknown_sfx_20 6 241 1664
-	unknown_sfx_20 8 241 1792
+	unknown_sfx_20 7 241 1280
+	unknown_sfx_20 7 241 1408
+	unknown_sfx_20 7 241 1536
+	unknown_sfx_20 7 241 1664
+	unknown_sfx_20 9 241 1792
 	end
 
 .SFX_Battle_33_Ch5
 	duty 3
-	unknown_sfx_20 6 225 1296
-	unknown_sfx_20 6 225 1424
-	unknown_sfx_20 6 225 1552
-	unknown_sfx_20 6 225 1680
-	unknown_sfx_20 8 225 1808
+	unknown_sfx_20 7 225 1296
+	unknown_sfx_20 7 225 1424
+	unknown_sfx_20 7 225 1552
+	unknown_sfx_20 7 225 1680
+	unknown_sfx_20 9 225 1808
 	end
 
 .SFX_Battle_34_Ch4
 	dutycycle 237
-	unknown_sfx_20 8 255 1016
-	unknown_sfx_20 15 255 1024
-	unknown_sfx_20 15 243 1024
+	unknown_sfx_20 9 255 1016
+	unknown_sfx_20 16 255 1024
+	unknown_sfx_20 16 243 1024
 	end
 
 .SFX_Battle_34_Ch5
 	dutycycle 180
-	unknown_sfx_20 8 239 960
-	unknown_sfx_20 15 239 960
-	unknown_sfx_20 15 227 960
+	unknown_sfx_20 9 239 960
+	unknown_sfx_20 16 239 960
+	unknown_sfx_20 16 227 960
 	end
 
 .SFX_Battle_34_Ch7
-	unknown_noise_20 4 255 81
-	unknown_noise_20 8 255 84
-	unknown_noise_20 15 255 85
-	unknown_noise_20 15 243 86
+	unknown_noise_20 5 255 81
+	unknown_noise_20 9 255 84
+	unknown_noise_20 16 255 85
+	unknown_noise_20 16 243 86
 	end
 
 .SFX_Battle_35_Ch4
@@ -2257,414 +2257,414 @@
 
 .SFX_Battle_36_Ch4
 	duty 0
-	unknown_sfx_20 2 241 1920
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 2 241 1936
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 2 241 1952
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 2 241 1968
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 2 241 1984
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 2 241 2000
+	unknown_sfx_20 3 241 1920
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 3 241 1936
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 3 241 1952
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 3 241 1968
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 3 241 1984
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 3 241 2000
 	goto SFX_Battle_36_branch_20930
 
 .SFX_Battle_36_branch_20930
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 2 241 2016
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 3 241 2016
 	loop 12 SFX_Battle_36_branch_20930
-	unknown_sfx_20 15 241 1792
+	unknown_sfx_20 16 241 1792
 	end
 
 .SFX_Battle_36_Ch5
 	dutycycle 179
-	unknown_sfx_20 2 241 1921
-	unknown_sfx_20 2 241 1793
-	unknown_sfx_20 2 241 1937
-	unknown_sfx_20 2 241 1793
-	unknown_sfx_20 2 241 1953
-	unknown_sfx_20 2 241 1793
-	unknown_sfx_20 2 241 1969
-	unknown_sfx_20 2 241 1793
-	unknown_sfx_20 2 241 1985
-	unknown_sfx_20 2 241 1793
-	unknown_sfx_20 2 241 2001
-	unknown_sfx_20 2 241 1793
-	unknown_sfx_20 2 241 2017
+	unknown_sfx_20 3 241 1921
+	unknown_sfx_20 3 241 1793
+	unknown_sfx_20 3 241 1937
+	unknown_sfx_20 3 241 1793
+	unknown_sfx_20 3 241 1953
+	unknown_sfx_20 3 241 1793
+	unknown_sfx_20 3 241 1969
+	unknown_sfx_20 3 241 1793
+	unknown_sfx_20 3 241 1985
+	unknown_sfx_20 3 241 1793
+	unknown_sfx_20 3 241 2001
+	unknown_sfx_20 3 241 1793
+	unknown_sfx_20 3 241 2017
 	loop 12 SFX_Battle_36_branch_20930
-	unknown_sfx_20 15 241 1793
+	unknown_sfx_20 16 241 1793
 	end
 
 .SFX_Battle_36_Ch7
-	unknown_noise_20 1 209 73
-	unknown_noise_20 1 209 41
+	unknown_noise_20 2 209 73
+	unknown_noise_20 2 209 41
 	loop 26 SFX_Battle_36_Ch7
 	end
 
 .SFX_08_unused_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 224 1920
-	unknown_sfx_20 15 240 1924
-	unknown_sfx_20 15 195 1504
-	unknown_sfx_20 15 196 1536
-	unknown_sfx_20 10 108 1920
-	unknown_sfx_20 8 113 1924
+	unknown_sfx_20 16 224 1920
+	unknown_sfx_20 16 240 1924
+	unknown_sfx_20 16 195 1504
+	unknown_sfx_20 16 196 1536
+	unknown_sfx_20 11 108 1920
+	unknown_sfx_20 9 113 1924
 	end
 
 .SFX_08_unused_Ch5
 	dutycycle 5
-	unknown_sfx_20 15 160 1857
-	unknown_sfx_20 15 176 1859
-	unknown_sfx_20 15 147 1457
-	unknown_sfx_20 15 148 1473
-	unknown_sfx_20 10 76 1857
-	unknown_sfx_20 8 49 1862
+	unknown_sfx_20 16 160 1857
+	unknown_sfx_20 16 176 1859
+	unknown_sfx_20 16 147 1457
+	unknown_sfx_20 16 148 1473
+	unknown_sfx_20 11 76 1857
+	unknown_sfx_20 9 49 1862
 	end
 
 .SFX_08_unused_Ch7
-	unknown_noise_20 2 242 76
-	unknown_noise_20 6 224 58
-	unknown_noise_20 15 208 58
-	unknown_noise_20 8 208 44
-	unknown_noise_20 6 230 76
-	unknown_noise_20 12 125 76
-	unknown_noise_20 15 211 76
+	unknown_noise_20 3 242 76
+	unknown_noise_20 7 224 58
+	unknown_noise_20 16 208 58
+	unknown_noise_20 9 208 44
+	unknown_noise_20 7 230 76
+	unknown_noise_20 13 125 76
+	unknown_noise_20 16 211 76
 	end
 
 .SFX_Cry09_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1952
-	unknown_sfx_20 6 230 1955
-	unknown_sfx_20 10 244 1952
+	unknown_sfx_20 16 247 1952
+	unknown_sfx_20 7 230 1955
+	unknown_sfx_20 11 244 1952
 	dutycycle 165
-	unknown_sfx_20 10 246 2008
-	unknown_sfx_20 4 227 2007
-	unknown_sfx_20 15 242 2008
+	unknown_sfx_20 11 246 2008
+	unknown_sfx_20 5 227 2007
+	unknown_sfx_20 16 242 2008
 	end
 
 .SFX_Cry09_2_Ch5
 	dutycycle 5
-	unknown_sfx_20 2 8 0
-	unknown_sfx_20 15 167 1697
-	unknown_sfx_20 6 134 1698
-	unknown_sfx_20 10 116 1697
+	unknown_sfx_20 3 8 0
+	unknown_sfx_20 16 167 1697
+	unknown_sfx_20 7 134 1698
+	unknown_sfx_20 11 116 1697
 	dutycycle 95
-	unknown_sfx_20 10 118 1750
-	unknown_sfx_20 4 131 1753
-	unknown_sfx_20 15 162 1751
+	unknown_sfx_20 11 118 1750
+	unknown_sfx_20 5 131 1753
+	unknown_sfx_20 16 162 1751
 	end
 
 .SFX_Cry09_2_Ch7
-	unknown_noise_20 2 242 60
-	unknown_noise_20 8 228 62
-	unknown_noise_20 15 215 60
-	unknown_noise_20 6 197 59
-	unknown_noise_20 6 228 61
-	unknown_noise_20 8 182 60
-	unknown_noise_20 6 212 61
-	unknown_noise_20 8 193 59
+	unknown_noise_20 3 242 60
+	unknown_noise_20 9 228 62
+	unknown_noise_20 16 215 60
+	unknown_noise_20 7 197 59
+	unknown_noise_20 7 228 61
+	unknown_noise_20 9 182 60
+	unknown_noise_20 7 212 61
+	unknown_noise_20 9 193 59
 	end
 
 .SFX_Cry23_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1984
-	unknown_sfx_20 6 228 1985
-	unknown_sfx_20 10 246 1984
-	unknown_sfx_20 4 211 1986
-	unknown_sfx_20 8 193 1984
+	unknown_sfx_20 16 247 1984
+	unknown_sfx_20 7 228 1985
+	unknown_sfx_20 11 246 1984
+	unknown_sfx_20 5 211 1986
+	unknown_sfx_20 9 193 1984
 	end
 
 .SFX_Cry23_2_Ch5
 	dutycycle 95
-	unknown_sfx_20 15 151 1921
-	unknown_sfx_20 6 132 1920
-	unknown_sfx_20 10 150 1921
-	unknown_sfx_20 15 131 1921
+	unknown_sfx_20 16 151 1921
+	unknown_sfx_20 7 132 1920
+	unknown_sfx_20 11 150 1921
+	unknown_sfx_20 16 131 1921
 	end
 
 .SFX_Cry23_2_Ch7
-	unknown_noise_20 3 242 60
-	unknown_noise_20 13 230 44
-	unknown_noise_20 15 215 60
-	unknown_noise_20 8 193 44
+	unknown_noise_20 4 242 60
+	unknown_noise_20 14 230 44
+	unknown_noise_20 16 215 60
+	unknown_noise_20 9 193 44
 	end
 
 .SFX_Cry24_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1664
-	unknown_sfx_20 10 230 1668
-	unknown_sfx_20 15 215 1680
-	unknown_sfx_20 8 213 1680
-	unknown_sfx_20 6 196 1672
-	unknown_sfx_20 5 211 1648
-	unknown_sfx_20 4 211 1632
-	unknown_sfx_20 8 193 1600
+	unknown_sfx_20 16 247 1664
+	unknown_sfx_20 11 230 1668
+	unknown_sfx_20 16 215 1680
+	unknown_sfx_20 9 213 1680
+	unknown_sfx_20 7 196 1672
+	unknown_sfx_20 6 211 1648
+	unknown_sfx_20 5 211 1632
+	unknown_sfx_20 9 193 1600
 	end
 
 .SFX_Cry24_2_Ch5
 	dutycycle 5
-	unknown_sfx_20 15 183 1601
-	unknown_sfx_20 10 150 1602
-	unknown_sfx_20 15 167 1617
-	unknown_sfx_20 8 165 1617
-	unknown_sfx_20 6 148 1607
-	unknown_sfx_20 5 163 1585
-	unknown_sfx_20 4 147 1570
-	unknown_sfx_20 8 113 1537
+	unknown_sfx_20 16 183 1601
+	unknown_sfx_20 11 150 1602
+	unknown_sfx_20 16 167 1617
+	unknown_sfx_20 9 165 1617
+	unknown_sfx_20 7 148 1607
+	unknown_sfx_20 6 163 1585
+	unknown_sfx_20 5 147 1570
+	unknown_sfx_20 9 113 1537
 	end
 
 .SFX_Cry24_2_Ch7
-	unknown_noise_20 15 228 60
-	unknown_noise_20 10 199 76
-	unknown_noise_20 10 199 60
-	unknown_noise_20 12 183 76
-	unknown_noise_20 15 162 92
+	unknown_noise_20 16 228 60
+	unknown_noise_20 11 199 76
+	unknown_noise_20 11 199 60
+	unknown_noise_20 13 183 76
+	unknown_noise_20 16 162 92
 	end
 
 .SFX_Cry11_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1952
-	unknown_sfx_20 8 230 1956
-	unknown_sfx_20 4 214 1952
-	unknown_sfx_20 15 211 1824
-	unknown_sfx_20 8 195 1827
-	unknown_sfx_20 2 194 1832
-	unknown_sfx_20 8 177 1840
+	unknown_sfx_20 7 247 1952
+	unknown_sfx_20 9 230 1956
+	unknown_sfx_20 5 214 1952
+	unknown_sfx_20 16 211 1824
+	unknown_sfx_20 9 195 1827
+	unknown_sfx_20 3 194 1832
+	unknown_sfx_20 9 177 1840
 	end
 
 .SFX_Cry11_2_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 6 167 1857
-	unknown_sfx_20 8 134 1859
-	unknown_sfx_20 4 118 1857
-	unknown_sfx_20 13 131 1730
-	unknown_sfx_20 7 115 1729
-	unknown_sfx_20 3 130 1740
-	unknown_sfx_20 8 113 1752
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 7 167 1857
+	unknown_sfx_20 9 134 1859
+	unknown_sfx_20 5 118 1857
+	unknown_sfx_20 14 131 1730
+	unknown_sfx_20 8 115 1729
+	unknown_sfx_20 4 130 1740
+	unknown_sfx_20 9 113 1752
 	end
 
 .SFX_Cry11_2_Ch7
-	unknown_noise_20 2 242 76
-	unknown_noise_20 6 230 58
-	unknown_noise_20 4 215 58
-	unknown_noise_20 6 214 44
-	unknown_noise_20 8 229 60
-	unknown_noise_20 12 210 61
-	unknown_noise_20 8 209 44
+	unknown_noise_20 3 242 76
+	unknown_noise_20 7 230 58
+	unknown_noise_20 5 215 58
+	unknown_noise_20 7 214 44
+	unknown_noise_20 9 229 60
+	unknown_noise_20 13 210 61
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry25_2_Ch4
 	dutycycle 165
-	unknown_sfx_20 6 244 1856
-	unknown_sfx_20 15 227 1840
-	unknown_sfx_20 4 244 1856
-	unknown_sfx_20 5 179 1864
-	unknown_sfx_20 8 209 1872
+	unknown_sfx_20 7 244 1856
+	unknown_sfx_20 16 227 1840
+	unknown_sfx_20 5 244 1856
+	unknown_sfx_20 6 179 1864
+	unknown_sfx_20 9 209 1872
 	end
 
 .SFX_Cry25_2_Ch5
 	dutycycle 119
-	unknown_sfx_20 6 195 1810
-	unknown_sfx_20 15 179 1796
-	unknown_sfx_20 3 195 1810
-	unknown_sfx_20 4 195 1825
-	unknown_sfx_20 8 177 1842
+	unknown_sfx_20 7 195 1810
+	unknown_sfx_20 16 179 1796
+	unknown_sfx_20 4 195 1810
+	unknown_sfx_20 5 195 1825
+	unknown_sfx_20 9 177 1842
 	end
 
 .SFX_Cry25_2_Ch7
-	unknown_noise_20 8 214 44
-	unknown_noise_20 12 198 60
-	unknown_noise_20 10 182 44
-	unknown_noise_20 8 145 28
+	unknown_noise_20 9 214 44
+	unknown_noise_20 13 198 60
+	unknown_noise_20 11 182 44
+	unknown_noise_20 9 145 28
 	end
 
 .SFX_Cry03_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 247 1544
-	unknown_sfx_20 6 230 1536
-	unknown_sfx_20 6 215 1520
-	unknown_sfx_20 6 196 1504
-	unknown_sfx_20 5 211 1472
-	unknown_sfx_20 4 211 1440
-	unknown_sfx_20 8 225 1408
+	unknown_sfx_20 5 247 1544
+	unknown_sfx_20 7 230 1536
+	unknown_sfx_20 7 215 1520
+	unknown_sfx_20 7 196 1504
+	unknown_sfx_20 6 211 1472
+	unknown_sfx_20 5 211 1440
+	unknown_sfx_20 9 225 1408
 	end
 
 .SFX_Cry03_2_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 199 1284
-	unknown_sfx_20 6 166 1282
-	unknown_sfx_20 6 151 1265
-	unknown_sfx_20 4 180 1249
-	unknown_sfx_20 5 163 1218
-	unknown_sfx_20 4 179 1187
-	unknown_sfx_20 8 193 1154
+	unknown_sfx_20 5 199 1284
+	unknown_sfx_20 7 166 1282
+	unknown_sfx_20 7 151 1265
+	unknown_sfx_20 5 180 1249
+	unknown_sfx_20 6 163 1218
+	unknown_sfx_20 5 179 1187
+	unknown_sfx_20 9 193 1154
 	end
 
 .SFX_Cry03_2_Ch7
-	unknown_noise_20 12 228 76
-	unknown_noise_20 10 199 92
-	unknown_noise_20 12 182 76
-	unknown_noise_20 15 162 92
+	unknown_noise_20 13 228 76
+	unknown_noise_20 11 199 92
+	unknown_noise_20 13 182 76
+	unknown_noise_20 16 162 92
 	end
 
 .SFX_Cry0F_2_Ch4
 	dutycycle 241
-	unknown_sfx_20 4 247 1984
-	unknown_sfx_20 12 230 1986
-	unknown_sfx_20 6 181 1664
-	unknown_sfx_20 4 196 1648
-	unknown_sfx_20 4 181 1632
-	unknown_sfx_20 8 193 1600
+	unknown_sfx_20 5 247 1984
+	unknown_sfx_20 13 230 1986
+	unknown_sfx_20 7 181 1664
+	unknown_sfx_20 5 196 1648
+	unknown_sfx_20 5 181 1632
+	unknown_sfx_20 9 193 1600
 	end
 
 .SFX_Cry0F_2_Ch5
 	dutycycle 204
-	unknown_sfx_20 3 199 1921
-	unknown_sfx_20 12 182 1920
-	unknown_sfx_20 6 165 1601
-	unknown_sfx_20 4 196 1586
-	unknown_sfx_20 6 181 1569
-	unknown_sfx_20 8 161 1538
+	unknown_sfx_20 4 199 1921
+	unknown_sfx_20 13 182 1920
+	unknown_sfx_20 7 165 1601
+	unknown_sfx_20 5 196 1586
+	unknown_sfx_20 7 181 1569
+	unknown_sfx_20 9 161 1538
 	end
 
 .SFX_Cry0F_2_Ch7
-	unknown_noise_20 3 228 60
-	unknown_noise_20 12 214 44
 	unknown_noise_20 4 228 60
-	unknown_noise_20 8 183 92
-	unknown_noise_20 15 194 93
+	unknown_noise_20 13 214 44
+	unknown_noise_20 5 228 60
+	unknown_noise_20 9 183 92
+	unknown_noise_20 16 194 93
 	end
 
 .SFX_Cry10_2_Ch4
 	dutycycle 201
-	unknown_sfx_20 8 247 1664
-	unknown_sfx_20 2 247 1632
-	unknown_sfx_20 1 231 1600
-	unknown_sfx_20 1 231 1568
-	unknown_sfx_20 15 209 1536
-	unknown_sfx_20 4 199 1856
-	unknown_sfx_20 4 167 1840
-	unknown_sfx_20 15 145 1824
+	unknown_sfx_20 9 247 1664
+	unknown_sfx_20 3 247 1632
+	unknown_sfx_20 2 231 1600
+	unknown_sfx_20 2 231 1568
+	unknown_sfx_20 16 209 1536
+	unknown_sfx_20 5 199 1856
+	unknown_sfx_20 5 167 1840
+	unknown_sfx_20 16 145 1824
 	end
 
 .SFX_Cry10_2_Ch5
 	dutycycle 121
-	unknown_sfx_20 10 231 1666
-	unknown_sfx_20 2 231 1634
-	unknown_sfx_20 1 215 1602
-	unknown_sfx_20 1 215 1570
-	unknown_sfx_20 15 193 1538
-	unknown_sfx_20 4 183 1858
-	unknown_sfx_20 2 151 1842
-	unknown_sfx_20 15 129 1826
+	unknown_sfx_20 11 231 1666
+	unknown_sfx_20 3 231 1634
+	unknown_sfx_20 2 215 1602
+	unknown_sfx_20 2 215 1570
+	unknown_sfx_20 16 193 1538
+	unknown_sfx_20 5 183 1858
+	unknown_sfx_20 3 151 1842
+	unknown_sfx_20 16 129 1826
 	end
 
 .SFX_Cry10_2_Ch7
-	unknown_noise_20 4 116 33
-	unknown_noise_20 4 116 16
-	unknown_noise_20 4 113 32
+	unknown_noise_20 5 116 33
+	unknown_noise_20 5 116 16
+	unknown_noise_20 5 113 32
 	end
 
 .SFX_Cry00_2_Ch4
 	dutycycle 245
-	unknown_sfx_20 4 243 1816
-	unknown_sfx_20 15 229 1944
-	unknown_sfx_20 8 145 1880
+	unknown_sfx_20 5 243 1816
+	unknown_sfx_20 16 229 1944
+	unknown_sfx_20 9 145 1880
 	end
 
 .SFX_Cry00_2_Ch5
 	dutycycle 160
-	unknown_sfx_20 5 179 1800
-	unknown_sfx_20 15 197 1928
-	unknown_sfx_20 8 113 1864
+	unknown_sfx_20 6 179 1800
+	unknown_sfx_20 16 197 1928
+	unknown_sfx_20 9 113 1864
 	end
 
 .SFX_Cry00_2_Ch7
-	unknown_noise_20 3 161 28
-	unknown_noise_20 14 148 44
-	unknown_noise_20 8 129 28
+	unknown_noise_20 4 161 28
+	unknown_noise_20 15 148 44
+	unknown_noise_20 9 129 28
 	end
 
 .SFX_Cry0E_2_Ch4
 	dutycycle 165
-	unknown_sfx_20 4 225 1792
-	unknown_sfx_20 4 242 1920
-	unknown_sfx_20 2 146 1856
-	unknown_sfx_20 8 225 1536
+	unknown_sfx_20 5 225 1792
+	unknown_sfx_20 5 242 1920
+	unknown_sfx_20 3 146 1856
+	unknown_sfx_20 9 225 1536
 	end
 
 .SFX_Cry0E_2_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 177 1761
-	unknown_sfx_20 3 194 1761
-	unknown_sfx_20 3 98 1665
-	unknown_sfx_20 8 177 1505
+	unknown_sfx_20 5 177 1761
+	unknown_sfx_20 4 194 1761
+	unknown_sfx_20 4 98 1665
+	unknown_sfx_20 9 177 1505
 	end
 
 .SFX_Cry0E_2_Ch7
-	unknown_noise_20 2 97 50
-	unknown_noise_20 2 97 33
-	unknown_noise_20 8 97 17
+	unknown_noise_20 3 97 50
+	unknown_noise_20 3 97 33
+	unknown_noise_20 9 97 17
 	end
 
 .SFX_Cry06_2_Ch4
 	dutycycle 250
-	unknown_sfx_20 6 131 583
-	unknown_sfx_20 15 98 550
-	unknown_sfx_20 4 82 581
-	unknown_sfx_20 9 99 518
-	unknown_sfx_20 15 130 549
-	unknown_sfx_20 15 66 519
+	unknown_sfx_20 7 131 583
+	unknown_sfx_20 16 98 550
+	unknown_sfx_20 5 82 581
+	unknown_sfx_20 10 99 518
+	unknown_sfx_20 16 130 549
+	unknown_sfx_20 16 66 519
 	goto SFX_Cry06_2_Ch5
 
 .SFX_Cry06_2_Ch5
 	end
 
 .SFX_Cry06_2_Ch7
-	unknown_noise_20 8 212 140
-	unknown_noise_20 4 226 156
-	unknown_noise_20 15 198 140
-	unknown_noise_20 8 228 172
-	unknown_noise_20 15 215 156
-	unknown_noise_20 15 242 172
+	unknown_noise_20 9 212 140
+	unknown_noise_20 5 226 156
+	unknown_noise_20 16 198 140
+	unknown_noise_20 9 228 172
+	unknown_noise_20 16 215 156
+	unknown_noise_20 16 242 172
 	end
 
 .SFX_Cry07_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 243 1760
-	unknown_sfx_20 15 228 1600
-	unknown_sfx_20 8 193 1568
+	unknown_sfx_20 5 243 1760
+	unknown_sfx_20 16 228 1600
+	unknown_sfx_20 9 193 1568
 	end
 
 .SFX_Cry07_2_Ch5
 	dutycycle 10
-	unknown_sfx_20 3 195 1667
-	unknown_sfx_20 14 180 1538
-	unknown_sfx_20 8 161 1537
+	unknown_sfx_20 4 195 1667
+	unknown_sfx_20 15 180 1538
+	unknown_sfx_20 9 161 1537
 	end
 
 .SFX_Cry07_2_Ch7
-	unknown_noise_20 4 211 92
-	unknown_noise_20 15 230 76
-	unknown_noise_20 8 177 92
+	unknown_noise_20 5 211 92
+	unknown_noise_20 16 230 76
+	unknown_noise_20 9 177 92
 	end
 
 .SFX_Cry05_2_Ch4
 	dutycycle 10
-	unknown_sfx_20 6 226 1280
-	unknown_sfx_20 6 227 1408
-	unknown_sfx_20 6 211 1392
-	unknown_sfx_20 8 161 1376
+	unknown_sfx_20 7 226 1280
+	unknown_sfx_20 7 227 1408
+	unknown_sfx_20 7 211 1392
+	unknown_sfx_20 9 161 1376
 	end
 
 .SFX_Cry05_2_Ch5
 	dutycycle 245
-	unknown_sfx_20 6 226 1154
-	unknown_sfx_20 6 211 1281
-	unknown_sfx_20 6 178 1250
-	unknown_sfx_20 8 129 1217
+	unknown_sfx_20 7 226 1154
+	unknown_sfx_20 7 211 1281
+	unknown_sfx_20 7 178 1250
+	unknown_sfx_20 9 129 1217
 	goto SFX_Cry05_2_Ch7
 
 .SFX_Cry05_2_Ch7
@@ -2672,64 +2672,64 @@
 
 .SFX_Cry0B_2_Ch4
 	dutycycle 204
-	unknown_sfx_20 4 241 1792
-	unknown_sfx_20 4 225 1920
-	unknown_sfx_20 4 209 1856
-	unknown_sfx_20 4 225 1856
-	unknown_sfx_20 4 241 1920
-	unknown_sfx_20 4 209 1792
-	unknown_sfx_20 4 241 1793
-	unknown_sfx_20 4 209 1922
-	unknown_sfx_20 4 193 1858
-	unknown_sfx_20 8 177 1857
+	unknown_sfx_20 5 241 1792
+	unknown_sfx_20 5 225 1920
+	unknown_sfx_20 5 209 1856
+	unknown_sfx_20 5 225 1856
+	unknown_sfx_20 5 241 1920
+	unknown_sfx_20 5 209 1792
+	unknown_sfx_20 5 241 1793
+	unknown_sfx_20 5 209 1922
+	unknown_sfx_20 5 193 1858
+	unknown_sfx_20 9 177 1857
 	end
 
 .SFX_Cry0B_2_Ch5
 	dutycycle 68
-	unknown_sfx_20 12 8 0
-	unknown_sfx_20 4 241 1793
-	unknown_sfx_20 4 225 1922
-	unknown_sfx_20 4 209 1857
-	unknown_sfx_20 4 225 1857
-	unknown_sfx_20 4 241 1922
-	unknown_sfx_20 8 209 1793
+	unknown_sfx_20 13 8 0
+	unknown_sfx_20 5 241 1793
+	unknown_sfx_20 5 225 1922
+	unknown_sfx_20 5 209 1857
+	unknown_sfx_20 5 225 1857
+	unknown_sfx_20 5 241 1922
+	unknown_sfx_20 9 209 1793
 	end
 
 .SFX_Cry0B_2_Ch7
-	unknown_noise_20 15 8 0
-	unknown_noise_20 4 8 0
-	unknown_noise_20 4 209 76
-	unknown_noise_20 4 177 44
-	unknown_noise_20 4 209 60
-	unknown_noise_20 4 177 60
-	unknown_noise_20 4 193 44
-	unknown_noise_20 8 161 76
+	unknown_noise_20 16 8 0
+	unknown_noise_20 5 8 0
+	unknown_noise_20 5 209 76
+	unknown_noise_20 5 177 44
+	unknown_noise_20 5 209 60
+	unknown_noise_20 5 177 60
+	unknown_noise_20 5 193 44
+	unknown_noise_20 9 161 76
 	end
 
 .SFX_Cry0C_2_Ch4
 	dutycycle 204
-	unknown_sfx_20 8 245 1536
-	unknown_sfx_20 2 210 1592
-	unknown_sfx_20 2 194 1584
-	unknown_sfx_20 2 194 1576
-	unknown_sfx_20 2 178 1568
-	unknown_sfx_20 2 178 1552
-	unknown_sfx_20 2 162 1560
-	unknown_sfx_20 2 178 1552
-	unknown_sfx_20 8 193 1568
+	unknown_sfx_20 9 245 1536
+	unknown_sfx_20 3 210 1592
+	unknown_sfx_20 3 194 1584
+	unknown_sfx_20 3 194 1576
+	unknown_sfx_20 3 178 1568
+	unknown_sfx_20 3 178 1552
+	unknown_sfx_20 3 162 1560
+	unknown_sfx_20 3 178 1552
+	unknown_sfx_20 9 193 1568
 	end
 
 .SFX_Cry0C_2_Ch5
 	dutycycle 68
-	unknown_sfx_20 12 195 1472
-	unknown_sfx_20 3 177 1529
-	unknown_sfx_20 2 161 1521
-	unknown_sfx_20 2 161 1513
-	unknown_sfx_20 2 145 1505
-	unknown_sfx_20 2 145 1497
-	unknown_sfx_20 2 129 1489
-	unknown_sfx_20 2 145 1497
-	unknown_sfx_20 8 145 1505
+	unknown_sfx_20 13 195 1472
+	unknown_sfx_20 4 177 1529
+	unknown_sfx_20 3 161 1521
+	unknown_sfx_20 3 161 1513
+	unknown_sfx_20 3 145 1505
+	unknown_sfx_20 3 145 1497
+	unknown_sfx_20 3 129 1489
+	unknown_sfx_20 3 145 1497
+	unknown_sfx_20 9 145 1505
 	goto SFX_Cry0C_2_Ch7
 
 .SFX_Cry0C_2_Ch7
@@ -2737,16 +2737,16 @@
 
 .SFX_Cry02_2_Ch4
 	duty 0
-	unknown_sfx_20 8 245 1152
-	unknown_sfx_20 2 225 1504
-	unknown_sfx_20 8 209 1500
+	unknown_sfx_20 9 245 1152
+	unknown_sfx_20 3 225 1504
+	unknown_sfx_20 9 209 1500
 	end
 
 .SFX_Cry02_2_Ch5
 	dutycycle 165
-	unknown_sfx_20 7 149 1089
-	unknown_sfx_20 2 129 1313
-	unknown_sfx_20 8 97 1306
+	unknown_sfx_20 8 149 1089
+	unknown_sfx_20 3 129 1313
+	unknown_sfx_20 9 97 1306
 	goto SFX_Cry02_2_Ch7
 
 .SFX_Cry02_2_Ch7
@@ -2754,166 +2754,166 @@
 
 .SFX_Cry0D_2_Ch4
 	dutycycle 136
-	unknown_sfx_20 5 242 1616
-	unknown_sfx_20 9 209 1632
-	unknown_sfx_20 5 226 1554
-	unknown_sfx_20 9 193 1570
-	unknown_sfx_20 5 242 1552
-	unknown_sfx_20 6 209 1568
+	unknown_sfx_20 6 242 1616
+	unknown_sfx_20 10 209 1632
+	unknown_sfx_20 6 226 1554
+	unknown_sfx_20 10 193 1570
+	unknown_sfx_20 6 242 1552
+	unknown_sfx_20 7 209 1568
 	loop 2 SFX_Cry0D_2_Ch4
 	end
 
 .SFX_Cry0D_2_Ch5
 	dutycycle 64
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 5 242 1617
-	unknown_sfx_20 9 209 1633
-	unknown_sfx_20 5 226 1556
-	unknown_sfx_20 8 193 1572
-	unknown_sfx_20 5 242 1553
-	unknown_sfx_20 12 209 1569
-	unknown_sfx_20 5 226 1556
-	unknown_sfx_20 8 193 1572
-	unknown_sfx_20 5 242 1553
-	unknown_sfx_20 4 209 1569
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 6 242 1617
+	unknown_sfx_20 10 209 1633
+	unknown_sfx_20 6 226 1556
+	unknown_sfx_20 9 193 1572
+	unknown_sfx_20 6 242 1553
+	unknown_sfx_20 13 209 1569
+	unknown_sfx_20 6 226 1556
+	unknown_sfx_20 9 193 1572
+	unknown_sfx_20 6 242 1553
+	unknown_sfx_20 5 209 1569
 	end
 
 .SFX_Cry0D_2_Ch7
-	unknown_noise_20 6 210 28
-	unknown_noise_20 9 177 44
-	unknown_noise_20 8 194 44
-	unknown_noise_20 9 177 60
-	unknown_noise_20 6 194 44
-	unknown_noise_20 9 162 60
-	unknown_noise_20 7 194 44
-	unknown_noise_20 5 161 60
+	unknown_noise_20 7 210 28
+	unknown_noise_20 10 177 44
 	unknown_noise_20 9 194 44
-	unknown_noise_20 4 161 60
+	unknown_noise_20 10 177 60
+	unknown_noise_20 7 194 44
+	unknown_noise_20 10 162 60
+	unknown_noise_20 8 194 44
+	unknown_noise_20 6 161 60
+	unknown_noise_20 10 194 44
+	unknown_noise_20 5 161 60
 	end
 
 .SFX_Cry01_2_Ch4
 	dutycycle 160
-	unknown_sfx_20 4 243 1536
-	unknown_sfx_20 8 213 1888
-	unknown_sfx_20 3 226 1824
-	unknown_sfx_20 8 209 1808
+	unknown_sfx_20 5 243 1536
+	unknown_sfx_20 9 213 1888
+	unknown_sfx_20 4 226 1824
+	unknown_sfx_20 9 209 1808
 	end
 
 .SFX_Cry01_2_Ch5
 	dutycycle 90
-	unknown_sfx_20 5 179 1777
-	unknown_sfx_20 7 197 1874
-	unknown_sfx_20 3 162 1809
-	unknown_sfx_20 8 177 1537
+	unknown_sfx_20 6 179 1777
+	unknown_sfx_20 8 197 1874
+	unknown_sfx_20 4 162 1809
+	unknown_sfx_20 9 177 1537
 	end
 
 .SFX_Cry01_2_Ch7
-	unknown_noise_20 3 162 60
-	unknown_noise_20 12 148 44
-	unknown_noise_20 3 130 28
-	unknown_noise_20 8 113 44
+	unknown_noise_20 4 162 60
+	unknown_noise_20 13 148 44
+	unknown_noise_20 4 130 28
+	unknown_noise_20 9 113 44
 	end
 
 .SFX_Cry0A_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 8 247 1760
-	unknown_sfx_20 6 230 1765
-	unknown_sfx_20 3 244 1760
-	unknown_sfx_20 3 246 1744
-	unknown_sfx_20 3 227 1728
-	unknown_sfx_20 4 242 1712
-	unknown_sfx_20 15 162 1736
+	unknown_sfx_20 9 247 1760
+	unknown_sfx_20 7 230 1765
+	unknown_sfx_20 4 244 1760
+	unknown_sfx_20 4 246 1744
+	unknown_sfx_20 4 227 1728
+	unknown_sfx_20 5 242 1712
+	unknown_sfx_20 16 162 1736
 	end
 
 .SFX_Cry0A_2_Ch5
 	dutycycle 5
-	unknown_sfx_20 3 8 0
-	unknown_sfx_20 8 167 1697
-	unknown_sfx_20 6 134 1699
-	unknown_sfx_20 3 116 1697
-	unknown_sfx_20 3 118 1681
-	unknown_sfx_20 3 131 1666
-	unknown_sfx_20 4 162 1649
-	unknown_sfx_20 15 114 1673
+	unknown_sfx_20 4 8 0
+	unknown_sfx_20 9 167 1697
+	unknown_sfx_20 7 134 1699
+	unknown_sfx_20 4 116 1697
+	unknown_sfx_20 4 118 1681
+	unknown_sfx_20 4 131 1666
+	unknown_sfx_20 5 162 1649
+	unknown_sfx_20 16 114 1673
 	end
 
 .SFX_Cry0A_2_Ch7
-	unknown_noise_20 2 242 60
-	unknown_noise_20 8 228 62
-	unknown_noise_20 8 215 60
-	unknown_noise_20 5 197 59
-	unknown_noise_20 3 212 44
-	unknown_noise_20 2 182 60
-	unknown_noise_20 3 164 44
-	unknown_noise_20 8 145 60
+	unknown_noise_20 3 242 60
+	unknown_noise_20 9 228 62
+	unknown_noise_20 9 215 60
+	unknown_noise_20 6 197 59
+	unknown_noise_20 4 212 44
+	unknown_noise_20 3 182 60
+	unknown_noise_20 4 164 44
+	unknown_noise_20 9 145 60
 	end
 
 .SFX_Cry08_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 246 1381
-	unknown_sfx_20 10 228 1404
-	unknown_sfx_20 3 194 1372
-	unknown_sfx_20 15 178 1340
+	unknown_sfx_20 16 246 1381
+	unknown_sfx_20 11 228 1404
+	unknown_sfx_20 4 194 1372
+	unknown_sfx_20 16 178 1340
 	end
 
 .SFX_Cry08_2_Ch5
 	dutycycle 90
-	unknown_sfx_20 14 214 1283
-	unknown_sfx_20 9 180 1307
-	unknown_sfx_20 4 146 1274
-	unknown_sfx_20 15 162 1243
+	unknown_sfx_20 15 214 1283
+	unknown_sfx_20 10 180 1307
+	unknown_sfx_20 5 146 1274
+	unknown_sfx_20 16 162 1243
 	end
 
 .SFX_Cry08_2_Ch7
-	unknown_noise_20 12 230 76
-	unknown_noise_20 11 215 92
-	unknown_noise_20 15 194 76
+	unknown_noise_20 13 230 76
+	unknown_noise_20 12 215 92
+	unknown_noise_20 16 194 76
 	end
 
 .SFX_Cry04_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 247 1696
-	unknown_sfx_20 8 230 1700
-	unknown_sfx_20 4 214 1696
-	unknown_sfx_20 12 211 1568
-	unknown_sfx_20 8 195 1572
-	unknown_sfx_20 4 194 1568
-	unknown_sfx_20 8 177 1552
+	unknown_sfx_20 5 247 1696
+	unknown_sfx_20 9 230 1700
+	unknown_sfx_20 5 214 1696
+	unknown_sfx_20 13 211 1568
+	unknown_sfx_20 9 195 1572
+	unknown_sfx_20 5 194 1568
+	unknown_sfx_20 9 177 1552
 	end
 
 .SFX_Cry04_2_Ch5
 	dutycycle 90
-	unknown_sfx_20 4 231 1537
-	unknown_sfx_20 8 214 1539
-	unknown_sfx_20 4 198 1537
-	unknown_sfx_20 12 195 1409
-	unknown_sfx_20 8 179 1411
-	unknown_sfx_20 4 178 1410
-	unknown_sfx_20 8 161 1393
+	unknown_sfx_20 5 231 1537
+	unknown_sfx_20 9 214 1539
+	unknown_sfx_20 5 198 1537
+	unknown_sfx_20 13 195 1409
+	unknown_sfx_20 9 179 1411
+	unknown_sfx_20 5 178 1410
+	unknown_sfx_20 9 161 1393
 	end
 
 .SFX_Cry04_2_Ch7
-	unknown_noise_20 7 214 92
-	unknown_noise_20 8 230 76
-	unknown_noise_20 4 212 92
-	unknown_noise_20 4 212 76
-	unknown_noise_20 7 195 76
-	unknown_noise_20 8 161 92
+	unknown_noise_20 8 214 92
+	unknown_noise_20 9 230 76
+	unknown_noise_20 5 212 92
+	unknown_noise_20 5 212 76
+	unknown_noise_20 8 195 76
+	unknown_noise_20 9 161 92
 	end
 
 .SFX_Cry19_2_Ch4
 	dutycycle 27
-	unknown_sfx_20 7 210 1856
-	unknown_sfx_20 15 229 1888
-	unknown_sfx_20 15 193 1840
+	unknown_sfx_20 8 210 1856
+	unknown_sfx_20 16 229 1888
+	unknown_sfx_20 16 193 1840
 	end
 
 .SFX_Cry19_2_Ch5
 	dutycycle 129
-	unknown_sfx_20 2 194 1793
-	unknown_sfx_20 4 194 1800
-	unknown_sfx_20 15 215 1857
-	unknown_sfx_20 15 162 1793
+	unknown_sfx_20 3 194 1793
+	unknown_sfx_20 5 194 1800
+	unknown_sfx_20 16 215 1857
+	unknown_sfx_20 16 162 1793
 	goto SFX_Cry19_2_Ch7
 
 .SFX_Cry19_2_Ch7
@@ -2921,398 +2921,398 @@
 
 .SFX_Cry16_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 215 1920
-	unknown_sfx_20 4 230 1952
-	unknown_sfx_20 15 210 1856
+	unknown_sfx_20 16 215 1920
+	unknown_sfx_20 5 230 1952
+	unknown_sfx_20 16 210 1856
 	end
 
 .SFX_Cry16_2_Ch5
 	dutycycle 90
-	unknown_sfx_20 15 199 1875
-	unknown_sfx_20 5 182 1906
-	unknown_sfx_20 15 194 1809
+	unknown_sfx_20 16 199 1875
+	unknown_sfx_20 6 182 1906
+	unknown_sfx_20 16 194 1809
 	end
 
 .SFX_Cry16_2_Ch7
-	unknown_noise_20 13 246 76
-	unknown_noise_20 4 230 60
-	unknown_noise_20 15 242 76
+	unknown_noise_20 14 246 76
+	unknown_noise_20 5 230 60
+	unknown_noise_20 16 242 76
 	end
 
 .SFX_Cry1B_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1728
-	unknown_sfx_20 15 231 1792
-	unknown_sfx_20 4 244 1776
-	unknown_sfx_20 4 228 1760
-	unknown_sfx_20 8 209 1744
+	unknown_sfx_20 7 247 1728
+	unknown_sfx_20 16 231 1792
+	unknown_sfx_20 5 244 1776
+	unknown_sfx_20 5 228 1760
+	unknown_sfx_20 9 209 1744
 	end
 
 .SFX_Cry1B_2_Ch5
 	dutycycle 10
-	unknown_sfx_20 7 230 1665
-	unknown_sfx_20 14 213 1729
-	unknown_sfx_20 4 196 1713
-	unknown_sfx_20 4 212 1697
-	unknown_sfx_20 8 193 1681
+	unknown_sfx_20 8 230 1665
+	unknown_sfx_20 15 213 1729
+	unknown_sfx_20 5 196 1713
+	unknown_sfx_20 5 212 1697
+	unknown_sfx_20 9 193 1681
 	end
 
 .SFX_Cry1B_2_Ch7
-	unknown_noise_20 10 166 60
-	unknown_noise_20 14 148 44
-	unknown_noise_20 5 163 60
-	unknown_noise_20 8 145 44
+	unknown_noise_20 11 166 60
+	unknown_noise_20 15 148 44
+	unknown_noise_20 6 163 60
+	unknown_noise_20 9 145 44
 	end
 
 .SFX_Cry12_2_Ch4
 	dutycycle 165
-	unknown_sfx_20 12 242 1088
-	unknown_sfx_20 15 227 1184
-	unknown_sfx_20 4 210 1168
-	unknown_sfx_20 8 209 1152
+	unknown_sfx_20 13 242 1088
+	unknown_sfx_20 16 227 1184
+	unknown_sfx_20 5 210 1168
+	unknown_sfx_20 9 209 1152
 	end
 
 .SFX_Cry12_2_Ch5
 	dutycycle 238
-	unknown_sfx_20 11 210 1080
-	unknown_sfx_20 14 198 1176
-	unknown_sfx_20 3 178 1160
-	unknown_sfx_20 8 177 1144
+	unknown_sfx_20 12 210 1080
+	unknown_sfx_20 15 198 1176
+	unknown_sfx_20 4 178 1160
+	unknown_sfx_20 9 177 1144
 	end
 
 .SFX_Cry12_2_Ch7
-	unknown_noise_20 10 230 108
-	unknown_noise_20 15 210 92
-	unknown_noise_20 3 194 108
-	unknown_noise_20 8 209 92
+	unknown_noise_20 11 230 108
+	unknown_noise_20 16 210 92
+	unknown_noise_20 4 194 108
+	unknown_noise_20 9 209 92
 	end
 
 .SFX_Cry13_2_Ch4
 	dutycycle 51
-	unknown_sfx_20 15 246 1472
-	unknown_sfx_20 8 227 1468
-	unknown_sfx_20 6 210 1488
-	unknown_sfx_20 6 178 1504
-	unknown_sfx_20 6 194 1520
-	unknown_sfx_20 8 177 1536
+	unknown_sfx_20 16 246 1472
+	unknown_sfx_20 9 227 1468
+	unknown_sfx_20 7 210 1488
+	unknown_sfx_20 7 178 1504
+	unknown_sfx_20 7 194 1520
+	unknown_sfx_20 9 177 1536
 	end
 
 .SFX_Cry13_2_Ch5
 	dutycycle 153
-	unknown_sfx_20 14 198 1201
-	unknown_sfx_20 7 195 1197
-	unknown_sfx_20 5 178 1217
-	unknown_sfx_20 8 146 1233
-	unknown_sfx_20 6 162 1249
-	unknown_sfx_20 8 145 1265
+	unknown_sfx_20 15 198 1201
+	unknown_sfx_20 8 195 1197
+	unknown_sfx_20 6 178 1217
+	unknown_sfx_20 9 146 1233
+	unknown_sfx_20 7 162 1249
+	unknown_sfx_20 9 145 1265
 	end
 
 .SFX_Cry13_2_Ch7
-	unknown_noise_20 10 230 92
-	unknown_noise_20 10 214 108
-	unknown_noise_20 4 194 76
-	unknown_noise_20 6 211 92
-	unknown_noise_20 8 179 76
-	unknown_noise_20 8 161 92
+	unknown_noise_20 11 230 92
+	unknown_noise_20 11 214 108
+	unknown_noise_20 5 194 76
+	unknown_noise_20 7 211 92
+	unknown_noise_20 9 179 76
+	unknown_noise_20 9 161 92
 	end
 
 .SFX_Cry14_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 8 228 1936
-	unknown_sfx_20 15 245 1984
-	unknown_sfx_20 8 209 2008
+	unknown_sfx_20 9 228 1936
+	unknown_sfx_20 16 245 1984
+	unknown_sfx_20 9 209 2008
 	end
 
 .SFX_Cry14_2_Ch5
 	dutycycle 165
-	unknown_sfx_20 10 196 1905
-	unknown_sfx_20 15 182 1954
-	unknown_sfx_20 8 161 1975
+	unknown_sfx_20 11 196 1905
+	unknown_sfx_20 16 182 1954
+	unknown_sfx_20 9 161 1975
 	end
 
 .SFX_Cry14_2_Ch7
-	unknown_noise_20 8 228 76
-	unknown_noise_20 14 196 60
-	unknown_noise_20 8 209 44
+	unknown_noise_20 9 228 76
+	unknown_noise_20 15 196 60
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry1E_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 242 1536
-	unknown_sfx_20 6 226 1600
-	unknown_sfx_20 6 210 1664
-	unknown_sfx_20 6 226 1728
-	unknown_sfx_20 6 210 1792
-	unknown_sfx_20 6 194 1856
-	unknown_sfx_20 6 178 1920
-	unknown_sfx_20 8 161 1984
+	unknown_sfx_20 7 242 1536
+	unknown_sfx_20 7 226 1600
+	unknown_sfx_20 7 210 1664
+	unknown_sfx_20 7 226 1728
+	unknown_sfx_20 7 210 1792
+	unknown_sfx_20 7 194 1856
+	unknown_sfx_20 7 178 1920
+	unknown_sfx_20 9 161 1984
 	end
 
 .SFX_Cry1E_2_Ch5
 	dutycycle 17
-	unknown_sfx_20 3 8 1
-	unknown_sfx_20 6 194 1473
-	unknown_sfx_20 6 178 1538
-	unknown_sfx_20 6 162 1601
-	unknown_sfx_20 6 178 1666
-	unknown_sfx_20 6 162 1730
-	unknown_sfx_20 6 146 1793
-	unknown_sfx_20 6 162 1858
-	unknown_sfx_20 8 129 1921
+	unknown_sfx_20 4 8 1
+	unknown_sfx_20 7 194 1473
+	unknown_sfx_20 7 178 1538
+	unknown_sfx_20 7 162 1601
+	unknown_sfx_20 7 178 1666
+	unknown_sfx_20 7 162 1730
+	unknown_sfx_20 7 146 1793
+	unknown_sfx_20 7 162 1858
+	unknown_sfx_20 9 129 1921
 	end
 
 .SFX_Cry1E_2_Ch7
-	unknown_noise_20 6 8 1
-	unknown_noise_20 5 226 92
-	unknown_noise_20 5 194 76
-	unknown_noise_20 5 210 60
-	unknown_noise_20 5 178 44
-	unknown_noise_20 5 194 28
-	unknown_noise_20 5 162 27
-	unknown_noise_20 5 146 26
-	unknown_noise_20 8 129 24
+	unknown_noise_20 7 8 1
+	unknown_noise_20 6 226 92
+	unknown_noise_20 6 194 76
+	unknown_noise_20 6 210 60
+	unknown_noise_20 6 178 44
+	unknown_noise_20 6 194 28
+	unknown_noise_20 6 162 27
+	unknown_noise_20 6 146 26
+	unknown_noise_20 9 129 24
 	end
 
 .SFX_Cry15_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 243 1920
-	unknown_sfx_20 15 231 1792
-	unknown_sfx_20 8 211 1808
-	unknown_sfx_20 4 194 1792
-	unknown_sfx_20 4 210 1776
-	unknown_sfx_20 8 193 1760
+	unknown_sfx_20 5 243 1920
+	unknown_sfx_20 16 231 1792
+	unknown_sfx_20 9 211 1808
+	unknown_sfx_20 5 194 1792
+	unknown_sfx_20 5 210 1776
+	unknown_sfx_20 9 193 1760
 	end
 
 .SFX_Cry15_2_Ch5
 	dutycycle 90
-	unknown_sfx_20 6 195 1793
-	unknown_sfx_20 14 183 1665
-	unknown_sfx_20 7 179 1682
-	unknown_sfx_20 3 162 1665
-	unknown_sfx_20 4 178 1650
-	unknown_sfx_20 8 161 1633
+	unknown_sfx_20 7 195 1793
+	unknown_sfx_20 15 183 1665
+	unknown_sfx_20 8 179 1682
+	unknown_sfx_20 4 162 1665
+	unknown_sfx_20 5 178 1650
+	unknown_sfx_20 9 161 1633
 	end
 
 .SFX_Cry15_2_Ch7
-	unknown_noise_20 6 227 92
-	unknown_noise_20 14 214 76
-	unknown_noise_20 6 198 60
-	unknown_noise_20 3 179 76
-	unknown_noise_20 3 162 92
-	unknown_noise_20 8 177 108
+	unknown_noise_20 7 227 92
+	unknown_noise_20 15 214 76
+	unknown_noise_20 7 198 60
+	unknown_noise_20 4 179 76
+	unknown_noise_20 4 162 92
+	unknown_noise_20 9 177 108
 	end
 
 .SFX_Cry17_2_Ch4
 	dutycycle 15
-	unknown_sfx_20 15 247 1280
-	unknown_sfx_20 15 231 1288
-	unknown_sfx_20 8 180 1152
-	unknown_sfx_20 15 162 1120
+	unknown_sfx_20 16 247 1280
+	unknown_sfx_20 16 231 1288
+	unknown_sfx_20 9 180 1152
+	unknown_sfx_20 16 162 1120
 	end
 
 .SFX_Cry17_2_Ch5
 	dutycycle 68
-	unknown_sfx_20 14 215 1153
-	unknown_sfx_20 14 199 1161
-	unknown_sfx_20 10 180 1025
-	unknown_sfx_20 15 194 993
+	unknown_sfx_20 15 215 1153
+	unknown_sfx_20 15 199 1161
+	unknown_sfx_20 11 180 1025
+	unknown_sfx_20 16 194 993
 	end
 
 .SFX_Cry17_2_Ch7
-	unknown_noise_20 14 247 124
-	unknown_noise_20 12 246 108
-	unknown_noise_20 9 228 124
-	unknown_noise_20 15 226 108
+	unknown_noise_20 15 247 124
+	unknown_noise_20 13 246 108
+	unknown_noise_20 10 228 124
+	unknown_noise_20 16 226 108
 	end
 
 .SFX_Cry1C_2_Ch4
 	dutycycle 245
-	unknown_sfx_20 7 214 2017
-	unknown_sfx_20 6 198 2018
-	unknown_sfx_20 9 214 2017
-	unknown_sfx_20 7 198 2016
-	unknown_sfx_20 5 182 2018
-	unknown_sfx_20 7 198 2017
-	unknown_sfx_20 6 182 2016
-	unknown_sfx_20 8 161 2015
+	unknown_sfx_20 8 214 2017
+	unknown_sfx_20 7 198 2018
+	unknown_sfx_20 10 214 2017
+	unknown_sfx_20 8 198 2016
+	unknown_sfx_20 6 182 2018
+	unknown_sfx_20 8 198 2017
+	unknown_sfx_20 7 182 2016
+	unknown_sfx_20 9 161 2015
 	end
 
 .SFX_Cry1C_2_Ch5
 	dutycycle 68
-	unknown_sfx_20 6 195 1993
-	unknown_sfx_20 6 179 1991
-	unknown_sfx_20 10 196 1987
-	unknown_sfx_20 8 180 1991
-	unknown_sfx_20 6 195 1993
-	unknown_sfx_20 15 162 1989
+	unknown_sfx_20 7 195 1993
+	unknown_sfx_20 7 179 1991
+	unknown_sfx_20 11 196 1987
+	unknown_sfx_20 9 180 1991
+	unknown_sfx_20 7 195 1993
+	unknown_sfx_20 16 162 1989
 	end
 
 .SFX_Cry1C_2_Ch7
-	unknown_noise_20 13 25 124
-	unknown_noise_20 13 247 140
-	unknown_noise_20 12 214 124
-	unknown_noise_20 8 196 108
-	unknown_noise_20 15 179 92
+	unknown_noise_20 14 25 124
+	unknown_noise_20 14 247 140
+	unknown_noise_20 13 214 124
+	unknown_noise_20 9 196 108
+	unknown_noise_20 16 179 92
 	end
 
 .SFX_Cry1A_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1856
-	unknown_sfx_20 12 230 1860
-	unknown_sfx_20 6 213 1872
-	unknown_sfx_20 4 195 1888
-	unknown_sfx_20 3 195 1920
-	unknown_sfx_20 8 209 1952
+	unknown_sfx_20 7 247 1856
+	unknown_sfx_20 13 230 1860
+	unknown_sfx_20 7 213 1872
+	unknown_sfx_20 5 195 1888
+	unknown_sfx_20 4 195 1920
+	unknown_sfx_20 9 209 1952
 	end
 
 .SFX_Cry1A_2_Ch5
 	dutycycle 10
-	unknown_sfx_20 6 199 1793
-	unknown_sfx_20 11 182 1794
-	unknown_sfx_20 6 165 1809
-	unknown_sfx_20 4 147 1825
-	unknown_sfx_20 3 163 1857
-	unknown_sfx_20 8 145 1890
+	unknown_sfx_20 7 199 1793
+	unknown_sfx_20 12 182 1794
+	unknown_sfx_20 7 165 1809
+	unknown_sfx_20 5 147 1825
+	unknown_sfx_20 4 163 1857
+	unknown_sfx_20 9 145 1890
 	end
 
 .SFX_Cry1A_2_Ch7
+	unknown_noise_20 4 226 60
+	unknown_noise_20 9 214 76
+	unknown_noise_20 6 212 60
+	unknown_noise_20 13 199 76
 	unknown_noise_20 3 226 60
-	unknown_noise_20 8 214 76
-	unknown_noise_20 5 212 60
-	unknown_noise_20 12 199 76
-	unknown_noise_20 2 226 60
-	unknown_noise_20 8 209 44
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry1D_2_Ch4
 	dutycycle 244
-	unknown_sfx_20 15 240 1797
-	unknown_sfx_20 10 224 1792
-	unknown_sfx_20 6 180 1808
-	unknown_sfx_20 4 211 1792
-	unknown_sfx_20 6 178 1568
-	unknown_sfx_20 8 161 1572
+	unknown_sfx_20 16 240 1797
+	unknown_sfx_20 11 224 1792
+	unknown_sfx_20 7 180 1808
+	unknown_sfx_20 5 211 1792
+	unknown_sfx_20 7 178 1568
+	unknown_sfx_20 9 161 1572
 	end
 
 .SFX_Cry1D_2_Ch5
 	dutycycle 34
-	unknown_sfx_20 15 176 1731
-	unknown_sfx_20 10 160 1729
-	unknown_sfx_20 6 132 1746
-	unknown_sfx_20 4 147 1729
-	unknown_sfx_20 6 130 1505
-	unknown_sfx_20 8 97 1512
+	unknown_sfx_20 16 176 1731
+	unknown_sfx_20 11 160 1729
+	unknown_sfx_20 7 132 1746
+	unknown_sfx_20 5 147 1729
+	unknown_sfx_20 7 130 1505
+	unknown_sfx_20 9 97 1512
 	end
 
 .SFX_Cry1D_2_Ch7
-	unknown_noise_20 6 230 76
-	unknown_noise_20 15 214 60
-	unknown_noise_20 10 197 74
-	unknown_noise_20 1 178 91
-	unknown_noise_20 15 194 76
+	unknown_noise_20 7 230 76
+	unknown_noise_20 16 214 60
+	unknown_noise_20 11 197 74
+	unknown_noise_20 2 178 91
+	unknown_noise_20 16 194 76
 	end
 
 .SFX_Cry18_2_Ch4
 	dutycycle 80
-	unknown_sfx_20 10 245 1664
-	unknown_sfx_20 3 226 1696
-	unknown_sfx_20 3 242 1728
-	unknown_sfx_20 3 226 1760
-	unknown_sfx_20 3 210 1792
-	unknown_sfx_20 3 194 1760
-	unknown_sfx_20 3 210 1728
-	unknown_sfx_20 8 193 1696
+	unknown_sfx_20 11 245 1664
+	unknown_sfx_20 4 226 1696
+	unknown_sfx_20 4 242 1728
+	unknown_sfx_20 4 226 1760
+	unknown_sfx_20 4 210 1792
+	unknown_sfx_20 4 194 1760
+	unknown_sfx_20 4 210 1728
+	unknown_sfx_20 9 193 1696
 	end
 
 .SFX_Cry18_2_Ch5
 	dutycycle 15
-	unknown_sfx_20 9 213 1585
-	unknown_sfx_20 3 210 1618
-	unknown_sfx_20 3 226 1649
-	unknown_sfx_20 3 178 1681
-	unknown_sfx_20 3 194 1714
-	unknown_sfx_20 3 178 1681
-	unknown_sfx_20 3 194 1649
-	unknown_sfx_20 8 177 1617
+	unknown_sfx_20 10 213 1585
+	unknown_sfx_20 4 210 1618
+	unknown_sfx_20 4 226 1649
+	unknown_sfx_20 4 178 1681
+	unknown_sfx_20 4 194 1714
+	unknown_sfx_20 4 178 1681
+	unknown_sfx_20 4 194 1649
+	unknown_sfx_20 9 177 1617
 	end
 
 .SFX_Cry18_2_Ch7
-	unknown_noise_20 6 227 76
-	unknown_noise_20 4 195 60
-	unknown_noise_20 5 212 60
-	unknown_noise_20 4 196 44
-	unknown_noise_20 6 180 60
-	unknown_noise_20 8 193 44
+	unknown_noise_20 7 227 76
+	unknown_noise_20 5 195 60
+	unknown_noise_20 6 212 60
+	unknown_noise_20 5 196 44
+	unknown_noise_20 7 180 60
+	unknown_noise_20 9 193 44
 	end
 
 .SFX_Cry1F_2_Ch4
 	dutycycle 165
-	unknown_sfx_20 3 244 1601
-	unknown_sfx_20 13 214 1825
-	unknown_sfx_20 8 244 1817
-	unknown_sfx_20 8 193 1818
+	unknown_sfx_20 4 244 1601
+	unknown_sfx_20 14 214 1825
+	unknown_sfx_20 9 244 1817
+	unknown_sfx_20 9 193 1818
 	end
 
 .SFX_Cry1F_2_Ch5
 	dutycycle 204
-	unknown_sfx_20 4 244 1408
-	unknown_sfx_20 14 230 1760
-	unknown_sfx_20 8 213 1752
-	unknown_sfx_20 8 209 1756
+	unknown_sfx_20 5 244 1408
+	unknown_sfx_20 15 230 1760
+	unknown_sfx_20 9 213 1752
+	unknown_sfx_20 9 209 1756
 	end
 
 .SFX_Cry1F_2_Ch7
-	unknown_noise_20 5 196 70
-	unknown_noise_20 13 165 68
-	unknown_noise_20 8 196 69
-	unknown_noise_20 8 177 68
+	unknown_noise_20 6 196 70
+	unknown_noise_20 14 165 68
+	unknown_noise_20 9 196 69
+	unknown_noise_20 9 177 68
 	end
 
 .SFX_Cry20_2_Ch4
 	dutycycle 240
-	unknown_sfx_20 13 241 1297
-	unknown_sfx_20 13 225 1301
-	unknown_sfx_20 13 225 1297
-	unknown_sfx_20 8 209 1297
+	unknown_sfx_20 14 241 1297
+	unknown_sfx_20 14 225 1301
+	unknown_sfx_20 14 225 1297
+	unknown_sfx_20 9 209 1297
 	end
 
 .SFX_Cry20_2_Ch5
 	dutycycle 21
-	unknown_sfx_20 12 225 1292
-	unknown_sfx_20 12 209 1296
-	unknown_sfx_20 14 193 1292
-	unknown_sfx_20 8 193 1290
+	unknown_sfx_20 13 225 1292
+	unknown_sfx_20 13 209 1296
+	unknown_sfx_20 15 193 1292
+	unknown_sfx_20 9 193 1290
 	end
 
 .SFX_Cry20_2_Ch7
-	unknown_noise_20 14 242 101
-	unknown_noise_20 13 226 85
-	unknown_noise_20 14 210 86
-	unknown_noise_20 8 209 102
+	unknown_noise_20 15 242 101
+	unknown_noise_20 14 226 85
+	unknown_noise_20 15 210 86
+	unknown_noise_20 9 209 102
 	end
 
 .SFX_Cry21_2_Ch4
 	dutycycle 27
-	unknown_sfx_20 3 243 1380
-	unknown_sfx_20 2 226 1348
-	unknown_sfx_20 5 209 1314
-	unknown_sfx_20 2 178 1156
-	unknown_sfx_20 8 209 1186
-	unknown_sfx_20 3 243 1316
-	unknown_sfx_20 4 228 1252
-	unknown_sfx_20 8 209 1282
+	unknown_sfx_20 4 243 1380
+	unknown_sfx_20 3 226 1348
+	unknown_sfx_20 6 209 1314
+	unknown_sfx_20 3 178 1156
+	unknown_sfx_20 9 209 1186
+	unknown_sfx_20 4 243 1316
+	unknown_sfx_20 5 228 1252
+	unknown_sfx_20 9 209 1282
 	end
 
 .SFX_Cry21_2_Ch5
 	dutycycle 204
-	unknown_sfx_20 3 211 1376
-	unknown_sfx_20 2 194 1344
-	unknown_sfx_20 5 193 1312
-	unknown_sfx_20 2 146 1152
-	unknown_sfx_20 8 193 1184
-	unknown_sfx_20 3 211 1312
-	unknown_sfx_20 3 196 1248
-	unknown_sfx_20 8 193 1280
+	unknown_sfx_20 4 211 1376
+	unknown_sfx_20 3 194 1344
+	unknown_sfx_20 6 193 1312
+	unknown_sfx_20 3 146 1152
+	unknown_sfx_20 9 193 1184
+	unknown_sfx_20 4 211 1312
+	unknown_sfx_20 4 196 1248
+	unknown_sfx_20 9 193 1280
 	goto SFX_Cry21_2_Ch7
 
 .SFX_Cry21_2_Ch7
@@ -3320,910 +3320,910 @@
 
 .SFX_Cry22_2_Ch4
 	dutycycle 17
-	unknown_sfx_20 2 61 897
-	unknown_sfx_20 7 245 1537
-	unknown_sfx_20 1 194 1153
-	unknown_sfx_20 8 145 897
+	unknown_sfx_20 3 61 897
+	unknown_sfx_20 8 245 1537
+	unknown_sfx_20 2 194 1153
+	unknown_sfx_20 9 145 897
 	end
 
 .SFX_Cry22_2_Ch5
 	dutycycle 238
-	unknown_sfx_20 2 62 1456
-	unknown_sfx_20 7 213 1885
-	unknown_sfx_20 1 178 1712
-	unknown_sfx_20 8 97 1456
+	unknown_sfx_20 3 62 1456
+	unknown_sfx_20 8 213 1885
+	unknown_sfx_20 2 178 1712
+	unknown_sfx_20 9 97 1456
 	end
 
 .SFX_Cry22_2_Ch7
-	unknown_noise_20 2 146 73
-	unknown_noise_20 7 181 41
-	unknown_noise_20 1 162 57
-	unknown_noise_20 8 145 73
+	unknown_noise_20 3 146 73
+	unknown_noise_20 8 181 41
+	unknown_noise_20 2 162 57
+	unknown_noise_20 9 145 73
 	end
 
 .SFX_Snare1_3_Ch7
-	unknown_noise_20 0 193 51
+	unknown_noise_20 1 193 51
 	end
 
 .SFX_Snare2_3_Ch7
-	unknown_noise_20 0 177 51
+	unknown_noise_20 1 177 51
 	end
 
 .SFX_Snare3_3_Ch7
-	unknown_noise_20 0 161 51
+	unknown_noise_20 1 161 51
 	end
 
 .SFX_Snare4_3_Ch7
-	unknown_noise_20 0 129 51
+	unknown_noise_20 1 129 51
 	end
 
 .SFX_Snare5_3_Ch7
-	unknown_noise_20 7 132 55
-	unknown_noise_20 6 132 54
-	unknown_noise_20 5 131 53
-	unknown_noise_20 4 131 52
-	unknown_noise_20 3 130 51
-	unknown_noise_20 2 129 50
+	unknown_noise_20 8 132 55
+	unknown_noise_20 7 132 54
+	unknown_noise_20 6 131 53
+	unknown_noise_20 5 131 52
+	unknown_noise_20 4 130 51
+	unknown_noise_20 3 129 50
 	end
 
 .SFX_Triangle1_3_Ch7
-	unknown_noise_20 0 81 42
+	unknown_noise_20 1 81 42
 	end
 
 .SFX_Triangle2_3_Ch7
-	unknown_noise_20 1 65 43
-	unknown_noise_20 0 97 42
+	unknown_noise_20 2 65 43
+	unknown_noise_20 1 97 42
 	end
 
 .SFX_Snare6_3_Ch7
-	unknown_noise_20 0 129 16
+	unknown_noise_20 1 129 16
 	end
 
 .SFX_Snare7_3_Ch7
-	unknown_noise_20 0 130 35
+	unknown_noise_20 1 130 35
 	end
 
 .SFX_Snare8_3_Ch7
-	unknown_noise_20 0 130 37
+	unknown_noise_20 1 130 37
 	end
 
 .SFX_Snare9_3_Ch7
-	unknown_noise_20 0 130 38
+	unknown_noise_20 1 130 38
 	end
 
 .SFX_Cymbal1_3_Ch7
-	unknown_noise_20 0 161 16
+	unknown_noise_20 1 161 16
 	end
 
 .SFX_Cymbal2_3_Ch7
-	unknown_noise_20 0 162 17
+	unknown_noise_20 1 162 17
 	end
 
 .SFX_Cymbal3_3_Ch7
-	unknown_noise_20 0 162 80
+	unknown_noise_20 1 162 80
 	end
 
 .SFX_Muted_Snare1_3_Ch7
-	unknown_noise_20 0 161 24
-	unknown_noise_20 0 49 51
+	unknown_noise_20 1 161 24
+	unknown_noise_20 1 49 51
 	end
 
 .SFX_Triangle3_3_Ch7
-	unknown_noise_20 2 145 40
-	unknown_noise_20 0 113 24
+	unknown_noise_20 3 145 40
+	unknown_noise_20 1 113 24
 	end
 
 .SFX_Muted_Snare2_3_Ch7
-	unknown_noise_20 0 145 34
+	unknown_noise_20 1 145 34
 	end
 
 .SFX_Muted_Snare3_3_Ch7
-	unknown_noise_20 0 113 34
+	unknown_noise_20 1 113 34
 	end
 
 .SFX_Muted_Snare4_3_Ch7
-	unknown_noise_20 0 97 34
+	unknown_noise_20 1 97 34
 	end
 
 .SFX_Start_Menu_3_Ch7
-	unknown_noise_20 1 226 51
-	unknown_noise_20 8 225 34
+	unknown_noise_20 2 226 51
+	unknown_noise_20 9 225 34
 	end
 
 .SFX_Cut_3_Ch7
-	unknown_noise_20 2 247 36
-	unknown_noise_20 2 247 52
-	unknown_noise_20 4 247 68
-	unknown_noise_20 8 244 85
-	unknown_noise_20 8 241 68
+	unknown_noise_20 3 247 36
+	unknown_noise_20 3 247 52
+	unknown_noise_20 5 247 68
+	unknown_noise_20 9 244 85
+	unknown_noise_20 9 241 68
 	end
 
 .SFX_Go_Inside_3_Ch7
-	unknown_noise_20 9 241 68
-	unknown_noise_20 8 209 67
+	unknown_noise_20 10 241 68
+	unknown_noise_20 9 209 67
 	end
 
 .SFX_Swap_3_Ch4
 	duty 2
-	unknown_sfx_20 8 225 1856
+	unknown_sfx_20 9 225 1856
 	end
 
 .SFX_Swap_3_Ch5
 	duty 2
-	unknown_sfx_20 2 8 0
-	unknown_sfx_20 8 177 1857
+	unknown_sfx_20 3 8 0
+	unknown_sfx_20 9 177 1857
 	end
 
 .SFX_Tink_3_Ch4
 	duty 2
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 512
+	unknown_sfx_20 5 242 512
 	unknown_sfx_10 34
-	unknown_sfx_20 8 226 512
+	unknown_sfx_20 9 226 512
 	unknown_sfx_10 8
 	end
 
 .SFX_59_3_Ch4
 	duty 2
-	unknown_sfx_20 4 241 1920
+	unknown_sfx_20 5 241 1920
 	end
 
 .SFX_59_3_Ch5
 	duty 2
-	unknown_sfx_20 1 8 0
-	unknown_sfx_20 4 161 1889
+	unknown_sfx_20 2 8 0
+	unknown_sfx_20 5 161 1889
 	end
 
 .SFX_Purchase_3_Ch4
 	duty 2
-	unknown_sfx_20 4 225 1792
-	unknown_sfx_20 8 242 2016
+	unknown_sfx_20 5 225 1792
+	unknown_sfx_20 9 242 2016
 	end
 
 .SFX_Purchase_3_Ch5
 	duty 2
-	unknown_sfx_20 1 8 0
-	unknown_sfx_20 4 145 1729
-	unknown_sfx_20 8 162 1953
+	unknown_sfx_20 2 8 0
+	unknown_sfx_20 5 145 1729
+	unknown_sfx_20 9 162 1953
 	end
 
 .SFX_Collision_3_Ch4
 	duty 2
 	unknown_sfx_10 90
-	unknown_sfx_20 15 241 768
+	unknown_sfx_20 16 241 768
 	unknown_sfx_10 8
 	end
 
 .SFX_Go_Outside_3_Ch7
-	unknown_noise_20 2 241 84
-	unknown_noise_20 12 113 35
-	unknown_noise_20 2 177 84
-	unknown_noise_20 12 97 35
-	unknown_noise_20 6 65 84
+	unknown_noise_20 3 241 84
+	unknown_noise_20 13 113 35
+	unknown_noise_20 3 177 84
+	unknown_noise_20 13 97 35
+	unknown_noise_20 7 65 84
 	end
 
 .SFX_Press_AB_3_Ch4
 	duty 2
-	unknown_sfx_20 0 145 1984
-	unknown_sfx_20 0 129 2000
-	unknown_sfx_20 0 145 1984
-	unknown_sfx_20 12 161 2000
+	unknown_sfx_20 1 145 1984
+	unknown_sfx_20 1 129 2000
+	unknown_sfx_20 1 145 1984
+	unknown_sfx_20 13 161 2000
 	end
 
 .SFX_Save_3_Ch4
 	duty 2
 	ifred
-	unknown_sfx_20 4 244 1792
-	unknown_sfx_20 3 228 1664
-	unknown_sfx_20 3 228 1728
-	unknown_sfx_20 3 228 1792
-	unknown_sfx_20 2 228 1952
+	unknown_sfx_20 5 244 1792
+	unknown_sfx_20 4 228 1664
+	unknown_sfx_20 4 228 1728
+	unknown_sfx_20 4 228 1792
+	unknown_sfx_20 3 228 1952
 	else
-	unknown_sfx_20 3 228 1536
-	unknown_sfx_20 3 228 1664
-	unknown_sfx_20 3 228 1728
-	unknown_sfx_20 3 228 1792
-	unknown_sfx_20 15 242 2016
+	unknown_sfx_20 4 228 1536
+	unknown_sfx_20 4 228 1664
+	unknown_sfx_20 4 228 1728
+	unknown_sfx_20 4 228 1792
+	unknown_sfx_20 16 242 2016
 	endif
 	end
 
 .SFX_Save_3_Ch5
 	duty 2
 	ifred
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 3 212 1793
-	unknown_sfx_20 3 196 1665
-	unknown_sfx_20 3 196 1729
-	unknown_sfx_20 3 196 1793
-	unknown_sfx_20 2 196 1953
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 4 212 1793
+	unknown_sfx_20 4 196 1665
+	unknown_sfx_20 4 196 1729
+	unknown_sfx_20 4 196 1793
+	unknown_sfx_20 3 196 1953
 	else
-	unknown_sfx_20 3 8 0
-	unknown_sfx_20 3 196 1537
-	unknown_sfx_20 3 196 1665
-	unknown_sfx_20 3 196 1729
-	unknown_sfx_20 3 196 1793
-	unknown_sfx_20 15 210 2017
+	unknown_sfx_20 4 8 0
+	unknown_sfx_20 4 196 1537
+	unknown_sfx_20 4 196 1665
+	unknown_sfx_20 4 196 1729
+	unknown_sfx_20 4 196 1793
+	unknown_sfx_20 16 210 2017
 	endif
 	end
 
 .SFX_Heal_HP_3_Ch4
 	duty 2
 	unknown_sfx_10 23
-	unknown_sfx_20 15 240 1264
-	unknown_sfx_20 15 242 1616
+	unknown_sfx_20 16 240 1264
+	unknown_sfx_20 16 242 1616
 	unknown_sfx_10 8
 	end
 
 .SFX_Poisoned_3_Ch4
 	duty 0
 	unknown_sfx_10 20
-	unknown_sfx_20 4 242 1536
+	unknown_sfx_20 5 242 1536
 	loop 4 SFX_Poisoned_3_Ch4
-	unknown_sfx_20 15 243 1536
+	unknown_sfx_20 16 243 1536
 	unknown_sfx_10 8
 	end
 
 .SFX_Heal_Ailment_3_Ch4
 	duty 2
 	unknown_sfx_10 20
-	unknown_sfx_20 4 242 1536
-	unknown_sfx_20 4 242 1536
+	unknown_sfx_20 5 242 1536
+	unknown_sfx_20 5 242 1536
 	unknown_sfx_10 23
-	unknown_sfx_20 15 242 1536
+	unknown_sfx_20 16 242 1536
 	unknown_sfx_10 8
 	end
 
 .SFX_Trade_Machine_3_Ch4
 	duty 2
 	unknown_sfx_10 21
-	unknown_sfx_20 15 240 1264
-	unknown_sfx_20 15 242 1616
+	unknown_sfx_20 16 240 1264
+	unknown_sfx_20 16 242 1616
 	unknown_sfx_10 8
 	end
 
 .SFX_Turn_On_PC_3_Ch4
 	duty 2
-	unknown_sfx_20 15 242 1984
-	unknown_sfx_20 15 0 0
-	unknown_sfx_20 15 0 0
-	unknown_sfx_20 3 129 1920
-	unknown_sfx_20 3 129 1792
-	unknown_sfx_20 3 129 1856
-	unknown_sfx_20 3 129 1792
-	unknown_sfx_20 3 129 1920
-	unknown_sfx_20 3 129 1792
-	unknown_sfx_20 3 129 1984
-	unknown_sfx_20 3 129 1792
+	unknown_sfx_20 16 242 1984
+	unknown_sfx_20 16 0 0
+	unknown_sfx_20 16 0 0
+	unknown_sfx_20 4 129 1920
+	unknown_sfx_20 4 129 1792
+	unknown_sfx_20 4 129 1856
+	unknown_sfx_20 4 129 1792
+	unknown_sfx_20 4 129 1920
+	unknown_sfx_20 4 129 1792
+	unknown_sfx_20 4 129 1984
+	unknown_sfx_20 4 129 1792
 	end
 
 .SFX_Turn_Off_PC_3_Ch4
 	duty 2
-	unknown_sfx_20 4 240 1536
-	unknown_sfx_20 4 240 1024
-	unknown_sfx_20 4 240 512
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 240 1536
+	unknown_sfx_20 5 240 1024
+	unknown_sfx_20 5 240 512
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Enter_PC_3_Ch4
 	duty 2
-	unknown_sfx_20 4 240 1792
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 4 240 1792
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 240 1792
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 5 240 1792
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Shrink_3_Ch4
 	duty 1
 	unknown_sfx_10 23
-	unknown_sfx_20 15 215 1536
-	unknown_sfx_20 15 183 1408
-	unknown_sfx_20 15 135 1280
-	unknown_sfx_20 15 71 1152
-	unknown_sfx_20 15 23 1024
+	unknown_sfx_20 16 215 1536
+	unknown_sfx_20 16 183 1408
+	unknown_sfx_20 16 135 1280
+	unknown_sfx_20 16 71 1152
+	unknown_sfx_20 16 23 1024
 	unknown_sfx_10 8
 	end
 
 .SFX_Switch_3_Ch4
 	duty 2
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 2 241 1664
-	unknown_sfx_20 1 0 0
-	unknown_sfx_20 4 241 1920
-	unknown_sfx_20 4 0 0
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 3 241 1664
+	unknown_sfx_20 2 0 0
+	unknown_sfx_20 5 241 1920
+	unknown_sfx_20 5 0 0
 	end
 
 .SFX_Healing_Machine_3_Ch4
 	duty 2
 	unknown_sfx_10 44
-	unknown_sfx_20 4 242 1280
+	unknown_sfx_20 5 242 1280
 	unknown_sfx_10 34
-	unknown_sfx_20 2 241 1280
+	unknown_sfx_20 3 241 1280
 	unknown_sfx_10 8
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Teleport_Exit1_3_Ch4
 	duty 1
 	unknown_sfx_10 23
-	unknown_sfx_20 15 215 1280
-	unknown_sfx_20 15 183 1408
-	unknown_sfx_20 15 135 1536
-	unknown_sfx_20 15 71 1664
-	unknown_sfx_20 15 23 1792
+	unknown_sfx_20 16 215 1280
+	unknown_sfx_20 16 183 1408
+	unknown_sfx_20 16 135 1536
+	unknown_sfx_20 16 71 1664
+	unknown_sfx_20 16 23 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Teleport_Enter1_3_Ch4
 	duty 1
 	unknown_sfx_10 23
-	unknown_sfx_20 15 215 1792
-	unknown_sfx_20 15 183 1664
-	unknown_sfx_20 15 135 1536
-	unknown_sfx_20 15 71 1408
-	unknown_sfx_20 15 23 1280
+	unknown_sfx_20 16 215 1792
+	unknown_sfx_20 16 183 1664
+	unknown_sfx_20 16 135 1536
+	unknown_sfx_20 16 71 1408
+	unknown_sfx_20 16 23 1280
 	unknown_sfx_10 8
 	end
 
 .SFX_Teleport_Exit2_3_Ch4
 	duty 1
 	unknown_sfx_10 22
-	unknown_sfx_20 15 210 1280
+	unknown_sfx_20 16 210 1280
 	unknown_sfx_10 8
 	end
 
 .SFX_Ledge_3_Ch4
 	duty 2
 	unknown_sfx_10 149
-	unknown_sfx_20 15 242 1024
+	unknown_sfx_20 16 242 1024
 	unknown_sfx_10 8
 	end
 
 .SFX_Teleport_Enter2_3_Ch7
-	unknown_noise_20 2 241 50
+	unknown_noise_20 3 241 50
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 241 34
 	unknown_noise_20 2 0 0
-	unknown_noise_20 2 241 34
-	unknown_noise_20 1 0 0
 	end
 
 .SFX_Fly_3_Ch7
-	unknown_noise_20 2 241 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 161 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 209 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 129 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 177 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 97 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 145 18
-	unknown_noise_20 2 0 0
-	unknown_noise_20 2 65 18
-	unknown_noise_20 2 0 0
+	unknown_noise_20 3 241 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 161 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 209 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 129 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 177 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 97 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 145 18
+	unknown_noise_20 3 0 0
+	unknown_noise_20 3 65 18
+	unknown_noise_20 3 0 0
 	end
 
 .SFX_Denied_3_Ch4
 	duty 3
 	unknown_sfx_10 90
-	unknown_sfx_20 4 240 1280
+	unknown_sfx_20 5 240 1280
 	unknown_sfx_10 8
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Denied_3_Ch5
 	duty 3
-	unknown_sfx_20 4 240 1025
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1025
-	unknown_sfx_20 1 0 0
+	unknown_sfx_20 5 240 1025
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1025
+	unknown_sfx_20 2 0 0
 	end
 
 .SFX_Arrow_Tiles_3_Ch4
 	duty 0
 	unknown_sfx_10 23
-	unknown_sfx_20 15 210 1792
+	unknown_sfx_20 16 210 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Push_Boulder_3_Ch7
-	unknown_noise_20 4 162 35
-	unknown_noise_20 8 241 52
-	unknown_noise_20 15 0 0
-	unknown_noise_20 2 247 36
-	unknown_noise_20 2 247 52
-	unknown_noise_20 4 247 68
-	unknown_noise_20 8 244 85
-	unknown_noise_20 8 241 68
+	unknown_noise_20 5 162 35
+	unknown_noise_20 9 241 52
+	unknown_noise_20 16 0 0
+	unknown_noise_20 3 247 36
+	unknown_noise_20 3 247 52
+	unknown_noise_20 5 247 68
+	unknown_noise_20 9 244 85
+	unknown_noise_20 9 241 68
 	end
 
 .SFX_SS_Anne_Horn_3_Ch4
 	duty 2
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 240 1280
-	unknown_sfx_20 15 242 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 240 1280
+	unknown_sfx_20 16 242 1280
 	end
 
 .SFX_SS_Anne_Horn_3_Ch5
 	duty 3
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 4 0 0
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 240 1154
-	unknown_sfx_20 15 242 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 5 0 0
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 240 1154
+	unknown_sfx_20 16 242 1154
 	end
 
 .SFX_Withdraw_Deposit_3_Ch4
 	duty 1
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 1280
+	unknown_sfx_20 5 242 1280
 	unknown_sfx_10 34
-	unknown_sfx_20 4 226 1280
+	unknown_sfx_20 5 226 1280
 	unknown_sfx_10 58
-	unknown_sfx_20 4 242 1792
+	unknown_sfx_20 5 242 1792
 	unknown_sfx_10 34
-	unknown_sfx_20 15 226 1792
+	unknown_sfx_20 16 226 1792
 	unknown_sfx_10 8
 	end
 
 .SFX_Intro_Lunge_Ch7
-	unknown_noise_20 6 32 16
-	unknown_noise_20 6 47 64
-	unknown_noise_20 6 79 65
-	unknown_noise_20 6 143 65
-	unknown_noise_20 6 207 66
-	unknown_noise_20 8 215 66
-	unknown_noise_20 15 231 67
-	unknown_noise_20 15 242 67
+	unknown_noise_20 7 32 16
+	unknown_noise_20 7 47 64
+	unknown_noise_20 7 79 65
+	unknown_noise_20 7 143 65
+	unknown_noise_20 7 207 66
+	unknown_noise_20 9 215 66
+	unknown_noise_20 16 231 67
+	unknown_noise_20 16 242 67
 	end
 
 .SFX_Intro_Hip_Ch4
 	duty 2
 	unknown_sfx_10 38
-	unknown_sfx_20 12 194 1856
+	unknown_sfx_20 13 194 1856
 	unknown_sfx_10 8
 	end
 
 .SFX_Intro_Hop_Ch4
 	duty 2
 	unknown_sfx_10 38
-	unknown_sfx_20 12 194 1664
+	unknown_sfx_20 13 194 1664
 	unknown_sfx_10 8
 	end
 
 .SFX_Intro_Raise_Ch7
-	unknown_noise_20 2 111 33
-	unknown_noise_20 2 175 49
-	unknown_noise_20 15 242 65
+	unknown_noise_20 3 111 33
+	unknown_noise_20 3 175 49
+	unknown_noise_20 16 242 65
 	end
 
 .SFX_Intro_Crash_Ch7
-	unknown_noise_20 2 210 50
-	unknown_noise_20 15 242 67
+	unknown_noise_20 3 210 50
+	unknown_noise_20 16 242 67
 	end
 
 .SFX_Intro_Whoosh_Ch7
-	unknown_noise_20 4 44 32
-	unknown_noise_20 3 160 32
-	unknown_noise_20 3 176 33
-	unknown_noise_20 3 192 34
-	unknown_noise_20 15 210 36
+	unknown_noise_20 5 44 32
+	unknown_noise_20 4 160 32
+	unknown_noise_20 4 176 33
+	unknown_noise_20 4 192 34
+	unknown_noise_20 16 210 36
 	end
 
 .SFX_Slots_Stop_Wheel_Ch4
 	duty 2
-	unknown_sfx_20 1 242 1696
-	unknown_sfx_20 1 242 1760
-	unknown_sfx_20 8 241 1792
+	unknown_sfx_20 2 242 1696
+	unknown_sfx_20 2 242 1760
+	unknown_sfx_20 9 241 1792
 	end
 
 .SFX_Slots_Reward_Ch4
 	duty 2
-	unknown_sfx_20 2 241 1792
-	unknown_sfx_20 8 129 2016
+	unknown_sfx_20 3 241 1792
+	unknown_sfx_20 9 129 2016
 	end
 
 .SFX_Slots_New_Spin_Ch4
 	duty 3
-	unknown_sfx_20 5 225 1792
-	unknown_sfx_20 2 225 1920
-	unknown_sfx_20 15 241 1984
+	unknown_sfx_20 6 225 1792
+	unknown_sfx_20 3 225 1920
+	unknown_sfx_20 16 241 1984
 	end
 
 .SFX_Slots_New_Spin_Ch5
 	duty 2
-	unknown_sfx_20 4 193 1729
-	unknown_sfx_20 2 193 1857
-	unknown_sfx_20 15 209 1921
+	unknown_sfx_20 5 193 1729
+	unknown_sfx_20 3 193 1857
+	unknown_sfx_20 16 209 1921
 	end
 
 .SFX_Shooting_Star_Ch4
 	dutycycle 228
 	unknown_sfx_10 47
-	unknown_sfx_20 4 64 2016
-	unknown_sfx_20 4 96 2016
-	unknown_sfx_20 4 128 2016
-	unknown_sfx_20 8 160 2016
-	unknown_sfx_20 8 160 2016
-	unknown_sfx_20 8 128 2016
-	unknown_sfx_20 8 96 2016
-	unknown_sfx_20 8 48 2016
-	unknown_sfx_20 15 18 2016
+	unknown_sfx_20 5 64 2016
+	unknown_sfx_20 5 96 2016
+	unknown_sfx_20 5 128 2016
+	unknown_sfx_20 9 160 2016
+	unknown_sfx_20 9 160 2016
+	unknown_sfx_20 9 128 2016
+	unknown_sfx_20 9 96 2016
+	unknown_sfx_20 9 48 2016
+	unknown_sfx_20 16 18 2016
 	unknown_sfx_10 8
 	end
 
 .SFX_1f_unused_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 224 1920
-	unknown_sfx_20 15 240 1924
-	unknown_sfx_20 15 195 1504
-	unknown_sfx_20 15 196 1536
-	unknown_sfx_20 10 108 1920
-	unknown_sfx_20 8 113 1924
+	unknown_sfx_20 16 224 1920
+	unknown_sfx_20 16 240 1924
+	unknown_sfx_20 16 195 1504
+	unknown_sfx_20 16 196 1536
+	unknown_sfx_20 11 108 1920
+	unknown_sfx_20 9 113 1924
 	end
 
 .SFX_1f_unused_Ch5
 	dutycycle 5
-	unknown_sfx_20 15 160 1857
-	unknown_sfx_20 15 176 1859
-	unknown_sfx_20 15 147 1457
-	unknown_sfx_20 15 148 1473
-	unknown_sfx_20 10 76 1857
-	unknown_sfx_20 8 49 1862
+	unknown_sfx_20 16 160 1857
+	unknown_sfx_20 16 176 1859
+	unknown_sfx_20 16 147 1457
+	unknown_sfx_20 16 148 1473
+	unknown_sfx_20 11 76 1857
+	unknown_sfx_20 9 49 1862
 	end
 
 .SFX_1f_unused_Ch7
-	unknown_noise_20 2 242 76
-	unknown_noise_20 6 224 58
-	unknown_noise_20 15 208 58
-	unknown_noise_20 8 208 44
-	unknown_noise_20 6 230 76
-	unknown_noise_20 12 125 76
-	unknown_noise_20 15 211 76
+	unknown_noise_20 3 242 76
+	unknown_noise_20 7 224 58
+	unknown_noise_20 16 208 58
+	unknown_noise_20 9 208 44
+	unknown_noise_20 7 230 76
+	unknown_noise_20 13 125 76
+	unknown_noise_20 16 211 76
 	end
 
 .SFX_Cry09_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1952
-	unknown_sfx_20 6 230 1955
-	unknown_sfx_20 10 244 1952
+	unknown_sfx_20 16 247 1952
+	unknown_sfx_20 7 230 1955
+	unknown_sfx_20 11 244 1952
 	dutycycle 165
-	unknown_sfx_20 10 246 2008
-	unknown_sfx_20 4 227 2007
-	unknown_sfx_20 15 242 2008
+	unknown_sfx_20 11 246 2008
+	unknown_sfx_20 5 227 2007
+	unknown_sfx_20 16 242 2008
 	end
 
 .SFX_Cry09_3_Ch5
 	dutycycle 5
-	unknown_sfx_20 2 8 0
-	unknown_sfx_20 15 167 1697
-	unknown_sfx_20 6 134 1698
-	unknown_sfx_20 10 116 1697
+	unknown_sfx_20 3 8 0
+	unknown_sfx_20 16 167 1697
+	unknown_sfx_20 7 134 1698
+	unknown_sfx_20 11 116 1697
 	dutycycle 95
-	unknown_sfx_20 10 118 1750
-	unknown_sfx_20 4 131 1753
-	unknown_sfx_20 15 162 1751
+	unknown_sfx_20 11 118 1750
+	unknown_sfx_20 5 131 1753
+	unknown_sfx_20 16 162 1751
 	end
 
 .SFX_Cry09_3_Ch7
-	unknown_noise_20 2 242 60
-	unknown_noise_20 8 228 62
-	unknown_noise_20 15 215 60
-	unknown_noise_20 6 197 59
-	unknown_noise_20 6 228 61
-	unknown_noise_20 8 182 60
-	unknown_noise_20 6 212 61
-	unknown_noise_20 8 193 59
+	unknown_noise_20 3 242 60
+	unknown_noise_20 9 228 62
+	unknown_noise_20 16 215 60
+	unknown_noise_20 7 197 59
+	unknown_noise_20 7 228 61
+	unknown_noise_20 9 182 60
+	unknown_noise_20 7 212 61
+	unknown_noise_20 9 193 59
 	end
 
 .SFX_Cry23_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1984
-	unknown_sfx_20 6 228 1985
-	unknown_sfx_20 10 246 1984
-	unknown_sfx_20 4 211 1986
-	unknown_sfx_20 8 193 1984
+	unknown_sfx_20 16 247 1984
+	unknown_sfx_20 7 228 1985
+	unknown_sfx_20 11 246 1984
+	unknown_sfx_20 5 211 1986
+	unknown_sfx_20 9 193 1984
 	end
 
 .SFX_Cry23_3_Ch5
 	dutycycle 95
-	unknown_sfx_20 15 151 1921
-	unknown_sfx_20 6 132 1920
-	unknown_sfx_20 10 150 1921
-	unknown_sfx_20 15 131 1921
+	unknown_sfx_20 16 151 1921
+	unknown_sfx_20 7 132 1920
+	unknown_sfx_20 11 150 1921
+	unknown_sfx_20 16 131 1921
 	end
 
 .SFX_Cry23_3_Ch7
-	unknown_noise_20 3 242 60
-	unknown_noise_20 13 230 44
-	unknown_noise_20 15 215 60
-	unknown_noise_20 8 193 44
+	unknown_noise_20 4 242 60
+	unknown_noise_20 14 230 44
+	unknown_noise_20 16 215 60
+	unknown_noise_20 9 193 44
 	end
 
 .SFX_Cry24_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 247 1664
-	unknown_sfx_20 10 230 1668
-	unknown_sfx_20 15 215 1680
-	unknown_sfx_20 8 213 1680
-	unknown_sfx_20 6 196 1672
-	unknown_sfx_20 5 211 1648
-	unknown_sfx_20 4 211 1632
-	unknown_sfx_20 8 193 1600
+	unknown_sfx_20 16 247 1664
+	unknown_sfx_20 11 230 1668
+	unknown_sfx_20 16 215 1680
+	unknown_sfx_20 9 213 1680
+	unknown_sfx_20 7 196 1672
+	unknown_sfx_20 6 211 1648
+	unknown_sfx_20 5 211 1632
+	unknown_sfx_20 9 193 1600
 	end
 
 .SFX_Cry24_3_Ch5
 	dutycycle 5
-	unknown_sfx_20 15 183 1601
-	unknown_sfx_20 10 150 1602
-	unknown_sfx_20 15 167 1617
-	unknown_sfx_20 8 165 1617
-	unknown_sfx_20 6 148 1607
-	unknown_sfx_20 5 163 1585
-	unknown_sfx_20 4 147 1570
-	unknown_sfx_20 8 113 1537
+	unknown_sfx_20 16 183 1601
+	unknown_sfx_20 11 150 1602
+	unknown_sfx_20 16 167 1617
+	unknown_sfx_20 9 165 1617
+	unknown_sfx_20 7 148 1607
+	unknown_sfx_20 6 163 1585
+	unknown_sfx_20 5 147 1570
+	unknown_sfx_20 9 113 1537
 	end
 
 .SFX_Cry24_3_Ch7
-	unknown_noise_20 15 228 60
-	unknown_noise_20 10 199 76
-	unknown_noise_20 10 199 60
-	unknown_noise_20 12 183 76
-	unknown_noise_20 15 162 92
+	unknown_noise_20 16 228 60
+	unknown_noise_20 11 199 76
+	unknown_noise_20 11 199 60
+	unknown_noise_20 13 183 76
+	unknown_noise_20 16 162 92
 	end
 
 .SFX_Cry11_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1952
-	unknown_sfx_20 8 230 1956
-	unknown_sfx_20 4 214 1952
-	unknown_sfx_20 15 211 1824
-	unknown_sfx_20 8 195 1827
-	unknown_sfx_20 2 194 1832
-	unknown_sfx_20 8 177 1840
+	unknown_sfx_20 7 247 1952
+	unknown_sfx_20 9 230 1956
+	unknown_sfx_20 5 214 1952
+	unknown_sfx_20 16 211 1824
+	unknown_sfx_20 9 195 1827
+	unknown_sfx_20 3 194 1832
+	unknown_sfx_20 9 177 1840
 	end
 
 .SFX_Cry11_3_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 6 167 1857
-	unknown_sfx_20 8 134 1859
-	unknown_sfx_20 4 118 1857
-	unknown_sfx_20 13 131 1730
-	unknown_sfx_20 7 115 1729
-	unknown_sfx_20 3 130 1740
-	unknown_sfx_20 8 113 1752
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 7 167 1857
+	unknown_sfx_20 9 134 1859
+	unknown_sfx_20 5 118 1857
+	unknown_sfx_20 14 131 1730
+	unknown_sfx_20 8 115 1729
+	unknown_sfx_20 4 130 1740
+	unknown_sfx_20 9 113 1752
 	end
 
 .SFX_Cry11_3_Ch7
-	unknown_noise_20 2 242 76
-	unknown_noise_20 6 230 58
-	unknown_noise_20 4 215 58
-	unknown_noise_20 6 214 44
-	unknown_noise_20 8 229 60
-	unknown_noise_20 12 210 61
-	unknown_noise_20 8 209 44
+	unknown_noise_20 3 242 76
+	unknown_noise_20 7 230 58
+	unknown_noise_20 5 215 58
+	unknown_noise_20 7 214 44
+	unknown_noise_20 9 229 60
+	unknown_noise_20 13 210 61
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry25_3_Ch4
 	dutycycle 165
-	unknown_sfx_20 6 244 1856
-	unknown_sfx_20 15 227 1840
-	unknown_sfx_20 4 244 1856
-	unknown_sfx_20 5 179 1864
-	unknown_sfx_20 8 209 1872
+	unknown_sfx_20 7 244 1856
+	unknown_sfx_20 16 227 1840
+	unknown_sfx_20 5 244 1856
+	unknown_sfx_20 6 179 1864
+	unknown_sfx_20 9 209 1872
 	end
 
 .SFX_Cry25_3_Ch5
 	dutycycle 119
-	unknown_sfx_20 6 195 1810
-	unknown_sfx_20 15 179 1796
-	unknown_sfx_20 3 195 1810
-	unknown_sfx_20 4 195 1825
-	unknown_sfx_20 8 177 1842
+	unknown_sfx_20 7 195 1810
+	unknown_sfx_20 16 179 1796
+	unknown_sfx_20 4 195 1810
+	unknown_sfx_20 5 195 1825
+	unknown_sfx_20 9 177 1842
 	end
 
 .SFX_Cry25_3_Ch7
-	unknown_noise_20 8 214 44
-	unknown_noise_20 12 198 60
-	unknown_noise_20 10 182 44
-	unknown_noise_20 8 145 28
+	unknown_noise_20 9 214 44
+	unknown_noise_20 13 198 60
+	unknown_noise_20 11 182 44
+	unknown_noise_20 9 145 28
 	end
 
 .SFX_Cry03_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 247 1544
-	unknown_sfx_20 6 230 1536
-	unknown_sfx_20 6 215 1520
-	unknown_sfx_20 6 196 1504
-	unknown_sfx_20 5 211 1472
-	unknown_sfx_20 4 211 1440
-	unknown_sfx_20 8 225 1408
+	unknown_sfx_20 5 247 1544
+	unknown_sfx_20 7 230 1536
+	unknown_sfx_20 7 215 1520
+	unknown_sfx_20 7 196 1504
+	unknown_sfx_20 6 211 1472
+	unknown_sfx_20 5 211 1440
+	unknown_sfx_20 9 225 1408
 	end
 
 .SFX_Cry03_3_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 199 1284
-	unknown_sfx_20 6 166 1282
-	unknown_sfx_20 6 151 1265
-	unknown_sfx_20 4 180 1249
-	unknown_sfx_20 5 163 1218
-	unknown_sfx_20 4 179 1187
-	unknown_sfx_20 8 193 1154
+	unknown_sfx_20 5 199 1284
+	unknown_sfx_20 7 166 1282
+	unknown_sfx_20 7 151 1265
+	unknown_sfx_20 5 180 1249
+	unknown_sfx_20 6 163 1218
+	unknown_sfx_20 5 179 1187
+	unknown_sfx_20 9 193 1154
 	end
 
 .SFX_Cry03_3_Ch7
-	unknown_noise_20 12 228 76
-	unknown_noise_20 10 199 92
-	unknown_noise_20 12 182 76
-	unknown_noise_20 15 162 92
+	unknown_noise_20 13 228 76
+	unknown_noise_20 11 199 92
+	unknown_noise_20 13 182 76
+	unknown_noise_20 16 162 92
 	end
 
 .SFX_Cry0F_3_Ch4
 	dutycycle 241
-	unknown_sfx_20 4 247 1984
-	unknown_sfx_20 12 230 1986
-	unknown_sfx_20 6 181 1664
-	unknown_sfx_20 4 196 1648
-	unknown_sfx_20 4 181 1632
-	unknown_sfx_20 8 193 1600
+	unknown_sfx_20 5 247 1984
+	unknown_sfx_20 13 230 1986
+	unknown_sfx_20 7 181 1664
+	unknown_sfx_20 5 196 1648
+	unknown_sfx_20 5 181 1632
+	unknown_sfx_20 9 193 1600
 	end
 
 .SFX_Cry0F_3_Ch5
 	dutycycle 204
-	unknown_sfx_20 3 199 1921
-	unknown_sfx_20 12 182 1920
-	unknown_sfx_20 6 165 1601
-	unknown_sfx_20 4 196 1586
-	unknown_sfx_20 6 181 1569
-	unknown_sfx_20 8 161 1538
+	unknown_sfx_20 4 199 1921
+	unknown_sfx_20 13 182 1920
+	unknown_sfx_20 7 165 1601
+	unknown_sfx_20 5 196 1586
+	unknown_sfx_20 7 181 1569
+	unknown_sfx_20 9 161 1538
 	end
 
 .SFX_Cry0F_3_Ch7
-	unknown_noise_20 3 228 60
-	unknown_noise_20 12 214 44
 	unknown_noise_20 4 228 60
-	unknown_noise_20 8 183 92
-	unknown_noise_20 15 194 93
+	unknown_noise_20 13 214 44
+	unknown_noise_20 5 228 60
+	unknown_noise_20 9 183 92
+	unknown_noise_20 16 194 93
 	end
 
 .SFX_Cry10_3_Ch4
 	dutycycle 201
-	unknown_sfx_20 8 247 1664
-	unknown_sfx_20 2 247 1632
-	unknown_sfx_20 1 231 1600
-	unknown_sfx_20 1 231 1568
-	unknown_sfx_20 15 209 1536
-	unknown_sfx_20 4 199 1856
-	unknown_sfx_20 4 167 1840
-	unknown_sfx_20 15 145 1824
+	unknown_sfx_20 9 247 1664
+	unknown_sfx_20 3 247 1632
+	unknown_sfx_20 2 231 1600
+	unknown_sfx_20 2 231 1568
+	unknown_sfx_20 16 209 1536
+	unknown_sfx_20 5 199 1856
+	unknown_sfx_20 5 167 1840
+	unknown_sfx_20 16 145 1824
 	end
 
 .SFX_Cry10_3_Ch5
 	dutycycle 121
-	unknown_sfx_20 10 231 1666
-	unknown_sfx_20 2 231 1634
-	unknown_sfx_20 1 215 1602
-	unknown_sfx_20 1 215 1570
-	unknown_sfx_20 15 193 1538
-	unknown_sfx_20 4 183 1858
-	unknown_sfx_20 2 151 1842
-	unknown_sfx_20 15 129 1826
+	unknown_sfx_20 11 231 1666
+	unknown_sfx_20 3 231 1634
+	unknown_sfx_20 2 215 1602
+	unknown_sfx_20 2 215 1570
+	unknown_sfx_20 16 193 1538
+	unknown_sfx_20 5 183 1858
+	unknown_sfx_20 3 151 1842
+	unknown_sfx_20 16 129 1826
 	end
 
 .SFX_Cry10_3_Ch7
-	unknown_noise_20 4 116 33
-	unknown_noise_20 4 116 16
-	unknown_noise_20 4 113 32
+	unknown_noise_20 5 116 33
+	unknown_noise_20 5 116 16
+	unknown_noise_20 5 113 32
 	end
 
 .SFX_Cry00_3_Ch4
 	dutycycle 245
-	unknown_sfx_20 4 243 1816
-	unknown_sfx_20 15 229 1944
-	unknown_sfx_20 8 145 1880
+	unknown_sfx_20 5 243 1816
+	unknown_sfx_20 16 229 1944
+	unknown_sfx_20 9 145 1880
 	end
 
 .SFX_Cry00_3_Ch5
 	dutycycle 160
-	unknown_sfx_20 5 179 1800
-	unknown_sfx_20 15 197 1928
-	unknown_sfx_20 8 113 1864
+	unknown_sfx_20 6 179 1800
+	unknown_sfx_20 16 197 1928
+	unknown_sfx_20 9 113 1864
 	end
 
 .SFX_Cry00_3_Ch7
-	unknown_noise_20 3 161 28
-	unknown_noise_20 14 148 44
-	unknown_noise_20 8 129 28
+	unknown_noise_20 4 161 28
+	unknown_noise_20 15 148 44
+	unknown_noise_20 9 129 28
 	end
 
 .SFX_Cry0E_3_Ch4
 	dutycycle 165
-	unknown_sfx_20 4 225 1792
-	unknown_sfx_20 4 242 1920
-	unknown_sfx_20 2 146 1856
-	unknown_sfx_20 8 225 1536
+	unknown_sfx_20 5 225 1792
+	unknown_sfx_20 5 242 1920
+	unknown_sfx_20 3 146 1856
+	unknown_sfx_20 9 225 1536
 	end
 
 .SFX_Cry0E_3_Ch5
 	dutycycle 10
-	unknown_sfx_20 4 177 1761
-	unknown_sfx_20 3 194 1761
-	unknown_sfx_20 3 98 1665
-	unknown_sfx_20 8 177 1505
+	unknown_sfx_20 5 177 1761
+	unknown_sfx_20 4 194 1761
+	unknown_sfx_20 4 98 1665
+	unknown_sfx_20 9 177 1505
 	end
 
 .SFX_Cry0E_3_Ch7
-	unknown_noise_20 2 97 50
-	unknown_noise_20 2 97 33
-	unknown_noise_20 8 97 17
+	unknown_noise_20 3 97 50
+	unknown_noise_20 3 97 33
+	unknown_noise_20 9 97 17
 	end
 
 .SFX_Cry06_3_Ch4
 	dutycycle 250
-	unknown_sfx_20 6 131 583
-	unknown_sfx_20 15 98 550
-	unknown_sfx_20 4 82 581
-	unknown_sfx_20 9 99 518
-	unknown_sfx_20 15 130 549
-	unknown_sfx_20 15 66 519
+	unknown_sfx_20 7 131 583
+	unknown_sfx_20 16 98 550
+	unknown_sfx_20 5 82 581
+	unknown_sfx_20 10 99 518
+	unknown_sfx_20 16 130 549
+	unknown_sfx_20 16 66 519
 	goto SFX_Cry06_3_Ch5
 
 .SFX_Cry06_3_Ch5
 	end
 
 .SFX_Cry06_3_Ch7
-	unknown_noise_20 8 212 140
-	unknown_noise_20 4 226 156
-	unknown_noise_20 15 198 140
-	unknown_noise_20 8 228 172
-	unknown_noise_20 15 215 156
-	unknown_noise_20 15 242 172
+	unknown_noise_20 9 212 140
+	unknown_noise_20 5 226 156
+	unknown_noise_20 16 198 140
+	unknown_noise_20 9 228 172
+	unknown_noise_20 16 215 156
+	unknown_noise_20 16 242 172
 	end
 
 .SFX_Cry07_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 243 1760
-	unknown_sfx_20 15 228 1600
-	unknown_sfx_20 8 193 1568
+	unknown_sfx_20 5 243 1760
+	unknown_sfx_20 16 228 1600
+	unknown_sfx_20 9 193 1568
 	end
 
 .SFX_Cry07_3_Ch5
 	dutycycle 10
-	unknown_sfx_20 3 195 1667
-	unknown_sfx_20 14 180 1538
-	unknown_sfx_20 8 161 1537
+	unknown_sfx_20 4 195 1667
+	unknown_sfx_20 15 180 1538
+	unknown_sfx_20 9 161 1537
 	end
 
 .SFX_Cry07_3_Ch7
-	unknown_noise_20 4 211 92
-	unknown_noise_20 15 230 76
-	unknown_noise_20 8 177 92
+	unknown_noise_20 5 211 92
+	unknown_noise_20 16 230 76
+	unknown_noise_20 9 177 92
 	end
 
 .SFX_Cry05_3_Ch4
 	dutycycle 10
-	unknown_sfx_20 6 226 1280
-	unknown_sfx_20 6 227 1408
-	unknown_sfx_20 6 211 1392
-	unknown_sfx_20 8 161 1376
+	unknown_sfx_20 7 226 1280
+	unknown_sfx_20 7 227 1408
+	unknown_sfx_20 7 211 1392
+	unknown_sfx_20 9 161 1376
 	end
 
 .SFX_Cry05_3_Ch5
 	dutycycle 245
-	unknown_sfx_20 6 226 1154
-	unknown_sfx_20 6 211 1281
-	unknown_sfx_20 6 178 1250
-	unknown_sfx_20 8 129 1217
+	unknown_sfx_20 7 226 1154
+	unknown_sfx_20 7 211 1281
+	unknown_sfx_20 7 178 1250
+	unknown_sfx_20 9 129 1217
 	goto SFX_Cry05_3_Ch7
 
 .SFX_Cry05_3_Ch7
@@ -4231,64 +4231,64 @@
 
 .SFX_Cry0B_3_Ch4
 	dutycycle 204
-	unknown_sfx_20 4 241 1792
-	unknown_sfx_20 4 225 1920
-	unknown_sfx_20 4 209 1856
-	unknown_sfx_20 4 225 1856
-	unknown_sfx_20 4 241 1920
-	unknown_sfx_20 4 209 1792
-	unknown_sfx_20 4 241 1793
-	unknown_sfx_20 4 209 1922
-	unknown_sfx_20 4 193 1858
-	unknown_sfx_20 8 177 1857
+	unknown_sfx_20 5 241 1792
+	unknown_sfx_20 5 225 1920
+	unknown_sfx_20 5 209 1856
+	unknown_sfx_20 5 225 1856
+	unknown_sfx_20 5 241 1920
+	unknown_sfx_20 5 209 1792
+	unknown_sfx_20 5 241 1793
+	unknown_sfx_20 5 209 1922
+	unknown_sfx_20 5 193 1858
+	unknown_sfx_20 9 177 1857
 	end
 
 .SFX_Cry0B_3_Ch5
 	dutycycle 68
-	unknown_sfx_20 12 8 0
-	unknown_sfx_20 4 241 1793
-	unknown_sfx_20 4 225 1922
-	unknown_sfx_20 4 209 1857
-	unknown_sfx_20 4 225 1857
-	unknown_sfx_20 4 241 1922
-	unknown_sfx_20 8 209 1793
+	unknown_sfx_20 13 8 0
+	unknown_sfx_20 5 241 1793
+	unknown_sfx_20 5 225 1922
+	unknown_sfx_20 5 209 1857
+	unknown_sfx_20 5 225 1857
+	unknown_sfx_20 5 241 1922
+	unknown_sfx_20 9 209 1793
 	end
 
 .SFX_Cry0B_3_Ch7
-	unknown_noise_20 15 8 0
-	unknown_noise_20 4 8 0
-	unknown_noise_20 4 209 76
-	unknown_noise_20 4 177 44
-	unknown_noise_20 4 209 60
-	unknown_noise_20 4 177 60
-	unknown_noise_20 4 193 44
-	unknown_noise_20 8 161 76
+	unknown_noise_20 16 8 0
+	unknown_noise_20 5 8 0
+	unknown_noise_20 5 209 76
+	unknown_noise_20 5 177 44
+	unknown_noise_20 5 209 60
+	unknown_noise_20 5 177 60
+	unknown_noise_20 5 193 44
+	unknown_noise_20 9 161 76
 	end
 
 .SFX_Cry0C_3_Ch4
 	dutycycle 204
-	unknown_sfx_20 8 245 1536
-	unknown_sfx_20 2 210 1592
-	unknown_sfx_20 2 194 1584
-	unknown_sfx_20 2 194 1576
-	unknown_sfx_20 2 178 1568
-	unknown_sfx_20 2 178 1552
-	unknown_sfx_20 2 162 1560
-	unknown_sfx_20 2 178 1552
-	unknown_sfx_20 8 193 1568
+	unknown_sfx_20 9 245 1536
+	unknown_sfx_20 3 210 1592
+	unknown_sfx_20 3 194 1584
+	unknown_sfx_20 3 194 1576
+	unknown_sfx_20 3 178 1568
+	unknown_sfx_20 3 178 1552
+	unknown_sfx_20 3 162 1560
+	unknown_sfx_20 3 178 1552
+	unknown_sfx_20 9 193 1568
 	end
 
 .SFX_Cry0C_3_Ch5
 	dutycycle 68
-	unknown_sfx_20 12 195 1472
-	unknown_sfx_20 3 177 1529
-	unknown_sfx_20 2 161 1521
-	unknown_sfx_20 2 161 1513
-	unknown_sfx_20 2 145 1505
-	unknown_sfx_20 2 145 1497
-	unknown_sfx_20 2 129 1489
-	unknown_sfx_20 2 145 1497
-	unknown_sfx_20 8 145 1505
+	unknown_sfx_20 13 195 1472
+	unknown_sfx_20 4 177 1529
+	unknown_sfx_20 3 161 1521
+	unknown_sfx_20 3 161 1513
+	unknown_sfx_20 3 145 1505
+	unknown_sfx_20 3 145 1497
+	unknown_sfx_20 3 129 1489
+	unknown_sfx_20 3 145 1497
+	unknown_sfx_20 9 145 1505
 	goto SFX_Cry0C_3_Ch7
 
 .SFX_Cry0C_3_Ch7
@@ -4296,16 +4296,16 @@
 
 .SFX_Cry02_3_Ch4
 	duty 0
-	unknown_sfx_20 8 245 1152
-	unknown_sfx_20 2 225 1504
-	unknown_sfx_20 8 209 1500
+	unknown_sfx_20 9 245 1152
+	unknown_sfx_20 3 225 1504
+	unknown_sfx_20 9 209 1500
 	end
 
 .SFX_Cry02_3_Ch5
 	dutycycle 165
-	unknown_sfx_20 7 149 1089
-	unknown_sfx_20 2 129 1313
-	unknown_sfx_20 8 97 1306
+	unknown_sfx_20 8 149 1089
+	unknown_sfx_20 3 129 1313
+	unknown_sfx_20 9 97 1306
 	goto SFX_Cry02_3_Ch7
 
 .SFX_Cry02_3_Ch7
@@ -4313,166 +4313,166 @@
 
 .SFX_Cry0D_3_Ch4
 	dutycycle 136
-	unknown_sfx_20 5 242 1616
-	unknown_sfx_20 9 209 1632
-	unknown_sfx_20 5 226 1554
-	unknown_sfx_20 9 193 1570
-	unknown_sfx_20 5 242 1552
-	unknown_sfx_20 6 209 1568
+	unknown_sfx_20 6 242 1616
+	unknown_sfx_20 10 209 1632
+	unknown_sfx_20 6 226 1554
+	unknown_sfx_20 10 193 1570
+	unknown_sfx_20 6 242 1552
+	unknown_sfx_20 7 209 1568
 	loop 2 SFX_Cry0D_3_Ch4
 	end
 
 .SFX_Cry0D_3_Ch5
 	dutycycle 64
-	unknown_sfx_20 4 8 0
-	unknown_sfx_20 5 242 1617
-	unknown_sfx_20 9 209 1633
-	unknown_sfx_20 5 226 1556
-	unknown_sfx_20 8 193 1572
-	unknown_sfx_20 5 242 1553
-	unknown_sfx_20 12 209 1569
-	unknown_sfx_20 5 226 1556
-	unknown_sfx_20 8 193 1572
-	unknown_sfx_20 5 242 1553
-	unknown_sfx_20 4 209 1569
+	unknown_sfx_20 5 8 0
+	unknown_sfx_20 6 242 1617
+	unknown_sfx_20 10 209 1633
+	unknown_sfx_20 6 226 1556
+	unknown_sfx_20 9 193 1572
+	unknown_sfx_20 6 242 1553
+	unknown_sfx_20 13 209 1569
+	unknown_sfx_20 6 226 1556
+	unknown_sfx_20 9 193 1572
+	unknown_sfx_20 6 242 1553
+	unknown_sfx_20 5 209 1569
 	end
 
 .SFX_Cry0D_3_Ch7
-	unknown_noise_20 6 210 28
-	unknown_noise_20 9 177 44
-	unknown_noise_20 8 194 44
-	unknown_noise_20 9 177 60
-	unknown_noise_20 6 194 44
-	unknown_noise_20 9 162 60
-	unknown_noise_20 7 194 44
-	unknown_noise_20 5 161 60
+	unknown_noise_20 7 210 28
+	unknown_noise_20 10 177 44
 	unknown_noise_20 9 194 44
-	unknown_noise_20 4 161 60
+	unknown_noise_20 10 177 60
+	unknown_noise_20 7 194 44
+	unknown_noise_20 10 162 60
+	unknown_noise_20 8 194 44
+	unknown_noise_20 6 161 60
+	unknown_noise_20 10 194 44
+	unknown_noise_20 5 161 60
 	end
 
 .SFX_Cry01_3_Ch4
 	dutycycle 160
-	unknown_sfx_20 4 243 1536
-	unknown_sfx_20 8 213 1888
-	unknown_sfx_20 3 226 1824
-	unknown_sfx_20 8 209 1808
+	unknown_sfx_20 5 243 1536
+	unknown_sfx_20 9 213 1888
+	unknown_sfx_20 4 226 1824
+	unknown_sfx_20 9 209 1808
 	end
 
 .SFX_Cry01_3_Ch5
 	dutycycle 90
-	unknown_sfx_20 5 179 1777
-	unknown_sfx_20 7 197 1874
-	unknown_sfx_20 3 162 1809
-	unknown_sfx_20 8 177 1537
+	unknown_sfx_20 6 179 1777
+	unknown_sfx_20 8 197 1874
+	unknown_sfx_20 4 162 1809
+	unknown_sfx_20 9 177 1537
 	end
 
 .SFX_Cry01_3_Ch7
-	unknown_noise_20 3 162 60
-	unknown_noise_20 12 148 44
-	unknown_noise_20 3 130 28
-	unknown_noise_20 8 113 44
+	unknown_noise_20 4 162 60
+	unknown_noise_20 13 148 44
+	unknown_noise_20 4 130 28
+	unknown_noise_20 9 113 44
 	end
 
 .SFX_Cry0A_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 8 247 1760
-	unknown_sfx_20 6 230 1765
-	unknown_sfx_20 3 244 1760
-	unknown_sfx_20 3 246 1744
-	unknown_sfx_20 3 227 1728
-	unknown_sfx_20 4 242 1712
-	unknown_sfx_20 15 162 1736
+	unknown_sfx_20 9 247 1760
+	unknown_sfx_20 7 230 1765
+	unknown_sfx_20 4 244 1760
+	unknown_sfx_20 4 246 1744
+	unknown_sfx_20 4 227 1728
+	unknown_sfx_20 5 242 1712
+	unknown_sfx_20 16 162 1736
 	end
 
 .SFX_Cry0A_3_Ch5
 	dutycycle 5
-	unknown_sfx_20 3 8 0
-	unknown_sfx_20 8 167 1697
-	unknown_sfx_20 6 134 1699
-	unknown_sfx_20 3 116 1697
-	unknown_sfx_20 3 118 1681
-	unknown_sfx_20 3 131 1666
-	unknown_sfx_20 4 162 1649
-	unknown_sfx_20 15 114 1673
+	unknown_sfx_20 4 8 0
+	unknown_sfx_20 9 167 1697
+	unknown_sfx_20 7 134 1699
+	unknown_sfx_20 4 116 1697
+	unknown_sfx_20 4 118 1681
+	unknown_sfx_20 4 131 1666
+	unknown_sfx_20 5 162 1649
+	unknown_sfx_20 16 114 1673
 	end
 
 .SFX_Cry0A_3_Ch7
-	unknown_noise_20 2 242 60
-	unknown_noise_20 8 228 62
-	unknown_noise_20 8 215 60
-	unknown_noise_20 5 197 59
-	unknown_noise_20 3 212 44
-	unknown_noise_20 2 182 60
-	unknown_noise_20 3 164 44
-	unknown_noise_20 8 145 60
+	unknown_noise_20 3 242 60
+	unknown_noise_20 9 228 62
+	unknown_noise_20 9 215 60
+	unknown_noise_20 6 197 59
+	unknown_noise_20 4 212 44
+	unknown_noise_20 3 182 60
+	unknown_noise_20 4 164 44
+	unknown_noise_20 9 145 60
 	end
 
 .SFX_Cry08_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 246 1381
-	unknown_sfx_20 10 228 1404
-	unknown_sfx_20 3 194 1372
-	unknown_sfx_20 15 178 1340
+	unknown_sfx_20 16 246 1381
+	unknown_sfx_20 11 228 1404
+	unknown_sfx_20 4 194 1372
+	unknown_sfx_20 16 178 1340
 	end
 
 .SFX_Cry08_3_Ch5
 	dutycycle 90
-	unknown_sfx_20 14 214 1283
-	unknown_sfx_20 9 180 1307
-	unknown_sfx_20 4 146 1274
-	unknown_sfx_20 15 162 1243
+	unknown_sfx_20 15 214 1283
+	unknown_sfx_20 10 180 1307
+	unknown_sfx_20 5 146 1274
+	unknown_sfx_20 16 162 1243
 	end
 
 .SFX_Cry08_3_Ch7
-	unknown_noise_20 12 230 76
-	unknown_noise_20 11 215 92
-	unknown_noise_20 15 194 76
+	unknown_noise_20 13 230 76
+	unknown_noise_20 12 215 92
+	unknown_noise_20 16 194 76
 	end
 
 .SFX_Cry04_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 247 1696
-	unknown_sfx_20 8 230 1700
-	unknown_sfx_20 4 214 1696
-	unknown_sfx_20 12 211 1568
-	unknown_sfx_20 8 195 1572
-	unknown_sfx_20 4 194 1568
-	unknown_sfx_20 8 177 1552
+	unknown_sfx_20 5 247 1696
+	unknown_sfx_20 9 230 1700
+	unknown_sfx_20 5 214 1696
+	unknown_sfx_20 13 211 1568
+	unknown_sfx_20 9 195 1572
+	unknown_sfx_20 5 194 1568
+	unknown_sfx_20 9 177 1552
 	end
 
 .SFX_Cry04_3_Ch5
 	dutycycle 90
-	unknown_sfx_20 4 231 1537
-	unknown_sfx_20 8 214 1539
-	unknown_sfx_20 4 198 1537
-	unknown_sfx_20 12 195 1409
-	unknown_sfx_20 8 179 1411
-	unknown_sfx_20 4 178 1410
-	unknown_sfx_20 8 161 1393
+	unknown_sfx_20 5 231 1537
+	unknown_sfx_20 9 214 1539
+	unknown_sfx_20 5 198 1537
+	unknown_sfx_20 13 195 1409
+	unknown_sfx_20 9 179 1411
+	unknown_sfx_20 5 178 1410
+	unknown_sfx_20 9 161 1393
 	end
 
 .SFX_Cry04_3_Ch7
-	unknown_noise_20 7 214 92
-	unknown_noise_20 8 230 76
-	unknown_noise_20 4 212 92
-	unknown_noise_20 4 212 76
-	unknown_noise_20 7 195 76
-	unknown_noise_20 8 161 92
+	unknown_noise_20 8 214 92
+	unknown_noise_20 9 230 76
+	unknown_noise_20 5 212 92
+	unknown_noise_20 5 212 76
+	unknown_noise_20 8 195 76
+	unknown_noise_20 9 161 92
 	end
 
 .SFX_Cry19_3_Ch4
 	dutycycle 27
-	unknown_sfx_20 7 210 1856
-	unknown_sfx_20 15 229 1888
-	unknown_sfx_20 15 193 1840
+	unknown_sfx_20 8 210 1856
+	unknown_sfx_20 16 229 1888
+	unknown_sfx_20 16 193 1840
 	end
 
 .SFX_Cry19_3_Ch5
 	dutycycle 129
-	unknown_sfx_20 2 194 1793
-	unknown_sfx_20 4 194 1800
-	unknown_sfx_20 15 215 1857
-	unknown_sfx_20 15 162 1793
+	unknown_sfx_20 3 194 1793
+	unknown_sfx_20 5 194 1800
+	unknown_sfx_20 16 215 1857
+	unknown_sfx_20 16 162 1793
 	goto SFX_Cry19_3_Ch7
 
 .SFX_Cry19_3_Ch7
@@ -4480,398 +4480,398 @@
 
 .SFX_Cry16_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 15 215 1920
-	unknown_sfx_20 4 230 1952
-	unknown_sfx_20 15 210 1856
+	unknown_sfx_20 16 215 1920
+	unknown_sfx_20 5 230 1952
+	unknown_sfx_20 16 210 1856
 	end
 
 .SFX_Cry16_3_Ch5
 	dutycycle 90
-	unknown_sfx_20 15 199 1875
-	unknown_sfx_20 5 182 1906
-	unknown_sfx_20 15 194 1809
+	unknown_sfx_20 16 199 1875
+	unknown_sfx_20 6 182 1906
+	unknown_sfx_20 16 194 1809
 	end
 
 .SFX_Cry16_3_Ch7
-	unknown_noise_20 13 246 76
-	unknown_noise_20 4 230 60
-	unknown_noise_20 15 242 76
+	unknown_noise_20 14 246 76
+	unknown_noise_20 5 230 60
+	unknown_noise_20 16 242 76
 	end
 
 .SFX_Cry1B_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1728
-	unknown_sfx_20 15 231 1792
-	unknown_sfx_20 4 244 1776
-	unknown_sfx_20 4 228 1760
-	unknown_sfx_20 8 209 1744
+	unknown_sfx_20 7 247 1728
+	unknown_sfx_20 16 231 1792
+	unknown_sfx_20 5 244 1776
+	unknown_sfx_20 5 228 1760
+	unknown_sfx_20 9 209 1744
 	end
 
 .SFX_Cry1B_3_Ch5
 	dutycycle 10
-	unknown_sfx_20 7 230 1665
-	unknown_sfx_20 14 213 1729
-	unknown_sfx_20 4 196 1713
-	unknown_sfx_20 4 212 1697
-	unknown_sfx_20 8 193 1681
+	unknown_sfx_20 8 230 1665
+	unknown_sfx_20 15 213 1729
+	unknown_sfx_20 5 196 1713
+	unknown_sfx_20 5 212 1697
+	unknown_sfx_20 9 193 1681
 	end
 
 .SFX_Cry1B_3_Ch7
-	unknown_noise_20 10 166 60
-	unknown_noise_20 14 148 44
-	unknown_noise_20 5 163 60
-	unknown_noise_20 8 145 44
+	unknown_noise_20 11 166 60
+	unknown_noise_20 15 148 44
+	unknown_noise_20 6 163 60
+	unknown_noise_20 9 145 44
 	end
 
 .SFX_Cry12_3_Ch4
 	dutycycle 165
-	unknown_sfx_20 12 242 1088
-	unknown_sfx_20 15 227 1184
-	unknown_sfx_20 4 210 1168
-	unknown_sfx_20 8 209 1152
+	unknown_sfx_20 13 242 1088
+	unknown_sfx_20 16 227 1184
+	unknown_sfx_20 5 210 1168
+	unknown_sfx_20 9 209 1152
 	end
 
 .SFX_Cry12_3_Ch5
 	dutycycle 238
-	unknown_sfx_20 11 210 1080
-	unknown_sfx_20 14 198 1176
-	unknown_sfx_20 3 178 1160
-	unknown_sfx_20 8 177 1144
+	unknown_sfx_20 12 210 1080
+	unknown_sfx_20 15 198 1176
+	unknown_sfx_20 4 178 1160
+	unknown_sfx_20 9 177 1144
 	end
 
 .SFX_Cry12_3_Ch7
-	unknown_noise_20 10 230 108
-	unknown_noise_20 15 210 92
-	unknown_noise_20 3 194 108
-	unknown_noise_20 8 209 92
+	unknown_noise_20 11 230 108
+	unknown_noise_20 16 210 92
+	unknown_noise_20 4 194 108
+	unknown_noise_20 9 209 92
 	end
 
 .SFX_Cry13_3_Ch4
 	dutycycle 51
-	unknown_sfx_20 15 246 1472
-	unknown_sfx_20 8 227 1468
-	unknown_sfx_20 6 210 1488
-	unknown_sfx_20 6 178 1504
-	unknown_sfx_20 6 194 1520
-	unknown_sfx_20 8 177 1536
+	unknown_sfx_20 16 246 1472
+	unknown_sfx_20 9 227 1468
+	unknown_sfx_20 7 210 1488
+	unknown_sfx_20 7 178 1504
+	unknown_sfx_20 7 194 1520
+	unknown_sfx_20 9 177 1536
 	end
 
 .SFX_Cry13_3_Ch5
 	dutycycle 153
-	unknown_sfx_20 14 198 1201
-	unknown_sfx_20 7 195 1197
-	unknown_sfx_20 5 178 1217
-	unknown_sfx_20 8 146 1233
-	unknown_sfx_20 6 162 1249
-	unknown_sfx_20 8 145 1265
+	unknown_sfx_20 15 198 1201
+	unknown_sfx_20 8 195 1197
+	unknown_sfx_20 6 178 1217
+	unknown_sfx_20 9 146 1233
+	unknown_sfx_20 7 162 1249
+	unknown_sfx_20 9 145 1265
 	end
 
 .SFX_Cry13_3_Ch7
-	unknown_noise_20 10 230 92
-	unknown_noise_20 10 214 108
-	unknown_noise_20 4 194 76
-	unknown_noise_20 6 211 92
-	unknown_noise_20 8 179 76
-	unknown_noise_20 8 161 92
+	unknown_noise_20 11 230 92
+	unknown_noise_20 11 214 108
+	unknown_noise_20 5 194 76
+	unknown_noise_20 7 211 92
+	unknown_noise_20 9 179 76
+	unknown_noise_20 9 161 92
 	end
 
 .SFX_Cry14_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 8 228 1936
-	unknown_sfx_20 15 245 1984
-	unknown_sfx_20 8 209 2008
+	unknown_sfx_20 9 228 1936
+	unknown_sfx_20 16 245 1984
+	unknown_sfx_20 9 209 2008
 	end
 
 .SFX_Cry14_3_Ch5
 	dutycycle 165
-	unknown_sfx_20 10 196 1905
-	unknown_sfx_20 15 182 1954
-	unknown_sfx_20 8 161 1975
+	unknown_sfx_20 11 196 1905
+	unknown_sfx_20 16 182 1954
+	unknown_sfx_20 9 161 1975
 	end
 
 .SFX_Cry14_3_Ch7
-	unknown_noise_20 8 228 76
-	unknown_noise_20 14 196 60
-	unknown_noise_20 8 209 44
+	unknown_noise_20 9 228 76
+	unknown_noise_20 15 196 60
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry1E_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 242 1536
-	unknown_sfx_20 6 226 1600
-	unknown_sfx_20 6 210 1664
-	unknown_sfx_20 6 226 1728
-	unknown_sfx_20 6 210 1792
-	unknown_sfx_20 6 194 1856
-	unknown_sfx_20 6 178 1920
-	unknown_sfx_20 8 161 1984
+	unknown_sfx_20 7 242 1536
+	unknown_sfx_20 7 226 1600
+	unknown_sfx_20 7 210 1664
+	unknown_sfx_20 7 226 1728
+	unknown_sfx_20 7 210 1792
+	unknown_sfx_20 7 194 1856
+	unknown_sfx_20 7 178 1920
+	unknown_sfx_20 9 161 1984
 	end
 
 .SFX_Cry1E_3_Ch5
 	dutycycle 17
-	unknown_sfx_20 3 8 1
-	unknown_sfx_20 6 194 1473
-	unknown_sfx_20 6 178 1538
-	unknown_sfx_20 6 162 1601
-	unknown_sfx_20 6 178 1666
-	unknown_sfx_20 6 162 1730
-	unknown_sfx_20 6 146 1793
-	unknown_sfx_20 6 162 1858
-	unknown_sfx_20 8 129 1921
+	unknown_sfx_20 4 8 1
+	unknown_sfx_20 7 194 1473
+	unknown_sfx_20 7 178 1538
+	unknown_sfx_20 7 162 1601
+	unknown_sfx_20 7 178 1666
+	unknown_sfx_20 7 162 1730
+	unknown_sfx_20 7 146 1793
+	unknown_sfx_20 7 162 1858
+	unknown_sfx_20 9 129 1921
 	end
 
 .SFX_Cry1E_3_Ch7
-	unknown_noise_20 6 8 1
-	unknown_noise_20 5 226 92
-	unknown_noise_20 5 194 76
-	unknown_noise_20 5 210 60
-	unknown_noise_20 5 178 44
-	unknown_noise_20 5 194 28
-	unknown_noise_20 5 162 27
-	unknown_noise_20 5 146 26
-	unknown_noise_20 8 129 24
+	unknown_noise_20 7 8 1
+	unknown_noise_20 6 226 92
+	unknown_noise_20 6 194 76
+	unknown_noise_20 6 210 60
+	unknown_noise_20 6 178 44
+	unknown_noise_20 6 194 28
+	unknown_noise_20 6 162 27
+	unknown_noise_20 6 146 26
+	unknown_noise_20 9 129 24
 	end
 
 .SFX_Cry15_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 4 243 1920
-	unknown_sfx_20 15 231 1792
-	unknown_sfx_20 8 211 1808
-	unknown_sfx_20 4 194 1792
-	unknown_sfx_20 4 210 1776
-	unknown_sfx_20 8 193 1760
+	unknown_sfx_20 5 243 1920
+	unknown_sfx_20 16 231 1792
+	unknown_sfx_20 9 211 1808
+	unknown_sfx_20 5 194 1792
+	unknown_sfx_20 5 210 1776
+	unknown_sfx_20 9 193 1760
 	end
 
 .SFX_Cry15_3_Ch5
 	dutycycle 90
-	unknown_sfx_20 6 195 1793
-	unknown_sfx_20 14 183 1665
-	unknown_sfx_20 7 179 1682
-	unknown_sfx_20 3 162 1665
-	unknown_sfx_20 4 178 1650
-	unknown_sfx_20 8 161 1633
+	unknown_sfx_20 7 195 1793
+	unknown_sfx_20 15 183 1665
+	unknown_sfx_20 8 179 1682
+	unknown_sfx_20 4 162 1665
+	unknown_sfx_20 5 178 1650
+	unknown_sfx_20 9 161 1633
 	end
 
 .SFX_Cry15_3_Ch7
-	unknown_noise_20 6 227 92
-	unknown_noise_20 14 214 76
-	unknown_noise_20 6 198 60
-	unknown_noise_20 3 179 76
-	unknown_noise_20 3 162 92
-	unknown_noise_20 8 177 108
+	unknown_noise_20 7 227 92
+	unknown_noise_20 15 214 76
+	unknown_noise_20 7 198 60
+	unknown_noise_20 4 179 76
+	unknown_noise_20 4 162 92
+	unknown_noise_20 9 177 108
 	end
 
 .SFX_Cry17_3_Ch4
 	dutycycle 15
-	unknown_sfx_20 15 247 1280
-	unknown_sfx_20 15 231 1288
-	unknown_sfx_20 8 180 1152
-	unknown_sfx_20 15 162 1120
+	unknown_sfx_20 16 247 1280
+	unknown_sfx_20 16 231 1288
+	unknown_sfx_20 9 180 1152
+	unknown_sfx_20 16 162 1120
 	end
 
 .SFX_Cry17_3_Ch5
 	dutycycle 68
-	unknown_sfx_20 14 215 1153
-	unknown_sfx_20 14 199 1161
-	unknown_sfx_20 10 180 1025
-	unknown_sfx_20 15 194 993
+	unknown_sfx_20 15 215 1153
+	unknown_sfx_20 15 199 1161
+	unknown_sfx_20 11 180 1025
+	unknown_sfx_20 16 194 993
 	end
 
 .SFX_Cry17_3_Ch7
-	unknown_noise_20 14 247 124
-	unknown_noise_20 12 246 108
-	unknown_noise_20 9 228 124
-	unknown_noise_20 15 226 108
+	unknown_noise_20 15 247 124
+	unknown_noise_20 13 246 108
+	unknown_noise_20 10 228 124
+	unknown_noise_20 16 226 108
 	end
 
 .SFX_Cry1C_3_Ch4
 	dutycycle 245
-	unknown_sfx_20 7 214 2017
-	unknown_sfx_20 6 198 2018
-	unknown_sfx_20 9 214 2017
-	unknown_sfx_20 7 198 2016
-	unknown_sfx_20 5 182 2018
-	unknown_sfx_20 7 198 2017
-	unknown_sfx_20 6 182 2016
-	unknown_sfx_20 8 161 2015
+	unknown_sfx_20 8 214 2017
+	unknown_sfx_20 7 198 2018
+	unknown_sfx_20 10 214 2017
+	unknown_sfx_20 8 198 2016
+	unknown_sfx_20 6 182 2018
+	unknown_sfx_20 8 198 2017
+	unknown_sfx_20 7 182 2016
+	unknown_sfx_20 9 161 2015
 	end
 
 .SFX_Cry1C_3_Ch5
 	dutycycle 68
-	unknown_sfx_20 6 195 1993
-	unknown_sfx_20 6 179 1991
-	unknown_sfx_20 10 196 1987
-	unknown_sfx_20 8 180 1991
-	unknown_sfx_20 6 195 1993
-	unknown_sfx_20 15 162 1989
+	unknown_sfx_20 7 195 1993
+	unknown_sfx_20 7 179 1991
+	unknown_sfx_20 11 196 1987
+	unknown_sfx_20 9 180 1991
+	unknown_sfx_20 7 195 1993
+	unknown_sfx_20 16 162 1989
 	end
 
 .SFX_Cry1C_3_Ch7
-	unknown_noise_20 13 25 124
-	unknown_noise_20 13 247 140
-	unknown_noise_20 12 214 124
-	unknown_noise_20 8 196 108
-	unknown_noise_20 15 179 92
+	unknown_noise_20 14 25 124
+	unknown_noise_20 14 247 140
+	unknown_noise_20 13 214 124
+	unknown_noise_20 9 196 108
+	unknown_noise_20 16 179 92
 	end
 
 .SFX_Cry1A_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 6 247 1856
-	unknown_sfx_20 12 230 1860
-	unknown_sfx_20 6 213 1872
-	unknown_sfx_20 4 195 1888
-	unknown_sfx_20 3 195 1920
-	unknown_sfx_20 8 209 1952
+	unknown_sfx_20 7 247 1856
+	unknown_sfx_20 13 230 1860
+	unknown_sfx_20 7 213 1872
+	unknown_sfx_20 5 195 1888
+	unknown_sfx_20 4 195 1920
+	unknown_sfx_20 9 209 1952
 	end
 
 .SFX_Cry1A_3_Ch5
 	dutycycle 10
-	unknown_sfx_20 6 199 1793
-	unknown_sfx_20 11 182 1794
-	unknown_sfx_20 6 165 1809
-	unknown_sfx_20 4 147 1825
-	unknown_sfx_20 3 163 1857
-	unknown_sfx_20 8 145 1890
+	unknown_sfx_20 7 199 1793
+	unknown_sfx_20 12 182 1794
+	unknown_sfx_20 7 165 1809
+	unknown_sfx_20 5 147 1825
+	unknown_sfx_20 4 163 1857
+	unknown_sfx_20 9 145 1890
 	end
 
 .SFX_Cry1A_3_Ch7
+	unknown_noise_20 4 226 60
+	unknown_noise_20 9 214 76
+	unknown_noise_20 6 212 60
+	unknown_noise_20 13 199 76
 	unknown_noise_20 3 226 60
-	unknown_noise_20 8 214 76
-	unknown_noise_20 5 212 60
-	unknown_noise_20 12 199 76
-	unknown_noise_20 2 226 60
-	unknown_noise_20 8 209 44
+	unknown_noise_20 9 209 44
 	end
 
 .SFX_Cry1D_3_Ch4
 	dutycycle 244
-	unknown_sfx_20 15 240 1797
-	unknown_sfx_20 10 224 1792
-	unknown_sfx_20 6 180 1808
-	unknown_sfx_20 4 211 1792
-	unknown_sfx_20 6 178 1568
-	unknown_sfx_20 8 161 1572
+	unknown_sfx_20 16 240 1797
+	unknown_sfx_20 11 224 1792
+	unknown_sfx_20 7 180 1808
+	unknown_sfx_20 5 211 1792
+	unknown_sfx_20 7 178 1568
+	unknown_sfx_20 9 161 1572
 	end
 
 .SFX_Cry1D_3_Ch5
 	dutycycle 34
-	unknown_sfx_20 15 176 1731
-	unknown_sfx_20 10 160 1729
-	unknown_sfx_20 6 132 1746
-	unknown_sfx_20 4 147 1729
-	unknown_sfx_20 6 130 1505
-	unknown_sfx_20 8 97 1512
+	unknown_sfx_20 16 176 1731
+	unknown_sfx_20 11 160 1729
+	unknown_sfx_20 7 132 1746
+	unknown_sfx_20 5 147 1729
+	unknown_sfx_20 7 130 1505
+	unknown_sfx_20 9 97 1512
 	end
 
 .SFX_Cry1D_3_Ch7
-	unknown_noise_20 6 230 76
-	unknown_noise_20 15 214 60
-	unknown_noise_20 10 197 74
-	unknown_noise_20 1 178 91
-	unknown_noise_20 15 194 76
+	unknown_noise_20 7 230 76
+	unknown_noise_20 16 214 60
+	unknown_noise_20 11 197 74
+	unknown_noise_20 2 178 91
+	unknown_noise_20 16 194 76
 	end
 
 .SFX_Cry18_3_Ch4
 	dutycycle 80
-	unknown_sfx_20 10 245 1664
-	unknown_sfx_20 3 226 1696
-	unknown_sfx_20 3 242 1728
-	unknown_sfx_20 3 226 1760
-	unknown_sfx_20 3 210 1792
-	unknown_sfx_20 3 194 1760
-	unknown_sfx_20 3 210 1728
-	unknown_sfx_20 8 193 1696
+	unknown_sfx_20 11 245 1664
+	unknown_sfx_20 4 226 1696
+	unknown_sfx_20 4 242 1728
+	unknown_sfx_20 4 226 1760
+	unknown_sfx_20 4 210 1792
+	unknown_sfx_20 4 194 1760
+	unknown_sfx_20 4 210 1728
+	unknown_sfx_20 9 193 1696
 	end
 
 .SFX_Cry18_3_Ch5
 	dutycycle 15
-	unknown_sfx_20 9 213 1585
-	unknown_sfx_20 3 210 1618
-	unknown_sfx_20 3 226 1649
-	unknown_sfx_20 3 178 1681
-	unknown_sfx_20 3 194 1714
-	unknown_sfx_20 3 178 1681
-	unknown_sfx_20 3 194 1649
-	unknown_sfx_20 8 177 1617
+	unknown_sfx_20 10 213 1585
+	unknown_sfx_20 4 210 1618
+	unknown_sfx_20 4 226 1649
+	unknown_sfx_20 4 178 1681
+	unknown_sfx_20 4 194 1714
+	unknown_sfx_20 4 178 1681
+	unknown_sfx_20 4 194 1649
+	unknown_sfx_20 9 177 1617
 	end
 
 .SFX_Cry18_3_Ch7
-	unknown_noise_20 6 227 76
-	unknown_noise_20 4 195 60
-	unknown_noise_20 5 212 60
-	unknown_noise_20 4 196 44
-	unknown_noise_20 6 180 60
-	unknown_noise_20 8 193 44
+	unknown_noise_20 7 227 76
+	unknown_noise_20 5 195 60
+	unknown_noise_20 6 212 60
+	unknown_noise_20 5 196 44
+	unknown_noise_20 7 180 60
+	unknown_noise_20 9 193 44
 	end
 
 .SFX_Cry1F_3_Ch4
 	dutycycle 165
-	unknown_sfx_20 3 244 1601
-	unknown_sfx_20 13 214 1825
-	unknown_sfx_20 8 244 1817
-	unknown_sfx_20 8 193 1818
+	unknown_sfx_20 4 244 1601
+	unknown_sfx_20 14 214 1825
+	unknown_sfx_20 9 244 1817
+	unknown_sfx_20 9 193 1818
 	end
 
 .SFX_Cry1F_3_Ch5
 	dutycycle 204
-	unknown_sfx_20 4 244 1408
-	unknown_sfx_20 14 230 1760
-	unknown_sfx_20 8 213 1752
-	unknown_sfx_20 8 209 1756
+	unknown_sfx_20 5 244 1408
+	unknown_sfx_20 15 230 1760
+	unknown_sfx_20 9 213 1752
+	unknown_sfx_20 9 209 1756
 	end
 
 .SFX_Cry1F_3_Ch7
-	unknown_noise_20 5 196 70
-	unknown_noise_20 13 165 68
-	unknown_noise_20 8 196 69
-	unknown_noise_20 8 177 68
+	unknown_noise_20 6 196 70
+	unknown_noise_20 14 165 68
+	unknown_noise_20 9 196 69
+	unknown_noise_20 9 177 68
 	end
 
 .SFX_Cry20_3_Ch4
 	dutycycle 240
-	unknown_sfx_20 13 241 1297
-	unknown_sfx_20 13 225 1301
-	unknown_sfx_20 13 225 1297
-	unknown_sfx_20 8 209 1297
+	unknown_sfx_20 14 241 1297
+	unknown_sfx_20 14 225 1301
+	unknown_sfx_20 14 225 1297
+	unknown_sfx_20 9 209 1297
 	end
 
 .SFX_Cry20_3_Ch5
 	dutycycle 21
-	unknown_sfx_20 12 225 1292
-	unknown_sfx_20 12 209 1296
-	unknown_sfx_20 14 193 1292
-	unknown_sfx_20 8 193 1290
+	unknown_sfx_20 13 225 1292
+	unknown_sfx_20 13 209 1296
+	unknown_sfx_20 15 193 1292
+	unknown_sfx_20 9 193 1290
 	end
 
 .SFX_Cry20_3_Ch7
-	unknown_noise_20 14 242 101
-	unknown_noise_20 13 226 85
-	unknown_noise_20 14 210 86
-	unknown_noise_20 8 209 102
+	unknown_noise_20 15 242 101
+	unknown_noise_20 14 226 85
+	unknown_noise_20 15 210 86
+	unknown_noise_20 9 209 102
 	end
 
 .SFX_Cry21_3_Ch4
 	dutycycle 27
-	unknown_sfx_20 3 243 1380
-	unknown_sfx_20 2 226 1348
-	unknown_sfx_20 5 209 1314
-	unknown_sfx_20 2 178 1156
-	unknown_sfx_20 8 209 1186
-	unknown_sfx_20 3 243 1316
-	unknown_sfx_20 4 228 1252
-	unknown_sfx_20 8 209 1282
+	unknown_sfx_20 4 243 1380
+	unknown_sfx_20 3 226 1348
+	unknown_sfx_20 6 209 1314
+	unknown_sfx_20 3 178 1156
+	unknown_sfx_20 9 209 1186
+	unknown_sfx_20 4 243 1316
+	unknown_sfx_20 5 228 1252
+	unknown_sfx_20 9 209 1282
 	end
 
 .SFX_Cry21_3_Ch5
 	dutycycle 204
-	unknown_sfx_20 3 211 1376
-	unknown_sfx_20 2 194 1344
-	unknown_sfx_20 5 193 1312
-	unknown_sfx_20 2 146 1152
-	unknown_sfx_20 8 193 1184
-	unknown_sfx_20 3 211 1312
-	unknown_sfx_20 3 196 1248
-	unknown_sfx_20 8 193 1280
+	unknown_sfx_20 4 211 1376
+	unknown_sfx_20 3 194 1344
+	unknown_sfx_20 6 193 1312
+	unknown_sfx_20 3 146 1152
+	unknown_sfx_20 9 193 1184
+	unknown_sfx_20 4 211 1312
+	unknown_sfx_20 4 196 1248
+	unknown_sfx_20 9 193 1280
 	goto SFX_Cry21_3_Ch7
 
 .SFX_Cry21_3_Ch7
@@ -4879,25 +4879,25 @@
 
 .SFX_Cry22_3_Ch4
 	dutycycle 17
-	unknown_sfx_20 2 61 897
-	unknown_sfx_20 7 245 1537
-	unknown_sfx_20 1 194 1153
-	unknown_sfx_20 8 145 897
+	unknown_sfx_20 3 61 897
+	unknown_sfx_20 8 245 1537
+	unknown_sfx_20 2 194 1153
+	unknown_sfx_20 9 145 897
 	end
 
 .SFX_Cry22_3_Ch5
 	dutycycle 238
-	unknown_sfx_20 2 62 1456
-	unknown_sfx_20 7 213 1885
-	unknown_sfx_20 1 178 1712
-	unknown_sfx_20 8 97 1456
+	unknown_sfx_20 3 62 1456
+	unknown_sfx_20 8 213 1885
+	unknown_sfx_20 2 178 1712
+	unknown_sfx_20 9 97 1456
 	end
 
 .SFX_Cry22_3_Ch7
-	unknown_noise_20 2 146 73
-	unknown_noise_20 7 181 41
-	unknown_noise_20 1 162 57
-	unknown_noise_20 8 145 73
+	unknown_noise_20 3 146 73
+	unknown_noise_20 8 181 41
+	unknown_noise_20 2 162 57
+	unknown_noise_20 9 145 73
 	end
 
 .Music_PkmnHealed_Ch0

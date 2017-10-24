@@ -318,7 +318,7 @@ namespace process_audio
         {
             state.CurrentSequence.Commands.Add(new UnknownSfx20Command
             {
-                Param1 = Convert.ToInt32(state.LineMatch.Groups[1].ToString()),
+                Param1 = Convert.ToInt32(state.LineMatch.Groups[1].ToString()) + 1,
                 Param2 = Convert.ToInt32(state.LineMatch.Groups[2].ToString()),
                 Param3 = Convert.ToInt32(state.LineMatch.Groups[3].ToString()),
                 Param4 = Convert.ToInt32(state.LineMatch.Groups[4].ToString()),
@@ -329,7 +329,7 @@ namespace process_audio
         {
             state.CurrentSequence.Commands.Add(new UnknownNoise20Command
             {
-                Param1 = Convert.ToInt32(state.LineMatch.Groups[1].ToString()),
+                Param1 = Convert.ToInt32(state.LineMatch.Groups[1].ToString()) + 1,
                 Param2 = Convert.ToInt32(state.LineMatch.Groups[2].ToString()),
                 Param3 = Convert.ToInt32(state.LineMatch.Groups[3].ToString()),
             });
