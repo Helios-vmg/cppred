@@ -7,6 +7,7 @@ class HeliosRenderer : public AudioRenderer{
 	std::uint64_t audio_turned_on_at = 0;
 	bool set_audio_turned_on_at_at_next_update = false;
 	std::uint64_t current_clock = 0;
+	std::uint64_t last_simulated_time = std::numeric_limits<std::uint64_t>::max();
 
 	ClockDivider audio_sample_clock,
 		frame_sequencer_clock;

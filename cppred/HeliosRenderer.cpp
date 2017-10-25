@@ -52,10 +52,21 @@ void HeliosRenderer::update(double now){
 		this->set_audio_turned_on_at_at_next_update = false;
 	}
 	auto t = this->current_clock - this->audio_turned_on_at;
+	std::uint64_t i, loops;
+	if (t < this->last_simulated_time){
+		i = t - t % 4;
+		loops = 1;
+	}else{
+		i = this->last_simulated_time;
+		loops = (t - i) / 4;
+	}
 
-	this->noise.update_state_before_render(t);
-	this->frame_sequencer_clock.update(t);
-	this->audio_sample_clock.update(t);
+	for (std::uint64_t j = 0; j < loops; j++, i += 4){
+		this->noise.update_state_before_render(i);
+		this->frame_sequencer_clock.update(i);
+		this->audio_sample_clock.update(i);
+	}
+	this->last_simulated_time = i;
 }
 
 void HeliosRenderer::sample_callback(void *This, std::uint64_t sample_no){
