@@ -195,10 +195,10 @@ DEFINE_SEQUENCE_CLASS(UnknownSfx10, 1);
 DEFINE_SEQUENCE_CLASS(UnknownSfx20, 3);
 DEFINE_SEQUENCE_CLASS(UnknownNoise20, 3);
 DEFINE_SEQUENCE_CLASS(ExecuteMusic, 0);
-//DEFINE_SEQUENCE_CLASS(PitchBend, 2);
+//DEFINE_SEQUENCE_CLASS(PitchBend, 3);
 class PitchBendCommand : public AudioCommand{
 public:
-	PitchBendCommand(std::istream &stream): AudioCommand(stream, 2){
+	PitchBendCommand(std::istream &stream): AudioCommand(stream, 3){
 		this->params[1] = calculate_frequency(this->params[1], this->params[2]);
 		this->parameter_count = 2;
 	}
@@ -607,7 +607,10 @@ class AudioData{
 			(channel.get_channel_no() < 4 ? lt_4 : geq_4).push_back(&channel);
 			std::set<std::string> stack;
 			stack.insert(channel.get_referenced_sequence());
-			this->check_sequence(*this->sequences.find(channel.get_referenced_sequence())->second, channel, header, stack);
+			auto it = this->sequences.find(channel.get_referenced_sequence());
+			if (it == this->sequences.end())
+				throw std::runtime_error("Error: Resource " + header.get_name() + " references non-existent sequence: " + channel.get_referenced_sequence());
+			this->check_sequence(*it->second, channel, header, stack);
 		}
 		if (header.get_is_music() && geq_4.size()){
 			std::cerr << "Warning: Header " << header.get_name() << " is marked as music, but allocates channels greater than channel No. 3. See the following channels:\n";
