@@ -9,7 +9,8 @@
 #include <queue>
 #include <fstream>
 #include "common_types.h"
-#include "../CodeGeneration/output/audio.h"
+//#include "../CodeGeneration/output/audio.h"
+enum class AudioResourceId;
 
 class Engine;
 
@@ -170,9 +171,9 @@ class AudioSystem : public AbstractAudioSystem{
 #endif
 
 	//Original program analogs:
-	AudioResourceId new_sound_id = AudioResourceId::None;
-	AudioResourceId last_music_sound_id = AudioResourceId::None;
-	AudioResourceId after_fade_out_play_this = AudioResourceId::None;
+	AudioResourceId new_sound_id;
+	AudioResourceId last_music_sound_id;
+	AudioResourceId after_fade_out_play_this;
 	int fade_out_control = 0;
 	int fade_out_counter = 0;
 	int fade_out_counter_reload_value = 0;

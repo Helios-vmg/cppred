@@ -6,6 +6,7 @@
 #include "CppRedCommonFunctions.h"
 #include "utility.h"
 #include "pokemon_version.h"
+#include "../CodeGeneration/output/audio.h"
 #include <iostream>
 
 static void display_copyright(Engine &engine){

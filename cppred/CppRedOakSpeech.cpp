@@ -1,5 +1,6 @@
 #include "CppRedOakSpeech.h"
 #include "CppRedEngine.h"
+#include "../CodeGeneration/output/audio.h"
 
 static void fade_in(CppRedEngine &cppred){
 	const Palette palettes[] = {

@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "HeliosRenderer.h"
 #include "utility.h"
+#include "../CodeGeneration/output/audio.h"
 #include <cstring>
 #include <algorithm>
 #include <sstream>
@@ -31,6 +32,9 @@ basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_a
 }
 
 AudioSystem::AudioSystem(Engine &engine): engine(&engine){
+	this->new_sound_id = AudioResourceId::None;
+	this->last_music_sound_id = AudioResourceId::None;
+	this->after_fade_out_play_this = AudioResourceId::None;
 #ifdef AudioRenderer_RECORD_AUDIO_REGISTER_WRITES
 	this->audio_recording.open("audio_output.txt");
 #endif

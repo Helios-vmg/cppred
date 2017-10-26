@@ -28,7 +28,7 @@ class CppRedAudioProgram : public AudioProgram{
 	std::vector<AudioResource> resources;
 
 	AbstractAudioSystem *audio;
-	AudioResourceId sound_id = AudioResourceId::None;
+	AudioResourceId sound_id;
 	enum class PauseMusicState{
 		NotPaused,
 		PauseRequested,
@@ -48,7 +48,7 @@ class CppRedAudioProgram : public AudioProgram{
 	const AudioResource *current_resource = nullptr;
 	class Channel{
 		CppRedAudioProgram *program;
-		AudioResourceId sound_id = AudioResourceId::None;
+		AudioResourceId sound_id;
 		std::vector<int> call_stack;
 		int program_counter = 0;
 		int bank = 1;

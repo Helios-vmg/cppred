@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Renderer.h"
 #include "CppRedData.h"
+#include "../CodeGeneration/output/audio.h"
 #include <cmath>
 
 template <typename T, size_t N>
