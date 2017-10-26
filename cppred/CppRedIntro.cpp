@@ -281,11 +281,13 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	}
 
 	//Gengar moves back and raises arm.
+	engine.play_sound(AudioResourceId::SFX_Intro_Raise);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon2);
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 8) || cppred.check_for_user_interruption(0.5))
 		return ret;
 
 	//Now moves forward and lowers arm.
+	engine.play_sound(AudioResourceId::SFX_Intro_Crash);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon3);
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 18, -1))
 		return ret;
