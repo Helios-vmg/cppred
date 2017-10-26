@@ -1,4 +1,3 @@
-
 #ignore thumbnails created by windows
 Thumbs.db
 #Ignore files build by Visual Studio
@@ -31,12 +30,9 @@ _ReSharper*/
 *.sdf
 *.opendb
 bin64/
-generated_files/*.generated.*
-Emulator/My Amplifier XE Results - Emulator/
-code_generator/My Amplifier XE Results - code_generator/
 *.db
 *.o
-include/
+/include/
 .~lock*
 CodeGeneration/output/*.h
 CodeGeneration/output/*.inl
