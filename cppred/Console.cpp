@@ -113,6 +113,28 @@ bool Console::handle_event(const SDL_Event &event){
 		case SDL_QUIT:
 			return false;
 		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym){
+				case SDLK_DOWN:
+					this->current_menu_position++;
+					return true;
+				case SDLK_UP:
+					this->current_menu_position--;
+					return true;
+				case SDLK_PAGEDOWN:
+					this->current_menu_position += 10;
+					return true;
+				case SDLK_PAGEUP:
+					this->current_menu_position -= 10;
+					return true;
+				case SDLK_HOME:
+					this->current_menu_position = 0;
+					return true;
+				case SDLK_END:
+					this->current_menu_position = -1;
+					return true;
+				default:
+					break;
+			}
 			if (!event.key.repeat){
 				switch (event.key.keysym.sym){
 					case SDLK_ESCAPE:
@@ -126,17 +148,6 @@ bool Console::handle_event(const SDL_Event &event){
 						break;
 					case SDLK_RETURN:
 						this->selected = true;
-						break;
-					default:
-						break;
-				}
-			}else{
-				switch (event.key.keysym.sym){
-					case SDLK_DOWN:
-						this->current_menu_position++;
-						break;
-					case SDLK_UP:
-						this->current_menu_position--;
 						break;
 					default:
 						break;
@@ -270,7 +281,7 @@ int Console::handle_menu(const std::vector<std::string> &strings, int default_it
 
 void Console::coroutine_entry_point(){
 	std::vector<std::string> main_menu = {
-		"Sound test.",
+		"Sound test",
 	};
 
 	while (true){
@@ -288,6 +299,7 @@ void Console::sound_test(){
 	this->engine->go_to_debug();
 	auto sounds = this->engine->get_audio().get_program().get_resource_strings();
 	sounds.erase(sounds.begin());
+	sounds.push_back("Stop");
 	int item = 0;
 	while (true){
 		item = this->handle_menu(sounds, item);
