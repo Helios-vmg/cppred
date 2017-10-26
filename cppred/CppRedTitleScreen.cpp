@@ -244,6 +244,8 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 
 	renderer.set_y_bg_offset(0, 64, { 0, 64 });
 
+	cppred.play_sound(AudioResourceId::SFX_Intro_Crash);
+
 	//Bounce logo.
 	bounce_logo(cppred);
 
@@ -253,6 +255,8 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 	draw_image_from_offsets(renderer, { 7, 8 }, RedBlueVersion, version_offsets);
 	//Scroll version from the right.
 	scroll_version(cppred);
+
+	cppred.play_sound(AudioResourceId::Music_TitleScreen);
 
 	renderer.set_enable_window(false);
 	renderer.draw_image_to_tilemap(copyright_location, CopyrightTitleScreen);
