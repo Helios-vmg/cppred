@@ -467,7 +467,7 @@ DEFINE_COMMAND_FUNCTION(Rest){
 	std::cout << "rest " << command.length << std::endl;
 #endif
 	this->set_delay_counters(audio, command.length);
-	if (this->channel_no < 4 && this->program->channels[4])
+	if (this->channel_no < 4 && this->program->channels[4 + this->channel_no])
 		return true;
 	if (this->channel_no % 4 == 2){
 		this->disable_this_hardware_channel(audio);
@@ -718,7 +718,7 @@ bool CppRedAudioProgram::Channel::disable_channel_output(AbstractAudioSystem &au
 }
 
 bool CppRedAudioProgram::Channel::disable_channel_output_sub(AbstractAudioSystem &audio){
-	if (this->program->channels[4] && this->program->is_cry()){
+	if (this->program->channels[4] && this->program->channels[4]->is_cry()){
 		if (this->channel_no == 4 && this->go_back_one_command_if_cry(audio))
 			return false;
 		audio.set_NR50(this->program->saved_volume);
@@ -765,7 +765,7 @@ void CppRedAudioProgram::Channel::note_pitch(AbstractAudioSystem &audio, std::ui
 	int frequency = calculate_frequency(note_parameter, this->octave);
 	if (this->do_pitch_bend)
 		frequency = this->init_pitch_bend_variables(frequency);
-	if (this->channel_no < 4 && this->program->channels[4])
+	if (this->channel_no < 4 && this->program->channels[4 + this->channel_no])
 		return;
 	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(audio, ((this->volume << 4) & 0xF0)|(this->fade & 0x0F));
 	this->apply_duty_and_sound_length(audio);
@@ -813,11 +813,11 @@ void CppRedAudioProgram::Channel::apply_duty_and_sound_length(AbstractAudioSyste
 void CppRedAudioProgram::Channel::enable_channel_output(AbstractAudioSystem &audio){
 	auto nr51 = audio.get_NR51();
 	byte_t value;
-	if (this->channel_no >= 4 || this->program->channels[4])
+	if (this->channel_no == 7 || this->channel_no < 4 && !this->program->channels[4 + this->channel_no]){
+		value = nr51 & disable_channel_masks[this->channel_no % 4];
+		value |= this->program->stereo_panning & enable_channel_masks[this->channel_no % 4];
+	}else
 		value = nr51 | enable_channel_masks[this->channel_no % 4];
-	else
-		value = nr51 & disable_channel_masks[this->channel_no % 4]
-			| this->program->stereo_panning & enable_channel_masks[this->channel_no % 4];
 	audio.set_NR51(value);
 }
 
