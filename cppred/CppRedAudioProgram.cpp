@@ -784,10 +784,8 @@ int CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
 	int delta = this->pitch_bend_target_frequency - frequency;
 	if (delta >= 0)
 		this->pitch_bend_decreasing = false;
-	else{
+	else
 		this->pitch_bend_decreasing = true;
-		delta = -delta;
-	}
 	this->pitch_bend_advance = (pitch_bend_t)delta / this->pitch_bend_length;
 
 	//It would be great if I could figure out an expression to compute this without iteration...
