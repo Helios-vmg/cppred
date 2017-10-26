@@ -4901,6 +4901,7 @@
 	end
 
 .Music_PkmnHealed_Ch0
+	octave 4
 	tempo 144
 	volume 7 7
 	duty 2
