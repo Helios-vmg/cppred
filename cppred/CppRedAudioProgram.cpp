@@ -577,8 +577,6 @@ bool CppRedAudioProgram::Channel::unknown20(const AudioCommand &command_, Abstra
 	if (this->channel_no < 3 || this->do_execute_music)
 		return true;
 #endif
-	//if (!command.length)
-	//	__debugbreak();
 	this->note_length(audio, command.length, 2);
 	this->program->get_register_pointer(RegisterId::DutySoundLength, this->channel_no)(audio, this->duty | this->note_delay_counter);
 	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(audio, command.envelope);
@@ -695,7 +693,7 @@ DEFINE_COMMAND_FUNCTION(End){
 
 	if (this->channel_no < 3){
 		dont_stop_this_channel = !this->disable_channel_output(audio);
-		return dont_stop_this_channel;
+		return false;
 	}
 	this->do_noise_or_sfx = false;
 	this->do_execute_music = false;
@@ -705,11 +703,11 @@ DEFINE_COMMAND_FUNCTION(End){
 		if (this->program->disable_channel_output_when_sfx_ends){
 			this->program->disable_channel_output_when_sfx_ends = 0;
 			dont_stop_this_channel = !this->disable_channel_output(audio);
-			return dont_stop_this_channel;
+			return false;
 		}
 	}
 	dont_stop_this_channel = !this->disable_channel_output_sub(audio);
-	return dont_stop_this_channel;
+	return false;
 }
 
 bool CppRedAudioProgram::Channel::disable_channel_output(AbstractAudioSystem &audio){
@@ -764,7 +762,7 @@ void CppRedAudioProgram::Channel::disable_this_hardware_channel(AbstractAudioSys
 void CppRedAudioProgram::Channel::note_pitch(AbstractAudioSystem &audio, std::uint32_t note_parameter){
 	int frequency = calculate_frequency(note_parameter, this->octave);
 	if (this->do_pitch_bend)
-		this->init_pitch_bend_variables(frequency);
+		frequency = this->init_pitch_bend_variables(frequency);
 	if (this->channel_no < 4 && this->program->channels[4])
 		return;
 	this->program->get_register_pointer(RegisterId::VolumeEnvelope, this->channel_no)(audio, ((this->volume << 4) & 0xF0)|(this->fade & 0x0F));
@@ -776,29 +774,31 @@ void CppRedAudioProgram::Channel::note_pitch(AbstractAudioSystem &audio, std::ui
 	this->apply_wave_pattern_and_frequency(audio, frequency);
 }
 
-void CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
-	this->pitch_bend_current_frequency = frequency;
+int CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
+	this->pitch_bend_current_frequency = (pitch_bend_t)frequency;
 	this->pitch_bend_length = this->note_delay_counter - this->pitch_bend_length;
 	if (this->pitch_bend_length < 0)
 		this->pitch_bend_length = 1;
-	int delta = this->pitch_bend_target_frequency - this->pitch_bend_current_frequency;
+	int delta = this->pitch_bend_target_frequency - frequency;
 	if (delta >= 0)
 		this->pitch_bend_decreasing = false;
 	else{
 		this->pitch_bend_decreasing = true;
 		delta = -delta;
 	}
+	this->pitch_bend_advance = (pitch_bend_t)delta / this->pitch_bend_length;
+
+	//It would be great if I could figure out an expression to compute this without iteration...
 	int quotient = 0;
 	int remainder = delta;
 	assert(this->pitch_bend_length >= 0 && this->pitch_bend_length < 0x100);
 	do{
 		quotient++;
 		remainder -= this->pitch_bend_length;
+		if (remainder < 0)
+			remainder = euclidean_modulo(remainder, 256);
 	}while (remainder >= 0x100);
-	this->pitch_bend_frequency_steps = quotient;
-	this->pitch_bend_current_frequency_fractional_part =
-		this->pitch_bend_frequency_steps_fractional_part =
-			(remainder + this->pitch_bend_length) & 0xFF;
+	return (quotient << 8) | remainder;
 }
 
 void CppRedAudioProgram::Channel::apply_duty_and_sound_length(AbstractAudioSystem &audio){
@@ -843,18 +843,16 @@ void CppRedAudioProgram::Channel::apply_duty_cycle(AbstractAudioSystem &audio){
 
 void CppRedAudioProgram::Channel::apply_pitch_bend(AbstractAudioSystem &audio){
 	bool reached_target = false;
-	auto sum1 = this->pitch_bend_frequency_steps + this->pitch_bend_current_frequency;
-	auto sum2 = this->pitch_bend_frequency_steps_fractional_part + this->pitch_bend_current_frequency_fractional_part;
-	this->pitch_bend_current_frequency_fractional_part = sum2 & 0xFF;
-	auto whole_part = sum1 + (sum2 >> 8);
-	
+	auto new_frequency = this->pitch_bend_current_frequency + this->pitch_bend_advance;
+	auto whole_part = cast_round(new_frequency);
+
 	if (!this->pitch_bend_decreasing)
 		reached_target = whole_part >= this->pitch_bend_target_frequency;
 	else
 		reached_target = whole_part <= this->pitch_bend_target_frequency;
 
 	if (!reached_target){
-		this->pitch_bend_current_frequency = whole_part;
+		this->pitch_bend_current_frequency = new_frequency;
 		this->program->get_register_pointer(RegisterId::FrequencyLow, this->channel_no)(audio, whole_part & 0xFF);
 		this->program->get_register_pointer(RegisterId::FrequencyHigh, this->channel_no)(audio, (whole_part >> 8) & 0xFF);
 		return;
@@ -1039,9 +1037,7 @@ void CppRedAudioProgram::Channel::reset(AudioResourceId resource_id, int entry_p
 	this->channel_frequency = 0;
 	this->vibrato_delay_counter_reload_value = 0;
 	this->pitch_bend_length = 0;
-	this->pitch_bend_frequency_steps_fractional_part = 0;
-	this->pitch_bend_frequency_steps = 0;
-	this->pitch_bend_current_frequency_fractional_part = 0;
+	this->pitch_bend_advance = 0;
 	this->pitch_bend_current_frequency = 0;
 	this->pitch_bend_target_frequency = 0;
 
@@ -1057,7 +1053,7 @@ void CppRedAudioProgram::Channel::reset(AudioResourceId resource_id, int entry_p
 	this->vibrato_counter = 0;
 	this->volume = 0;
 	this->fade = 0;
-	this->octave = 0;
+	this->octave = 5;
 	this->do_rotate_duty = false;
 	this->ifred_execute_bit = true;
 }

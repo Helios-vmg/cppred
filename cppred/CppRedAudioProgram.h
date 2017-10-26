@@ -70,10 +70,9 @@ class CppRedAudioProgram : public AudioProgram{
 		int duty_cycle = 0;
 		int pitch_bend_length = 0;
 		int pitch_bend_target_frequency = 0;
-		int pitch_bend_current_frequency = 0;
-		int pitch_bend_current_frequency_fractional_part = 0;
-		int pitch_bend_frequency_steps = 0;
-		int pitch_bend_frequency_steps_fractional_part = 0;
+		typedef float pitch_bend_t;
+		pitch_bend_t pitch_bend_current_frequency = 0;
+		pitch_bend_t pitch_bend_advance = 0;
 		bool do_rotate_duty = false;
 		bool do_execute_music = false;
 		bool do_noise_or_sfx = false;
@@ -99,7 +98,7 @@ class CppRedAudioProgram : public AudioProgram{
 		void note_pitch(AbstractAudioSystem &audio, std::uint32_t note_parameter);
 		void disable_this_hardware_channel(AbstractAudioSystem &audio);
 		void set_delay_counters(AbstractAudioSystem &audio, std::uint32_t length_parameter);
-		void init_pitch_bend_variables(int frequency);
+		int init_pitch_bend_variables(int frequency);
 		void set_sfx_tempo();
 
 		typedef bool (Channel::*command_function)(const AudioCommand &, AbstractAudioSystem &, bool &);
