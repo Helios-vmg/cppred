@@ -12,7 +12,7 @@ static const auto w = Renderer::logical_screen_width * Engine::screen_scale;
 static const auto h = Renderer::logical_screen_height * Engine::screen_scale;
 static const auto matrix_w = w / 8;
 static const auto matrix_h = h / 8;
-static int text_scale = 1;
+static int text_scale = 2;
 
 Console::Console(Engine &engine):
 		engine(&engine),
@@ -46,7 +46,8 @@ void Console::initialize_background(byte_t background_alpha){
 	auto pixels = (RGB *)void_pixels;
 	for (int y = 0; y < h; y++){
 		auto row = pixels + y * w;
-		byte_t c = 0x55 + 0x55 * y / (h - 1);
+		//byte_t c = 0xFF - 0xFF * y / (h - 1);
+		byte_t c = 0;
 		for (int x = 0; x < w; x++){
 			row[x].r = c;
 			row[x].g = c;
