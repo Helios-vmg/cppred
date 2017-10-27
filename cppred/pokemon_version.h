@@ -1,9 +1,9 @@
 #pragma once
 
-#define RED 'red'
-#define BLUE 'blue'
+#define RED 0x3ED
+#define BLUE 0xB100
 
-#if POKEMON_VERSION != RED && POKEMON_VERSION != BLUE
+#if !defined POKEMON_VERSION || (POKEMON_VERSION != RED && POKEMON_VERSION != BLUE)
 #error Pokemon version not defined!
 #endif
 
