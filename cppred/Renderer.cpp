@@ -368,8 +368,8 @@ void Renderer::fill_rectangle(TileRegion region, const Point &corner, const Poin
 	tile_copy.tile_no %= tile_mapping_size;
 	int x0 = std::max(corner.x, 0);
 	int y0 = std::max(corner.y, 0);
-	int x1 = std::min(corner.x + size.x, Tilemap::w);
-	int y1 = std::min(corner.y + size.y, Tilemap::h);
+	int x1 = std::min(corner.x + size.x, (int)Tilemap::w);
+	int y1 = std::min(corner.y + size.y, (int)Tilemap::h);
 
 	auto &tilemap = this->get_tilemap(region);
 	for (int y2 = y0; y2 < y1; y2++)
@@ -411,7 +411,7 @@ std::uint64_t Renderer::get_id(){
 
 void Renderer::set_y_offset(Point (&array)[logical_screen_height], int y0, int y1, const Point &p){
 	y0 = std::max(y0, 0);
-	y1 = std::min(y1, logical_screen_height);
+	y1 = std::min(y1, (int)logical_screen_height);
 	for (int y = y0; y < y1; y++)
 		array[y] = p;
 }
