@@ -15,6 +15,8 @@ class Console{
 	std::unique_ptr<SDL_Texture, void(*)(SDL_Texture *)> background;
 	std::unique_ptr<SDL_Texture, void(*)(SDL_Texture *)> text_layer;
 	std::vector<byte_t> character_matrix;
+	std::vector<byte_t> last_character_matrix;
+	bool matrix_modified = false;
 
 	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
 	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;

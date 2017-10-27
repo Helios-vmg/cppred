@@ -23,6 +23,7 @@ Console::Console(Engine &engine):
 	this->background.reset(this->renderer->request_texture(w, h));
 	this->text_layer.reset(this->renderer->request_texture(w, h));
 	this->character_matrix.resize(matrix_w * matrix_h);
+	this->last_character_matrix.resize(this->character_matrix.size());
 
 	this->initialize_background(0x80);
 	this->initialize_text_layer();
@@ -73,35 +74,6 @@ void Console::blank_texture(SDL_Texture *texture, int width, int height){
 
 void Console::initialize_text_layer(){
 	this->blank_texture(this->text_layer.get(), w, h);
-	if (0)
-	{
-		void *void_pixels;
-		int pitch;
-
-		if (SDL_LockTexture(this->text_layer.get(), nullptr, &void_pixels, &pitch) < 0)
-			throw std::runtime_error("Console::Console(): Failed to initialize texture.");
-
-		assert(pitch == w * sizeof(RGB));
-		
-		RGB on = { 255, 255, 255, 255 },
-			off = { 0, 0, 0, 0 };
-
-		auto pixels = (RGB *)void_pixels;
-
-		for (int y0 = 0; y0 < 16; y0++){
-			for (int x0 = 0; x0 < 16; x0++){
-				int character = x0 + y0 * 16;
-				int first_font_index = character * 8;
-				for (int y = 0; y < 8; y++){
-					for (int x = 0; x < 8; x++){
-						pixels[(x + x0 * 8) + (y + y0 * 8) * w] = !!(GFX_font[first_font_index + y] & (0x80 >> x)) ? on : off;
-					}
-				}
-			}
-		}
-
-		SDL_UnlockTexture(this->text_layer.get());
-	}
 	SDL_SetTextureBlendMode(this->text_layer.get(), SDL_BLENDMODE_BLEND);
 }
 
@@ -164,43 +136,48 @@ void Console::render(){
 	if (!this->visible)
 		return;
 
-	void *void_pixels;
-	int pitch;
-	if (SDL_LockTexture(this->text_layer.get(), nullptr, &void_pixels, &pitch) >= 0){
-		const RGB white = { 255, 255, 255, 255 },
-			black = { 0, 0, 0, 255 },
-			off = { 0, 0, 0, 0 };
-		auto matrix = &this->character_matrix[0];
-		auto pixels = (RGB *)void_pixels;
-		for (int y = 0; y < h; y++){
-			for (int x = 0; x < w; x++){
-				auto c = matrix[x / (8 * text_scale) + y / (8 * text_scale) * matrix_w];
-				if (!c){
-					pixels[x + y * w] = off;
-					continue;
+	if (this->matrix_modified && memcmp(&this->character_matrix[0], &this->last_character_matrix[0], this->character_matrix.size())){
+		void *void_pixels;
+		int pitch;
+		if (SDL_LockTexture(this->text_layer.get(), nullptr, &void_pixels, &pitch) >= 0){
+			const RGB white = { 255, 255, 255, 255 },
+				black = { 0, 0, 0, 255 },
+				off = { 0, 0, 0, 0 };
+			auto matrix = &this->character_matrix[0];
+			auto pixels = (RGB *)void_pixels;
+			for (int y = 0; y < h; y++){
+				for (int x = 0; x < w; x++){
+					auto c = matrix[x / (8 * text_scale) + y / (8 * text_scale) * matrix_w];
+					if (!c){
+						pixels[x + y * w] = off;
+						continue;
+					}
+					int first_font_index = c * 8;
+					pixels[x + y * w] = !!(GFX_font[first_font_index + (y / text_scale) % 8] & (0x80 >> ((x / text_scale) % 8))) ? white : off;
 				}
-				int first_font_index = c * 8;
-				pixels[x + y * w] = !!(GFX_font[first_font_index + (y / text_scale) % 8] & (0x80 >> ((x / text_scale) % 8))) ? white : off;
 			}
-		}
-		for (int y = 0; y < h; y++){
-			int y0 = std::max(y - text_scale, 0);
-			int y1 = std::min(y + text_scale * 2, h);
-			for (int x = 0; x < w; x++){
-				if (!!pixels[x + y * w].a)
-					continue;
-				int x0 = std::max(x - text_scale, 0);
-				int x1 = std::min(x + text_scale * 2, w);
-				bool any = false;
-				for (int y2 = y0; !any && y2 < y1; y2 += text_scale)
-					for (int x2 = x0; !any && x2 < x1; x2 += text_scale)
-						any = !!(((x2 != x) | (y2 != y)) & !!pixels[x2 + y2 * w].r);
+			for (int y = 0; y < h; y++){
+				int y0 = std::max(y - text_scale, 0);
+				int y1 = std::min(y + text_scale * 2, h);
+				for (int x = 0; x < w; x++){
+					if (!!pixels[x + y * w].a)
+						continue;
+					int x0 = std::max(x - text_scale, 0);
+					int x1 = std::min(x + text_scale * 2, w);
+					bool any = false;
+					for (int y2 = y0; !any && y2 < y1; y2 += text_scale)
+						for (int x2 = x0; !any && x2 < x1; x2 += text_scale)
+							any = !!(((x2 != x) | (y2 != y)) & !!pixels[x2 + y2 * w].r);
 
-				if (any)
-					pixels[x + y * w] = black;
+					if (any)
+						pixels[x + y * w] = black;
+				}
 			}
+			SDL_UnlockTexture(this->text_layer.get());
 		}
-		SDL_UnlockTexture(this->text_layer.get());
+
+		memcpy(&this->last_character_matrix[0], &this->character_matrix[0], this->character_matrix.size());
+		this->matrix_modified = false;
 	}
 
 	SDL_RenderCopy(this->renderer->get_renderer(), this->background.get(), nullptr, nullptr);
@@ -209,6 +186,7 @@ void Console::render(){
 
 void Console::write_character(int x, int y, byte_t character){
 	this->character_matrix[euclidean_modulo(x + y * matrix_w, matrix_w * matrix_h)] = character;
+	this->matrix_modified = true;
 }
 
 void Console::write_string(int x, int y, const char *string){
