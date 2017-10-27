@@ -2,17 +2,11 @@
 
 cpu_count=$(nproc)
 
-cd code_generator
-./generate_makefile.py
+cd code_generation
+cmake .
 make -j $cpu_count
-cd ../generated_files
-../code_generator/code_generator cpu.generated.h cpu.generated.cpp
-cd ../pdboy
-
-LIBS=$(pkg-config --libs sdl2)
-INCLUDES=$(pkg-config --cflags-only-I sdl2)
-export LIBS
-export INCLUDES
-
-./generate_makefile.py
+cd ../CodeGeneration
+../code_generation/code_generation
+cd ../cppred
+cmake .
 make -j $cpu_count
