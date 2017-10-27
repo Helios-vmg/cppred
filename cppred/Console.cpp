@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include "Engine.h"
 #include "../CodeGeneration/output/audio.h"
-#include "font.cpp"
+#include "font.inl"
 
 #ifdef RGB
 #undef RGB
