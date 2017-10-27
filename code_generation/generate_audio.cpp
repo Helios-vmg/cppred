@@ -6,6 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <set>
+#include <limits>
 
 typedef std::uint32_t u32;
 
@@ -498,18 +499,17 @@ class AudioData{
 	std::vector<AudioHeader> headers;
 
 	void load_main_file(const std::string &path){
-		std::ifstream file(path);
+		std::ifstream file(path, std::ios::binary);
 		if (!file)
 			throw std::runtime_error("File not found: " + path);
+
+		auto lines = file_splitter(file);
 
 		std::vector<std::string> sequence_strings;
 		std::vector<std::string> header_strings;
 		bool reading_sequences = true;
-		while (true){
-			std::string line;
-			std::getline(file, line);
-			if (!file)
-				break;
+		while (lines.size()){
+			auto line = move_pop_front(lines);
 			if (!line.size())
 				continue;
 			if (line == ":headers"){
@@ -525,18 +525,16 @@ class AudioData{
 			this->headers = parse_headers(header_strings);
 	}
 	void load_secondary_file(const std::string &path){
-		std::ifstream file(path);
+		std::ifstream file(path, std::ios::binary);
 		if (!file)
 			throw std::runtime_error("File not found: " + path);
+		auto lines = file_splitter(file);
 		std::vector<std::string> strings;
-		while (true){
-			std::string line;
-			std::getline(file, line);
-			if (!file)
-				break;
-			if (!line.size())
-				continue;
-			strings.push_back(line);
+		strings.reserve(lines.size());
+		while (lines.size()){
+			auto line = move_pop_front(lines);
+			if (line.size())
+				strings.emplace_back(std::move(line));
 		}
 		if (strings.size())
 			this->headers = parse_headers(strings);

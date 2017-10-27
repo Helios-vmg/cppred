@@ -3,9 +3,55 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
+#include <queue>
 #include <string>
 #include <map>
 #include <cassert>
+#include <cstdint>
+#include <limits>
+
+inline std::deque<std::string> file_splitter(std::ifstream &file){
+	std::deque<std::string> ret;
+	if (!file)
+		return ret;
+	file.seekg(0, std::ios::end);
+	if (file.tellg() > std::numeric_limits<size_t>::max())
+		return ret;
+	std::vector<std::uint8_t> data((size_t)file.tellg());
+	file.seekg(0);
+	file.read((char *)&data[0], data.size());
+
+	std::string accum;
+	bool cr_seen = false;
+	for (auto c : data){
+		if (cr_seen){
+			ret.emplace_back(std::move(accum));
+			cr_seen = false;
+			if (c == 10)
+				continue;
+		}
+		switch (c){
+			case 10:
+				ret.emplace_back(std::move(accum));
+				break;
+			case 13:
+				cr_seen = true;
+				break;
+			default:
+				accum.push_back(c);
+				break;
+		}
+	}
+	ret.emplace_back(std::move(accum));
+	return ret;
+}
+
+template <typename T>
+auto move_pop_front(T &x){
+	auto ret = std::move(x.front());
+	x.pop_front();
+	return ret;
+}
 
 class CsvParser{
 	std::map<std::string, size_t> headers;
@@ -43,22 +89,22 @@ class CsvParser{
 	}
 public:
 	CsvParser(const char *path){
-		std::ifstream file(path);
+		std::ifstream file(path, std::ios::binary);
 		if (!file)
 			throw std::runtime_error((std::string)"CsvParser::CsvParser(): Can't open file " + path);
 		
-		std::string line;
-		std::getline(file, line);
-		if (!file)
+		auto lines = file_splitter(file);
+		if (!lines.size())
 			throw std::runtime_error((std::string)"CsvParser::CsvParser(): Invalid file: " + path);
-		auto headers = split_csv_line(line);
+		auto headers = split_csv_line(lines.front());
+		lines.pop_front();
 		for (size_t i = 0; i < headers.size(); i++)
 			this->headers[headers[i]] = i;
 
-		while (true){
-			std::getline(file, line);
-			if (!file)
-				break;
+		while (lines.size()){
+			auto line = move_pop_front(lines);
+			if (!line.size())
+				continue;
 			auto processed = split_csv_line(line);
 			processed.resize(this->headers.size());
 			for (auto &s : processed)

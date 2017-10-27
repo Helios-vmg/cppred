@@ -123,15 +123,13 @@ static void set_text_command(std::vector<byte_t> &dst, CommandType &last_command
 	last_command = CommandType::Text;
 }
 
-static std::vector<byte_t> parse_text_format(std::istream &stream, std::map<std::string, int> &section_names){
+static std::vector<byte_t> parse_text_format(std::ifstream &stream, std::map<std::string, int> &section_names){
 	std::vector<byte_t> ret;
 	bool in_section = false;
 	CommandType last_command = CommandType::None;
-	for (int line_no = 1;; line_no++){
-		std::string line;
-		std::getline(stream, line);
-		if (!stream)
-			break;
+	auto lines = file_splitter(stream);
+	for (int line_no = 1; lines.size(); line_no++){
+		auto line = move_pop_front(lines);
 		if (!in_section){
 			if (!line.size())
 				continue;
@@ -214,7 +212,7 @@ static void generate_text_internal(known_hashes_t &known_hashes){
 	}
 	std::cout << "Generating text...\n";
 
-	std::ifstream input(input_file);
+	std::ifstream input(input_file, std::ios::binary);
 	if (!input)
 		throw std::runtime_error("input/text.txt not found!");
 	std::map<std::string, int> sections;
