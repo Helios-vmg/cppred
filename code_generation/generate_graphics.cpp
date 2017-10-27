@@ -517,7 +517,7 @@ static void generate_graphics_internal(known_hashes_t &known_hashes){
 		packed_image_data_size = bit_packed.size();
 		source << std::dec << ";\n"
 			"\n"
-			"static const std::uint16_t tile_mapping[] = ";
+			"const std::uint16_t tile_mapping[] = ";
 		{
 			std::vector<unsigned> temp;
 			for (auto &g : graphics)
