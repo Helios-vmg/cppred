@@ -22,7 +22,7 @@ const FadePaletteData fade_palettes[8] = {
 	{ BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
 };
 
-CppRedEngine::CppRedEngine(Engine &engine): engine(&engine){
+CppRedEngine::CppRedEngine(Engine &engine, PokemonVersion version): engine(&engine), version(version){
 	this->engine->set_on_yield([this](){ this->update_joypad_state(); });
 	this->reset_dialog_state();
 }

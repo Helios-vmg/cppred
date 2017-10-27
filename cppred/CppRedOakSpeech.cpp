@@ -67,25 +67,17 @@ static void scroll_portrait(CppRedEngine &cppred, std::vector<Point> &red_pic, b
 	red_pic = renderer.draw_image_to_tilemap({ !direction ? 12 : 6, 4 }, asset);
 }
 
-const char * const default_names_a[] = {
+const char * const default_names_red[] = {
 	"RED",
 	"ASH",
 	"JACK",
 };
 
-const char * const default_names_b[] = {
+const char * const default_names_blue[] = {
 	"BLUE",
 	"GARY",
 	"JOHN",
 };
-
-#if POKEMON_VERSION == RED
-auto &default_names_player = default_names_a;
-auto &default_names_rival = default_names_b;
-#elif POKEMON_VERSION == BLUE
-auto &default_names_player = default_names_b;
-auto &default_names_rival = default_names_a;
-#endif
 
 static std::string select_x_name(CppRedEngine &cppred, bool rival){
 	auto &engine = cppred.get_engine();
@@ -93,6 +85,8 @@ static std::string select_x_name(CppRedEngine &cppred, bool rival){
 
 	std::vector<std::string> items;
 	items.push_back("NEW NAME");
+	auto &default_names_player = cppred.get_version() == PokemonVersion::Red ? default_names_red : default_names_blue;
+	auto &default_names_rival = cppred.get_version() == PokemonVersion::Red ? default_names_blue : default_names_red;
 	auto &default_names = *(!rival ? &default_names_player : &default_names_rival);
 	for (auto s : default_names)
 		items.push_back(s);

@@ -16,6 +16,7 @@
 #undef max
 #endif
 
+enum class PokemonVersion;
 class XorShift128;
 class Renderer;
 class Console;
@@ -40,7 +41,7 @@ class Engine{
 	void initialize_window();
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(yielder_t &);
+	void coroutine_entry_point(yielder_t &, PokemonVersion);
 	bool handle_events();
 public:
 	Engine();

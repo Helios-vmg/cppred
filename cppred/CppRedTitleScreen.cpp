@@ -168,9 +168,8 @@ static void pick_new_pokemon(CppRedEngine &cppred, const SpeciesId (&pokemons)[N
 namespace CppRedScripts{
 
 TitleScreenResult title_screen(CppRedEngine &cppred){
-#if POKEMON_VERSION == RED
-	static const char version_offsets[] = { 0, 1, -1, 5, 6, 7, 8, 9 };
-	static const SpeciesId pokemons[] = {
+	static const char version_offsets_red[] = { 0, 1, -1, 5, 6, 7, 8, 9 };
+	static const SpeciesId pokemons_red[] = {
 		SpeciesId::Charmander,
 		SpeciesId::Squirtle,
 		SpeciesId::Bulbasaur,
@@ -188,9 +187,8 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 		SpeciesId::Ponyta,
 		SpeciesId::Magikarp,
 	};
-#elif POKEMON_VERSION == BLUE
-	static const char version_offsets[] = { 2, 3, 4, 5, 6, 7, 8, 9 };
-	static const SpeciesId pokemons[] = {
+	static const char version_offsets_blue[] = { 2, 3, 4, 5, 6, 7, 8, 9 };
+	static const SpeciesId pokemons_blue[] = {
 		SpeciesId::Squirtle,
 		SpeciesId::Charmander,
 		SpeciesId::Bulbasaur,
@@ -208,7 +206,8 @@ TitleScreenResult title_screen(CppRedEngine &cppred){
 		SpeciesId::Gengar,
 		SpeciesId::Raichu,
 	};
-#endif
+	auto &pokemons = cppred.get_version() == PokemonVersion::Red ? pokemons_red : pokemons_blue;
+	auto &version_offsets = cppred.get_version() == PokemonVersion::Red ? version_offsets_red : version_offsets_blue;
 
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();

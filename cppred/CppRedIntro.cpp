@@ -240,19 +240,17 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	renderer.set_default_palettes();
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
 
-#if POKEMON_VERSION == RED
-	GraphicsAsset assets[] = {
+	GraphicsAsset assets_red[] = {
 		FightIntroFrontMon1_red,
 		FightIntroFrontMon2_red,
 		FightIntroFrontMon3_red,
 	};
-#elif POKEMON_VERSION == BLUE
-	GraphicsAsset assets[] = {
+	GraphicsAsset assets_blue[] = {
 		FightIntroFrontMon1_blue,
 		FightIntroFrontMon2_blue,
 		FightIntroFrontMon3_blue,
 	};
-#endif
+	auto &assets = cppred.get_version() == PokemonVersion::Red ? assets_red : assets_blue;
 	
 	auto nidorino = renderer.create_sprite(assets[0]);
 	auto nidorino2 = renderer.create_sprite(assets[1]);

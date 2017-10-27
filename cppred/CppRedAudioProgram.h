@@ -3,6 +3,7 @@
 #include "CppRedData.h"
 #include "../common/AudioCommandType.h"
 #include "../common/AudioResourceType.h"
+#include "pokemon_version.h"
 
 struct AudioCommand{
 	AudioCommandType type;
@@ -28,6 +29,7 @@ class CppRedAudioProgram : public AudioProgram{
 	std::vector<AudioResource> resources;
 
 	AbstractAudioSystem *audio;
+	PokemonVersion version;
 	AudioResourceId sound_id;
 	enum class PauseMusicState{
 		NotPaused,
@@ -165,7 +167,7 @@ class CppRedAudioProgram : public AudioProgram{
 	void update_channel(int);
 	void compute_fade_out();
 public:
-	CppRedAudioProgram(AbstractAudioSystem &audio);
+	CppRedAudioProgram(AbstractAudioSystem &audio, PokemonVersion);
 	~CppRedAudioProgram();
 	void update(double now) override;
 	void play_sound(AudioResourceId) override;

@@ -4,6 +4,7 @@
 #include "CppRedData.h"
 #include "CppRedSavableData.h"
 #include "CppRedTextResources.h"
+#include "pokemon_version.h"
 #include <string>
 #include <unordered_map>
 #include <queue>
@@ -32,6 +33,7 @@ enum class NameEntryType{
 
 class CppRedEngine{
 	Engine *engine;
+	PokemonVersion version;
 	TextStore text_store;
 	InputState joypad_held;
 	InputState joypad_pressed;
@@ -46,7 +48,7 @@ class CppRedEngine{
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 public:
-	CppRedEngine(Engine &engine);
+	CppRedEngine(Engine &engine, PokemonVersion version);
 	void clear_screen();
 	Engine &get_engine(){
 		return *this->engine;
@@ -90,6 +92,9 @@ public:
 	}
 	std::string get_name_from_user(NameEntryType, int max_length = -1);
 	std::string get_name_from_user(SpeciesId, int max_length = -1);
+	PokemonVersion get_version() const{
+		return this->version;
+	}
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

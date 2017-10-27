@@ -24,8 +24,8 @@ static MainMenuResult initial_sequence(CppRedEngine &cppred){
 	}
 }
 
-void entry_point(Engine &engine){
-	CppRedEngine cppred(engine);
+void entry_point(Engine &engine, PokemonVersion version){
+	CppRedEngine cppred(engine, version);
 	if (initial_sequence(cppred) == MainMenuResult::ContinueGame){
 		//Continue game.
 	}else{

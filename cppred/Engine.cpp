@@ -42,11 +42,12 @@ void Engine::run(){
 	if (std::this_thread::get_id() != this->main_thread_id)
 		throw std::runtime_error("Engine::run() must be called from the main thread!");
 
-	this->coroutine.reset(new coroutine_t([this](yielder_t &y){ this->coroutine_entry_point(y); }));
+	PokemonVersion version = PokemonVersion::Red;
+	this->coroutine.reset(new coroutine_t([this, version](yielder_t &y){ this->coroutine_entry_point(y, version); }));
 	auto yielder = this->yielder;
 	this->yielder = nullptr;
 
-	CppRedAudioProgram crap(*this->audio);
+	auto audio_program = std::make_unique<CppRedAudioProgram>(*this->audio, version);
 
 	//Main loop.
 	while (this->handle_events()){
@@ -69,10 +70,10 @@ void Engine::run(){
 	this->coroutine.reset();
 }
 
-void Engine::coroutine_entry_point(yielder_t &yielder){
+void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version){
 	this->yielder = &yielder;
 	this->yield();
-	CppRedScripts::entry_point(*this);
+	CppRedScripts::entry_point(*this, version);
 }
 
 void Engine::yield(){

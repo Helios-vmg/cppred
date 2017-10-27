@@ -190,7 +190,7 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 	instruments_bank_3,
 };
 
-CppRedAudioProgram::CppRedAudioProgram(AbstractAudioSystem &audio): audio(&audio){
+CppRedAudioProgram::CppRedAudioProgram(AbstractAudioSystem &audio, PokemonVersion version): audio(&audio), version(version){
 	this->audio->start_audio_processing(*this);
 	this->load_commands();
 	this->load_resources();
@@ -659,11 +659,7 @@ DEFINE_COMMAND_FUNCTION(IfRed){
 #ifdef LOG_COMMAND_EXECUTION
 	std::cout << "ifred\n";
 #endif
-#if POKEMON_VERSION == RED
-	this->ifred_execute_bit = true;
-#elif POKEMON_VERSION == BLUE
-	this->ifred_execute_bit = false;
-#endif
+	this->ifred_execute_bit = this->program->version == PokemonVersion::Red;
 	return true;
 }
 
