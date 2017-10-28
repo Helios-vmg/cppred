@@ -1,4 +1,5 @@
 #include "HeliosRenderer.h"
+#include "AudioDevice.h"
 #include "utility.h"
 #include <sstream>
 
@@ -8,7 +9,22 @@
 #define CHANNEL3 (1 << 2)
 #define CHANNEL4 (1 << 3)
 
-HeliosRenderer::HeliosRenderer():
+basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_audio_type> &src){
+#ifdef USE_FLOAT_AUDIO
+	basic_StereoSample<std::int16_t> ret;
+	ret.left = (std::int16_t)(src.left * int16_max);
+	ret.right = (std::int16_t)(src.right * int16_max);
+	return ret;
+#else
+	basic_StereoSample<std::int16_t> ret;
+	ret.left = (std::int16_t)src.left;
+	ret.right = (std::int16_t)src.right;
+	return ret;
+#endif
+}
+
+HeliosRenderer::HeliosRenderer(AudioDevice &dev):
+		AudioRenderer2(dev),
 #ifdef USE_STD_FUNCTION
 		audio_sample_clock(gb_cpu_frequency_power, sampling_frequency, [this](std::uint64_t n){ this->sample_callback(n); }),
 		frame_sequencer_clock(gb_cpu_frequency_power, 512, [this](std::uint64_t n){ this->frame_sequencer_callback(n); })

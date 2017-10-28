@@ -1,6 +1,9 @@
 #include "Engine.h"
 #include "CppRedEntryPoint.h"
 #include "CppRedAudioProgram.h"
+#include "AudioScheduler.h"
+#include "AudioDevice.h"
+#include "HeliosRenderer.h"
 #include "Console.h"
 #include <stdexcept>
 #include <cassert>
@@ -19,7 +22,7 @@ Engine::Engine():
 }
 
 Engine::~Engine(){
-	this->audio.reset();
+	this->audio_scheduler.reset();
 	SDL_Quit();
 }
 
@@ -35,7 +38,7 @@ void Engine::initialize_video(){
 }
 
 void Engine::initialize_audio(){
-	this->audio.reset(new AudioSystem(*this));
+	this->audio_device.reset(new AudioDevice);
 }
 
 void Engine::run(){
@@ -43,37 +46,55 @@ void Engine::run(){
 		throw std::runtime_error("Engine::run() must be called from the main thread!");
 
 	PokemonVersion version = PokemonVersion::Red;
-	this->coroutine.reset(new coroutine_t([this, version](yielder_t &y){ this->coroutine_entry_point(y, version); }));
-	auto yielder = this->yielder;
-	this->yielder = nullptr;
+	bool continue_running = true;
+	while (continue_running){
+		this->wait_remainder = 0;
+		this->restart_requested = false;
+		this->debug_mode = false;
+		auto renderer = std::make_unique<HeliosRenderer>(*this->audio_device);
+		auto programp = std::make_unique<CppRedAudioProgram>(*renderer, version);
+		auto &program = *programp;
+		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(renderer), std::move(programp)));
+		this->audio_scheduler->start();
+		this->coroutine.reset(new coroutine_t([this, version, &program](yielder_t &y){ this->coroutine_entry_point(y, version, program); }));
+		auto yielder = this->yielder;
+		this->yielder = nullptr;
 
-	auto audio_program = std::make_unique<CppRedAudioProgram>(*this->audio, version);
+		//Main loop.
+		while ((continue_running &= this->handle_events()) && !this->restart_requested){
+			if (!this->debug_mode){
+				//Resume game code.
+				std::swap(yielder, this->yielder);
+				continue_running &= !!(*this->coroutine)();
+				std::swap(yielder, this->yielder);
+			}
 
-	//Main loop.
-	while (this->handle_events()){
-		if (!this->debug_mode){
-			//Resume game code.
-			std::swap(yielder, this->yielder);
-			auto stop = !(*this->coroutine)();
-			std::swap(yielder, this->yielder);
-			if (stop)
-				break;
+			auto console_request = this->console->update();
+			if (console_request){
+				switch (console_request->request_id){
+					case ConsoleRequestId::GetAudioProgram:
+						console_request->audio_program = &program;
+						break;
+					default:
+						break;
+				}
+			}
+
+			this->renderer->render();
+			this->console->render();
+			this->renderer->present();
 		}
 
-		this->console->update();
-
-		this->renderer->render();
-		this->console->render();
-		this->renderer->present();
+		this->on_yield = decltype(this->on_yield)();
+		this->coroutine.reset();
+		this->audio_scheduler.reset();
 	}
-
-	this->coroutine.reset();
 }
 
-void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version){
+void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRedAudioProgram &program){
 	this->yielder = &yielder;
 	this->yield();
-	CppRedScripts::entry_point(*this, version);
+	CppRedScripts::entry_point(*this, version, program);
 }
 
 void Engine::yield(){
@@ -187,4 +208,8 @@ void Engine::set_on_yield(std::function<void()> &&callback){
 
 void Engine::go_to_debug(){
 	this->debug_mode = true;
+}
+
+void Engine::restart(){
+	this->restart_requested = true;
 }

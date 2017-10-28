@@ -27,10 +27,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioData.h" />
+    <ClInclude Include="AudioDevice.h" />
     <ClInclude Include="AudioRenderer.h" />
-    <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioScheduler.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="CppRedAudioInterface.h" />
     <ClInclude Include="CppRedAudioProgram.h" />
     <ClInclude Include="CppRedClearSave.h" />
     <ClInclude Include="CppRedCommonFunctions.h" />
@@ -61,9 +64,12 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioDevice.cpp" />
+    <ClCompile Include="AudioRenderer.cpp" />
+    <ClCompile Include="AudioScheduler.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="CppRedAudioInterface.cpp" />
     <ClCompile Include="HeliosRenderer.cpp" />
-    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="CppRedAudioProgram.cpp" />
     <ClCompile Include="CppRedCommonFunctions.cpp" />
     <ClCompile Include="CppRedData.cpp" />

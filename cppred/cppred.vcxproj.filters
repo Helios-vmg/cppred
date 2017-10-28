@@ -45,6 +45,12 @@
     <Filter Include="Game code\Headers">
       <UniqueIdentifier>{2f9d52fe-86db-4f6c-90a7-3a38fd65dd3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine code\Headers\Audio">
+      <UniqueIdentifier>{66e42197-8202-42a4-a0b3-d43d42f19004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine code\Sources\Audio">
+      <UniqueIdentifier>{eaf95cb2-d4d0-4920-8fd4-484f5b5bbc58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -116,9 +122,6 @@
     <ClInclude Include="CppRedTextResources.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Audio.h">
-      <Filter>Engine code\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="PublishingResource.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
@@ -134,14 +137,26 @@
     <ClInclude Include="StaticSet.h">
       <Filter>Other\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="AudioRenderer.h">
-      <Filter>Engine code\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="HeliosRenderer.h">
-      <Filter>Engine code\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioData.h">
+      <Filter>Engine code\Headers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDevice.h">
+      <Filter>Engine code\Headers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRenderer.h">
+      <Filter>Engine code\Headers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="HeliosRenderer.h">
+      <Filter>Engine code\Headers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioScheduler.h">
+      <Filter>Engine code\Headers\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedAudioInterface.h">
+      <Filter>Game code\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -193,9 +208,6 @@
     <ClCompile Include="CppRedOakSpeech.cpp">
       <Filter>Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Audio.cpp">
-      <Filter>Engine code\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="threads.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
@@ -205,11 +217,23 @@
     <ClCompile Include="CppRedAudioProgram.cpp">
       <Filter>Game code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="HeliosRenderer.cpp">
-      <Filter>Engine code\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Console.cpp">
       <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDevice.cpp">
+      <Filter>Engine code\Sources\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="HeliosRenderer.cpp">
+      <Filter>Engine code\Sources\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRenderer.cpp">
+      <Filter>Engine code\Sources\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioScheduler.cpp">
+      <Filter>Engine code\Sources\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedAudioInterface.cpp">
+      <Filter>Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

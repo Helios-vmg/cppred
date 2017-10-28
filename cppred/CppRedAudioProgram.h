@@ -1,9 +1,9 @@
 #pragma once
-#include "Audio.h"
 #include "CppRedData.h"
 #include "../common/AudioCommandType.h"
 #include "../common/AudioResourceType.h"
 #include "pokemon_version.h"
+#include <mutex>
 
 struct AudioCommand{
 	AudioCommandType type;
@@ -22,13 +22,16 @@ struct AudioResource{
 	AudioResourceType type;
 };
 
-class CppRedAudioProgram : public AudioProgram{
+class AudioRenderer2;
+enum class AudioResourceId;
+
+class CppRedAudioProgram{
 	static const double update_threshold;
 	double last_update = -1;
 	std::vector<AudioCommand> commands;
 	std::vector<AudioResource> resources;
 
-	AbstractAudioSystem *audio;
+	AudioRenderer2 *renderer;
 	PokemonVersion version;
 	AudioResourceId sound_id;
 	enum class PauseMusicState{
@@ -48,6 +51,10 @@ class CppRedAudioProgram : public AudioProgram{
 	int frequency_modifier = 0;
 	bool stop_when_sfx_ends = false;
 	const AudioResource *current_resource = nullptr;
+	std::mutex mutex;
+	int fade_out_control = 0;
+	int fade_out_counter = 0;
+	int fade_out_counter_reload_value = 0;
 	class Channel{
 		CppRedAudioProgram *program;
 		AudioResourceId sound_id;
@@ -84,27 +91,27 @@ class CppRedAudioProgram : public AudioProgram{
 		bool ifred_execute_bit = true;
 		bool perfect_pitch = false;
 
-		bool apply_effects(AbstractAudioSystem &audio);
-		bool play_next_note(AbstractAudioSystem &audio);
-		void enable_channel_output(AbstractAudioSystem &audio);
-		void apply_duty_cycle(AbstractAudioSystem &audio);
-		void apply_pitch_bend(AbstractAudioSystem &audio);
-		void apply_duty_and_sound_length(AbstractAudioSystem &audio);
-		void apply_wave_pattern_and_frequency(AbstractAudioSystem &audio, int frequency);
-		void apply_vibrato(AbstractAudioSystem &audio);
-		bool continue_execution(AbstractAudioSystem &audio);
-		bool disable_channel_output(AbstractAudioSystem &audio);
-		bool disable_channel_output_sub(AbstractAudioSystem &audio);
-		bool go_back_one_command_if_cry(AbstractAudioSystem &audio);
-		void note_length(AbstractAudioSystem &audio, std::uint32_t length_parameter, std::uint32_t note_parameter);
-		void note_pitch(AbstractAudioSystem &audio, std::uint32_t note_parameter);
-		void disable_this_hardware_channel(AbstractAudioSystem &audio);
-		void set_delay_counters(AbstractAudioSystem &audio, std::uint32_t length_parameter);
+		bool apply_effects();
+		bool play_next_note();
+		void enable_channel_output();
+		void apply_duty_cycle();
+		void apply_pitch_bend();
+		void apply_duty_and_sound_length();
+		void apply_wave_pattern_and_frequency(int frequency);
+		void apply_vibrato();
+		bool continue_execution();
+		bool disable_channel_output();
+		bool disable_channel_output_sub();
+		bool go_back_one_command_if_cry();
+		void note_length(std::uint32_t length_parameter, std::uint32_t note_parameter);
+		void note_pitch(std::uint32_t note_parameter);
+		void disable_this_hardware_channel();
+		void set_delay_counters(std::uint32_t length_parameter);
 		int init_pitch_bend_variables(int frequency);
 		void set_sfx_tempo();
 
-		typedef bool (Channel::*command_function)(const AudioCommand &, AbstractAudioSystem &, bool &);
-#define DECLARE_COMMAND_FUNCTION(x) bool command_##x(const AudioCommand &, AbstractAudioSystem &audio, bool &)
+		typedef bool (Channel::*command_function)(const AudioCommand &, bool &);
+#define DECLARE_COMMAND_FUNCTION(x) bool command_##x(const AudioCommand &, bool &)
 		DECLARE_COMMAND_FUNCTION(Tempo);
 		DECLARE_COMMAND_FUNCTION(Volume);
 		DECLARE_COMMAND_FUNCTION(Duty);
@@ -130,11 +137,11 @@ class CppRedAudioProgram : public AudioProgram{
 		DECLARE_COMMAND_FUNCTION(Else);
 		DECLARE_COMMAND_FUNCTION(EndIf);
 		DECLARE_COMMAND_FUNCTION(End);
-		bool unknown20(const AudioCommand &, AbstractAudioSystem &audio, bool &dont_stop_this_channel, bool noise);
+		bool unknown20(const AudioCommand &, bool &dont_stop_this_channel, bool noise);
 		static const command_function command_functions[28];
 	public:
 		Channel(CppRedAudioProgram &program, int channel_no, AudioResourceId resource_id, int entry_point, int bank);
-		bool update(AbstractAudioSystem &audio);
+		bool update();
 		//int get_sound_id() const{
 		//	return this->sound_id;
 		//}
@@ -161,18 +168,31 @@ class CppRedAudioProgram : public AudioProgram{
 		FrequencyLow = 3,
 		FrequencyHigh = 4,
 	};
-	typedef byte_t (*register_function)(AbstractAudioSystem &, int);
+	typedef byte_t (*register_function)(AudioRenderer2 &, int);
 	register_function get_register_pointer(RegisterId, int channel_no);
+	void set_register(RegisterId reg, int channel_no, byte_t value){
+		this->get_register_pointer(reg, channel_no)(*this->renderer, value);
+	}
+	byte_t get_register(RegisterId reg, int channel_no){
+		return this->get_register_pointer(reg, channel_no)(*this->renderer, -1);
+	}
 	void perform_update();
 	void update_channel(int);
 	void compute_fade_out();
 public:
-	CppRedAudioProgram(AbstractAudioSystem &audio, PokemonVersion);
-	~CppRedAudioProgram();
-	void update(double now) override;
-	void play_sound(AudioResourceId) override;
+	CppRedAudioProgram(AudioRenderer2 &renderer, PokemonVersion);
+	void update(double now);
+	void play_sound(AudioResourceId);
 	void pause_music();
 	void unpause_music();
-	void clear_channel(int channel) override;
-	std::vector<std::string> get_resource_strings() override;
+	void clear_channel(int channel);
+	std::vector<std::string> get_resource_strings();
+	std::unique_lock<std::mutex> acquire_lock();
+	int get_fade_control() const{
+		return this->fade_out_control;
+	}
+	void set_fade_control(int f){
+		this->fade_out_control = f;
+	}
+	void copy_fade_control();
 };

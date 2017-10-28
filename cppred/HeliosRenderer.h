@@ -1,7 +1,7 @@
 #pragma once
 #include "AudioRenderer.h"
 
-class HeliosRenderer : public AudioRenderer{
+class HeliosRenderer : public AudioRenderer2{
 	unsigned current_frame_position = 0;
 	std::uint64_t frame_no = 0;
 	std::uint64_t audio_turned_on_at = 0;
@@ -53,7 +53,7 @@ class HeliosRenderer : public AudioRenderer{
 	void volume_event();
 	void sweep_event();
 public:
-	HeliosRenderer();
+	HeliosRenderer(AudioDevice &);
 	void update(double now) override;
 
 	void set_NR10(byte_t) override;

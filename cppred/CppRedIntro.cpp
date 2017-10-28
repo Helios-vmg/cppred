@@ -154,7 +154,7 @@ static bool animate_falling_stars(CppRedEngine &cppred, shooting_star_graphics &
 
 static bool shooting_star_scene(CppRedEngine &cppred){
 	shooting_star_graphics graphics(cppred.get_engine());
-	cppred.play_sound(AudioResourceId::SFX_Shooting_Star);
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Shooting_Star);
 	return animate_big_star(cppred, graphics) || cycle_logo_palettes(cppred, graphics) || animate_falling_stars(cppred, graphics);
 }
 
@@ -181,7 +181,7 @@ double parabola_func(double x){
 template <double Parabola(double)>
 void hop_sprite(CppRedEngine &cppred, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
 	auto &engine = cppred.get_engine();
-	cppred.play_sound(sfx);
+	cppred.get_audio_interface().play_sound(sfx);
 	auto t0 = engine.get_clock();
 	const double duration = 25.0;
 	double scaled;
@@ -234,7 +234,7 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
-	cppred.play_sound(AudioResourceId::Music_IntroBattle);
+	cppred.get_audio_interface().play_sound(AudioResourceId::Music_IntroBattle);
 	clear_middle_of_screen<4>(engine);
 	engine.wait_frames(3);
 	renderer.set_default_palettes();
@@ -279,13 +279,13 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 	}
 
 	//Gengar moves back and raises arm.
-	engine.play_sound(AudioResourceId::SFX_Intro_Raise);
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Raise);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon2);
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 8) || cppred.check_for_user_interruption(0.5))
 		return ret;
 
 	//Now moves forward and lowers arm.
-	engine.play_sound(AudioResourceId::SFX_Intro_Crash);
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon3);
 	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 18, -1))
 		return ret;
@@ -338,7 +338,7 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 		return ret;
 
 	//Lunge Nidorino.
-	cppred.play_sound(AudioResourceId::SFX_Intro_Lunge);
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Lunge);
 	nidorino2->set_visible(false);
 	nidorino3->set_visible(true);
 	{

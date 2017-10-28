@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <queue>
+#include "CppRedAudioInterface.h"
 
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
@@ -43,18 +44,17 @@ class CppRedEngine{
 	TextState text_state;
 	bool dialog_box_visible = false;
 	VariableStore variable_store;
+	CppRedAudioInterface audio_interface;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 public:
-	CppRedEngine(Engine &engine, PokemonVersion version);
+	CppRedEngine(Engine &engine, PokemonVersion version, CppRedAudioProgram &program);
 	void clear_screen();
 	Engine &get_engine(){
 		return *this->engine;
 	}
-	void play_sound(AudioResourceId);
-	void play_cry(SpeciesId);
 	void fade_out_to_white();
 	void palette_whiteout();
 	bool check_for_user_interruption(double timeout = 0, InputState * = nullptr);
@@ -94,6 +94,9 @@ public:
 	std::string get_name_from_user(SpeciesId, int max_length = -1);
 	PokemonVersion get_version() const{
 		return this->version;
+	}
+	CppRedAudioInterface &get_audio_interface(){
+		return this->audio_interface;
 	}
 
 	DEFINE_GETTER_SETTER(options)

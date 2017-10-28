@@ -105,8 +105,8 @@ static void oak_introduction(CppRedEngine &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	cppred.play_sound(AudioResourceId::Stop);
-	cppred.play_sound(AudioResourceId::Music_Routes2);
+	cppred.get_audio_interface().play_sound(AudioResourceId::Stop);
+	cppred.get_audio_interface().play_sound(AudioResourceId::Music_Routes2);
 	renderer.clear_screen();
 	engine.wait(1);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ProfOakPic);
@@ -118,7 +118,7 @@ static void oak_introduction(CppRedEngine &cppred){
 	renderer.draw_image_to_tilemap_flipped({ 6, 4 }, *pokemon_by_species_id[(int)SpeciesId::Nidorino]->front);
 	scroll_from_the_right(cppred);
 	cppred.run_dialog(TextResourceId::OakSpeechText2A);
-	cppred.play_cry(SpeciesId::Nidorina);
+	cppred.get_audio_interface().play_cry(SpeciesId::Nidorina);
 	cppred.run_dialog(TextResourceId::OakSpeechText2B);
 	cppred.fade_out_to_white();
 	cppred.clear_screen();
@@ -166,7 +166,7 @@ static void red_closing(CppRedEngine &cppred){
 	fade_in(cppred);
 
 	cppred.run_dialog(TextResourceId::OakSpeechText3);
-	cppred.play_sound(AudioResourceId::SFX_Shrink);
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Shrink);
 	engine.wait_frames(4);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic1);
 	engine.wait(0.5);

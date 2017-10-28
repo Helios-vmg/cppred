@@ -1,6 +1,7 @@
 #pragma once
-#include "Audio.h"
 #include "common_types.h"
+#include "AudioData.h"
+#include <limits>
 
 class ClockDivider{
 public:

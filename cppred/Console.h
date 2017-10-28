@@ -1,12 +1,23 @@
 #pragma once
+#include "common_types.h"
+#include "CppRedAudioInterface.h"
 #include <SDL.h>
 #include <memory>
-#include "common_types.h"
 #include <vector>
 #include <boost/coroutine2/all.hpp>
 
 class Engine;
 class Renderer;
+
+enum class ConsoleRequestId{
+	None,
+	GetAudioProgram,
+};
+
+struct ConsoleCommunicationChannel{
+	ConsoleRequestId request_id = ConsoleRequestId::None;
+	CppRedAudioProgram *audio_program = nullptr;
+};
 
 class Console{
 	Engine *engine;
@@ -18,8 +29,8 @@ class Console{
 	std::vector<byte_t> last_character_matrix;
 	bool matrix_modified = false;
 
-	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
-	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;
+	typedef boost::coroutines2::asymmetric_coroutine<ConsoleCommunicationChannel *>::pull_type coroutine_t;
+	typedef boost::coroutines2::asymmetric_coroutine<ConsoleCommunicationChannel *>::push_type yielder_t;
 	std::unique_ptr<coroutine_t> coroutine;
 	yielder_t *yielder = nullptr;
 
@@ -35,6 +46,7 @@ class Console{
 
 	void coroutine_entry_point();
 	void yield();
+	CppRedAudioProgram &get_audio_program();
 
 	int handle_menu(const std::vector<std::string> &, int default_item = 0, int item_separation = 1);
 	void draw_long_menu(const std::vector<std::string> &strings, int item_separation = 1);
@@ -46,6 +58,6 @@ public:
 		this->visible = !this->visible;
 	}
 	bool handle_event(const SDL_Event &);
-	void update();
+	ConsoleCommunicationChannel *update();
 	void render();
 };

@@ -1,6 +1,7 @@
 #include "Console.h"
 #include "Renderer.h"
 #include "Engine.h"
+#include "CppRedAudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 #include "font.inl"
 
@@ -194,15 +195,23 @@ void Console::write_string(int x, int y, const char *string){
 		this->write_character(x, y, *string);
 }
 
-void Console::update(){
+ConsoleCommunicationChannel *Console::update(){
 	if (!this->visible)
-		return;
+		return nullptr;
 
-	(*this->coroutine)();
+	auto &co = (*this->coroutine)();
+	return co ? co.get() : nullptr;
 }
 
 void Console::yield(){
-	(*this->yielder)();
+	(*this->yielder)(nullptr);
+}
+
+CppRedAudioProgram &Console::get_audio_program(){
+	ConsoleCommunicationChannel ccc;
+	ccc.request_id = ConsoleRequestId::GetAudioProgram;
+	(*this->yielder)(&ccc);
+	return *ccc.audio_program;
 }
 
 void Console::draw_long_menu(const std::vector<std::string> &strings, int item_separation){
@@ -259,6 +268,7 @@ int Console::handle_menu(const std::vector<std::string> &strings, int default_it
 
 void Console::coroutine_entry_point(){
 	std::vector<std::string> main_menu = {
+		"Restart",
 		"Sound test",
 	};
 
@@ -267,6 +277,10 @@ void Console::coroutine_entry_point(){
 
 		switch (selection){
 			case 0:
+				this->engine->restart();
+				this->visible = false;
+				break;
+			case 1:
 				this->sound_test();
 				break;
 		}
@@ -275,12 +289,14 @@ void Console::coroutine_entry_point(){
 
 void Console::sound_test(){
 	this->engine->go_to_debug();
-	auto sounds = this->engine->get_audio().get_program().get_resource_strings();
+	auto &program = this->get_audio_program();
+	CppRedAudioInterface audio_interface(program);
+	auto sounds = program.get_resource_strings();
 	sounds.erase(sounds.begin());
 	sounds.push_back("Stop");
 	int item = 0;
 	while (true){
 		item = this->handle_menu(sounds, item);
-		this->engine->play_sound((AudioResourceId)(item + 1));
+		audio_interface.play_sound((AudioResourceId)(item + 1));
 	}
 }

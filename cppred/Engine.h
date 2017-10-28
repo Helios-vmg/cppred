@@ -2,7 +2,6 @@
 #include "utility.h"
 #include "InputState.h"
 #include "Renderer.h"
-#include "Audio.h"
 #include "HighResolutionClock.h"
 #include <SDL.h>
 #include <boost/coroutine2/all.hpp>
@@ -20,10 +19,14 @@ enum class PokemonVersion;
 class XorShift128;
 class Renderer;
 class Console;
+class AudioDevice;
+class AudioScheduler;
+class CppRedAudioProgram;
 
 class Engine{
 	HighResolutionClock clock;
 	SDL_Window *window = nullptr;
+	std::unique_ptr<AudioDevice> audio_device;
 	std::unique_ptr<Renderer> renderer;
 	XorShift128 prng;
 	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
@@ -34,14 +37,15 @@ class Engine{
 	double wait_remainder = 0;
 	InputState input_state;
 	std::function<void()> on_yield;
-	std::unique_ptr<AudioSystem> audio;
+	std::unique_ptr<AudioScheduler> audio_scheduler;
 	std::unique_ptr<Console> console;
 	bool debug_mode = false;
+	bool restart_requested = false;
 
 	void initialize_window();
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(yielder_t &, PokemonVersion);
+	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRedAudioProgram &);
 	bool handle_events();
 public:
 	Engine();
@@ -55,9 +59,6 @@ public:
 	Renderer &get_renderer(){
 		return *this->renderer;
 	}
-	AudioSystem &get_audio(){
-		return *this->audio;
-	}
 	void yield();
 	void wait(double seconds);
 	//Note: Doesn't actually wait a specific number of frames. It multiplies
@@ -70,10 +71,8 @@ public:
 	void set_on_yield(std::function<void()> &&);
 	DEFINE_GETTER(input_state)
 
-	void play_sound(AudioResourceId sound){
-		this->audio->play_sound(sound);
-	}
 	void go_to_debug();
+	void restart();
 	static const int screen_scale = 4;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;

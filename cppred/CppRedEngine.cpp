@@ -22,7 +22,10 @@ const FadePaletteData fade_palettes[8] = {
 	{ BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
 };
 
-CppRedEngine::CppRedEngine(Engine &engine, PokemonVersion version): engine(&engine), version(version){
+CppRedEngine::CppRedEngine(Engine &engine, PokemonVersion version, CppRedAudioProgram &program):
+		engine(&engine),
+		version(version),
+		audio_interface(program){
 	this->engine->set_on_yield([this](){ this->update_joypad_state(); });
 	this->reset_dialog_state();
 }
@@ -30,14 +33,6 @@ CppRedEngine::CppRedEngine(Engine &engine, PokemonVersion version): engine(&engi
 void CppRedEngine::clear_screen(){
 	this->engine->get_renderer().clear_screen();
 	this->engine->wait_frames(3);
-}
-
-void CppRedEngine::play_sound(AudioResourceId sound){
-	this->engine->play_sound(sound);
-}
-
-void CppRedEngine::play_cry(SpeciesId){
-	//TODO
 }
 
 void CppRedEngine::fade_out_to_white(){
