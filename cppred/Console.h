@@ -1,7 +1,7 @@
 #pragma once
 #include "common_types.h"
 #include "CppRedAudioInterface.h"
-#include "Renderer.h"
+#include "VideoDevice.h"
 #include <SDL.h>
 #include <memory>
 #include <vector>
@@ -26,7 +26,7 @@ struct ConsoleCommunicationChannel{
 
 class Console{
 	Engine *engine;
-	Renderer *renderer;
+	VideoDevice *device;
 	bool visible;
 	Texture background;
 	Texture text_layer;

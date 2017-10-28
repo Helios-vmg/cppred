@@ -13,9 +13,9 @@ static int text_scale = 2;
 
 Console::Console(Engine &engine):
 		engine(&engine),
-		renderer(&engine.get_renderer()),
+		device(&engine.get_renderer().get_device()),
 		visible(false){
-	auto &dev = this->renderer->get_device();
+	auto &dev = *this->device;
 	auto size = dev.get_screen_size();
 	this->background = dev.allocate_texture(size);
 	this->text_layer = dev.allocate_texture(size);
@@ -173,9 +173,8 @@ void Console::render(){
 		this->matrix_modified = false;
 	}
 
-	auto &dev = this->renderer->get_device();
-	dev.render_copy(this->background);
-	dev.render_copy(this->text_layer);
+	this->device->render_copy(this->background);
+	this->device->render_copy(this->text_layer);
 }
 
 void Console::write_character(int x, int y, byte_t character){
