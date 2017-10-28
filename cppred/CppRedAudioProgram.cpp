@@ -258,8 +258,11 @@ void CppRedAudioProgram::update_channel(int i){
 	auto &c = this->channels[i];
 	if (!c)
 		return;
-	if (!c->update())
+	if (!c->update()){
 		c.reset();
+		if (i >= 4 && !this->is_sfx_playing())
+			this->sfx_finish_event.signal();
+	}
 }
 
 void CppRedAudioProgram::compute_fade_out(){
@@ -1124,4 +1127,20 @@ void CppRedAudioProgram::copy_fade_control(){
 
 std::unique_lock<std::mutex> CppRedAudioProgram::acquire_lock(){
 	return std::unique_lock<std::mutex>(this->mutex);
+}
+
+bool CppRedAudioProgram::is_sfx_playing(){
+	bool any = false;
+	for (int i = 4; i < array_length(this->channels) && !any; i++)
+		any = !!this->channels[i];
+	return any;
+}
+
+void CppRedAudioProgram::wait_for_sfx_to_end(){
+	{
+		LOCK_MUTEX(this->mutex);
+		if (!this->is_sfx_playing())
+			return;
+	}
+	this->sfx_finish_event.reset_and_wait();
 }

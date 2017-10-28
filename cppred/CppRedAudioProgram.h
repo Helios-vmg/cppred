@@ -3,6 +3,7 @@
 #include "../common/AudioCommandType.h"
 #include "../common/AudioResourceType.h"
 #include "pokemon_version.h"
+#include "threads.h"
 #include <mutex>
 #include <memory>
 
@@ -56,6 +57,7 @@ class CppRedAudioProgram{
 	int fade_out_control = 0;
 	int fade_out_counter = 0;
 	int fade_out_counter_reload_value = 0;
+	Event sfx_finish_event;
 	class Channel{
 		CppRedAudioProgram *program;
 		AudioResourceId sound_id;
@@ -180,6 +182,7 @@ class CppRedAudioProgram{
 	void perform_update();
 	void update_channel(int);
 	void compute_fade_out();
+	bool is_sfx_playing();
 public:
 	CppRedAudioProgram(AudioRenderer &renderer, PokemonVersion);
 	void update(double now);
@@ -196,4 +199,5 @@ public:
 		this->fade_out_control = f;
 	}
 	void copy_fade_control();
+	void wait_for_sfx_to_end();
 };

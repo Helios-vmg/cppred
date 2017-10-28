@@ -3,6 +3,7 @@
 #include "CppRedMiscClasses.h"
 #include "Engine.h"
 #include "Renderer.h"
+#include "../CodeGeneration/output/audio.h"
 
 static void show_options(CppRedEngine &cppred){
 	auto &engine = cppred.get_engine();
@@ -104,6 +105,7 @@ static void show_options(CppRedEngine &cppred){
 	options.battle_style = (BattleStyle)horizontal_cursor_positions[2];
 	cppred.set_options(options);
 	cppred.set_options_initialized(true);
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 }
 
 namespace CppRedScripts{
@@ -141,6 +143,7 @@ MainMenuResult main_menu(CppRedEngine &cppred){
 			case 0:
 				return MainMenuResult::ContinueGame;
 			case 1:
+				cppred.get_audio_interface().wait_for_sfx_to_end();
 				return MainMenuResult::NewGame;
 		}
 

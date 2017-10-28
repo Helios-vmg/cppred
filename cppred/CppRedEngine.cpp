@@ -1,6 +1,7 @@
 #include "CppRedEngine.h"
 #include "Engine.h"
 #include "Renderer.h"
+#include "../CodeGeneration/output/audio.h"
 #include <iostream>
 
 struct FadePaletteData{
@@ -207,10 +208,14 @@ int CppRedEngine::handle_standard_menu_with_title(
 		do{
 			this->engine->wait_exactly_one_frame();
 			auto state = this->joypad_auto_repeat();
-			if (!ignore_b && state.get_b())
+			if (!ignore_b && state.get_b()){
+				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 				return -1;
-			if (state.get_a())
+			}
+			if (state.get_a()){
+				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 				return current_item;
+			}
 			if (!(state.get_down() || state.get_up()))
 				continue;
 			addend = state.get_down() ? 1 : -1;

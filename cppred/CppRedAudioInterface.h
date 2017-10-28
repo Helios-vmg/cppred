@@ -19,4 +19,5 @@ public:
 	void play_cry(SpeciesId);
 	void pause_music();
 	void unpause_music();
+	void wait_for_sfx_to_end();
 };

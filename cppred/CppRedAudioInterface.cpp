@@ -39,3 +39,7 @@ void CppRedAudioInterface::pause_music(){
 void CppRedAudioInterface::unpause_music(){
 	this->program->unpause_music();
 }
+
+void CppRedAudioInterface::wait_for_sfx_to_end(){
+	this->program->wait_for_sfx_to_end();
+}

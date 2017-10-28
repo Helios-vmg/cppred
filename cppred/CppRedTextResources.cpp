@@ -1,6 +1,7 @@
 #include "CppRedTextResources.h"
 #include "CppRedEngine.h"
 #include "utility.h"
+#include "../CodeGeneration/output/audio.h"
 #include <sstream>
 
 TextStore::TextStore(){
@@ -186,6 +187,7 @@ void TextResourceCommand::wait_for_continue(CppRedEngine &cppred, TextState &sta
 			break;
 	}
 	arrow_location = ' ';
+	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 }
 
 void ContCommand::execute(CppRedEngine &cppred, TextState &state){
