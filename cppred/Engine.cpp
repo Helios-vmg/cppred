@@ -16,7 +16,6 @@ Engine::Engine():
 		main_thread_id(std::this_thread::get_id()){
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
-	this->initialize_window();
 	this->initialize_video();
 	this->initialize_audio();
 }
@@ -26,15 +25,8 @@ Engine::~Engine(){
 	SDL_Quit();
 }
 
-void Engine::initialize_window(){
-	this->window = SDL_CreateWindow("POKE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Renderer::logical_screen_width * screen_scale, Renderer::logical_screen_height * screen_scale, 0);
-	if (!this->window)
-		throw std::runtime_error("Failed to initialize SDL window.");
-}
-
 void Engine::initialize_video(){
-	this->renderer.reset(new Renderer(*this, this->window));
-	this->console.reset(new Console(*this));
+	this->video_device = Renderer::initialize_device(4);
 }
 
 void Engine::initialize_audio(){
@@ -51,10 +43,13 @@ void Engine::run(){
 		this->wait_remainder = 0;
 		this->restart_requested = false;
 		this->debug_mode = false;
-		auto renderer = std::make_unique<HeliosRenderer>(*this->audio_device);
-		auto programp = std::make_unique<CppRedAudioProgram>(*renderer, version);
+		this->renderer.reset(new Renderer(*this->video_device));
+		if (!this->console)
+			this->console.reset(new Console(*this));
+		auto audio_renderer = std::make_unique<HeliosRenderer>(*this->audio_device);
+		auto programp = std::make_unique<CppRedAudioProgram>(*audio_renderer, version);
 		auto &program = *programp;
-		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(renderer), std::move(programp)));
+		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(audio_renderer), std::move(programp)));
 		this->audio_scheduler->start();
 		this->coroutine.reset(new coroutine_t([this, version, &program](yielder_t &y){ this->coroutine_entry_point(y, version, program); }));
 		auto yielder = this->yielder;
@@ -82,7 +77,7 @@ void Engine::run(){
 
 			this->renderer->render();
 			this->console->render();
-			this->renderer->present();
+			this->video_device->present();
 		}
 
 		this->on_yield = decltype(this->on_yield)();

@@ -122,4 +122,7 @@ struct Point{
 		this->y = cast_round(this->y * x);
 		return *this;
 	}
+	int multiply_components() const{
+		return this->x * this->y;
+	}
 };

@@ -9,21 +9,18 @@
 #undef RGB
 #endif
 
-static const auto w = Renderer::logical_screen_width * Engine::screen_scale;
-static const auto h = Renderer::logical_screen_height * Engine::screen_scale;
-static const auto matrix_w = w / 8;
-static const auto matrix_h = h / 8;
 static int text_scale = 2;
 
 Console::Console(Engine &engine):
 		engine(&engine),
 		renderer(&engine.get_renderer()),
-		visible(false),
-		background(nullptr, SDL_DestroyTexture),
-		text_layer(nullptr, SDL_DestroyTexture){
-	this->background.reset(this->renderer->request_texture(w, h));
-	this->text_layer.reset(this->renderer->request_texture(w, h));
-	this->character_matrix.resize(matrix_w * matrix_h);
+		visible(false){
+	auto &dev = this->renderer->get_device();
+	auto size = dev.get_screen_size();
+	this->background = dev.allocate_texture(size);
+	this->text_layer = dev.allocate_texture(size);
+	this->matrix_size = size * (1.0 / 8.0);
+	this->character_matrix.resize(this->matrix_size.x * this->matrix_size.y);
 	this->last_character_matrix.resize(this->character_matrix.size());
 
 	this->initialize_background(0x80);
@@ -38,14 +35,11 @@ Console::Console(Engine &engine):
 }
 
 void Console::initialize_background(byte_t background_alpha){
-	void *void_pixels;
-	int pitch;
+	auto surf = this->background.lock();
 
-	if (SDL_LockTexture(this->background.get(), nullptr, &void_pixels, &pitch) < 0)
-		throw std::runtime_error("Console::initialize_background(): Failed to initialize texture.");
-
-	assert(pitch == w * sizeof(RGB));
-	auto pixels = (RGB *)void_pixels;
+	auto pixels = surf.get_row(0);
+	auto w = surf.get_size().x;
+	auto h = surf.get_size().y;
 	for (int y = 0; y < h; y++){
 		auto row = pixels + y * w;
 		//byte_t c = 0xFF - 0xFF * y / (h - 1);
@@ -57,8 +51,6 @@ void Console::initialize_background(byte_t background_alpha){
 			row[x].a = background_alpha;
 		}
 	}
-	SDL_UnlockTexture(this->background.get());
-	SDL_SetTextureBlendMode(this->background.get(), SDL_BLENDMODE_BLEND);
 }
 
 void Console::blank_texture(SDL_Texture *texture, int width, int height){
@@ -74,8 +66,8 @@ void Console::blank_texture(SDL_Texture *texture, int width, int height){
 }
 
 void Console::initialize_text_layer(){
-	this->blank_texture(this->text_layer.get(), w, h);
-	SDL_SetTextureBlendMode(this->text_layer.get(), SDL_BLENDMODE_BLEND);
+	auto surf = this->text_layer.lock();
+	memset(surf.get_row(0), 0, surf.get_size().multiply_components() * sizeof(RGB));
 }
 
 bool Console::handle_event(const SDL_Event &event){
@@ -138,17 +130,18 @@ void Console::render(){
 		return;
 
 	if (this->matrix_modified && memcmp(&this->character_matrix[0], &this->last_character_matrix[0], this->character_matrix.size())){
-		void *void_pixels;
-		int pitch;
-		if (SDL_LockTexture(this->text_layer.get(), nullptr, &void_pixels, &pitch) >= 0){
+		auto w = this->text_layer.get_size().x;
+		auto h = this->text_layer.get_size().y;
+		TextureSurface surf;
+		if (this->text_layer.try_lock(surf)){
 			const RGB white = { 255, 255, 255, 255 },
 				black = { 0, 0, 0, 255 },
 				off = { 0, 0, 0, 0 };
 			auto matrix = &this->character_matrix[0];
-			auto pixels = (RGB *)void_pixels;
+			auto pixels = (RGB *)surf.get_row(0);
 			for (int y = 0; y < h; y++){
 				for (int x = 0; x < w; x++){
-					auto c = matrix[x / (8 * text_scale) + y / (8 * text_scale) * matrix_w];
+					auto c = matrix[x / (8 * text_scale) + y / (8 * text_scale) * this->matrix_size.x];
 					if (!c){
 						pixels[x + y * w] = off;
 						continue;
@@ -174,19 +167,19 @@ void Console::render(){
 						pixels[x + y * w] = black;
 				}
 			}
-			SDL_UnlockTexture(this->text_layer.get());
 		}
 
 		memcpy(&this->last_character_matrix[0], &this->character_matrix[0], this->character_matrix.size());
 		this->matrix_modified = false;
 	}
 
-	SDL_RenderCopy(this->renderer->get_renderer(), this->background.get(), nullptr, nullptr);
-	SDL_RenderCopy(this->renderer->get_renderer(), this->text_layer.get(), nullptr, nullptr);
+	auto &dev = this->renderer->get_device();
+	dev.render_copy(this->background);
+	dev.render_copy(this->text_layer);
 }
 
 void Console::write_character(int x, int y, byte_t character){
-	this->character_matrix[euclidean_modulo(x + y * matrix_w, matrix_w * matrix_h)] = character;
+	this->character_matrix[euclidean_modulo(x + y * this->matrix_size.x, this->matrix_size.multiply_components())] = character;
 	this->matrix_modified = true;
 }
 
@@ -215,6 +208,7 @@ CppRedAudioProgram &Console::get_audio_program(){
 }
 
 void Console::draw_long_menu(const std::vector<std::string> &strings, int item_separation){
+	auto h = this->text_layer.get_size().y;
 	const auto max_visible = h / (8 * item_separation * text_scale) - 2;
 	auto first_visible_item = std::max(this->current_menu_position - max_visible / 2, 0);
 	if (strings.size() - first_visible_item < max_visible)
@@ -233,6 +227,7 @@ int Console::handle_menu(const std::vector<std::string> &strings, int default_it
 
 	auto previous_menu_position = default_item;
 	int i = 1;
+	auto h = this->text_layer.get_size().y;
 	const auto max_visible = h / (8 * item_separation * text_scale) - 2;
 	this->current_menu_position = default_item;
 	this->current_menu_size = (int)strings.size();

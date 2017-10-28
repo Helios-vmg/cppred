@@ -27,6 +27,7 @@ class Engine{
 	HighResolutionClock clock;
 	SDL_Window *window = nullptr;
 	std::unique_ptr<AudioDevice> audio_device;
+	std::unique_ptr<VideoDevice> video_device;
 	std::unique_ptr<Renderer> renderer;
 	XorShift128 prng;
 	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
@@ -42,7 +43,6 @@ class Engine{
 	bool debug_mode = false;
 	bool restart_requested = false;
 
-	void initialize_window();
 	void initialize_video();
 	void initialize_audio();
 	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRedAudioProgram &);

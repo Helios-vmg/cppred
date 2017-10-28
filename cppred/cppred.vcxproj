@@ -62,6 +62,7 @@
     <ClInclude Include="StaticSet.h" />
     <ClInclude Include="threads.h" />
     <ClInclude Include="utility.h" />
+    <ClInclude Include="VideoDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioDevice.cpp" />
@@ -89,6 +90,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="threads.cpp" />
     <ClCompile Include="utility.cpp" />
+    <ClCompile Include="VideoDevice.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{89C9E90C-A8FF-4B66-AB94-BA6C9AAAD651}</ProjectGuid>

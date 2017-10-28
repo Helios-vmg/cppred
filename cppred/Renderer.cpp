@@ -11,36 +11,20 @@
 //#define MEASURE_RENDERING_TIMES
 #define ALWAYS_RENDER
 
-Renderer::Renderer(Engine &engine, SDL_Window *window): engine(&engine){
-	this->initialize_sdl(window);
+Renderer::Renderer(VideoDevice &device): device(&device){
+	this->main_texture = this->device->allocate_texture(logical_screen_width, logical_screen_height);
+	if (!this->main_texture)
+		throw std::runtime_error("Failed to create main texture.");
+
+	TextureSurface surf;
+	if (this->main_texture.try_lock(surf))
+		memset(surf.get_row(0), 0xFF, logical_screen_height * logical_screen_width * sizeof(RGB));
 	this->initialize_assets();
 	this->initialize_data();
 }
 
-Renderer::~Renderer(){
-	SDL_DestroyTexture(this->main_texture);
-	SDL_DestroyRenderer(this->renderer);
-}
-
-void Renderer::initialize_sdl(SDL_Window *window){
-	this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
-	if (!this->renderer)
-		throw std::runtime_error("Failed to initialize SDL renderer.");
-	this->main_texture = this->request_texture(logical_screen_width, logical_screen_height);
-	if (!this->main_texture)
-		throw std::runtime_error("Failed to create main texture.");
-
-	void *void_pixels;
-	int pitch;
-	if (SDL_LockTexture(this->main_texture, nullptr, &void_pixels, &pitch) >= 0){
-		assert(pitch == logical_screen_width * 4);
-		memset(void_pixels, 0xFF, pitch * logical_screen_height);
-		SDL_UnlockTexture(this->main_texture);
-	}
-}
-
-SDL_Texture *Renderer::request_texture(int width, int height){
-	return SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+std::unique_ptr<VideoDevice> Renderer::initialize_device(int scale){
+	return std::make_unique<VideoDevice>(Point{ logical_screen_width, logical_screen_height } * scale);
 }
 
 void Renderer::initialize_assets(){
@@ -71,46 +55,6 @@ void Renderer::initialize_data(){
 	this->set_palette(PaletteRegion::Sprites1, 0);
 }
 
-void Renderer::set_palette(PaletteRegion region, Palette value){
-	this->skip_rendering = false;
-	switch (region){
-		case PaletteRegion::Background:
-			this->bg_palette = value;
-			break;
-		case PaletteRegion::Sprites0:
-			this->sprite0_palette = value;
-			break;
-		case PaletteRegion::Sprites1:
-			this->sprite1_palette = value;
-			break;
-	}
-}
-
-void Renderer::set_default_palettes(){
-	this->set_palette(PaletteRegion::Background, default_palette);
-	this->set_palette(PaletteRegion::Sprites0, default_palette);
-	this->clear_subpalettes(SubPaletteRegion::Background);
-	this->clear_subpalettes(SubPaletteRegion::Window);
-	this->clear_subpalettes(SubPaletteRegion::Sprites);
-}
-
-Tile &Renderer::get_tile(TileRegion region, const Point &p){
-	this->skip_rendering = false;
-	return this->get_tilemap(region).tiles[p.x + p.y * Tilemap::w];
-}
-
-Tilemap &Renderer::get_tilemap(TileRegion region){
-	this->skip_rendering = false;
-	switch (region){
-		case TileRegion::Background:
-			return this->bg_tilemap;
-		case TileRegion::Window:
-			return this->window_tilemap;
-	}
-	assert(false);
-	return this->bg_tilemap;
-}
-
 bool sort_sprites(Sprite *a, Sprite *b){
 	if (a->get_x() > b->get_x())
 		return true;
@@ -123,13 +67,9 @@ void Renderer::do_software_rendering(){
 #ifdef MEASURE_RENDERING_TIMES
 	auto t0 = this->engine->get_clock();
 #endif
-#ifndef ALWAYS_RENDER
-	if (this->skip_rendering)
-		return;
-#endif
-	void *void_pixels;
-	int pitch;
-	if (SDL_LockTexture(this->main_texture, nullptr, &void_pixels, &pitch) < 0)
+
+	TextureSurface surf;
+	if (!this->main_texture.try_lock(surf))
 		return;
 
 	if (this->enable_sprites){
@@ -154,7 +94,7 @@ void Renderer::do_software_rendering(){
 		&this->sprite1_palette,
 	};
 
-	auto pixels = (RGB *)void_pixels;
+	auto pixels = surf.get_row(0);
 	for (int y = 0; y < logical_screen_height; y++){
 		auto bg_offset = this->bg_global_offset + this->bg_offsets[y];
 		auto window_offset = this->window_global_offset + this->window_offsets[y];
@@ -190,7 +130,7 @@ void Renderer::do_software_rendering(){
 			}
 
 			if (this->enable_bg & !palette){
-				auto p = bg_offset + Point{x, y};
+				auto p = bg_offset + Point{ x, y };
 				p.x = euclidean_modulo(p.x, Tilemap::w * tile_size);
 				p.y = euclidean_modulo(p.y, Tilemap::h * tile_size);
 				auto &tile = this->bg_tilemap.tiles[p.x / tile_size + p.y / tile_size * Tilemap::w];
@@ -251,21 +191,17 @@ void Renderer::do_software_rendering(){
 			*(pixels++) = this->final_palette[!palette ? 0 : palette->data[color_index]];
 		}
 	}
-	SDL_UnlockTexture(this->main_texture);
 #ifdef MEASURE_RENDERING_TIMES
 	auto t1 = this->engine->get_clock();
 	std::cout << "Rendering time: " << (t1 - t0) * 1000 << " ms\n";
 #endif
 }
 
-void Renderer::present(){
-	SDL_RenderPresent(this->renderer);
-}
-
-void Renderer::render(){
-	this->do_software_rendering();
-	SDL_RenderCopy(this->renderer, this->main_texture, nullptr, nullptr);
-	this->skip_rendering = true;
+void Renderer::set_y_offset(Point (&array)[logical_screen_height], int y0, int y1, const Point &p){
+	y0 = std::max(y0, 0);
+	y1 = std::min(y1, (int)logical_screen_height);
+	for (int y = y0; y < y1; y++)
+		array[y] = p;
 }
 
 std::vector<Point> Renderer::draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette, bool flipped){
@@ -289,6 +225,48 @@ std::vector<Point> Renderer::draw_image_to_tilemap_internal(const Point &corner,
 	return ret;
 }
 
+void Renderer::set_palette(PaletteRegion region, Palette value){
+	switch (region){
+		case PaletteRegion::Background:
+			this->bg_palette = value;
+			break;
+		case PaletteRegion::Sprites0:
+			this->sprite0_palette = value;
+			break;
+		case PaletteRegion::Sprites1:
+			this->sprite1_palette = value;
+			break;
+	}
+}
+
+void Renderer::set_default_palettes(){
+	this->set_palette(PaletteRegion::Background, default_palette);
+	this->set_palette(PaletteRegion::Sprites0, default_palette);
+	this->clear_subpalettes(SubPaletteRegion::Background);
+	this->clear_subpalettes(SubPaletteRegion::Window);
+	this->clear_subpalettes(SubPaletteRegion::Sprites);
+}
+
+Tile &Renderer::get_tile(TileRegion region, const Point &p){
+	return this->get_tilemap(region).tiles[p.x + p.y * Tilemap::w];
+}
+
+Tilemap &Renderer::get_tilemap(TileRegion region){
+	switch (region){
+		case TileRegion::Background:
+			return this->bg_tilemap;
+		case TileRegion::Window:
+			return this->window_tilemap;
+	}
+	assert(false);
+	return this->bg_tilemap;
+}
+
+void Renderer::render(){
+	this->do_software_rendering();
+	this->device->render_copy(this->main_texture);
+}
+
 std::vector<Point> Renderer::draw_image_to_tilemap(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette){
 	return this->draw_image_to_tilemap_internal(corner, asset, region, palette, false);
 }
@@ -308,7 +286,6 @@ void Renderer::mass_set_tiles(const std::vector<Point> &tiles, const Tile &tile)
 }
 
 void Renderer::clear_subpalettes(SubPaletteRegion region){
-	this->require_redraw();
 	switch (region){
 		case SubPaletteRegion::All:
 		case SubPaletteRegion::Background:
@@ -342,23 +319,19 @@ void Renderer::clear_screen(){
 	fill(this->window_offsets, zero);
 	this->bg_global_offset = zero;
 	this->window_global_offset = zero;
-	this->skip_rendering = false;
 	this->set_default_palettes();
 }
 
 void Renderer::set_enable_bg(bool value){
 	this->enable_bg = value;
-	this->skip_rendering = false;
 }
 
 void Renderer::set_enable_window(bool value){
 	this->enable_window = value;
-	this->skip_rendering = false;
 }
 
 void Renderer::set_enable_sprites(bool value){
 	this->enable_sprites = value;
-	this->skip_rendering = false;
 }
 
 void Renderer::fill_rectangle(TileRegion region, const Point &corner, const Point &size, const Tile &tile){
@@ -407,13 +380,6 @@ void Renderer::release_sprite(std::uint64_t id){
 
 std::uint64_t Renderer::get_id(){
 	return this->next_sprite_id++;
-}
-
-void Renderer::set_y_offset(Point (&array)[logical_screen_height], int y0, int y1, const Point &p){
-	y0 = std::max(y0, 0);
-	y1 = std::min(y1, (int)logical_screen_height);
-	for (int y = y0; y < y1; y++)
-		array[y] = p;
 }
 
 void Renderer::set_y_bg_offset(int y0, int y1, const Point &p){

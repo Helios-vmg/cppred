@@ -87,6 +87,12 @@ constexpr std::uint32_t bit(std::uint32_t i){
 	return (std::uint32_t)1 << i;
 }
 
+template <typename T1, typename T2>
+void set_and_swap(T1 &dst, T1 &src, const T2 &null_value){
+	dst = src;
+	src = null_value;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);

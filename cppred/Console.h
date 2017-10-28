@@ -1,13 +1,13 @@
 #pragma once
 #include "common_types.h"
 #include "CppRedAudioInterface.h"
+#include "Renderer.h"
 #include <SDL.h>
 #include <memory>
 #include <vector>
 #include <boost/coroutine2/all.hpp>
 
 class Engine;
-class Renderer;
 
 enum class ConsoleRequestId{
 	None,
@@ -23,11 +23,12 @@ class Console{
 	Engine *engine;
 	Renderer *renderer;
 	bool visible;
-	std::unique_ptr<SDL_Texture, void(*)(SDL_Texture *)> background;
-	std::unique_ptr<SDL_Texture, void(*)(SDL_Texture *)> text_layer;
+	Texture background;
+	Texture text_layer;
 	std::vector<byte_t> character_matrix;
 	std::vector<byte_t> last_character_matrix;
 	bool matrix_modified = false;
+	Point matrix_size;
 
 	typedef boost::coroutines2::asymmetric_coroutine<ConsoleCommunicationChannel *>::pull_type coroutine_t;
 	typedef boost::coroutines2::asymmetric_coroutine<ConsoleCommunicationChannel *>::push_type yielder_t;

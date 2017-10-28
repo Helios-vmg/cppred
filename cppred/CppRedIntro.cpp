@@ -105,7 +105,6 @@ static bool animate_big_star(CppRedEngine &cppred, shooting_star_graphics &graph
 			break;
 		star.set_y(y0 + offset);
 		star.set_x(x0 - offset);
-		engine.get_renderer().require_redraw();
 	}
 	graphics.star.reset();
 	return ret;
@@ -144,7 +143,6 @@ static bool animate_falling_stars(CppRedEngine &cppred, shooting_star_graphics &
 				sprite.set_palette(pseudo_frame / 3 % 2 ? falling_star_on : falling_star_off);
 			}
 		}
-		renderer.require_redraw();
 
 		if (cppred.check_for_user_interruption())
 			return true;

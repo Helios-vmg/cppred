@@ -3,12 +3,12 @@
 #include "utility.h"
 #include "RendererStructs.h"
 #include "Sprite.h"
+#include "VideoDevice.h"
 #include <SDL.h>
 #include <vector>
 #include <map>
 #include <memory>
 
-struct SDL_Window;
 class Engine;
 
 class Renderer{
@@ -27,9 +27,8 @@ public:
 	typedef typename sprite_map_t::iterator sprite_iterator;
 
 private:
-	Engine *engine;
-	SDL_Renderer *renderer = nullptr;
-	SDL_Texture *main_texture = nullptr;
+	VideoDevice *device;
+	Texture main_texture;
 	std::vector<TileData> tile_data;
 	Tilemap bg_tilemap;
 	Tilemap window_tilemap;
@@ -47,30 +46,30 @@ private:
 	bool enable_bg = false;
 	bool enable_window = false;
 	bool enable_sprites = true;
-	bool skip_rendering = true;
 
-	void initialize_sdl(SDL_Window *);
 	void initialize_assets();
 	void initialize_data();
 	void do_software_rendering();
-	void set_y_offset(Point(&)[logical_screen_height], int y0, int y1, const Point &);
+	void set_y_offset(Point (&)[logical_screen_height], int y0, int y1, const Point &);
 	std::vector<Point> draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &, TileRegion, Palette, bool);
 public:
-	Renderer(Engine &, SDL_Window *);
-	~Renderer();
+	Renderer(VideoDevice &);
+	static std::unique_ptr<VideoDevice> initialize_device(int scale);
 	Renderer(const Renderer &) = delete;
 	Renderer(Renderer &&) = delete;
-	SDL_Renderer *get_renderer() const{
-		return this->renderer;
-	}
 	void operator=(const Renderer &) = delete;
 	void operator=(Renderer &&) = delete;
+	//SDL_Renderer *get_renderer() const{
+	//	return this->renderer;
+	//}
+	VideoDevice &get_device(){
+		return *this->device;
+	}
 	void set_palette(PaletteRegion region, Palette value);
 	void set_default_palettes();
 	Tile &get_tile(TileRegion, const Point &p);
 	Tilemap &get_tilemap(TileRegion);
 	void render();
-	void present();
 	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	std::vector<Point> draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
@@ -84,9 +83,6 @@ public:
 	void clear_sprites();
 	std::shared_ptr<Sprite> create_sprite(int tiles_w, int tiles_h);
 	std::shared_ptr<Sprite> create_sprite(const GraphicsAsset &);
-	void require_redraw(){
-		this->skip_rendering = false;
-	}
 	//std::pair<sprite_iterator, sprite_iterator> iterate_sprites();
 	void release_sprite(std::uint64_t);
 	std::uint64_t get_id();
@@ -94,7 +90,6 @@ public:
 	DEFINE_GETTER_SETTER(window_global_offset)
 	void set_y_bg_offset(int y0, int y1, const Point &);
 	void set_y_window_offset(int y0, int y1, const Point &);
-	SDL_Texture *request_texture(int width, int height);
 };
 
 static const std::uint16_t white_arrow = (std::uint16_t)('A' + 128);

@@ -158,6 +158,9 @@
     <ClInclude Include="CppRedAudioInterface.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="VideoDevice.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -234,6 +237,9 @@
     </ClCompile>
     <ClCompile Include="CppRedAudioInterface.cpp">
       <Filter>Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoDevice.cpp">
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
