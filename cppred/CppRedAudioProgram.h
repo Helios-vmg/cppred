@@ -4,6 +4,7 @@
 #include "../common/AudioResourceType.h"
 #include "pokemon_version.h"
 #include <mutex>
+#include <memory>
 
 struct AudioCommand{
 	AudioCommandType type;

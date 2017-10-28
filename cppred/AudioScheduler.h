@@ -17,7 +17,7 @@ class AudioScheduler{
 	std::unique_ptr<AudioRenderer> renderer;
 	std::unique_ptr<CppRedAudioProgram> program;
 	std::unique_ptr<std::thread> thread;
-	std::atomic<bool> continue_running = false;
+	std::atomic<bool> continue_running;
 	SDL_TimerID timer_id = 0;
 	Event timer_event;
 
