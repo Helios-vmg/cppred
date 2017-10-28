@@ -56,7 +56,7 @@ public:
 	}
 };
 
-void AudioDevice::set_renderer(AudioRenderer2 &renderer){
+void AudioDevice::set_renderer(AudioRenderer &renderer){
 	AudioLock al(this->audio_device);
 	this->renderer = &renderer;
 }

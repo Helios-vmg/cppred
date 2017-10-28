@@ -15,7 +15,7 @@ struct Panning{
 
 class AudioDevice;
 
-class AudioRenderer2{
+class AudioRenderer{
 	std::mutex mutex;
 	std::uint64_t expected_frame = 0;
 protected:
@@ -23,8 +23,8 @@ protected:
 	virtual AudioFrame *get_current_frame() = 0;
 	virtual void return_used_frame(AudioFrame *frame) = 0;
 public:
-	AudioRenderer2(AudioDevice &device);
-	virtual ~AudioRenderer2();
+	AudioRenderer(AudioDevice &device);
+	virtual ~AudioRenderer();
 	virtual void update(double now) = 0;
 	virtual void set_NR10(byte_t) = 0;
 	virtual void set_NR11(byte_t) = 0;

@@ -24,7 +24,7 @@ basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_a
 }
 
 HeliosRenderer::HeliosRenderer(AudioDevice &dev):
-		AudioRenderer2(dev),
+		AudioRenderer(dev),
 #ifdef USE_STD_FUNCTION
 		audio_sample_clock(gb_cpu_frequency_power, sampling_frequency, [this](std::uint64_t n){ this->sample_callback(n); }),
 		frame_sequencer_clock(gb_cpu_frequency_power, 512, [this](std::uint64_t n){ this->frame_sequencer_callback(n); })

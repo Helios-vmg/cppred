@@ -1,6 +1,5 @@
 #include "CppRedAudioProgram.h"
 #include "CppRedData.h"
-#include "Audio.h"
 #include "utility.h"
 #include "AudioRenderer.h"
 #include "../common/calculate_frequency.h"
@@ -191,7 +190,7 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 	instruments_bank_3,
 };
 
-CppRedAudioProgram::CppRedAudioProgram(AudioRenderer2 &renderer, PokemonVersion version): renderer(&renderer), version(version){
+CppRedAudioProgram::CppRedAudioProgram(AudioRenderer &renderer, PokemonVersion version): renderer(&renderer), version(version){
 	this->load_commands();
 	this->load_resources();
 }
@@ -1053,7 +1052,7 @@ void CppRedAudioProgram::Channel::reset(AudioResourceId resource_id, int entry_p
 }
 
 #define DEFINE_REGISTER_FUNCTION(reg, ch, dst) \
-static byte_t register_function_##reg##_##ch(AudioRenderer2 &renderer, int i){ \
+static byte_t register_function_##reg##_##ch(AudioRenderer &renderer, int i){ \
 	if (i < 0) \
 		return renderer.get_NR##dst(); \
 	renderer.set_NR##dst(i); \

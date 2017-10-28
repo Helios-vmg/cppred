@@ -8,13 +8,13 @@
 #include <SDL.h>
 
 class Engine;
-class AudioRenderer2;
+class AudioRenderer;
 class CppRedAudioProgram;
 enum class AudioResourceId;
 
 class AudioScheduler{
 	Engine *engine;
-	std::unique_ptr<AudioRenderer2> renderer;
+	std::unique_ptr<AudioRenderer> renderer;
 	std::unique_ptr<CppRedAudioProgram> program;
 	std::unique_ptr<std::thread> thread;
 	std::atomic<bool> continue_running = false;
@@ -25,7 +25,7 @@ class AudioScheduler{
 	void processor();
 	void stop();
 public:
-	AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer2> &&renderer, std::unique_ptr<CppRedAudioProgram> &&program);
+	AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer> &&renderer, std::unique_ptr<CppRedAudioProgram> &&program);
 	~AudioScheduler();
 	void start();
 };

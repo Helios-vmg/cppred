@@ -4,7 +4,7 @@
 #include "CppRedAudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 
-AudioScheduler::AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer2> &&renderer, std::unique_ptr<CppRedAudioProgram> &&program): engine(&engine){
+AudioScheduler::AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer> &&renderer, std::unique_ptr<CppRedAudioProgram> &&program): engine(&engine){
 	this->renderer = std::move(renderer);
 	this->program = std::move(program);
 	this->continue_running = false;

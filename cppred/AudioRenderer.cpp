@@ -1,15 +1,15 @@
 #include "AudioRenderer.h"
 #include "AudioDevice.h"
 
-AudioRenderer2::AudioRenderer2(AudioDevice &device): device(&device){
+AudioRenderer::AudioRenderer(AudioDevice &device): device(&device){
 	this->device->set_renderer(*this);
 }
 
-AudioRenderer2::~AudioRenderer2(){
+AudioRenderer::~AudioRenderer(){
 	this->device->clear_renderer();
 }
 
-void AudioRenderer2::write_data_to_device(Uint8 *stream, int len){
+void AudioRenderer::write_data_to_device(Uint8 *stream, int len){
 	{
 		LOCK_MUTEX(this->mutex);
 		auto frame = this->get_current_frame();

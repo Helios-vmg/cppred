@@ -22,7 +22,7 @@ struct AudioResource{
 	AudioResourceType type;
 };
 
-class AudioRenderer2;
+class AudioRenderer;
 enum class AudioResourceId;
 
 class CppRedAudioProgram{
@@ -31,7 +31,7 @@ class CppRedAudioProgram{
 	std::vector<AudioCommand> commands;
 	std::vector<AudioResource> resources;
 
-	AudioRenderer2 *renderer;
+	AudioRenderer *renderer;
 	PokemonVersion version;
 	AudioResourceId sound_id;
 	enum class PauseMusicState{
@@ -168,7 +168,7 @@ class CppRedAudioProgram{
 		FrequencyLow = 3,
 		FrequencyHigh = 4,
 	};
-	typedef byte_t (*register_function)(AudioRenderer2 &, int);
+	typedef byte_t (*register_function)(AudioRenderer &, int);
 	register_function get_register_pointer(RegisterId, int channel_no);
 	void set_register(RegisterId reg, int channel_no, byte_t value){
 		this->get_register_pointer(reg, channel_no)(*this->renderer, value);
@@ -180,7 +180,7 @@ class CppRedAudioProgram{
 	void update_channel(int);
 	void compute_fade_out();
 public:
-	CppRedAudioProgram(AudioRenderer2 &renderer, PokemonVersion);
+	CppRedAudioProgram(AudioRenderer &renderer, PokemonVersion);
 	void update(double now);
 	void play_sound(AudioResourceId);
 	void pause_music();
