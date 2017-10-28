@@ -33,6 +33,18 @@ void Engine::initialize_audio(){
 	this->audio_device.reset(new AudioDevice);
 }
 
+const char *to_string(PokemonVersion version){
+	switch (version){
+		case PokemonVersion::Red:
+			return "Pok\xC3\xA9mon Red";
+			break;
+		case PokemonVersion::Blue:
+			return "Pok\xC3\xA9mon Blue";
+		default:
+			return "Pok\xC3\xA9mon ?";
+	}
+}
+
 void Engine::run(){
 	if (std::this_thread::get_id() != this->main_thread_id)
 		throw std::runtime_error("Engine::run() must be called from the main thread!");
@@ -40,6 +52,7 @@ void Engine::run(){
 	PokemonVersion version = PokemonVersion::Red;
 	bool continue_running = true;
 	while (continue_running){
+		this->video_device->set_window_title(to_string(version));
 		this->wait_remainder = 0;
 		this->restart_requested = false;
 		this->debug_mode = false;
