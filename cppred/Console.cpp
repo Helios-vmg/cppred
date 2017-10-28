@@ -261,23 +261,42 @@ int Console::handle_menu(const std::vector<std::string> &strings, int default_it
 	}
 }
 
+static const char *to_string(PokemonVersion version){
+	switch (version){
+		case PokemonVersion::Red:
+			return "Red";
+		case PokemonVersion::Blue:
+			return "Blue";
+		default:
+			return "?";
+	}
+}
+
 void Console::coroutine_entry_point(){
-	std::vector<std::string> main_menu = {
-		"Restart",
-		"Sound test",
-	};
-
+	int item = 0;
 	while (true){
-		auto selection = this->handle_menu(main_menu);
+		std::vector<std::string> main_menu;
+		main_menu.push_back("Restart");
+		main_menu.push_back((std::string)"Version: " + to_string(this->get_version()));
+		main_menu.push_back("Sound test");
 
-		switch (selection){
-			case 0:
-				this->engine->restart();
-				this->visible = false;
-				break;
-			case 1:
-				this->sound_test();
-				break;
+		bool run = true;
+		while (run){
+			auto selection = this->handle_menu(main_menu, item);
+			item = selection;
+			switch (selection){
+				case 0:
+					this->restart_game();
+					this->visible = false;
+					break;
+				case 1:
+					this->flip_version();
+					run = false;
+					break;
+				case 2:
+					this->sound_test();
+					break;
+			}
 		}
 	}
 }
@@ -294,4 +313,23 @@ void Console::sound_test(){
 		item = this->handle_menu(sounds, item);
 		audio_interface.play_sound((AudioResourceId)(item + 1));
 	}
+}
+
+void Console::restart_game(){
+	ConsoleCommunicationChannel ccc;
+	ccc.request_id = ConsoleRequestId::Restart;
+	(*this->yielder)(&ccc);
+}
+
+void Console::flip_version(){
+	ConsoleCommunicationChannel ccc;
+	ccc.request_id = ConsoleRequestId::FlipVersion;
+	(*this->yielder)(&ccc);
+}
+
+PokemonVersion Console::get_version(){
+	ConsoleCommunicationChannel ccc;
+	ccc.request_id = ConsoleRequestId::GetVersion;
+	(*this->yielder)(&ccc);
+	return ccc.version;
 }

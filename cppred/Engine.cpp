@@ -33,11 +33,10 @@ void Engine::initialize_audio(){
 	this->audio_device.reset(new AudioDevice);
 }
 
-const char *to_string(PokemonVersion version){
+static const char *to_string(PokemonVersion version){
 	switch (version){
 		case PokemonVersion::Red:
 			return "Pok\xC3\xA9mon Red";
-			break;
 		case PokemonVersion::Blue:
 			return "Pok\xC3\xA9mon Blue";
 		default:
@@ -54,7 +53,6 @@ void Engine::run(){
 	while (continue_running){
 		this->video_device->set_window_title(to_string(version));
 		this->wait_remainder = 0;
-		this->restart_requested = false;
 		this->debug_mode = false;
 		this->renderer.reset(new Renderer(*this->video_device));
 		if (!this->console)
@@ -69,23 +67,12 @@ void Engine::run(){
 		this->yielder = nullptr;
 
 		//Main loop.
-		while ((continue_running &= this->handle_events()) && !this->restart_requested){
+		while ((continue_running &= this->handle_events()) && this->update_console(version, program)){
 			if (!this->debug_mode){
 				//Resume game code.
 				std::swap(yielder, this->yielder);
 				continue_running &= !!(*this->coroutine)();
 				std::swap(yielder, this->yielder);
-			}
-
-			auto console_request = this->console->update();
-			if (console_request){
-				switch (console_request->request_id){
-					case ConsoleRequestId::GetAudioProgram:
-						console_request->audio_program = &program;
-						break;
-					default:
-						break;
-				}
 			}
 
 			this->renderer->render();
@@ -98,6 +85,31 @@ void Engine::run(){
 		this->audio_scheduler.reset();
 	}
 }
+
+bool Engine::update_console(PokemonVersion &version, CppRedAudioProgram &program){
+	while (true){
+		auto console_request = this->console->update();
+		if (!console_request)
+			return true;
+		switch (console_request->request_id){
+			case ConsoleRequestId::GetAudioProgram:
+				console_request->audio_program = &program;
+				break;
+			case ConsoleRequestId::Restart:
+				return false;
+			case ConsoleRequestId::FlipVersion:
+				version = version == PokemonVersion::Red ? PokemonVersion::Blue : PokemonVersion::Red;
+				break;
+			case ConsoleRequestId::GetVersion:
+				console_request->version = version;
+				break;
+			default:
+				return true;
+		}
+	}
+	return true;
+}
+
 
 void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRedAudioProgram &program){
 	this->yielder = &yielder;
@@ -216,8 +228,4 @@ void Engine::set_on_yield(std::function<void()> &&callback){
 
 void Engine::go_to_debug(){
 	this->debug_mode = true;
-}
-
-void Engine::restart(){
-	this->restart_requested = true;
 }

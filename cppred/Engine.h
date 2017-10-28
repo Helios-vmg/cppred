@@ -41,12 +41,12 @@ class Engine{
 	std::unique_ptr<AudioScheduler> audio_scheduler;
 	std::unique_ptr<Console> console;
 	bool debug_mode = false;
-	bool restart_requested = false;
 
 	void initialize_video();
 	void initialize_audio();
 	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRedAudioProgram &);
 	bool handle_events();
+	bool update_console(PokemonVersion &version, CppRedAudioProgram &program);
 public:
 	Engine();
 	~Engine();
