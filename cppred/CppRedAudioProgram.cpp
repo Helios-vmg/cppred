@@ -773,10 +773,25 @@ void CppRedAudioProgram::Channel::note_pitch(std::uint32_t note_parameter){
 	this->apply_wave_pattern_and_frequency(frequency);
 }
 
+static int implementation2(int delta, int length){
+	int quotient;
+	int remainder;
+	if (delta >= 0x100){
+		delta -= 0x100;
+		quotient = delta / length + 1;
+		remainder = delta % length + 0x100 - length;
+	}else{
+		quotient = 1;
+		remainder = euclidean_modulo(delta - length, 0x100);
+	}
+
+	return (quotient << 8) | remainder;
+}
+
 int CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
 	this->pitch_bend_current_frequency = (pitch_bend_t)frequency;
 	this->pitch_bend_length = this->note_delay_counter - this->pitch_bend_length;
-	if (this->pitch_bend_length < 0)
+	if (this->pitch_bend_length <= 0)
 		this->pitch_bend_length = 1;
 	int delta = this->pitch_bend_target_frequency - frequency;
 	if (delta >= 0)
@@ -785,17 +800,7 @@ int CppRedAudioProgram::Channel::init_pitch_bend_variables(int frequency){
 		this->pitch_bend_decreasing = true;
 	this->pitch_bend_advance = (pitch_bend_t)delta / this->pitch_bend_length;
 
-	//It would be great if I could figure out an expression to compute this without iteration...
-	int quotient = 0;
-	int remainder = delta;
-	assert(this->pitch_bend_length >= 0 && this->pitch_bend_length < 0x100);
-	do{
-		quotient++;
-		remainder -= this->pitch_bend_length;
-		if (remainder < 0)
-			remainder = euclidean_modulo(remainder, 256);
-	}while (remainder >= 0x100);
-	return (quotient << 8) | remainder;
+	return implementation2(delta, this->pitch_bend_length);
 }
 
 void CppRedAudioProgram::Channel::apply_duty_and_sound_length(){
