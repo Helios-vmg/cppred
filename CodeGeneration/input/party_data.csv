@@ -1,9 +1,0 @@
-address,size,type,name,comment
-D163,mark,,wPartyDataStart,
-D163,1,u8,wPartyCount,
-D164,party_length,u8[party_length],wPartySpecies,
-D16A,mark,,wPartyEnd,
-D16B,44*party_length,partymember[party_length],wPartyMons,
-D273,character_name_length*party_length,u8[character_name_length*party_length],wPartyMonOT,
-D2B5,character_name_length*party_length,u8[character_name_length*party_length],wPartyMonNicks,
-D2F7,mark,,wPartyDataEnd,
