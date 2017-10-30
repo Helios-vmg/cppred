@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +55,12 @@ namespace process_maps
         public static string GetMd5(this byte[] buffer)
         {
             return BitConverter.ToString(System.Security.Cryptography.MD5.Create().ComputeHash(buffer)).ToLower().Replace("-", "");
+        }
+
+        public static string LoadFile(string path)
+        {
+            using (var file = new StreamReader(path, Encoding.UTF8))
+                return file.ReadToEnd();
         }
     }
 }

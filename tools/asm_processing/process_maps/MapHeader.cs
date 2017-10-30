@@ -30,11 +30,13 @@ namespace process_maps
         public string Label;
         public string Tileset;
         public int Width, Height;
-        public string Blocks;
+        public string MapData;
         public string TextPointers;
         public string Script;
         public readonly List<MapConnection> Connections = new List<MapConnection>();
-        public string Objects;
+        public string ObjectsName;
+        public List<string> Texts;
+        public MapObjects Objects;
 
         private static Regex _labelRegex = new Regex(@"^\s*([A-Za-z_][A-Za-z_0-9]*)\s*\:\s*$");
         private static Regex _tilesetRegex = new Regex(@"^\s*db\s+([A-Za-z_][A-Za-z_0-9]*)\s*$");
@@ -103,7 +105,7 @@ namespace process_maps
                                 var match = _pointersRegex.Match(line);
                                 if (!match.Success)
                                     continue;
-                                Blocks = match.Groups[1].ToString();
+                                MapData = match.Groups[1].ToString();
                                 TextPointers = match.Groups[2].ToString();
                                 Script = match.Groups[3].ToString();
                                 state++;
@@ -139,7 +141,7 @@ namespace process_maps
                                 match = _objectRegex.Match(line);
                                 if (match.Success)
                                 {
-                                    Objects = match.Groups[1].ToString();
+                                    ObjectsName = match.Groups[1].ToString();
                                     return;
                                 }
                                 throw new Exception();
@@ -150,7 +152,7 @@ namespace process_maps
                                 var match = _objectRegex.Match(line);
                                 if (match.Success)
                                 {
-                                    Objects = match.Groups[1].ToString();
+                                    ObjectsName = match.Groups[1].ToString();
                                     return;
                                 }
                                 throw new Exception();
