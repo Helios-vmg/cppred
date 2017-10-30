@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "process_audio", "process_au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParseRgbdsObj", "ParseRgbdsObj\ParseRgbdsObj.csproj", "{2518267F-8009-47ED-B6DE-D1C207EC476B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "process_maps", "process_maps\process_maps.csproj", "{A48B1339-7DD8-4CEB-AFD1-95825A4AE126}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2518267F-8009-47ED-B6DE-D1C207EC476B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A48B1339-7DD8-4CEB-AFD1-95825A4AE126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A48B1339-7DD8-4CEB-AFD1-95825A4AE126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A48B1339-7DD8-4CEB-AFD1-95825A4AE126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A48B1339-7DD8-4CEB-AFD1-95825A4AE126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
