@@ -1,4 +1,4 @@
-#include "code_generators.h"
+#include "generate_audio.h"
 #include "../FreeImage/Source/ZLib/zlib.h"
 #include "../common/calculate_frequency.h"
 #include "../common/AudioCommandType.h"

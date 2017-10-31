@@ -1,5 +1,7 @@
 #include "utility.h"
 #include "../common/sha1.h"
+#include "../common/csv_parser.h"
+#include "../common/base64.h"
 #include <sstream>
 #include <fstream>
 #include <stdexcept>
@@ -179,4 +181,18 @@ void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &s){
 		dst.push_back(c);
 	}
 	dst.push_back(0);
+}
+
+data_map_t read_data_csv(const char *path){
+	static const std::vector<std::string> order = { "name", "data", };
+
+	CsvParser csv(path);
+	auto rows = csv.row_count();
+
+	std::map<std::string, std::shared_ptr<std::vector<byte_t>>> ret;
+	for (size_t i = 0; i < rows; i++){
+		auto columns = csv.get_ordered_row(i, order);
+		ret[std::move(columns[0])] = std::make_shared<std::vector<byte_t>>(base64_decode(columns[1]));
+	}
+	return ret;
 }

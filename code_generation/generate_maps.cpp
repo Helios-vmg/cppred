@@ -1,59 +1,50 @@
-#include "code_generators.h"
+#include "generate_maps.h"
+#include "Blocksets.h"
+#include "Maps.h"
 #include "../common/csv_parser.h"
+#include "../common/base64.h"
 #include "utility.h"
 #include <string>
 #include <stdexcept>
 #include <iostream>
 
-static const char * const input_file = "input/maps.csv";
+static const char * const maps_file = "input/maps.csv";
+static const char * const tilesets_file = "input/tilesets.csv";
+static const char * const map_data_file = "input/map_data.csv";
+static const char * const blocksets_file = "input/blocksets.csv";
+static const std::vector<std::string> input_files = {
+	maps_file,
+	tilesets_file,
+	map_data_file,
+	graphics_csv_path,
+};
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
 
-static void generate_maps_internal(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(input_file, date_string);
+static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &gs){
+	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating maps.\n";
 		return;
 	}
 	std::cout << "Generating maps...\n";
 
-	static const std::vector<std::string> maps_order = { "name", "id", "width", "height", };
+	Blocksets blocksets(blocksets_file);
+	Tilesets tilesets(tilesets_file, blocksets, gs);
+	Maps maps(maps_file, map_data_file, tilesets);
 
-	std::ofstream header("output/maps.h");
-	std::ofstream source("output/maps.cpp");
-
-	header << generated_file_warning << "\n";
-	source << generated_file_warning << "\n";
-
-	CsvParser csv(input_file);
-	auto rows = csv.row_count();
-
-	header <<
-		"extern const MapMetadata map_metadata[" << rows << "];\n"
-		"\n"
-		"enum class MapId{\n";
-	source << "const MapMetadata map_metadata[" << rows << "] = {\n";
-
-	for (size_t i = 0; i < rows; i++){
-		auto columns = csv.get_ordered_row(i, maps_order);
-		auto name = columns[0];
-		auto id = to_unsigned(columns[1]);
-		auto width = to_unsigned(columns[2]);
-		auto height = to_unsigned(columns[3]);
-
-		header << "    " << name << " = " << id << ",\n";
-		source << "    { " << width << ", " << height << " },\n";
+	for (auto &map : maps.get_maps()){
+		std::string path = map->get_name();
+		path += ".png";
+		map->render_to_file(path.c_str());
 	}
 
-	header << "};\n";
-	source << "};\n";
-
-	known_hashes[hash_key] = current_hash;
+	//known_hashes[hash_key] = current_hash;
 }
 
-void generate_maps(known_hashes_t &known_hashes){
+void generate_maps(known_hashes_t &known_hashes, GraphicsStore &gs){
 	try{
-		generate_maps_internal(known_hashes);
+		generate_maps_internal(known_hashes, gs);
 	}catch (std::exception &e){
 		throw std::runtime_error((std::string)"generate_maps(): " + e.what());
 	}

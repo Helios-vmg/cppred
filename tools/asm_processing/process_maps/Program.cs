@@ -12,10 +12,6 @@ namespace process_maps
 {
     class Program
     {
-        
-
-        
-
         static void Main(string[] args)
         {
             try

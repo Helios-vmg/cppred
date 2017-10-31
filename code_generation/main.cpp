@@ -1,5 +1,11 @@
 #include "utility.h"
-#include "code_generators.h"
+#include "generate_graphics.h"
+#include "generate_maps.h"
+#include "generate_pokemon_data.h"
+#include "generate_text.h"
+#include "generate_moves.h"
+#include "generate_items.h"
+#include "generate_audio.h"
 #include "../common/csv_parser.h"
 #include <iostream>
 #include <stdexcept>
@@ -39,15 +45,14 @@ void save_hashes(const known_hashes_t &hashes){
 
 int main(){
 	try{
+
 		auto t0 = clock();
 		auto hashes = load_hashes();
-		auto bitmaps = generate_bitmaps(hashes);
-		generate_rams(hashes, bitmaps);
-		generate_graphics(hashes);
-		generate_maps(hashes);
+		GraphicsStore gs;
+		generate_graphics(hashes, gs);
+		generate_maps(hashes, gs);
 		generate_pokemon_data(hashes);
 		generate_text(hashes);
-		generate_charmap(hashes);
 		generate_moves(hashes);
 		generate_items(hashes);
 		generate_audio(hashes);
