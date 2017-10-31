@@ -16,7 +16,7 @@ public:
 	const std::string &get_name() const{
 		return this->name;
 	}
-	void render_to_file(const char *dst);
+	void render_to_file(const char *imagefile, const char *tilefile);
 };
 
 class Maps{

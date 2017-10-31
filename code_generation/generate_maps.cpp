@@ -34,9 +34,11 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	Maps maps(maps_file, map_data_file, tilesets);
 
 	for (auto &map : maps.get_maps()){
-		std::string path = map->get_name();
-		path += ".png";
-		map->render_to_file(path.c_str());
+		std::string path1 = map->get_name();
+		std::string path2 = path1;
+		path1 += ".png";
+		path2 += ".bin";
+		map->render_to_file(path1.c_str(), path2.c_str());
 	}
 
 	//known_hashes[hash_key] = current_hash;

@@ -1,6 +1,7 @@
 #include "Maps.h"
 #include "utility.h"
 #include "../common/csv_parser.h"
+#include "../FreeImage/Source/ZLib/zlib.h"
 
 Maps::Maps(const char *maps_path, const char *map_data_path, const Tilesets &tilesets){
 	static const std::vector<std::string> order = { "name", "tileset", "width", "height", "map_data", "script", "objects", };
@@ -36,7 +37,52 @@ std::shared_ptr<Map> Maps::get(const std::string &name){
 	return it->second;
 }
 
-void Map::render_to_file(const char *path){
+std::vector<byte_t> compress_memory(std::vector<byte_t> &in_data){
+	std::vector<byte_t> ret(in_data.size() * 2);
+
+	z_stream stream;
+	stream.zalloc = nullptr;
+	stream.zfree = nullptr;
+	stream.next_in = &in_data[0];
+	stream.avail_in = in_data.size();
+	stream.next_out = &ret[0];
+	stream.avail_out = ret.size();
+
+	deflateInit2(&stream, Z_BEST_COMPRESSION, Z_DEFLATED, -15, 9, Z_DEFAULT_STRATEGY);
+	size_t bytes_written = 0;
+
+	while (stream.avail_in){
+		int res = deflate(&stream, Z_NO_FLUSH);
+		assert(res == Z_OK);
+		if (!stream.avail_out){
+			stream.avail_out = ret.size();
+			auto n = ret.size();
+			ret.resize(n * 2);
+			bytes_written = n;
+			stream.next_out = &ret[n];
+		}
+	}
+
+	int deflate_res = Z_OK;
+	while (deflate_res == Z_OK){
+		if (!stream.avail_out){
+			stream.avail_out = ret.size();
+			auto n = ret.size();
+			ret.resize(n * 2);
+			bytes_written = n;
+			stream.next_out = &ret[n];
+		}
+		deflate_res = deflate(&stream, Z_FINISH);
+	}
+
+	assert(deflate_res == Z_STREAM_END);
+	bytes_written += ret.size() - bytes_written - stream.avail_out;
+	ret.resize(bytes_written);
+	deflateEnd(&stream);
+	return ret;
+}
+
+void Map::render_to_file(const char *imagefile, const char *tilefile){
 	const auto block_size = 4;
 	const auto block_pixel_size = block_size * Tile::size;
 	auto w = this->width * block_size;
@@ -70,5 +116,10 @@ void Map::render_to_file(const char *path){
 		}
 	}
 
-	save_png(path, &pixel_data[0], pixel_w, pixel_h);
+	save_png(imagefile, &pixel_data[0], pixel_w, pixel_h);
+	
+	auto compressed = compress_memory(final_tiles);
+
+	std::ofstream file(tilefile, std::ios::binary);
+	file.write((const char *)&compressed[0], compressed.size());
 }
