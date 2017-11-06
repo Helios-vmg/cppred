@@ -703,9 +703,8 @@ static void write_header_and_source(const char *header_path, const char *source_
 			"\n"
 			"extern const byte_t audio_sequence_data[];\n"
 			"static const size_t audio_sequence_data_size = " << sequences.size() << ";\n"
-			"static const size_t audio_header_data_size = " << headers.size() << ";\n"
 			"extern const byte_t audio_header_data[];\n"
-			"extern const size_t audio_header_data_size;\n"
+			"static const size_t audio_header_data_size = " << serialized_headers.size() << ";\n"
 			"enum class AudioResourceId{\n"
 			"    None = 0,\n";
 		size_t i = 1;
