@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <cstdint>
+#include <cstring>
 
 typedef std::uint8_t byte_t;
 

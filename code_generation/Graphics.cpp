@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "../common/csv_parser.h"
 #include "utility.h"
+#include <algorithm>
 
 const char * const graphics_csv_path = "input/graphics.csv";
 
