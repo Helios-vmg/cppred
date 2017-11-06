@@ -120,7 +120,7 @@ void write_tilesets(std::ostream &header, std::ostream &source, const Tilesets2 
 	for (auto &tileset : tilesets.get_tilesets()){
 		header << "extern const TilesetData " << tileset->get_name() << ";\n";
 		source << "const TilesetData " << tileset->get_name() << " = { \""
-			<< tileset->get_name() << "\", Blockset::" << tileset->get_blockset_name() << ", "
+			<< tileset->get_name() << "\", Blocksets::" << tileset->get_blockset_name() << ", &"
 			<< tileset->get_tiles().name << ", Collision::" << tileset->get_collision_name() << ", { ";
 		for (auto i : tileset->get_counters())
 			source << i << ", ";
@@ -165,7 +165,7 @@ void write_maps(std::ostream &header, std::ostream &source, const Maps2 &maps){
 	for (auto &map : maps.get_maps()){
 		header << "extern const MapData " << map->get_name() << ";\n";
 		source << "const MapData " << map->get_name() << " = { \""
-			<< map->get_name() << "\", Tilesets::" << map->get_tileset().get_name() << ", "
+			<< map->get_name() << "\", &Tilesets::" << map->get_tileset().get_name() << ", "
 			<< map->get_width() << ", " << map->get_height() << ", BinaryMapData::" << map->get_map_data_name() << " };\n";
 	}
 	header << "}\n\n";

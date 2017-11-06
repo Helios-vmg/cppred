@@ -1,5 +1,6 @@
 #include "CppRedData.h"
 #include "Renderer.h"
+#include "Maps.h"
 
 #define AT_LEVEL(level, next_form) EvolutionTriggerType::Level, level, SpeciesId::next_form
 #define WITH_ITEM(item, level, next_form) EvolutionTriggerType::Item, level, SpeciesId::next_form, ItemId::item
@@ -10,3 +11,4 @@
 #include "../CodeGeneration/output/text.inl"
 #include "../CodeGeneration/output/graphics.inl"
 #include "../CodeGeneration/output/audio.inl"
+#include "../CodeGeneration/output/maps.inl"
