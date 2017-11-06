@@ -1,15 +1,10 @@
 name,blockset,tiles,collision_data,counters,grass,type
 Overworld,Overworld_Block,Overworld_GFX,Overworld_Coll,,82,Outdoor
-RedsHouse1,RedsHouse_Block,RedsHouse_GFX,RedsHouse_Coll,,,Indoor
-Mart,Pokecenter_Block,Pokecenter_GFX,Pokecenter_Coll,24 25 30,,Indoor
+RedsHouse,RedsHouse_Block,RedsHouse_GFX,RedsHouse_Coll,,,Indoor
 Forest,Forest_Block,Forest_GFX,Forest_Coll,,32,Cave
-RedsHouse2,RedsHouse_Block,RedsHouse_GFX,RedsHouse_Coll,,,Indoor
-Dojo,Gym_Block,Gym_GFX,Gym_Coll,58,,Outdoor
 Pokecenter,Pokecenter_Block,Pokecenter_GFX,Pokecenter_Coll,24 25 30,,Indoor
 Gym,Gym_Block,Gym_GFX,Gym_Coll,58,,Outdoor
 House,House_Block,House_GFX,House_Coll,,,Indoor
-ForestGate,Gate_Block,Gate_GFX,Gate_Coll,23 50,,Indoor
-Museum,Gate_Block,Gate_GFX,Gate_Coll,23 50,,Indoor
 Underground,Underground_Block,Underground_GFX,Underground_Coll,,,Indoor
 Gate,Gate_Block,Gate_GFX,Gate_Coll,23 50,,Indoor
 Ship,Ship_Block,Ship_GFX,Ship_Coll,,,Cave
