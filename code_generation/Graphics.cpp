@@ -54,7 +54,7 @@ std::vector<std::shared_ptr<Graphic>> load_graphics_from_csv(const char *path){
 		ret.push_back(gr);
 	}
 
-	std::sort(ret.begin(), ret.end());
+	std::sort(ret.begin(), ret.end(), [](const auto &a, const auto &b){ return *a < *b; });
 
 	for (auto &gr : ret){
 		auto image = Image::load_image(gr->path.c_str());
