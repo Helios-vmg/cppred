@@ -157,12 +157,12 @@ static void generate_graphics_internal(known_hashes_t &known_hashes, GraphicsSto
 		for (auto &g : graphics)
 			source << "const GraphicsAsset " << g->name << " = { " << g->first_tile << ", " << g->w << ", " << g->h << " };\n";
 
-		source << "const byte_t packed_image_data[] = ";
+		source << "extern const byte_t packed_image_data[] = ";
 		write_buffer_to_stream(source, bit_packed);
 		packed_image_data_size = bit_packed.size();
 		source << std::dec << ";\n"
 			"\n"
-			"const std::uint16_t tile_mapping[] = ";
+			"extern const std::uint16_t tile_mapping[] = ";
 		{
 			std::vector<unsigned> temp;
 			for (auto &g : graphics)
@@ -180,8 +180,8 @@ static void generate_graphics_internal(known_hashes_t &known_hashes, GraphicsSto
 			generated_file_warning << "\n"
 			"#pragma once\n"
 			"\n"
-			"extern const byte_t packed_image_data[];\n"
-			"extern const std::uint16_t tile_mapping[];\n"
+			"extern const byte_t packed_image_data[" << packed_image_data_size << "];\n"
+			"extern const std::uint16_t tile_mapping[" << tile_mapping_size << "];\n"
 			"static const size_t packed_image_data_size = " << packed_image_data_size << ";\n"
 			"static const size_t tile_mapping_size = " << tile_mapping_size << ";\n"
 			;

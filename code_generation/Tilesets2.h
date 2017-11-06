@@ -4,19 +4,21 @@
 #include "utility.h"
 #include "Graphics.h"
 #include "../common/TilesetType.h"
+#include "ReorderedBlockset.h"
 
-class Tileset{
+class Tileset2{
 	std::string name;
 	std::string blockset_name;
 	std::shared_ptr<std::vector<byte_t>> blockset;
+	std::string collision_name;
 	std::shared_ptr<std::vector<byte_t>> collision;
 	std::shared_ptr<Graphic> tiles;
 	std::vector<int> counters;
 	int grass = -1;
 	TilesetType tileset_type;
 public:
-	Tileset(const std::vector<std::string> &columns, const data_map_t &blockset, const data_map_t &collision, GraphicsStore &gs);
-	DELETE_COPY_CONSTRUCTORS(Tileset);
+	Tileset2(const std::vector<std::string> &columns, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs);
+	DELETE_COPY_CONSTRUCTORS(Tileset2);
 	const std::string &get_name() const{
 		return this->name;
 	}
@@ -35,6 +37,9 @@ public:
 	const std::string &get_blockset_name() const{
 		return this->blockset_name;
 	}
+	const std::string &get_collision_name() const{
+		return this->collision_name;
+	}
 	const std::vector<byte_t> &get_collision() const{
 		return *this->collision;
 	}
@@ -43,10 +48,13 @@ public:
 	}
 };
 
-class Tilesets{
-	std::vector<std::shared_ptr<Tileset>> tilesets;
-	std::map<std::string, std::shared_ptr<Tileset>> map;
+class Tilesets2{
+	std::vector<std::shared_ptr<Tileset2>> tilesets;
+	std::map<std::string, std::shared_ptr<Tileset2>> map;
 public:
-	Tilesets(const char *path, const data_map_t &blockset, const data_map_t &collision, GraphicsStore &gs);
-	std::shared_ptr<Tileset> get(const std::string &name) const;
+	Tilesets2(const char *path, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs);
+	std::shared_ptr<Tileset2> get(const std::string &name) const;
+	const std::vector<std::shared_ptr<Tileset2>> &get_tilesets() const{
+		return this->tilesets;
+	}
 };

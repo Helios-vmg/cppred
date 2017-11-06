@@ -60,13 +60,19 @@
     <ClInclude Include="..\common\base64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Blocksets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Maps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tilesets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReorderedBlockset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tilesets2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Maps2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -116,13 +122,19 @@
     <ClCompile Include="..\common\base64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Blocksets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tilesets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Maps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReorderedBlockset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tilesets2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Maps2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

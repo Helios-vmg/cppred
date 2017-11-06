@@ -6,18 +6,11 @@
 * Details:    Implementation of the Base64 encoding algorithm.
 *********************************************************************/
 
-/*************************** HEADER FILES ***************************/
 #include <stdlib.h>
 #include "base64.h"
 
-/****************************** MACROS ******************************/
-#define NEWLINE_INVL 76
-
-/**************************** VARIABLES *****************************/
-// Note: To change the charset to a URL encoding, replace the '+' and '/' with '*' and '-'
 static const char charset[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 
-/*********************** FUNCTION DEFINITIONS ***********************/
 byte_t revchar(char ch){
 	if (ch >= 'A' && ch <= 'Z')
 		ch -= 'A';
@@ -59,6 +52,39 @@ std::vector<byte_t> base64_decode(const std::string &in){
 	}else if (left_over == 3){
 		ret.push_back((revchar(in[idx2]) << 2) | ((revchar(in[idx2 + 1]) & 0x30) >> 4));
 		ret.push_back((revchar(in[idx2 + 1]) << 4) | (revchar(in[idx2 + 2]) >> 2));
+	}
+
+	return ret;
+}
+
+std::string base64_encode(const std::vector<byte_t> &in){
+	size_t idx, blk_ceiling, newline_count = 0;
+
+	auto blks = in.size() / 3;
+	auto left_over = in.size() % 3;
+
+	std::string ret;
+	//Allocate a few bytes more to ensure no reallocations are necessary.
+	ret.reserve(in.size() * 3 / 2 + 16);
+	
+	blk_ceiling = blks * 3;
+	for (idx = 0; idx < blk_ceiling; idx += 3){
+		ret.push_back(charset[in[idx] >> 2]);
+		ret.push_back(charset[((in[idx] & 0x03) << 4) | (in[idx + 1] >> 4)]);
+		ret.push_back(charset[((in[idx + 1] & 0x0f) << 2) | (in[idx + 2] >> 6)]);
+		ret.push_back(charset[in[idx + 2] & 0x3F]);
+	}
+
+	if (left_over == 1) {
+		ret.push_back(charset[in[idx] >> 2]);
+		ret.push_back(charset[(in[idx] & 0x03) << 4]);
+		ret.push_back('=');
+		ret.push_back('=');
+	}else if (left_over == 2){
+		ret.push_back(charset[in[idx] >> 2]);
+		ret.push_back(charset[((in[idx] & 0x03) << 4) | (in[idx + 1] >> 4)]);
+		ret.push_back(charset[(in[idx + 1] & 0x0F) << 2]);
+		ret.push_back('=');
 	}
 
 	return ret;

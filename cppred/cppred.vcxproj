@@ -51,6 +51,7 @@
     <ClInclude Include="HighResolutionClock.h" />
     <ClInclude Include="CppRedIntro.h" />
     <ClInclude Include="InputState.h" />
+    <ClInclude Include="Maps.h" />
     <ClInclude Include="PokemonInfo.h" />
     <ClInclude Include="pokemon_version.h" />
     <ClInclude Include="PublishingResource.h" />

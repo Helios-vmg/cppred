@@ -3,10 +3,8 @@
 #include <iostream>
 
 static void deinit(void *p){
-	if (p){
-		std::cout << "Deinitializing FreeImage.\n";
+	if (p)
 		FreeImage_DeInitialise();
-	}
 }
 
 std::mutex FreeImageInitializer::mutex;
@@ -16,7 +14,6 @@ FreeImageInitializer::FreeImageInitializer(){
 	std::lock_guard<std::mutex> lg(this->mutex);
 	if (this->ptr)
 		return;
-	std::cout << "Initializing FreeImage.\n";
 	FreeImage_Initialise();
 	this->ptr.reset((void *)1);
 }

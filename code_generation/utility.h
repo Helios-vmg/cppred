@@ -34,6 +34,8 @@ void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t);
 void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &);
 typedef std::map<std::string, std::shared_ptr<std::vector<byte_t>>> data_map_t;
 data_map_t read_data_csv(const char *path);
+void write_data_csv(const char *path, const data_map_t &);
+std::vector<byte_t> compress_memory_DEFLATE(std::vector<byte_t> &in_data);
 
 template <typename T>
 void write_collection_to_stream(std::ostream &stream, const T &begin, const T &end){

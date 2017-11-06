@@ -161,6 +161,9 @@
     <ClInclude Include="VideoDevice.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Maps.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
