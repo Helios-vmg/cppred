@@ -3,13 +3,17 @@
 #include "../common/csv_parser.h"
 
 Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2 &tilesets){
-	static const std::vector<std::string> order = { "name", "tileset", "width", "height", "map_data", "script", "objects", };
+	static const std::vector<std::string> order = { "name", "tileset", "width", "height", "map_data", "script", "objects", "id" };
+	const int id_offset = 7;
 
 	CsvParser csv(maps_path);
 	auto rows = csv.row_count();
 
 	for (size_t i = 0; i < rows; i++){
 		auto columns = csv.get_ordered_row(i, order);
+		if (!columns[id_offset].size())
+			continue;
+
 		this->maps.emplace_back(new Map2(columns, tilesets, maps_data));
 		auto back = this->maps.back();
 		this->map[back->get_name()] = back;

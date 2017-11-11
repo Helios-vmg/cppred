@@ -3,7 +3,8 @@
 #include "../common/csv_parser.h"
 
 Maps::Maps(const char *maps_path, const char *map_data_path, const Tilesets &tilesets){
-	static const std::vector<std::string> order = { "name", "tileset", "width", "height", "map_data", "script", "objects", };
+	static const std::vector<std::string> order = { "name", "tileset", "width", "height", "map_data", "script", "objects", "id" };
+	const int id_offset = 7;
 	
 	auto maps_data = read_data_csv(map_data_path);
 
@@ -12,6 +13,9 @@ Maps::Maps(const char *maps_path, const char *map_data_path, const Tilesets &til
 
 	for (size_t i = 0; i < rows; i++){
 		auto columns = csv.get_ordered_row(i, order);
+		if (!columns[id_offset].size())
+			continue;
+
 		this->maps.emplace_back(new Map(columns, tilesets, maps_data));
 		auto back = this->maps.back();
 		this->map[back->get_name()] = back;
