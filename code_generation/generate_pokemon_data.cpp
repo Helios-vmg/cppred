@@ -293,7 +293,7 @@ SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 
 	this->allocated = to_bool(columns[24]);
 	this->overworld_sprite = columns[25];
-	this->starter_index = to_unsigned(columns[26]);
+	this->starter_index = to_int(columns[26]);
 }
 
 EvolutionTrigger::EvolutionTrigger(const std::vector<std::string> &columns){
