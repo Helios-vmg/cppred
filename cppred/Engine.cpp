@@ -68,6 +68,12 @@ void Engine::run(){
 
 		//Main loop.
 		while ((continue_running &= this->handle_events()) && this->update_console(version, program)){
+			{
+				LOCK_MUTEX(this->exception_thrown_mutex);
+				if (this->exception_thrown)
+					throw std::runtime_error(*this->exception_thrown);
+			}
+
 			if (!this->debug_mode){
 				//Resume game code.
 				std::swap(yielder, this->yielder);
@@ -228,4 +234,9 @@ void Engine::set_on_yield(std::function<void()> &&callback){
 
 void Engine::go_to_debug(){
 	this->debug_mode = true;
+}
+
+void Engine::throw_exception(const std::exception &e){
+	LOCK_MUTEX(this->exception_thrown_mutex);
+	this->exception_thrown = std::make_unique<std::string>(e.what());
 }

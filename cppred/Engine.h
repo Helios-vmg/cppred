@@ -41,6 +41,8 @@ class Engine{
 	std::unique_ptr<AudioScheduler> audio_scheduler;
 	std::unique_ptr<Console> console;
 	bool debug_mode = false;
+	std::mutex exception_thrown_mutex;
+	std::unique_ptr<std::string> exception_thrown;
 
 	void initialize_video();
 	void initialize_audio();
@@ -73,6 +75,7 @@ public:
 
 	void go_to_debug();
 	void restart();
+	void throw_exception(const std::exception &e);
 	static const int screen_scale = 4;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;

@@ -25,15 +25,19 @@ void AudioScheduler::start(){
 }
 
 void AudioScheduler::processor(){
-	this->renderer->set_NR52(0xFF);
-	this->renderer->set_NR50(0x77);
-	while (this->continue_running){
-		auto now = this->engine->get_clock();
-		this->program->update(now);
-		this->renderer->update(now);
-		//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
-		//actual wait can last up to a few ms.
-		this->timer_event.wait();
+	try{
+		this->renderer->set_NR52(0xFF);
+		this->renderer->set_NR50(0x77);
+		while (this->continue_running){
+			auto now = this->engine->get_clock();
+			this->program->update(now);
+			this->renderer->update(now);
+			//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
+			//actual wait can last up to a few ms.
+			this->timer_event.wait();
+		}
+	}catch (std::exception &e){
+		this->engine->throw_exception(e);
 	}
 }
 
