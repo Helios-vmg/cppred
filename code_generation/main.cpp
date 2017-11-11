@@ -6,6 +6,7 @@
 #include "generate_moves.h"
 #include "generate_items.h"
 #include "generate_audio.h"
+#include "PokemonData.h"
 #include "../common/csv_parser.h"
 #include <iostream>
 #include <stdexcept>
@@ -49,9 +50,10 @@ int main(){
 		auto t0 = clock();
 		auto hashes = load_hashes();
 		GraphicsStore gs;
+		std::unique_ptr<PokemonData> pokemon_data;
 		generate_graphics(hashes, gs);
 		generate_maps(hashes, gs);
-		generate_pokemon_data(hashes);
+		generate_pokemon_data(hashes, pokemon_data);
 		generate_text(hashes);
 		generate_moves(hashes);
 		generate_items(hashes);

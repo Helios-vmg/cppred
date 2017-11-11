@@ -143,6 +143,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="Maps.h" />
     <ClInclude Include="Maps2.h" />
+    <ClInclude Include="PokemonData.h" />
     <ClInclude Include="ReorderedBlockset.h" />
     <ClInclude Include="Tilesets2.h" />
     <ClInclude Include="Tilesets.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Maps.cpp" />
     <ClCompile Include="Maps2.cpp" />
+    <ClCompile Include="PokemonData.cpp" />
     <ClCompile Include="ReorderedBlockset.cpp" />
     <ClCompile Include="Tilesets2.cpp" />
     <ClCompile Include="Tilesets.cpp" />
