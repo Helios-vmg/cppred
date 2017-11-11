@@ -533,12 +533,12 @@ DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 			AudioResourceId::SFX_Muted_Snare3,
 			AudioResourceId::SFX_Muted_Snare4,
 		};
-		auto pitch = command.pitch - 1;
-		if (pitch < 0 || pitch >= array_length(noises)){
+		if (!command.pitch || command.pitch >= array_length(noises) + 1){
 			std::stringstream stream;
-			stream << "Bad noise instrument command. Attempt to call invalid noise " << pitch;
+			stream << "Bad noise instrument command. Attempt to call invalid noise " << (int)command.pitch - 1;
 			throw std::runtime_error(stream.str());
 		}
+		auto pitch = command.pitch - 1;
 		this->program->play_sound(noises[pitch]);
 	}
 	this->note_length(command.length, command.pitch);

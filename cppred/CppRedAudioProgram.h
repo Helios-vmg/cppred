@@ -6,6 +6,7 @@
 #include "threads.h"
 #include <mutex>
 #include <memory>
+#include <string>
 
 struct AudioCommand{
 	AudioCommandType type;

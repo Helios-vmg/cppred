@@ -1,8 +1,9 @@
 #pragma once
 #include "CppRedData.h"
+#include "RendererStructs.h"
 #include <vector>
 #include <memory>
-#include "RendererStructs.h"
+#include <string>
 
 class TextResource;
 class CppRedEngine;

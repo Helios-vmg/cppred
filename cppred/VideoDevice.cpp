@@ -1,4 +1,5 @@
 #include "VideoDevice.h"
+#include <string>
 
 VideoDevice::VideoDevice(const Point &size):
 		window(nullptr, SDL_DestroyWindow),
@@ -32,7 +33,7 @@ void VideoDevice::present(){
 	SDL_RenderPresent(this->renderer.get());
 }
 
-Texture::Texture(): texture(nullptr, SDL_DestroyTexture), size(size){}
+Texture::Texture(): texture(nullptr, SDL_DestroyTexture){}
 
 Texture::Texture(SDL_Texture *t, const Point &size): texture(t, SDL_DestroyTexture), size(size){}
 

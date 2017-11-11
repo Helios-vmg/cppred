@@ -107,7 +107,7 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const byte_t *&buf
 				if (!size)
 					throw std::runtime_error("TextStore::parse_command(): Parse error.");
 				size--;
-				ret.reset(new MemCommand(std::move(variable)));
+				ret.reset((TextResourceCommand *)new MemCommand(std::move(variable)));
 			}
 			break;
 		case TextResourceCommandType::Num:
@@ -128,7 +128,7 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const byte_t *&buf
 				auto digits = read_u32(buffer);
 				buffer += 4;
 				size -= 5;
-				ret.reset(new NumCommand(std::move(variable), digits));
+				ret.reset((TextResourceCommand *)new NumCommand(std::move(variable), digits));
 			}
 			break;
 		default:
