@@ -113,9 +113,6 @@
     <ClCompile Include="..\FreeImage\ToneMapping.cpp">
       <Filter>Source Files\Conversion</Filter>
     </ClCompile>
-    <ClCompile Include="..\FreeImage\J2KHelper.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\FreeImage\MNGHelper.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
@@ -131,12 +128,6 @@
     <ClCompile Include="..\FreeImage\PluginDDS.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginEXR.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginG3.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\FreeImage\PluginGIF.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
@@ -149,19 +140,7 @@
     <ClCompile Include="..\FreeImage\PluginIFF.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginJ2K.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\FreeImage\PluginJNG.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginJP2.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginJPEG.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginJXR.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
     <ClCompile Include="..\FreeImage\PluginKOALA.cpp">
@@ -194,22 +173,13 @@
     <ClCompile Include="..\FreeImage\PluginRAS.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginRAW.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\FreeImage\PluginSGI.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
     <ClCompile Include="..\FreeImage\PluginTARGA.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginTIFF.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\FreeImage\PluginWBMP.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImage\PluginWebP.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
     <ClCompile Include="..\FreeImage\PluginXBM.cpp">
@@ -219,9 +189,6 @@
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
     <ClCompile Include="..\FreeImage\PSDParser.cpp">
-      <Filter>Source Files\Plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImage\TIFFLogLuv.cpp">
       <Filter>Source Files\Plugins</Filter>
     </ClCompile>
     <ClCompile Include="..\DeprecationManager\Deprecated.cpp">
@@ -257,9 +224,6 @@
     <ClCompile Include="..\Metadata\TagLib.cpp">
       <Filter>Source Files\Metadata</Filter>
     </ClCompile>
-    <ClCompile Include="..\Metadata\XTIFF.cpp">
-      <Filter>Source Files\Metadata</Filter>
-    </ClCompile>
     <ClCompile Include="..\FreeImageToolkit\Background.cpp">
       <Filter>Toolkit Files</Filter>
     </ClCompile>
@@ -282,9 +246,6 @@
       <Filter>Toolkit Files</Filter>
     </ClCompile>
     <ClCompile Include="..\FreeImageToolkit\Flip.cpp">
-      <Filter>Toolkit Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FreeImageToolkit\JPEGTransform.cpp">
       <Filter>Toolkit Files</Filter>
     </ClCompile>
     <ClCompile Include="..\FreeImageToolkit\MultigridPoissonSolver.cpp">
