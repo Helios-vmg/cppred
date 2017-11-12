@@ -2,6 +2,7 @@
 #include "../common/csv_parser.h"
 #include "utility.h"
 #include <iomanip>
+#include <algorithm>
 
 extern const char * const pokemon_data_file = "input/pokemon_data.csv";
 extern const char * const evolutions_file = "input/evolutions.csv";
