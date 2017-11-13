@@ -42,7 +42,9 @@
     <ClInclude Include="CppRedMainMenu.h" />
     <ClInclude Include="CppRedMiscClasses.h" />
     <ClInclude Include="CppRedOakSpeech.h" />
+    <ClInclude Include="CppRedPokemon.h" />
     <ClInclude Include="CppRedSavableData.h" />
+    <ClInclude Include="CppRedStatus.h" />
     <ClInclude Include="CppRedTextResources.h" />
     <ClInclude Include="CppRedTitleScreen.h" />
     <ClInclude Include="Engine.h" />
@@ -62,6 +64,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StaticSet.h" />
     <ClInclude Include="threads.h" />
+    <ClInclude Include="CppRedTrainer.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="VideoDevice.h" />
   </ItemGroup>

@@ -464,3 +464,13 @@ std::string CppRedEngine::get_name_from_user(SpeciesId species, int max_length){
 	std::cout << "Selected name: " << ret << std::endl;
 	return ret;
 }
+
+#if 0
+void CppRedEngine::create_main_characters(const std::string &player_name, const std::string &rival_name){
+	
+}
+
+void CppRedEngine::game_loop(){
+	
+}
+#endif

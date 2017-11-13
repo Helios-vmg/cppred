@@ -19,6 +19,7 @@ static MainMenuResult initial_sequence(CppRedEngine &cppred){
 			if (main_menu_result != MainMenuResult::GoToTitleScreen)
 				return main_menu_result;
 		}
+		//TODO
 		//assert(title_screen_result == TitleScreenResult::GoToClearSaveDialog);
 		//clear_save_dialog(cppred);
 	}
@@ -30,6 +31,9 @@ void entry_point(Engine &engine, PokemonVersion version, CppRedAudioProgram &pro
 		//Continue game.
 	}else{
 		auto names = oak_speech(cppred);
+		cppred.create_main_characters(names.player_name, names.rival_name);
+		cppred.game_loop();
+		assert(false);
 	}
 }
 

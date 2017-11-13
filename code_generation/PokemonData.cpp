@@ -240,12 +240,15 @@ void PokemonData::generate_enums(const char *filename) const{
 		"};\n"
 		"\n"
 		"enum class PokedexId{\n";
+	int count = 0;
 	for (auto &species : this->species){
 		if (!species.pokedex_id && species.species_id)
 			break;
+		count += species.allocated;
 		file << "    " << species.name << " = " << species.pokedex_id << ",\n";
 	}
-	file << "};\n";
+	file << "};\n"
+		"static const int pokemon_species_count = " << count << ";\n";
 }
 
 void PokemonData::generate_static_data_declarations(const char *filename) const{

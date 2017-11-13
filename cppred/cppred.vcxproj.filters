@@ -164,6 +164,15 @@
     <ClInclude Include="Maps.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRedTrainer.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedPokemon.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRedStatus.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">

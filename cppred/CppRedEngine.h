@@ -98,6 +98,8 @@ public:
 	CppRedAudioInterface &get_audio_interface(){
 		return this->audio_interface;
 	}
+	void create_main_characters(const std::string &player_name, const std::string &rival_name);
+	void game_loop();
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
