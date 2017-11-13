@@ -8,6 +8,11 @@
 #include <memory>
 #include <string>
 
+class AudioRenderer;
+enum class AudioResourceId;
+
+namespace CppRed{
+
 struct AudioCommand{
 	AudioCommandType type;
 	std::uint32_t params[4];
@@ -25,10 +30,7 @@ struct AudioResource{
 	AudioResourceType type;
 };
 
-class AudioRenderer;
-enum class AudioResourceId;
-
-class CppRedAudioProgram{
+class AudioProgram{
 	static const double update_threshold;
 	double last_update = -1;
 	std::vector<AudioCommand> commands;
@@ -60,7 +62,7 @@ class CppRedAudioProgram{
 	int fade_out_counter_reload_value = 0;
 	Event sfx_finish_event;
 	class Channel{
-		CppRedAudioProgram *program;
+		CppRed::AudioProgram *program;
 		AudioResourceId sound_id;
 		std::vector<int> call_stack;
 		int program_counter = 0;
@@ -144,7 +146,7 @@ class CppRedAudioProgram{
 		bool unknown20(const AudioCommand &, bool &dont_stop_this_channel, bool noise);
 		static const command_function command_functions[28];
 	public:
-		Channel(CppRedAudioProgram &program, int channel_no, AudioResourceId resource_id, int entry_point, int bank);
+		Channel(CppRed::AudioProgram &program, int channel_no, AudioResourceId resource_id, int entry_point, int bank);
 		bool update();
 		//int get_sound_id() const{
 		//	return this->sound_id;
@@ -185,7 +187,7 @@ class CppRedAudioProgram{
 	void compute_fade_out();
 	bool is_sfx_playing();
 public:
-	CppRedAudioProgram(AudioRenderer &renderer, PokemonVersion);
+	CppRed::AudioProgram(AudioRenderer &renderer, PokemonVersion);
 	void update(double now);
 	void play_sound(AudioResourceId);
 	void pause_music();
@@ -202,3 +204,5 @@ public:
 	void copy_fade_control();
 	void wait_for_sfx_to_end();
 };
+
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace CppRed{
+
 enum class StatusCondition{
 	Normal = 0,
 	Poisoned = 3,
@@ -7,3 +9,5 @@ enum class StatusCondition{
 	Frozen = 5,
 	Paralized = 6,
 };
+
+}

@@ -1,18 +1,22 @@
 #pragma once
 #include "Pokemon.h"
 
+namespace CppRed{
+
 struct InventorySpace{
 	ItemId item;
 	int quantity;
 };
 
-class CppRedTrainer{
+class Trainer{
 public:
 	static const size_t max_inventory_size;
 private:
 	std::string name;
-	CppRedParty party;
+	Party party;
 	std::vector<InventorySpace> inventory;
 public:
-	CppRedTrainer() = default;
+	Trainer() = default;
 };
+
+}

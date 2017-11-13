@@ -4,6 +4,8 @@
 #include "utility.h"
 #include <cstdint>
 
+namespace CppRed{
+
 struct PokemonStats{
 	int hp;
 	int attack;
@@ -12,7 +14,7 @@ struct PokemonStats{
 	int special;
 };
 
-class CppRedPokemon{
+class Pokemon{
 	SpeciesId species;
 	std::string nickname;
 	int current_hp;
@@ -27,18 +29,20 @@ class CppRedPokemon{
 	byte_t pp[4];
 public:
 	//Generates a random pokemon with the given species and level.
-	CppRedPokemon(SpeciesId species, int level, XorShift128 &);
-	CppRedPokemon(const CppRedPokemon &);
-	CppRedPokemon(CppRedPokemon &&);
-	const CppRedPokemon &operator=(const CppRedPokemon &);
-	const CppRedPokemon &operator=(CppRedPokemon &&);
+	Pokemon(SpeciesId species, int level, XorShift128 &);
+	Pokemon(const Pokemon &);
+	Pokemon(Pokemon &&);
+	const Pokemon &operator=(const Pokemon &);
+	const Pokemon &operator=(Pokemon &&);
 };
 
-class CppRedParty{
+class Party{
 public:
 	static const size_t max_party_size = 6;
 private:
-	std::vector<CppRedPokemon> members;
+	std::vector<Pokemon> members;
 public:
-	CppRedParty() = default;
+	Party() = default;
 };
+
+}

@@ -5,9 +5,11 @@
 #include <memory>
 #include <string>
 
+namespace CppRed{
+
 class TextResource;
-class CppRedGame;
 class TextStore;
+class Game;
 
 enum class TextResourceCommandType{
 	End = 0,
@@ -38,22 +40,22 @@ public:
 
 class TextResourceCommand{
 protected:
-	void wait_for_continue(CppRedGame &cppred, TextState &state);
+	void wait_for_continue(Game &game, TextState &state);
 public:
 	virtual ~TextResourceCommand(){}
-	virtual void execute(CppRedGame &, TextState &) = 0;
+	virtual void execute(Game &, TextState &) = 0;
 };
 
 class TextCommand : public TextResourceCommand{
 	std::vector<byte_t> data;
 public:
 	TextCommand(const byte_t *, size_t);
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class LineCommand : public TextResourceCommand{
 public:
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class NextCommand : public LineCommand{
@@ -62,12 +64,12 @@ public:
 
 class ContCommand : public TextResourceCommand{
 public:
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class ParaCommand : public TextResourceCommand{
 public:
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class PageCommand : public ParaCommand{
@@ -76,29 +78,29 @@ public:
 
 class DoneCommand : public TextResourceCommand{
 public:
-	virtual void execute(CppRedGame &, TextState &) override;
+	virtual void execute(Game &, TextState &) override;
 };
 
 class PromptCommand : public DoneCommand{
 public:
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class DexCommand : public TextResourceCommand{
 public:
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class AutocontCommand : public TextResourceCommand{
 public:
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class MemCommand : public TextResourceCommand{
 	std::string variable;
 public:
 	MemCommand(std::string &&s): variable(std::move(s)){}
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class NumCommand : public TextResourceCommand{
@@ -108,7 +110,7 @@ public:
 	NumCommand(std::string &&s, int digits):
 		variable(std::move(s)),
 		digits(digits){}
-	void execute(CppRedGame &, TextState &) override;
+	void execute(Game &, TextState &) override;
 };
 
 class TextResource{
@@ -116,7 +118,7 @@ public:
 	TextResourceId id;
 	std::vector<std::unique_ptr<TextResourceCommand>> commands;
 
-	void execute(CppRedGame &, TextState &);
+	void execute(Game &, TextState &);
 };
 
 class TextStore{
@@ -126,5 +128,7 @@ class TextStore{
 	std::unique_ptr<TextResourceCommand> parse_command(const byte_t *&, size_t &, bool &stop);
 public:
 	TextStore();
-	void execute(CppRedGame &, TextResourceId, TextState &);
+	void execute(Game &, TextResourceId, TextState &);
 };
+
+}

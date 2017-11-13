@@ -2,13 +2,15 @@
 #include "AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 
-CppRedAudioInterface::CppRedAudioInterface(CppRedAudioProgram &program): program(&program){
+namespace CppRed{
+
+AudioInterface::AudioInterface(AudioProgram &program): program(&program){
 	this->new_sound_id = AudioResourceId::None;
 	this->last_music_sound_id = AudioResourceId::None;
 	this->after_fade_out_play_this = AudioResourceId::None;
 }
 
-void CppRedAudioInterface::play_sound(AudioResourceId id){
+void AudioInterface::play_sound(AudioResourceId id){
 	auto lock = this->program->acquire_lock();
 	if (this->new_sound_id != AudioResourceId::None)
 		for (int i = 4; i < 8; i++)
@@ -28,18 +30,20 @@ void CppRedAudioInterface::play_sound(AudioResourceId id){
 	this->program->play_sound(id);
 }
 
-void CppRedAudioInterface::play_cry(SpeciesId){
+void AudioInterface::play_cry(SpeciesId){
 	//TODO
 }
 
-void CppRedAudioInterface::pause_music(){
+void AudioInterface::pause_music(){
 	this->program->pause_music();
 }
 
-void CppRedAudioInterface::unpause_music(){
+void AudioInterface::unpause_music(){
 	this->program->unpause_music();
 }
 
-void CppRedAudioInterface::wait_for_sfx_to_end(){
+void AudioInterface::wait_for_sfx_to_end(){
 	this->program->wait_for_sfx_to_end();
+}
+
 }

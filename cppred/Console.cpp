@@ -199,7 +199,7 @@ void Console::yield(){
 	(*this->yielder)(nullptr);
 }
 
-CppRedAudioProgram &Console::get_audio_program(){
+CppRed::AudioProgram &Console::get_audio_program(){
 	ConsoleCommunicationChannel ccc;
 	ccc.request_id = ConsoleRequestId::GetAudioProgram;
 	(*this->yielder)(&ccc);
@@ -303,7 +303,7 @@ void Console::coroutine_entry_point(){
 void Console::sound_test(){
 	this->engine->go_to_debug();
 	auto &program = this->get_audio_program();
-	CppRedAudioInterface audio_interface(program);
+	CppRed::AudioInterface audio_interface(program);
 	auto sounds = program.get_resource_strings();
 	sounds.erase(sounds.begin());
 	sounds.push_back("Stop");

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace CppRed{
+
 enum class BattleStyle{
 	Shift = 0,
 	Set = 1,
@@ -17,3 +19,5 @@ public:
 	BattleStyle battle_style = BattleStyle::Shift;
 	TextSpeed text_speed = TextSpeed::Fast;
 };
+
+}

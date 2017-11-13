@@ -1,10 +1,11 @@
 #pragma once
 
 class Engine;
-class CppRedGame;
+namespace CppRed{
+class Game;
+namespace Scripts{
 
-namespace CppRedScripts{
+void clear_save_dialog(Game &game);
 
-void clear_save_dialog(CppRedGame &cppred);
-
-}
+} //Scripts
+} //CppRed

@@ -4,6 +4,8 @@
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 
+namespace CppRed{
+
 struct FadePaletteData{
 	Palette background_palette;
 	Palette obp0_palette;
@@ -23,7 +25,7 @@ const FadePaletteData fade_palettes[8] = {
 	{ BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
 };
 
-CppRedGame::CppRedGame(Engine &engine, PokemonVersion version, CppRedAudioProgram &program):
+Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program):
 		engine(&engine),
 		version(version),
 		audio_interface(program){
@@ -31,12 +33,12 @@ CppRedGame::CppRedGame(Engine &engine, PokemonVersion version, CppRedAudioProgra
 	this->reset_dialog_state();
 }
 
-void CppRedGame::clear_screen(){
+void Game::clear_screen(){
 	this->engine->get_renderer().clear_screen();
 	this->engine->wait_frames(3);
 }
 
-void CppRedGame::fade_out_to_white(){
+void Game::fade_out_to_white(){
 	auto &engine = *this->engine;
 	auto &renderer = engine.get_renderer();
 	for (int i = 0; i < 3; i++){
@@ -48,7 +50,7 @@ void CppRedGame::fade_out_to_white(){
 	}
 }
 
-void CppRedGame::palette_whiteout(){
+void Game::palette_whiteout(){
 	auto &renderer = this->engine->get_renderer();
 	renderer.clear_subpalettes(SubPaletteRegion::All);
 	renderer.set_palette(PaletteRegion::Background, zero_palette);
@@ -56,7 +58,7 @@ void CppRedGame::palette_whiteout(){
 	renderer.set_palette(PaletteRegion::Sprites1, zero_palette);
 }
 
-bool CppRedGame::check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *input_state){
+bool Game::check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *input_state){
 	timeout += this->engine->get_clock();
 	do{
 		this->engine->wait_exactly_one_frame();
@@ -77,25 +79,25 @@ bool CppRedGame::check_for_user_interruption_internal(bool autorepeat, double ti
 	return false;
 }
 
-bool CppRedGame::check_for_user_interruption_no_auto_repeat(double timeout, InputState *input_state){
+bool Game::check_for_user_interruption_no_auto_repeat(double timeout, InputState *input_state){
 	return this->check_for_user_interruption_internal(false, timeout, input_state);
 }
 
-bool CppRedGame::check_for_user_interruption(double timeout, InputState *input_state){
+bool Game::check_for_user_interruption(double timeout, InputState *input_state){
 	return this->check_for_user_interruption_internal(true, timeout, input_state);
 }
 
-InputState CppRedGame::joypad_only_newly_pressed(){
+InputState Game::joypad_only_newly_pressed(){
 	return this->joypad_pressed;
 }
 
-void CppRedGame::update_joypad_state(){
+void Game::update_joypad_state(){
 	auto old = this->joypad_held;
 	this->joypad_held = this->engine->get_input_state();
 	this->joypad_pressed = this->joypad_held & ~old;
 }
 
-InputState CppRedGame::joypad_auto_repeat(){
+InputState Game::joypad_auto_repeat(){
 	auto held = this->joypad_held;
 
 	auto pressed = this->joypad_pressed;
@@ -113,16 +115,16 @@ InputState CppRedGame::joypad_auto_repeat(){
 	return held;
 }
 
-void CppRedGame::wait_for_sound_to_finish(){
+void Game::wait_for_sound_to_finish(){
 	//TODO
 }
 
-CppRedGame::load_save_t CppRedGame::load_save(){
+Game::load_save_t Game::load_save(){
 	//TODO
 	return nullptr;
 }
 
-void CppRedGame::draw_box(const Point &corner, const Point &size, TileRegion region){
+void Game::draw_box(const Point &corner, const Point &size, TileRegion region){
 	if (corner.x < 0 || corner.y < 0)
 		throw std::runtime_error("CppRedEngine::handle_standard_menu(): invalid position.");
 	if (size.x > Renderer::logical_screen_tile_width - 2 || size.y > Renderer::logical_screen_tile_height - 2)
@@ -160,7 +162,7 @@ void CppRedGame::draw_box(const Point &corner, const Point &size, TileRegion reg
 	dst[1 + size.x].tile_no = tiles[8];
 }
 
-void CppRedGame::put_string(const Point &position, TileRegion region, const char *string){
+void Game::put_string(const Point &position, TileRegion region, const char *string){
 	int i = position.x + position.y * Tilemap::w;
 	auto tilemap = this->engine->get_renderer().get_tilemap(region).tiles;
 	for (; *string; string++){
@@ -171,7 +173,7 @@ void CppRedGame::put_string(const Point &position, TileRegion region, const char
 	}
 }
 
-int CppRedGame::handle_standard_menu_with_title(
+int Game::handle_standard_menu_with_title(
 		TileRegion region,
 		const Point &position_,
 		const std::vector<std::string> &items,
@@ -226,11 +228,11 @@ int CppRedGame::handle_standard_menu_with_title(
 	return -1;
 }
 
-int CppRedGame::handle_standard_menu(TileRegion region, const Point &position, const std::vector<std::string> &items, const Point &minimum_size, bool ignore_b){
+int Game::handle_standard_menu(TileRegion region, const Point &position, const std::vector<std::string> &items, const Point &minimum_size, bool ignore_b){
 	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b);
 }
 
-void CppRedGame::run_dialog(TextResourceId resource){
+void Game::run_dialog(TextResourceId resource){
 	if (!this->dialog_box_visible){
 		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Background);
 		this->dialog_box_visible = true;
@@ -238,7 +240,7 @@ void CppRedGame::run_dialog(TextResourceId resource){
 	this->text_store.execute(*this, resource, this->text_state);
 }
 
-void CppRedGame::reset_dialog_state(){
+void Game::reset_dialog_state(){
 	this->text_state.region = TileRegion::Background;
 	this->text_state.first_position =
 		this->text_state.position =
@@ -249,7 +251,7 @@ void CppRedGame::reset_dialog_state(){
 	this->dialog_box_visible = false;
 }
 
-void CppRedGame::text_print_delay(){
+void Game::text_print_delay(){
 	this->engine->wait_frames((int)this->options.text_speed);
 }
 
@@ -299,7 +301,7 @@ void VariableStore::delete_number(const std::string &key){
 	this->number_variables.erase(it);
 }
 
-std::string CppRedGame::get_name_from_user(NameEntryType type, SpeciesId species, int max_length_){
+std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int max_length_){
 	if (!max_length_)
 		return "";
 	size_t max_display_length = type == NameEntryType::Pokemon ? 10 : 7;
@@ -451,7 +453,7 @@ std::string CppRedGame::get_name_from_user(NameEntryType type, SpeciesId species
 	}
 }
 
-std::string CppRedGame::get_name_from_user(NameEntryType type, int max_length){
+std::string Game::get_name_from_user(NameEntryType type, int max_length){
 	if (type == NameEntryType::Pokemon)
 		throw std::runtime_error("CppRedEngine::get_name_from_user(): Invalid usage. type must not be NameEntryType::Pokemon.");
 	auto ret = this->get_name_from_user(type, SpeciesId::None, max_length);
@@ -459,7 +461,7 @@ std::string CppRedGame::get_name_from_user(NameEntryType type, int max_length){
 	return ret;
 }
 
-std::string CppRedGame::get_name_from_user(SpeciesId species, int max_length){
+std::string Game::get_name_from_user(SpeciesId species, int max_length){
 	auto ret = this->get_name_from_user(NameEntryType::Pokemon, SpeciesId::None, max_length);
 	std::cout << "Selected name: " << ret << std::endl;
 	return ret;
@@ -474,3 +476,5 @@ void CppRedEngine::game_loop(){
 	
 }
 #endif
+
+}

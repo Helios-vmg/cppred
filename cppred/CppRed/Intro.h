@@ -1,10 +1,12 @@
 #pragma once
 
 class Engine;
-class CppRedGame;
 
-namespace CppRedScripts{
+namespace CppRed{
+class Game;
+namespace Scripts{
 
-void intro(CppRedGame &cppred);
+void intro(Game &game);
 
+}
 }

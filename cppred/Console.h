@@ -20,7 +20,7 @@ enum class ConsoleRequestId{
 
 struct ConsoleCommunicationChannel{
 	ConsoleRequestId request_id = ConsoleRequestId::None;
-	CppRedAudioProgram *audio_program = nullptr;
+	CppRed::AudioProgram *audio_program = nullptr;
 	PokemonVersion version;
 };
 
@@ -52,7 +52,7 @@ class Console{
 
 	void coroutine_entry_point();
 	void yield();
-	CppRedAudioProgram &get_audio_program();
+	CppRed::AudioProgram &get_audio_program();
 
 	int handle_menu(const std::vector<std::string> &, int default_item = 0, int item_separation = 1);
 	void draw_long_menu(const std::vector<std::string> &strings, int item_separation = 1);

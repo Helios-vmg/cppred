@@ -58,7 +58,7 @@ void Engine::run(){
 		if (!this->console)
 			this->console.reset(new Console(*this));
 		auto audio_renderer = std::make_unique<HeliosRenderer>(*this->audio_device);
-		auto programp = std::make_unique<CppRedAudioProgram>(*audio_renderer, version);
+		auto programp = std::make_unique<CppRed::AudioProgram>(*audio_renderer, version);
 		auto &program = *programp;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(audio_renderer), std::move(programp)));
 		this->audio_scheduler->start();
@@ -92,7 +92,7 @@ void Engine::run(){
 	}
 }
 
-bool Engine::update_console(PokemonVersion &version, CppRedAudioProgram &program){
+bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgram &program){
 	while (true){
 		auto console_request = this->console->update();
 		if (!console_request)
@@ -117,10 +117,10 @@ bool Engine::update_console(PokemonVersion &version, CppRedAudioProgram &program
 }
 
 
-void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRedAudioProgram &program){
+void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRed::AudioProgram &program){
 	this->yielder = &yielder;
 	this->yield();
-	CppRedScripts::entry_point(*this, version, program);
+	CppRed::Scripts::entry_point(*this, version, program);
 }
 
 void Engine::yield(){

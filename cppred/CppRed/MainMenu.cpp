@@ -5,23 +5,23 @@
 #include "Renderer.h"
 #include "../CodeGeneration/output/audio.h"
 
-static void show_options(CppRedGame &cppred){
-	auto &engine = cppred.get_engine();
+static void show_options(CppRed::Game &game){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	auto options = cppred.get_options();
+	auto options = game.get_options();
 	renderer.clear_screen();
 
 	for (int i = 0; i < 3; i++)
-		cppred.draw_box({ 0, i * 5 }, { Renderer::logical_screen_tile_width - 2, 3 }, TileRegion::Background);
+		game.draw_box({ 0, i * 5 }, { Renderer::logical_screen_tile_width - 2, 3 }, TileRegion::Background);
 
-	cppred.put_string({ 1,  1 }, TileRegion::Background, "TEXT SPEED");
-	cppred.put_string({ 1,  6 }, TileRegion::Background, "BATTLE ANIMATION");
-	cppred.put_string({ 1, 11 }, TileRegion::Background, "BATTLE STYLE");
-	cppred.put_string({ 2,  3 }, TileRegion::Background, "FAST  MEDIUM SLOW");
-	cppred.put_string({ 2,  8 }, TileRegion::Background, "ON       OFF");
-	cppred.put_string({ 2, 13 }, TileRegion::Background, "SHIFT    SET");
-	cppred.put_string({ 2, 16 }, TileRegion::Background, "CANCEL");
+	game.put_string({ 1,  1 }, TileRegion::Background, "TEXT SPEED");
+	game.put_string({ 1,  6 }, TileRegion::Background, "BATTLE ANIMATION");
+	game.put_string({ 1, 11 }, TileRegion::Background, "BATTLE STYLE");
+	game.put_string({ 2,  3 }, TileRegion::Background, "FAST  MEDIUM SLOW");
+	game.put_string({ 2,  8 }, TileRegion::Background, "ON       OFF");
+	game.put_string({ 2, 13 }, TileRegion::Background, "SHIFT    SET");
+	game.put_string({ 2, 16 }, TileRegion::Background, "CANCEL");
 
 	const int speed_positions[] = { 1, 7, 14, -1 };
 	const int animation_positions[] = { 1, 10, -1 };
@@ -69,7 +69,7 @@ static void show_options(CppRedGame &cppred){
 
 		while (true){
 			engine.wait_exactly_one_frame();
-			auto input = cppred.joypad_auto_repeat();
+			auto input = game.joypad_auto_repeat();
 			if (input.get_left()){
 				if (!horizontal_cursor_positions[vertical_cursor_position])
 					while (cursor_positions[vertical_cursor_position].second[horizontal_cursor_positions[vertical_cursor_position]] >= 0)
@@ -100,21 +100,22 @@ static void show_options(CppRedGame &cppred){
 		}
 	}
 
-	options.text_speed = (TextSpeed)(horizontal_cursor_positions[0] * 2 + 1);
+	options.text_speed = (CppRed::TextSpeed)(horizontal_cursor_positions[0] * 2 + 1);
 	options.battle_animations_enabled = !horizontal_cursor_positions[1];
-	options.battle_style = (BattleStyle)horizontal_cursor_positions[2];
-	cppred.set_options(options);
-	cppred.set_options_initialized(true);
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+	options.battle_style = (CppRed::BattleStyle)horizontal_cursor_positions[2];
+	game.set_options(options);
+	game.set_options_initialized(true);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 }
 
-namespace CppRedScripts{
+namespace CppRed{
+namespace Scripts{
 
-MainMenuResult main_menu(CppRedGame &cppred){
-	auto &engine = cppred.get_engine();
+MainMenuResult main_menu(Game &game){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	auto save = cppred.load_save();
+	auto save = game.load_save();
 
 	renderer.set_default_palettes();
 
@@ -133,7 +134,7 @@ MainMenuResult main_menu(CppRedGame &cppred){
 	items.push_back("NEW GAME");
 	items.push_back("OPTION");
 	while (true){
-		selection = cppred.handle_standard_menu(TileRegion::Background, { 0, 0 }, items, { 13, 0 });
+		selection = game.handle_standard_menu(TileRegion::Background, { 0, 0 }, items, { 13, 0 });
 		selection += (selection >= 0) * delta;
 		
 		if (selection < 0)
@@ -143,13 +144,14 @@ MainMenuResult main_menu(CppRedGame &cppred){
 			case 0:
 				return MainMenuResult::ContinueGame;
 			case 1:
-				cppred.get_audio_interface().wait_for_sfx_to_end();
+				game.get_audio_interface().wait_for_sfx_to_end();
 				return MainMenuResult::NewGame;
 		}
 
-		show_options(cppred);
+		show_options(game);
 		renderer.clear_screen();
 	}
 }
 
+}
 }

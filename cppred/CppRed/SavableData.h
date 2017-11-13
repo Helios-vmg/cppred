@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 
+namespace CppRed{
+
 class SavableData{
 	SavableData() = default;
 public:
@@ -14,3 +16,5 @@ public:
 	static std::shared_ptr<SavableData> load(const std::string &path);
 	void save(const std::string &path);
 };
+
+}

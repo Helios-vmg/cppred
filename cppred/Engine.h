@@ -21,7 +21,10 @@ class Renderer;
 class Console;
 class AudioDevice;
 class AudioScheduler;
-class CppRedAudioProgram;
+
+namespace CppRed{
+class AudioProgram;
+}
 
 class Engine{
 	HighResolutionClock clock;
@@ -46,9 +49,9 @@ class Engine{
 
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRedAudioProgram &);
+	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRed::AudioProgram &);
 	bool handle_events();
-	bool update_console(PokemonVersion &version, CppRedAudioProgram &program);
+	bool update_console(PokemonVersion &version, CppRed::AudioProgram &program);
 public:
 	Engine();
 	~Engine();

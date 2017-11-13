@@ -1,15 +1,17 @@
 #pragma once
 
 class Engine;
-class CppRedGame;
 
-namespace CppRedScripts{
+namespace CppRed{
+class Game;
+namespace Scripts{
 
 enum class TitleScreenResult{
 	GoToMainMenu,
 	GoToClearSaveDialog,
 };
 
-TitleScreenResult title_screen(CppRedGame &cppred);
+TitleScreenResult title_screen(Game &game);
 
+}
 }

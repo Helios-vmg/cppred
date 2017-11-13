@@ -4,6 +4,8 @@
 #include "../CodeGeneration/output/audio.h"
 #include <sstream>
 
+namespace CppRed{
+
 TextStore::TextStore(){
 	auto buffer = packed_text_data;
 	size_t size = packed_text_data_size;
@@ -138,9 +140,9 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const byte_t *&buf
 	return ret;
 }
 
-void TextResource::execute(CppRedGame &cppred, TextState &state){
+void TextResource::execute(Game &game, TextState &state){
 	for (auto &p : this->commands)
-		p->execute(cppred, state);
+		p->execute(game, state);
 }
 
 TextCommand::TextCommand(const byte_t *buffer, size_t size){
@@ -148,54 +150,54 @@ TextCommand::TextCommand(const byte_t *buffer, size_t size){
 	memcpy(&this->data[0], buffer, size);
 }
 
-void TextStore::execute(CppRedGame &cppred, TextResourceId id, TextState &state){
-	this->resources[(int)id]->execute(cppred, state);
+void TextStore::execute(Game &game, TextResourceId id, TextState &state){
+	this->resources[(int)id]->execute(game, state);
 }
 
 template <typename T>
-void progressively_write_text(const T &data, CppRedGame &cppred, TextState &state){
-	auto &engine = cppred.get_engine();
+void progressively_write_text(const T &data, Game &game, TextState &state){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
 	auto tiles = renderer.get_tilemap(state.region).tiles + state.position.x + state.position.y * Tilemap::w;
 	for (auto c : data){
 		(tiles++)->tile_no = (typename std::make_unsigned<decltype(c)>::type)c;
 		state.position.x++;
-		cppred.text_print_delay();
+		game.text_print_delay();
 	}
 }
 
-void TextCommand::execute(CppRedGame &cppred, TextState &state){
-	progressively_write_text(this->data, cppred, state);
+void TextCommand::execute(Game &game, TextState &state){
+	progressively_write_text(this->data, game, state);
 }
 
-void LineCommand::execute(CppRedGame &cppred, TextState &state){
+void LineCommand::execute(Game &game, TextState &state){
 	auto temp = state.start_of_line + Point{ 0, 2 };
 	if (temp.y < state.box_corner.y + state.box_size.y)
 		state.start_of_line = temp;
 	state.position = state.start_of_line;
 }
 
-void TextResourceCommand::wait_for_continue(CppRedGame &cppred, TextState &state){
-	auto &engine = cppred.get_engine();
+void TextResourceCommand::wait_for_continue(Game &game, TextState &state){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto tilemap = renderer.get_tilemap(state.region).tiles;
 	auto &arrow_location = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w].tile_no;
 	for (bool b = true;; b = !b){
 		arrow_location = b ? down_arrow : ' ';
-		if (cppred.check_for_user_interruption_no_auto_repeat(0.5))
+		if (game.check_for_user_interruption_no_auto_repeat(0.5))
 			break;
 	}
 	arrow_location = ' ';
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 }
 
-void ContCommand::execute(CppRedGame &cppred, TextState &state){
-	auto &engine = cppred.get_engine();
+void ContCommand::execute(Game &game, TextState &state){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto tilemap = renderer.get_tilemap(state.region).tiles;
 	
-	this->wait_for_continue(cppred, state);
+	this->wait_for_continue(game, state);
 
 	for (int i = 0; i < 2; i++){
 		for (int y = 0; y < state.box_size.y - 1; y++){
@@ -212,12 +214,12 @@ void ContCommand::execute(CppRedGame &cppred, TextState &state){
 	state.position = state.start_of_line;
 }
 
-void ParaCommand::execute(CppRedGame &cppred, TextState &state){
-	auto &engine = cppred.get_engine();
+void ParaCommand::execute(Game &game, TextState &state){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto tilemap = renderer.get_tilemap(state.region).tiles;
 	
-	this->wait_for_continue(cppred, state);
+	this->wait_for_continue(game, state);
 	
 	for (int y = 0; y < state.box_size.y; y++){
 		auto y0 = (state.box_corner.y + y) * Tilemap::w;
@@ -227,25 +229,27 @@ void ParaCommand::execute(CppRedGame &cppred, TextState &state){
 	state.start_of_line = state.position = state.first_position;
 }
 
-void PromptCommand::execute(CppRedGame &cppred, TextState &state){
-	this->wait_for_continue(cppred, state);
-	DoneCommand::execute(cppred, state);
+void PromptCommand::execute(Game &game, TextState &state){
+	this->wait_for_continue(game, state);
+	DoneCommand::execute(game, state);
 }
 
-void DoneCommand::execute(CppRedGame &cppred, TextState &){
-	cppred.reset_dialog_state();
+void DoneCommand::execute(Game &game, TextState &){
+	game.reset_dialog_state();
 }
 
-void DexCommand::execute(CppRedGame &, TextState &){}
-void AutocontCommand::execute(CppRedGame &, TextState &){}
+void DexCommand::execute(Game &, TextState &){}
+void AutocontCommand::execute(Game &, TextState &){}
 
-void MemCommand::execute(CppRedGame &cppred, TextState &state){
-	auto value = cppred.get_variable_store().get_string(this->variable);
-	progressively_write_text(value, cppred, state);
+void MemCommand::execute(Game &game, TextState &state){
+	auto value = game.get_variable_store().get_string(this->variable);
+	progressively_write_text(value, game, state);
 }
 
-void NumCommand::execute(CppRedGame &cppred, TextState &state){
+void NumCommand::execute(Game &game, TextState &state){
 	std::stringstream stream;
-	stream << cppred.get_variable_store().get_number(this->variable);
-	progressively_write_text(stream.str(), cppred, state);
+	stream << game.get_variable_store().get_number(this->variable);
+	progressively_write_text(stream.str(), game, state);
+}
+
 }

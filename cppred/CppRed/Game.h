@@ -5,10 +5,12 @@
 #include "SavableData.h"
 #include "TextResources.h"
 #include "pokemon_version.h"
+#include "AudioInterface.h"
 #include <string>
 #include <unordered_map>
 #include <queue>
-#include "AudioInterface.h"
+
+namespace CppRed{
 
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
@@ -32,7 +34,7 @@ enum class NameEntryType{
 	Pokemon,
 };
 
-class CppRedGame{
+class Game{
 	Engine *engine;
 	PokemonVersion version;
 	TextStore text_store;
@@ -44,13 +46,13 @@ class CppRedGame{
 	TextState text_state;
 	bool dialog_box_visible = false;
 	VariableStore variable_store;
-	CppRedAudioInterface audio_interface;
+	CppRed::AudioInterface audio_interface;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 public:
-	CppRedGame(Engine &engine, PokemonVersion version, CppRedAudioProgram &program);
+	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
 	void clear_screen();
 	Engine &get_engine(){
 		return *this->engine;
@@ -95,7 +97,7 @@ public:
 	PokemonVersion get_version() const{
 		return this->version;
 	}
-	CppRedAudioInterface &get_audio_interface(){
+	CppRed::AudioInterface &get_audio_interface(){
 		return this->audio_interface;
 	}
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
@@ -104,3 +106,5 @@ public:
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
 };
+
+}

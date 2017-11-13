@@ -8,33 +8,35 @@
 #include "ClearSave.h"
 #include "OakSpeech.h"
 
-namespace CppRedScripts{
+namespace CppRed{
+namespace Scripts{
 
-static MainMenuResult initial_sequence(CppRedGame &cppred){
-	auto &engine = cppred.get_engine();
+static MainMenuResult initial_sequence(Game &game){
+	auto &engine = game.get_engine();
 	while (true){
-		intro(cppred);
-		while (title_screen(cppred) == TitleScreenResult::GoToMainMenu){
-			auto main_menu_result = main_menu(cppred);
+		intro(game);
+		while (title_screen(game) == TitleScreenResult::GoToMainMenu){
+			auto main_menu_result = main_menu(game);
 			if (main_menu_result != MainMenuResult::GoToTitleScreen)
 				return main_menu_result;
 		}
 		//TODO
 		//assert(title_screen_result == TitleScreenResult::GoToClearSaveDialog);
-		//clear_save_dialog(cppred);
+		//clear_save_dialog(game);
 	}
 }
 
-void entry_point(Engine &engine, PokemonVersion version, CppRedAudioProgram &program){
-	CppRedGame cppred(engine, version, program);
-	if (initial_sequence(cppred) == MainMenuResult::ContinueGame){
+void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program){
+	Game game(engine, version, program);
+	if (initial_sequence(game) == MainMenuResult::ContinueGame){
 		//Continue game.
 	}else{
-		auto names = oak_speech(cppred);
-		cppred.create_main_characters(names.player_name, names.rival_name);
-		cppred.game_loop();
+		auto names = oak_speech(game);
+		game.create_main_characters(names.player_name, names.rival_name);
+		game.game_loop();
 		assert(false);
 	}
 }
 
+}
 }

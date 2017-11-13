@@ -2,10 +2,11 @@
 
 enum class PokemonVersion;
 class Engine;
-class CppRedAudioProgram;
+namespace CppRed{
+class AudioProgram;
+namespace Scripts{
 
-namespace CppRedScripts{
+void entry_point(Engine &, PokemonVersion, CppRed::AudioProgram &);
 
-void entry_point(Engine &, PokemonVersion, CppRedAudioProgram &);
-
+}
 }

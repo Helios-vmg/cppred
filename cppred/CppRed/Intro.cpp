@@ -86,8 +86,8 @@ public:
 	}
 };
 
-static bool animate_big_star(CppRedGame &cppred, shooting_star_graphics &graphics){
-	auto &engine = cppred.get_engine();
+static bool animate_big_star(CppRed::Game &game, shooting_star_graphics &graphics){
+	auto &engine = game.get_engine();
 	const double pixels_per_second = 240;
 	auto &star = *graphics.star;
 	auto x0 = star.get_x();
@@ -95,7 +95,7 @@ static bool animate_big_star(CppRedGame &cppred, shooting_star_graphics &graphic
 	auto t0 = engine.get_clock();
 	bool ret = false;
 	while (true){
-		if (cppred.check_for_user_interruption()){
+		if (game.check_for_user_interruption()){
 			ret = true;
 			break;
 		}
@@ -110,21 +110,21 @@ static bool animate_big_star(CppRedGame &cppred, shooting_star_graphics &graphic
 	return ret;
 }
 
-static bool cycle_logo_palettes(CppRedGame &cppred, shooting_star_graphics &graphics){
-	auto &engine = cppred.get_engine();
+static bool cycle_logo_palettes(CppRed::Game &game, shooting_star_graphics &graphics){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	for (int i = 0; i < 3; i++){
 		renderer.mass_set_palettes(graphics.logo_tiles, logo_palette_cycle[(i + 1) % array_length(logo_palette_cycle)]);
 		renderer.mass_set_palettes(graphics.game_freak_tiles, logo_palette_cycle[(i + 2) % array_length(logo_palette_cycle)]);
 
-		if (cppred.check_for_user_interruption(1.0 / 6.0))
+		if (game.check_for_user_interruption(1.0 / 6.0))
 			return true;
 	}
 	return false;
 }
 
-static bool animate_falling_stars(CppRedGame &cppred, shooting_star_graphics &graphics){
-	auto &engine = cppred.get_engine();
+static bool animate_falling_stars(CppRed::Game &game, shooting_star_graphics &graphics){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	const double falling_rate = 20;
 	auto t0 = engine.get_clock();
@@ -144,16 +144,16 @@ static bool animate_falling_stars(CppRedGame &cppred, shooting_star_graphics &gr
 			}
 		}
 
-		if (cppred.check_for_user_interruption())
+		if (game.check_for_user_interruption())
 			return true;
 	}
 	return false;
 }
 
-static bool shooting_star_scene(CppRedGame &cppred){
-	shooting_star_graphics graphics(cppred.get_engine());
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Shooting_Star);
-	return animate_big_star(cppred, graphics) || cycle_logo_palettes(cppred, graphics) || animate_falling_stars(cppred, graphics);
+static bool shooting_star_scene(CppRed::Game &game){
+	shooting_star_graphics graphics(game.get_engine());
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Shooting_Star);
+	return animate_big_star(game, graphics) || cycle_logo_palettes(game, graphics) || animate_falling_stars(game, graphics);
 }
 
 template <unsigned N>
@@ -177,9 +177,9 @@ double parabola_func(double x){
 #define nidorino_parabola4 parabola_func<1, -85, 25>
 
 template <double Parabola(double)>
-void hop_sprite(CppRedGame &cppred, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
-	auto &engine = cppred.get_engine();
-	cppred.get_audio_interface().play_sound(sfx);
+void hop_sprite(CppRed::Game &game, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
+	auto &engine = game.get_engine();
+	game.get_audio_interface().play_sound(sfx);
 	auto t0 = engine.get_clock();
 	const double duration = 25.0;
 	double scaled;
@@ -196,8 +196,8 @@ void hop_sprite(CppRedGame &cppred, Sprite &sprite, AudioResourceId sfx, Point &
 }
 
 template <bool MoveSprite>
-bool move_gengar(CppRedGame &cppred, Sprite &nidorino, Point &position, int length, int sign = 1){
-	auto &engine = cppred.get_engine();
+bool move_gengar(CppRed::Game &game, Sprite &nidorino, Point &position, int length, int sign = 1){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto t0 = engine.get_clock();
 	const double speed = 60;
@@ -212,7 +212,7 @@ bool move_gengar(CppRedGame &cppred, Sprite &nidorino, Point &position, int leng
 		renderer.set_bg_global_offset(initial_offset + offset);
 		if (MoveSprite)
 			nidorino.set_position(position + offset);
-		if (cppred.check_for_user_interruption())
+		if (game.check_for_user_interruption())
 			return true;
 	}while (step < length);
 	
@@ -226,13 +226,13 @@ struct BattleSceneSprites{
 	std::shared_ptr<Sprite> nidorino[3];
 };
 
-static BattleSceneSprites battle_scene(CppRedGame &cppred){
+static BattleSceneSprites battle_scene(CppRed::Game &game){
 	const Point gengar_position = { 13, 7 };
 	const Point nidorino_initial_position = { -6, 72 };
 
-	auto &engine = cppred.get_engine();
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	cppred.get_audio_interface().play_sound(AudioResourceId::Music_IntroBattle);
+	game.get_audio_interface().play_sound(AudioResourceId::Music_IntroBattle);
 	clear_middle_of_screen<4>(engine);
 	engine.wait_frames(3);
 	renderer.set_default_palettes();
@@ -248,7 +248,7 @@ static BattleSceneSprites battle_scene(CppRedGame &cppred){
 		FightIntroFrontMon2_blue,
 		FightIntroFrontMon3_blue,
 	};
-	auto &assets = cppred.get_version() == PokemonVersion::Red ? assets_red : assets_blue;
+	auto &assets = game.get_version() == PokemonVersion::Red ? assets_red : assets_blue;
 	
 	auto nidorino = renderer.create_sprite(assets[0]);
 	auto nidorino2 = renderer.create_sprite(assets[1]);
@@ -260,7 +260,7 @@ static BattleSceneSprites battle_scene(CppRedGame &cppred){
 	auto nidorino_position = nidorino->get_position();
 
 	//Animate "rotation" around pokemon ring.
-	if (move_gengar<true>(cppred, *nidorino, nidorino_position, 80))
+	if (move_gengar<true>(game, *nidorino, nidorino_position, 80))
 		return ret;
 
 	static const AudioResourceId hophop[] = {
@@ -270,36 +270,36 @@ static BattleSceneSprites battle_scene(CppRedGame &cppred){
 
 	//Nidorino then hops once to the left, then to the right, then repeats once.
 	for (int i = 0, sign = 1; i < 4; i++){
-		hop_sprite<nidorino_parabola1>(cppred, *nidorino, hophop[i % 2], nidorino_position, sign, 8.0 / 25.0);
+		hop_sprite<nidorino_parabola1>(game, *nidorino, hophop[i % 2], nidorino_position, sign, 8.0 / 25.0);
 		sign = -sign;
-		if (i % 2 && cppred.check_for_user_interruption(1.0 / 6.0))
+		if (i % 2 && game.check_for_user_interruption(1.0 / 6.0))
 			return ret;
 	}
 
 	//Gengar moves back and raises arm.
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Raise);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Raise);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon2);
-	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 8) || cppred.check_for_user_interruption(0.5))
+	if (move_gengar<false>(game, *nidorino, nidorino_position, 8) || game.check_for_user_interruption(0.5))
 		return ret;
 
 	//Now moves forward and lowers arm.
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon3);
-	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 18, -1))
+	if (move_gengar<false>(game, *nidorino, nidorino_position, 18, -1))
 		return ret;
 
 	//Nidorino dodges.
 	nidorino->set_visible(false);
 	nidorino2->set_visible(true);
-	hop_sprite<nidorino_parabola2>(cppred, *nidorino2, AudioResourceId::SFX_Intro_Hip, nidorino_position, 1, 1);
-	if (cppred.check_for_user_interruption(0.5))
+	hop_sprite<nidorino_parabola2>(game, *nidorino2, AudioResourceId::SFX_Intro_Hip, nidorino_position, 1, 1);
+	if (game.check_for_user_interruption(0.5))
 		return ret;
 
 	//Now moves back to original position and original pose.
-	if (move_gengar<false>(cppred, *nidorino, nidorino_position, 10, 1))
+	if (move_gengar<false>(game, *nidorino, nidorino_position, 10, 1))
 		return ret;
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
-	if (cppred.check_for_user_interruption(1))
+	if (game.check_for_user_interruption(1))
 		return ret;
 
 	nidorino->set_visible(true);
@@ -307,9 +307,9 @@ static BattleSceneSprites battle_scene(CppRedGame &cppred){
 
 	//Nidorino then hops once to the left, then to the right, then repeats once.
 	for (int i = 0, sign = -1; i < 2; i++){
-		hop_sprite<nidorino_parabola3>(cppred, *nidorino, hophop[i % 2], nidorino_position, sign, 16.0 / 25.0);
+		hop_sprite<nidorino_parabola3>(game, *nidorino, hophop[i % 2], nidorino_position, sign, 16.0 / 25.0);
 		sign = -sign;
-		if (i % 2 && cppred.check_for_user_interruption(1.0 / 6.0))
+		if (i % 2 && game.check_for_user_interruption(1.0 / 6.0))
 			return ret;
 	}
 
@@ -332,11 +332,11 @@ static BattleSceneSprites battle_scene(CppRedGame &cppred){
 		nidorino_position = nidorino2->get_position();
 	}
 
-	if (cppred.check_for_user_interruption(0.5))
+	if (game.check_for_user_interruption(0.5))
 		return ret;
 
 	//Lunge Nidorino.
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Lunge);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Lunge);
 	nidorino2->set_visible(false);
 	nidorino3->set_visible(true);
 	{
@@ -361,30 +361,32 @@ static BattleSceneSprites battle_scene(CppRedGame &cppred){
 	return ret;
 }
 
-namespace CppRedScripts{
+namespace CppRed{
+namespace Scripts{
 
-void intro(CppRedGame &cppred){
-	auto &engine = cppred.get_engine();
+void intro(Game &game){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	engine.get_renderer().set_enable_bg(true);
 	engine.get_renderer().set_enable_sprites(true);
 	display_copyright(engine);
 	
-	clear_screen(cppred.get_engine());
+	clear_screen(game.get_engine());
 	draw_black_bars<4>(engine);
 	engine.wait_frames(64);
 
-	if (!shooting_star_scene(cppred))
+	if (!shooting_star_scene(game))
 		engine.wait_frames(40);
 
 	{
 		//Warning: temp contains side effect in its destructor. Do not remove this!
-		auto temp = battle_scene(cppred);
+		auto temp = battle_scene(game);
 
-		cppred.fade_out_to_white();
+		game.fade_out_to_white();
 	}
 	renderer.clear_screen();
 	engine.wait_exactly_one_frame();
 }
 
+}
 }

@@ -9,13 +9,15 @@
 
 class Engine;
 class AudioRenderer;
-class CppRedAudioProgram;
 enum class AudioResourceId;
+namespace CppRed{
+class AudioProgram;
+}
 
 class AudioScheduler{
 	Engine *engine;
 	std::unique_ptr<AudioRenderer> renderer;
-	std::unique_ptr<CppRedAudioProgram> program;
+	std::unique_ptr<CppRed::AudioProgram> program;
 	std::unique_ptr<std::thread> thread;
 	std::atomic<bool> continue_running;
 	SDL_TimerID timer_id = 0;
@@ -25,7 +27,7 @@ class AudioScheduler{
 	void processor();
 	void stop();
 public:
-	AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer> &&renderer, std::unique_ptr<CppRedAudioProgram> &&program);
+	AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer> &&renderer, std::unique_ptr<CppRed::AudioProgram> &&program);
 	~AudioScheduler();
 	void start();
 };

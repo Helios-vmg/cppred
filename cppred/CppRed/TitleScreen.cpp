@@ -49,8 +49,8 @@ double limit_of_curve(double base){
 
 }
 
-static void bounce_logo(CppRedGame &cppred){
-	auto &engine = cppred.get_engine();
+static void bounce_logo(CppRed::Game &game){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
 	auto t0 = engine.get_clock();
@@ -68,7 +68,7 @@ static void bounce_logo(CppRedGame &cppred){
 		//The easing function is designed to reach the first zero at exactly x = 1.
 		//Therefore play the sound effect the first time the logo bounces.
 		if (!played && x > 1){
-			cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
+			game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
 			played = true;
 		}
 		renderer.set_y_bg_offset(0, 64, { 0, cast_round(64 * EasingCurve::f(x, base)) });
@@ -76,8 +76,8 @@ static void bounce_logo(CppRedGame &cppred){
 	}while (x < limit);
 }
 
-static void scroll_version(CppRedGame &cppred){
-	auto &engine = cppred.get_engine();
+static void scroll_version(CppRed::Game &game){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
 	auto t0 = engine.get_clock();
@@ -106,8 +106,8 @@ static double pokeball_trajectory(double x){
 static const Point pokemon_location = {5, 10};
 
 template <size_t N>
-static void pick_new_pokemon(CppRedGame &cppred, const SpeciesId (&pokemons)[N], int &current_pokemon, Sprite &ball){
-	auto &engine = cppred.get_engine();
+static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N], int &current_pokemon, Sprite &ball){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	
 	int previous_pokemon = current_pokemon;
@@ -165,9 +165,10 @@ static void pick_new_pokemon(CppRedGame &cppred, const SpeciesId (&pokemons)[N],
 	}
 }
 
-namespace CppRedScripts{
+namespace CppRed{
+namespace Scripts{
 
-TitleScreenResult title_screen(CppRedGame &cppred){
+TitleScreenResult title_screen(Game &game){
 	static const char version_offsets_red[] = { 0, 1, -1, 5, 6, 7, 8, 9 };
 	static const SpeciesId pokemons_red[] = {
 		SpeciesId::Charmander,
@@ -206,13 +207,13 @@ TitleScreenResult title_screen(CppRedGame &cppred){
 		SpeciesId::Gengar,
 		SpeciesId::Raichu,
 	};
-	auto &pokemons = cppred.get_version() == PokemonVersion::Red ? pokemons_red : pokemons_blue;
-	auto &version_offsets = cppred.get_version() == PokemonVersion::Red ? version_offsets_red : version_offsets_blue;
+	auto &pokemons = game.get_version() == PokemonVersion::Red ? pokemons_red : pokemons_blue;
+	auto &version_offsets = game.get_version() == PokemonVersion::Red ? version_offsets_red : version_offsets_blue;
 
-	auto &engine = cppred.get_engine();
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	cppred.palette_whiteout();
-	cppred.clear_screen();
+	game.palette_whiteout();
+	game.clear_screen();
 
 	renderer.set_default_palettes();
 	renderer.set_enable_bg(true);
@@ -244,30 +245,30 @@ TitleScreenResult title_screen(CppRedGame &cppred){
 
 	renderer.set_y_bg_offset(0, 64, { 0, 64 });
 
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
 
 	//Bounce logo.
-	bounce_logo(cppred);
+	bounce_logo(game);
 
 	engine.wait_frames(36);
-	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Whoosh);
+	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Whoosh);
 
 	draw_image_from_offsets(renderer, { 7, 8 }, RedBlueVersion, version_offsets);
 	//Scroll version from the right.
-	scroll_version(cppred);
+	scroll_version(game);
 
-	cppred.get_audio_interface().play_sound(AudioResourceId::Music_TitleScreen);
+	game.get_audio_interface().play_sound(AudioResourceId::Music_TitleScreen);
 
 	renderer.set_enable_window(false);
 	renderer.draw_image_to_tilemap(copyright_location, CopyrightTitleScreen);
 	renderer.draw_image_to_tilemap(pokemon_location, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
 
 	InputState user_input;
-	while (!cppred.check_for_user_interruption(200.0/60.0, &user_input))
-		pick_new_pokemon(cppred, pokemons, current_pokemon, *pokeball);
+	while (!game.check_for_user_interruption(200.0/60.0, &user_input))
+		pick_new_pokemon(game, pokemons, current_pokemon, *pokeball);
 
-	cppred.get_audio_interface().play_cry(pokemons[current_pokemon]);
-	cppred.wait_for_sound_to_finish();
+	game.get_audio_interface().play_cry(pokemons[current_pokemon]);
+	game.wait_for_sound_to_finish();
 	renderer.clear_screen();
 
 	pc.reset();
@@ -277,4 +278,5 @@ TitleScreenResult title_screen(CppRedGame &cppred){
 	return clear_save ? TitleScreenResult::GoToClearSaveDialog : TitleScreenResult::GoToMainMenu;
 }
 
+}
 }
