@@ -46,10 +46,19 @@ private:
 	bool enable_bg = false;
 	bool enable_window = false;
 	bool enable_sprites = true;
+	struct RenderPoint{
+		int value;
+		const Palette *palette;
+	};
+	RenderPoint intermediate_render_surface[logical_screen_width * logical_screen_height];
 
 	void initialize_assets();
 	void initialize_data();
 	void do_software_rendering();
+	void render_non_sprites();
+	void render_sprites();
+	void render_sprite(Sprite &, const Palette **);
+	void final_render(TextureSurface &);
 	void set_y_offset(Point (&)[logical_screen_height], int y0, int y1, const Point &);
 	std::vector<Point> draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &, TileRegion, Palette, bool);
 public:

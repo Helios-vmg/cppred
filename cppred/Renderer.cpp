@@ -64,36 +64,30 @@ bool sort_sprites(Sprite *a, Sprite *b){
 
 void Renderer::do_software_rendering(){
 #ifdef MEASURE_RENDERING_TIMES
-	auto t0 = this->engine->get_clock();
+	HighResolutionClock clock;
+	auto t0 = clock.get();
 #endif
 
 	TextureSurface surf;
 	if (!this->main_texture.try_lock(surf))
 		return;
 
-	if (this->enable_sprites){
-		this->sprite_list.clear();
-		for (auto &kv : this->sprites){
-			auto sprite = kv.second;
-			auto x0 = sprite->get_x();
-			auto y0 = sprite->get_y();
-			auto x1 = x0 + sprite->get_w();
-			auto y1 = y0 + sprite->get_h();
-			if (!sprite->get_visible() | (y0 >= logical_screen_height) | (x0 >= logical_screen_width) | (y1 <= 0) | (x1 <= 0))
-				continue;
-			this->sprite_list.push_back(sprite);
-		}
+	for (auto &point : this->intermediate_render_surface){
+		point.value = -1;
+		point.palette = nullptr;
 	}
 
-	std::sort(this->sprite_list.begin(), this->sprite_list.end(), sort_sprites);
+	this->render_non_sprites();
+	this->render_sprites();
+	this->final_render(surf);
+	
+#ifdef MEASURE_RENDERING_TIMES
+	auto t1 = clock.get();
+	std::cout << "Rendering time: " << (t1 - t0) * 1000 << " ms\n";
+#endif
+}
 
-	const Palette *sprite_palettes[] = {
-		nullptr,
-		&this->sprite0_palette,
-		&this->sprite1_palette,
-	};
-
-	auto pixels = surf.get_row(0);
+void Renderer::render_non_sprites(){
 	for (int y = 0; y < logical_screen_height; y++){
 		auto bg_offset = this->bg_global_offset + this->bg_offsets[y];
 		auto window_offset = this->window_global_offset + this->window_offsets[y];
@@ -107,8 +101,12 @@ void Renderer::do_software_rendering(){
 		//}
 
 		for (int x = 0; x < logical_screen_width; x++){
-			int color_index = -1;
-			const Palette *palette = nullptr;
+			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
+			auto &color_index = point.value;
+			auto &palette = point.palette;
+
+			color_index = -1;
+			palette = nullptr;
 
 			if (window_enabled){
 				auto p = window_offset;
@@ -146,54 +144,91 @@ void Renderer::do_software_rendering(){
 				if (!*palette)
 					palette = &this->bg_palette;
 			}
-
-			if (this->enable_sprites /*& (color_index == -1)*/){
-				for (auto sprite : this->sprite_list){
-					auto spry = sprite->get_y();
-					auto sprx = sprite->get_x();
-					auto sprite_is_here = (x >= sprx) & (x < sprx + sprite->get_w() * tile_size) & (y >= spry) & (y < spry + sprite->get_h() * tile_size);
-					if (!sprite_is_here)
-						continue;
-
-					auto sprite_offset_x = x - sprx;
-					auto sprite_offset_y = y - spry;
-					auto sprite_tile_x = sprite_offset_x / tile_size;
-					auto sprite_tile_y = sprite_offset_y / tile_size;
-
-					auto &tile = sprite->get_tile(sprite_tile_x, sprite_tile_y);
-					auto sprite_is_not_covered_here = tile.has_priority | !color_index;
-					if (!sprite_is_not_covered_here)
-						continue;
-
-					auto tile_no = tile.tile_no;
-					tile_no = tile_mapping[tile_no];
-					int tile_offset_x = sprite_offset_x % tile_size;
-					int tile_offset_y = sprite_offset_y % tile_size;
-					if (tile.flipped_x)
-						tile_offset_x = (tile_size - 1) - tile_offset_x;
-					if (tile.flipped_y)
-						tile_offset_y = (tile_size - 1) - tile_offset_y;
-					auto index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
-					if (!index)
-						continue;
-					color_index = index;
-					palette = &tile.palette;
-					if (!*palette){
-						palette = &sprite->get_palette();
-						if (!*palette)
-							palette = sprite_palettes[(int)sprite->get_palette_region()];
-					}
-					break;
-				}
-			}
-
-			*(pixels++) = this->final_palette[!palette ? 0 : palette->data[color_index]];
 		}
 	}
-#ifdef MEASURE_RENDERING_TIMES
-	auto t1 = this->engine->get_clock();
-	std::cout << "Rendering time: " << (t1 - t0) * 1000 << " ms\n";
-#endif
+}
+
+void Renderer::render_sprites(){
+	if (!this->enable_sprites)
+		return;
+
+	this->sprite_list.clear();
+	for (auto &kv : this->sprites){
+		auto sprite = kv.second;
+		auto x0 = sprite->get_x();
+		auto y0 = sprite->get_y();
+		auto x1 = x0 + sprite->get_w();
+		auto y1 = y0 + sprite->get_h();
+		if (!sprite->get_visible() | (y0 >= logical_screen_height) | (x0 >= logical_screen_width) | (y1 <= 0) | (x1 <= 0))
+			continue;
+		this->sprite_list.push_back(sprite);
+	}
+		
+	std::sort(this->sprite_list.begin(), this->sprite_list.end(), sort_sprites);
+
+	const Palette *sprite_palettes[] = {
+		nullptr,
+		&this->sprite0_palette,
+		&this->sprite1_palette,
+	};
+
+	for (auto sprite : this->sprite_list)
+		this->render_sprite(*sprite, sprite_palettes);
+}
+
+void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
+	auto spry = sprite.get_y();
+	auto sprx = sprite.get_x();
+	auto w = sprite.get_w() * tile_size;
+	auto h = sprite.get_h() * tile_size;
+	auto x0 = std::max(sprx, 0);
+	auto y0 = std::max(spry, 0);
+	auto x1 = std::min(sprx + w, logical_screen_width);
+	auto y1 = std::min(spry + h, logical_screen_height);
+
+	for (int y = y0, sprite_offset_y = 0; y < y1; y++, sprite_offset_y++){
+		for (int x = x0, sprite_offset_x = 0; x < x1; x++, sprite_offset_x++){
+			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
+			auto &color_index = point.value;
+			auto &palette = point.palette;
+
+			auto sprite_tile_x = sprite_offset_x / tile_size;
+			auto sprite_tile_y = sprite_offset_y / tile_size;
+
+			auto &tile = sprite.get_tile(sprite_tile_x, sprite_tile_y);
+			auto sprite_is_not_covered_here = tile.has_priority | !color_index;
+			if (!sprite_is_not_covered_here)
+				continue;
+
+			auto tile_no = tile.tile_no;
+			tile_no = tile_mapping[tile_no];
+			int tile_offset_x = sprite_offset_x % tile_size;
+			int tile_offset_y = sprite_offset_y % tile_size;
+			if (tile.flipped_x)
+				tile_offset_x = (tile_size - 1) - tile_offset_x;
+			if (tile.flipped_y)
+				tile_offset_y = (tile_size - 1) - tile_offset_y;
+			auto index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
+			if (!index)
+				continue;
+			color_index = index;
+			palette = &tile.palette;
+			if (!*palette){
+				palette = &sprite.get_palette();
+				if (!*palette)
+					palette = sprite_palettes[(int)sprite.get_palette_region()];
+			}
+		}
+	}
+}
+
+void Renderer::final_render(TextureSurface &surf){
+	auto pixels = surf.get_row(0);
+	for (auto &point : this->intermediate_render_surface){
+		auto color_index = point.value;
+		auto palette = point.palette;
+		*(pixels++) = this->final_palette[!palette ? 0 : palette->data[color_index]];
+	}
 }
 
 void Renderer::set_y_offset(Point (&array)[logical_screen_height], int y0, int y1, const Point &p){
