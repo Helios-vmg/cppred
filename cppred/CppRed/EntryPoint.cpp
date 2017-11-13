@@ -1,12 +1,12 @@
-#include "CppRedEntryPoint.h"
+#include "EntryPoint.h"
 #include "Engine.h"
 #include "Renderer.h"
-#include "CppRedGame.h"
-#include "CppRedIntro.h"
-#include "CppRedTitleScreen.h"
-#include "CppRedMainMenu.h"
-#include "CppRedClearSave.h"
-#include "CppRedOakSpeech.h"
+#include "Game.h"
+#include "Intro.h"
+#include "TitleScreen.h"
+#include "MainMenu.h"
+#include "ClearSave.h"
+#include "OakSpeech.h"
 
 namespace CppRedScripts{
 

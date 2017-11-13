@@ -1,5 +1,5 @@
 #pragma once
-#include "CppRedPokemon.h"
+#include "Pokemon.h"
 
 struct InventorySpace{
 	ItemId item;

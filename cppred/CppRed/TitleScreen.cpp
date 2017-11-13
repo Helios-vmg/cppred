@@ -1,8 +1,8 @@
-#include "CppRedTitleScreen.h"
-#include "CppRedGame.h"
+#include "TitleScreen.h"
+#include "Game.h"
 #include "Engine.h"
 #include "Renderer.h"
-#include "CppRedData.h"
+#include "Data.h"
 #include "../CodeGeneration/output/audio.h"
 #include <cmath>
 

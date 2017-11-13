@@ -1,5 +1,5 @@
-#include "CppRedAudioInterface.h"
-#include "CppRedAudioProgram.h"
+#include "AudioInterface.h"
+#include "AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 
 CppRedAudioInterface::CppRedAudioInterface(CppRedAudioProgram &program): program(&program){

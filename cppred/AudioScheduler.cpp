@@ -1,7 +1,7 @@
 #include "AudioScheduler.h"
 #include "Engine.h"
 #include "AudioRenderer.h"
-#include "CppRedAudioProgram.h"
+#include "CppRed/AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 
 AudioScheduler::AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer> &&renderer, std::unique_ptr<CppRedAudioProgram> &&program): engine(&engine){

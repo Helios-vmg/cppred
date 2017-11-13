@@ -1,5 +1,5 @@
-#include "CppRedTextResources.h"
-#include "CppRedGame.h"
+#include "TextResources.h"
+#include "Game.h"
 #include "utility.h"
 #include "../CodeGeneration/output/audio.h"
 #include <sstream>

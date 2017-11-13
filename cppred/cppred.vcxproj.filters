@@ -5,26 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Scripts">
-      <UniqueIdentifier>{b3ca2bd6-4879-4f9d-9a0c-94164a540f54}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripts\Sources">
-      <UniqueIdentifier>{3da45571-c86e-45fb-a190-c2ba190fe749}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Scripts\Headers">
-      <UniqueIdentifier>{4dde1977-9e8e-42b8-a33a-23151494d84c}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Other">
-      <UniqueIdentifier>{f5b5fefb-753c-46c0-be03-55cf3b66706e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Other\Headers">
-      <UniqueIdentifier>{63939ce5-e16b-44fd-8d2b-9a69fc0e3d43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Other\Sources">
-      <UniqueIdentifier>{b2f52764-42bf-4c55-a683-182bf04f4cdf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine code">
       <UniqueIdentifier>{f65c77b1-553f-47ab-9b32-69f40df4d33b}</UniqueIdentifier>
     </Filter>
@@ -36,20 +16,43 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Game code">
-      <UniqueIdentifier>{89758a15-bdb8-4681-bd5b-815107368132}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game code\Sources">
-      <UniqueIdentifier>{037b666f-fbc9-4cd4-9164-29025617bb24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game code\Headers">
-      <UniqueIdentifier>{2f9d52fe-86db-4f6c-90a7-3a38fd65dd3d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine code\Headers\Audio">
       <UniqueIdentifier>{66e42197-8202-42a4-a0b3-d43d42f19004}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine code\Sources\Audio">
       <UniqueIdentifier>{eaf95cb2-d4d0-4920-8fd4-484f5b5bbc58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed">
+      <UniqueIdentifier>{2dd8d136-4c28-4dba-92c4-c81606d83b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Scripts">
+      <UniqueIdentifier>{b3ca2bd6-4879-4f9d-9a0c-94164a540f54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Scripts\Sources">
+      <UniqueIdentifier>{3da45571-c86e-45fb-a190-c2ba190fe749}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="CppRed\Scripts\Headers">
+      <UniqueIdentifier>{4dde1977-9e8e-42b8-a33a-23151494d84c}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="CppRed\Game code">
+      <UniqueIdentifier>{89758a15-bdb8-4681-bd5b-815107368132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Game code\Sources">
+      <UniqueIdentifier>{037b666f-fbc9-4cd4-9164-29025617bb24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Game code\Headers">
+      <UniqueIdentifier>{2f9d52fe-86db-4f6c-90a7-3a38fd65dd3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Other">
+      <UniqueIdentifier>{f5b5fefb-753c-46c0-be03-55cf3b66706e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Other\Headers">
+      <UniqueIdentifier>{63939ce5-e16b-44fd-8d2b-9a69fc0e3d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppRed\Other\Sources">
+      <UniqueIdentifier>{b2f52764-42bf-4c55-a683-182bf04f4cdf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -77,47 +80,47 @@
     <ClInclude Include="Sprite.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedClearSave.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/ClearSave.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedCommonFunctions.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/CommonFunctions.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedEntryPoint.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/EntryPoint.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedIntro.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/Intro.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedMainMenu.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/MainMenu.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedOakSpeech.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/OakSpeech.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedTitleScreen.h">
-      <Filter>Scripts\Headers</Filter>
+    <ClInclude Include="CppRed/TitleScreen.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsAsset.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedData.h">
-      <Filter>Other\Headers</Filter>
+    <ClInclude Include="CppRed/Data.h">
+      <Filter>CppRed\Other\Headers</Filter>
     </ClInclude>
     <ClInclude Include="PokemonInfo.h">
-      <Filter>Other\Headers</Filter>
+      <Filter>CppRed\Other\Headers</Filter>
     </ClInclude>
     <ClInclude Include="pokemon_version.h">
-      <Filter>Game code\Headers</Filter>
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedSavableData.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/SavableData.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedMiscClasses.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/MiscClasses.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedTextResources.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/TextResources.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="PublishingResource.h">
       <Filter>Engine code\Headers</Filter>
@@ -128,11 +131,11 @@
     <ClInclude Include="SoundGenerators.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedAudioProgram.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/AudioProgram.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="StaticSet.h">
-      <Filter>Other\Headers</Filter>
+      <Filter>CppRed\Other\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>Engine code\Headers</Filter>
@@ -152,8 +155,8 @@
     <ClInclude Include="AudioScheduler.h">
       <Filter>Engine code\Headers\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedAudioInterface.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/AudioInterface.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="VideoDevice.h">
       <Filter>Engine code\Headers</Filter>
@@ -161,17 +164,17 @@
     <ClInclude Include="Maps.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedTrainer.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/Trainer.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedPokemon.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/Pokemon.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedStatus.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/Status.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedGame.h">
-      <Filter>Game code\Headers</Filter>
+    <ClInclude Include="CppRed/Game.h">
+      <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -193,32 +196,32 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedCommonFunctions.cpp">
-      <Filter>Scripts\Sources</Filter>
+    <ClCompile Include="CppRed/CommonFunctions.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedEntryPoint.cpp">
-      <Filter>Scripts\Sources</Filter>
+    <ClCompile Include="CppRed/EntryPoint.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedIntro.cpp">
-      <Filter>Scripts\Sources</Filter>
+    <ClCompile Include="CppRed/Intro.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedTitleScreen.cpp">
-      <Filter>Scripts\Sources</Filter>
+    <ClCompile Include="CppRed/TitleScreen.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedData.cpp">
-      <Filter>Other\Sources</Filter>
+    <ClCompile Include="CppRed/Data.cpp">
+      <Filter>CppRed\Other\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedMainMenu.cpp">
-      <Filter>Scripts\Sources</Filter>
+    <ClCompile Include="CppRed/MainMenu.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedSavableData.cpp">
-      <Filter>Game code\Sources</Filter>
+    <ClCompile Include="CppRed/SavableData.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedTextResources.cpp">
-      <Filter>Game code\Sources</Filter>
+    <ClCompile Include="CppRed/TextResources.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedOakSpeech.cpp">
-      <Filter>Scripts\Sources</Filter>
+    <ClCompile Include="CppRed/OakSpeech.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
     <ClCompile Include="threads.cpp">
       <Filter>Engine code\Sources</Filter>
@@ -226,8 +229,8 @@
     <ClCompile Include="SoundGenerators.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedAudioProgram.cpp">
-      <Filter>Game code\Sources</Filter>
+    <ClCompile Include="CppRed/AudioProgram.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Console.cpp">
       <Filter>Engine code\Sources</Filter>
@@ -244,14 +247,14 @@
     <ClCompile Include="AudioScheduler.cpp">
       <Filter>Engine code\Sources\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedAudioInterface.cpp">
-      <Filter>Game code\Sources</Filter>
+    <ClCompile Include="CppRed/AudioInterface.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="VideoDevice.cpp">
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRedGame.cpp">
-      <Filter>Game code\Sources</Filter>
+    <ClCompile Include="CppRed/Game.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #include "Console.h"
 #include "Renderer.h"
 #include "Engine.h"
-#include "CppRedAudioProgram.h"
+#include "CppRed/AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 #include "font.inl"
 

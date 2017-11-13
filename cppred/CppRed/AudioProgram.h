@@ -1,5 +1,5 @@
 #pragma once
-#include "CppRedData.h"
+#include "Data.h"
 #include "../common/AudioCommandType.h"
 #include "../common/AudioResourceType.h"
 #include "pokemon_version.h"

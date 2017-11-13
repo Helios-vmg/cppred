@@ -1,6 +1,6 @@
 #include "Engine.h"
-#include "CppRedEntryPoint.h"
-#include "CppRedAudioProgram.h"
+#include "CppRed/EntryPoint.h"
+#include "CppRed/AudioProgram.h"
 #include "AudioScheduler.h"
 #include "AudioDevice.h"
 #include "HeliosRenderer.h"

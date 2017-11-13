@@ -1,6 +1,6 @@
 #pragma once
-#include "CppRedData.h"
-#include "CppRedStatus.h"
+#include "Data.h"
+#include "Status.h"
 #include "utility.h"
 #include <cstdint>
 

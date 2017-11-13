@@ -1,5 +1,5 @@
-#include "CppRedOakSpeech.h"
-#include "CppRedGame.h"
+#include "OakSpeech.h"
+#include "Game.h"
 #include "../CodeGeneration/output/audio.h"
 
 static void fade_in(CppRedGame &cppred){

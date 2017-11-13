@@ -1,5 +1,5 @@
-#include "CppRedAudioProgram.h"
-#include "CppRedData.h"
+#include "AudioProgram.h"
+#include "Data.h"
 #include "utility.h"
 #include "AudioRenderer.h"
 #include "../common/calculate_frequency.h"

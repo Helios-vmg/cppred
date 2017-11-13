@@ -1,6 +1,6 @@
 #pragma once
 #include "common_types.h"
-#include "CppRedAudioInterface.h"
+#include "CppRed/AudioInterface.h"
 #include "VideoDevice.h"
 #include <SDL.h>
 #include <memory>

@@ -1,4 +1,4 @@
-#include "CppRedGame.h"
+#include "Game.h"
 #include "Engine.h"
 #include "Renderer.h"
 #include "../CodeGeneration/output/audio.h"

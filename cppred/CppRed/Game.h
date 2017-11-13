@@ -1,14 +1,14 @@
 #pragma once
 #include "Engine.h"
 #include "utility.h"
-#include "CppRedData.h"
-#include "CppRedSavableData.h"
-#include "CppRedTextResources.h"
+#include "Data.h"
+#include "SavableData.h"
+#include "TextResources.h"
 #include "pokemon_version.h"
 #include <string>
 #include <unordered_map>
 #include <queue>
-#include "CppRedAudioInterface.h"
+#include "AudioInterface.h"
 
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
