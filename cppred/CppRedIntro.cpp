@@ -1,6 +1,6 @@
 #include "CppRedIntro.h"
 #include "CppRedCommonFunctions.h"
-#include "CppRedEngine.h"
+#include "CppRedGame.h"
 #include "Engine.h"
 #include "Renderer.h"
 #include "CppRedCommonFunctions.h"
@@ -86,7 +86,7 @@ public:
 	}
 };
 
-static bool animate_big_star(CppRedEngine &cppred, shooting_star_graphics &graphics){
+static bool animate_big_star(CppRedGame &cppred, shooting_star_graphics &graphics){
 	auto &engine = cppred.get_engine();
 	const double pixels_per_second = 240;
 	auto &star = *graphics.star;
@@ -110,7 +110,7 @@ static bool animate_big_star(CppRedEngine &cppred, shooting_star_graphics &graph
 	return ret;
 }
 
-static bool cycle_logo_palettes(CppRedEngine &cppred, shooting_star_graphics &graphics){
+static bool cycle_logo_palettes(CppRedGame &cppred, shooting_star_graphics &graphics){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	for (int i = 0; i < 3; i++){
@@ -123,7 +123,7 @@ static bool cycle_logo_palettes(CppRedEngine &cppred, shooting_star_graphics &gr
 	return false;
 }
 
-static bool animate_falling_stars(CppRedEngine &cppred, shooting_star_graphics &graphics){
+static bool animate_falling_stars(CppRedGame &cppred, shooting_star_graphics &graphics){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	const double falling_rate = 20;
@@ -150,7 +150,7 @@ static bool animate_falling_stars(CppRedEngine &cppred, shooting_star_graphics &
 	return false;
 }
 
-static bool shooting_star_scene(CppRedEngine &cppred){
+static bool shooting_star_scene(CppRedGame &cppred){
 	shooting_star_graphics graphics(cppred.get_engine());
 	cppred.get_audio_interface().play_sound(AudioResourceId::SFX_Shooting_Star);
 	return animate_big_star(cppred, graphics) || cycle_logo_palettes(cppred, graphics) || animate_falling_stars(cppred, graphics);
@@ -177,7 +177,7 @@ double parabola_func(double x){
 #define nidorino_parabola4 parabola_func<1, -85, 25>
 
 template <double Parabola(double)>
-void hop_sprite(CppRedEngine &cppred, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
+void hop_sprite(CppRedGame &cppred, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
 	auto &engine = cppred.get_engine();
 	cppred.get_audio_interface().play_sound(sfx);
 	auto t0 = engine.get_clock();
@@ -196,7 +196,7 @@ void hop_sprite(CppRedEngine &cppred, Sprite &sprite, AudioResourceId sfx, Point
 }
 
 template <bool MoveSprite>
-bool move_gengar(CppRedEngine &cppred, Sprite &nidorino, Point &position, int length, int sign = 1){
+bool move_gengar(CppRedGame &cppred, Sprite &nidorino, Point &position, int length, int sign = 1){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto t0 = engine.get_clock();
@@ -226,7 +226,7 @@ struct BattleSceneSprites{
 	std::shared_ptr<Sprite> nidorino[3];
 };
 
-static BattleSceneSprites battle_scene(CppRedEngine &cppred){
+static BattleSceneSprites battle_scene(CppRedGame &cppred){
 	const Point gengar_position = { 13, 7 };
 	const Point nidorino_initial_position = { -6, 72 };
 
@@ -363,7 +363,7 @@ static BattleSceneSprites battle_scene(CppRedEngine &cppred){
 
 namespace CppRedScripts{
 
-void intro(CppRedEngine &cppred){
+void intro(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	engine.get_renderer().set_enable_bg(true);

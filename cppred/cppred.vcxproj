@@ -38,7 +38,7 @@
     <ClInclude Include="CppRedClearSave.h" />
     <ClInclude Include="CppRedCommonFunctions.h" />
     <ClInclude Include="CppRedData.h" />
-    <ClInclude Include="CppRedEngine.h" />
+    <ClInclude Include="CppRedGame.h" />
     <ClInclude Include="CppRedMainMenu.h" />
     <ClInclude Include="CppRedMiscClasses.h" />
     <ClInclude Include="CppRedOakSpeech.h" />
@@ -78,7 +78,7 @@
     <ClCompile Include="CppRedAudioProgram.cpp" />
     <ClCompile Include="CppRedCommonFunctions.cpp" />
     <ClCompile Include="CppRedData.cpp" />
-    <ClCompile Include="CppRedEngine.cpp" />
+    <ClCompile Include="CppRedGame.cpp" />
     <ClCompile Include="CppRedIntro.cpp" />
     <ClCompile Include="CppRedMainMenu.cpp" />
     <ClCompile Include="CppRedOakSpeech.cpp" />

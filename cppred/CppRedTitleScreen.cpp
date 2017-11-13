@@ -1,5 +1,5 @@
 #include "CppRedTitleScreen.h"
-#include "CppRedEngine.h"
+#include "CppRedGame.h"
 #include "Engine.h"
 #include "Renderer.h"
 #include "CppRedData.h"
@@ -49,7 +49,7 @@ double limit_of_curve(double base){
 
 }
 
-static void bounce_logo(CppRedEngine &cppred){
+static void bounce_logo(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -76,7 +76,7 @@ static void bounce_logo(CppRedEngine &cppred){
 	}while (x < limit);
 }
 
-static void scroll_version(CppRedEngine &cppred){
+static void scroll_version(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -106,7 +106,7 @@ static double pokeball_trajectory(double x){
 static const Point pokemon_location = {5, 10};
 
 template <size_t N>
-static void pick_new_pokemon(CppRedEngine &cppred, const SpeciesId (&pokemons)[N], int &current_pokemon, Sprite &ball){
+static void pick_new_pokemon(CppRedGame &cppred, const SpeciesId (&pokemons)[N], int &current_pokemon, Sprite &ball){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	
@@ -167,7 +167,7 @@ static void pick_new_pokemon(CppRedEngine &cppred, const SpeciesId (&pokemons)[N
 
 namespace CppRedScripts{
 
-TitleScreenResult title_screen(CppRedEngine &cppred){
+TitleScreenResult title_screen(CppRedGame &cppred){
 	static const char version_offsets_red[] = { 0, 1, -1, 5, 6, 7, 8, 9 };
 	static const SpeciesId pokemons_red[] = {
 		SpeciesId::Charmander,

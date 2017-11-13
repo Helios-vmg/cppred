@@ -1,7 +1,7 @@
 #include "CppRedEntryPoint.h"
 #include "Engine.h"
 #include "Renderer.h"
-#include "CppRedEngine.h"
+#include "CppRedGame.h"
 #include "CppRedIntro.h"
 #include "CppRedTitleScreen.h"
 #include "CppRedMainMenu.h"
@@ -10,7 +10,7 @@
 
 namespace CppRedScripts{
 
-static MainMenuResult initial_sequence(CppRedEngine &cppred){
+static MainMenuResult initial_sequence(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	while (true){
 		intro(cppred);
@@ -26,7 +26,7 @@ static MainMenuResult initial_sequence(CppRedEngine &cppred){
 }
 
 void entry_point(Engine &engine, PokemonVersion version, CppRedAudioProgram &program){
-	CppRedEngine cppred(engine, version, program);
+	CppRedGame cppred(engine, version, program);
 	if (initial_sequence(cppred) == MainMenuResult::ContinueGame){
 		//Continue game.
 	}else{

@@ -107,9 +107,6 @@
     <ClInclude Include="PokemonInfo.h">
       <Filter>Other\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRedEngine.h">
-      <Filter>Game code\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="pokemon_version.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
@@ -173,6 +170,9 @@
     <ClInclude Include="CppRedStatus.h">
       <Filter>Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRedGame.h">
+      <Filter>Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -210,9 +210,6 @@
     </ClCompile>
     <ClCompile Include="CppRedMainMenu.cpp">
       <Filter>Scripts\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRedEngine.cpp">
-      <Filter>Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRedSavableData.cpp">
       <Filter>Game code\Sources</Filter>
@@ -252,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="VideoDevice.cpp">
       <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRedGame.cpp">
+      <Filter>Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

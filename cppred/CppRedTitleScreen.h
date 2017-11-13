@@ -1,7 +1,7 @@
 #pragma once
 
 class Engine;
-class CppRedEngine;
+class CppRedGame;
 
 namespace CppRedScripts{
 
@@ -10,6 +10,6 @@ enum class TitleScreenResult{
 	GoToClearSaveDialog,
 };
 
-TitleScreenResult title_screen(CppRedEngine &cppred);
+TitleScreenResult title_screen(CppRedGame &cppred);
 
 }

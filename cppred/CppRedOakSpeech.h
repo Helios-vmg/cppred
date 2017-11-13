@@ -2,7 +2,7 @@
 #include <string>
 
 class Engine;
-class CppRedEngine;
+class CppRedGame;
 
 namespace CppRedScripts{
 
@@ -11,6 +11,6 @@ struct NamesChosenDuringOakSpeech{
 	std::string rival_name;
 };
 
-NamesChosenDuringOakSpeech oak_speech(CppRedEngine &cppred);
+NamesChosenDuringOakSpeech oak_speech(CppRedGame &cppred);
 
 }

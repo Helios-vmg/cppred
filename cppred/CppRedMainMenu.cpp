@@ -1,11 +1,11 @@
 #include "CppRedMainMenu.h"
-#include "CppRedEngine.h"
+#include "CppRedGame.h"
 #include "CppRedMiscClasses.h"
 #include "Engine.h"
 #include "Renderer.h"
 #include "../CodeGeneration/output/audio.h"
 
-static void show_options(CppRedEngine &cppred){
+static void show_options(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -110,7 +110,7 @@ static void show_options(CppRedEngine &cppred){
 
 namespace CppRedScripts{
 
-MainMenuResult main_menu(CppRedEngine &cppred){
+MainMenuResult main_menu(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 

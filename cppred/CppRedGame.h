@@ -32,7 +32,7 @@ enum class NameEntryType{
 	Pokemon,
 };
 
-class CppRedEngine{
+class CppRedGame{
 	Engine *engine;
 	PokemonVersion version;
 	TextStore text_store;
@@ -50,7 +50,7 @@ class CppRedEngine{
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 public:
-	CppRedEngine(Engine &engine, PokemonVersion version, CppRedAudioProgram &program);
+	CppRedGame(Engine &engine, PokemonVersion version, CppRedAudioProgram &program);
 	void clear_screen();
 	Engine &get_engine(){
 		return *this->engine;

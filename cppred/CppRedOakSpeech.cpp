@@ -1,8 +1,8 @@
 #include "CppRedOakSpeech.h"
-#include "CppRedEngine.h"
+#include "CppRedGame.h"
 #include "../CodeGeneration/output/audio.h"
 
-static void fade_in(CppRedEngine &cppred){
+static void fade_in(CppRedGame &cppred){
 	const Palette palettes[] = {
 		BITMAP(01010100),
 		BITMAP(10101000),
@@ -21,7 +21,7 @@ static void fade_in(CppRedEngine &cppred){
 	}
 }
 
-static void scroll_from_the_right(CppRedEngine &cppred){
+static void scroll_from_the_right(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	const auto t = Renderer::tile_size;
@@ -39,7 +39,7 @@ static void scroll_from_the_right(CppRedEngine &cppred){
 	}
 }
 
-static void scroll_portrait(CppRedEngine &cppred, std::vector<Point> &red_pic, bool direction, const GraphicsAsset &asset){
+static void scroll_portrait(CppRedGame &cppred, std::vector<Point> &red_pic, bool direction, const GraphicsAsset &asset){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 	const auto t = Renderer::tile_size;
@@ -79,7 +79,7 @@ const char * const default_names_blue[] = {
 	"JOHN",
 };
 
-static std::string select_x_name(CppRedEngine &cppred, bool rival){
+static std::string select_x_name(CppRedGame &cppred, bool rival){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -101,7 +101,7 @@ static std::string select_x_name(CppRedEngine &cppred, bool rival){
 	return ret;
 }
 
-static void oak_introduction(CppRedEngine &cppred){
+static void oak_introduction(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -124,7 +124,7 @@ static void oak_introduction(CppRedEngine &cppred){
 	cppred.clear_screen();
 }
 
-static std::string select_player_name(CppRedEngine &cppred){
+static std::string select_player_name(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -141,7 +141,7 @@ static std::string select_player_name(CppRedEngine &cppred){
 	return ret;
 }
 
-static std::string select_rival_name(CppRedEngine &cppred){
+static std::string select_rival_name(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -158,7 +158,7 @@ static std::string select_rival_name(CppRedEngine &cppred){
 	return ret;
 }
 
-static void red_closing(CppRedEngine &cppred){
+static void red_closing(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 
@@ -185,7 +185,7 @@ static void red_closing(CppRedEngine &cppred){
 
 namespace CppRedScripts{
 
-NamesChosenDuringOakSpeech oak_speech(CppRedEngine &cppred){
+NamesChosenDuringOakSpeech oak_speech(CppRedGame &cppred){
 	auto &engine = cppred.get_engine();
 	auto &renderer = engine.get_renderer();
 

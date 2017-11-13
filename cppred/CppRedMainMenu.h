@@ -1,7 +1,7 @@
 #pragma once
 
 class Engine;
-class CppRedEngine;
+class CppRedGame;
 
 namespace CppRedScripts{
 
@@ -11,6 +11,6 @@ enum class MainMenuResult{
 	NewGame,
 };
 
-MainMenuResult main_menu(CppRedEngine &cppred);
+MainMenuResult main_menu(CppRedGame &cppred);
 
 }
