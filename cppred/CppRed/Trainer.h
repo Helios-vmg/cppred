@@ -11,12 +11,12 @@ struct InventorySpace{
 class Trainer{
 public:
 	static const size_t max_inventory_size;
-private:
+protected:
 	std::string name;
 	Party party;
 	std::vector<InventorySpace> inventory;
 public:
-	Trainer() = default;
+	Trainer(const std::string &name);
 };
 
 }

@@ -10,7 +10,12 @@
 #include <unordered_map>
 #include <queue>
 
+struct MapData;
+
 namespace CppRed{
+
+class Trainer;
+class PlayerCharacter;
 
 class VariableStore{
 	std::unordered_map<std::string, std::string *> string_variables;
@@ -46,13 +51,21 @@ class Game{
 	TextState text_state;
 	bool dialog_box_visible = false;
 	VariableStore variable_store;
-	CppRed::AudioInterface audio_interface;
+	AudioInterface audio_interface;
+	std::unique_ptr<PlayerCharacter> player_character;
+	std::unique_ptr<Trainer> rival;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
+	void render();
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
+	Game(Game &&) = delete;
+	Game(const Game &) = delete;
+	void operator=(Game &&) = delete;
+	void operator=(const Game &) = delete;
+	~Game();
 	void clear_screen();
 	Engine &get_engine(){
 		return *this->engine;
@@ -101,6 +114,7 @@ public:
 		return this->audio_interface;
 	}
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
+	void teleport_player(const MapData *destination, const Point &position);
 	void game_loop();
 
 	DEFINE_GETTER_SETTER(options)

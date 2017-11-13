@@ -12,7 +12,7 @@
 static void display_copyright(Engine &engine){
 	auto &renderer = engine.get_renderer();
 	renderer.draw_image_to_tilemap({ 2, 7 }, CopyrightScreen);
-	renderer.set_palette(PaletteRegion::Background, BITMAP(11100100));
+	renderer.set_palette(PaletteRegion::Background, default_palette);
 	engine.wait(3);
 }
 

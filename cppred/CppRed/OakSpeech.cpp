@@ -79,14 +79,18 @@ const char * const default_names_blue[] = {
 	"JOHN",
 };
 
+decltype(default_names_red) &get_default_names(PokemonVersion version, bool flip = false){
+	return ((version == PokemonVersion::Red) ^ flip) ? default_names_red : default_names_blue;
+}
+
 static std::string select_x_name(CppRed::Game &game, bool rival){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
 	std::vector<std::string> items;
 	items.push_back("NEW NAME");
-	auto &default_names_player = game.get_version() == PokemonVersion::Red ? default_names_red : default_names_blue;
-	auto &default_names_rival = game.get_version() == PokemonVersion::Red ? default_names_blue : default_names_red;
+	auto &default_names_player = get_default_names(game.get_version());
+	auto &default_names_rival = get_default_names(game.get_version(), true);
 	auto &default_names = *(!rival ? &default_names_player : &default_names_rival);
 	for (auto s : default_names)
 		items.push_back(s);
@@ -188,6 +192,7 @@ namespace Scripts{
 
 NamesChosenDuringOakSpeech oak_speech(Game &game){
 	NamesChosenDuringOakSpeech ret;
+#ifndef CPPRED_TESTING
 	oak_introduction(game);
 	ret.player_name = select_player_name(game);
 	ret.rival_name = select_rival_name(game);
@@ -196,6 +201,13 @@ NamesChosenDuringOakSpeech oak_speech(Game &game){
 	auto &variables = game.get_variable_store();
 	variables.delete_string("temp_player_name");
 	variables.delete_string("temp_rival_name");
+#else
+	game.get_audio_interface().play_sound(AudioResourceId::Stop);
+	auto &default_names_player = get_default_names(game.get_version());
+	auto &default_names_rival = get_default_names(game.get_version(), true);
+	ret.player_name = default_names_player[0];
+	ret.rival_name = default_names_rival[0];
+#endif
 	return ret;
 }
 

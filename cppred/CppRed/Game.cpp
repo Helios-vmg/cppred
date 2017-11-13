@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "Engine.h"
 #include "Renderer.h"
+#include "PlayerCharacter.h"
+#include "Maps.h"
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 
@@ -32,6 +34,8 @@ Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program
 	this->engine->set_on_yield([this](){ this->update_joypad_state(); });
 	this->reset_dialog_state();
 }
+
+Game::~Game(){}
 
 void Game::clear_screen(){
 	this->engine->get_renderer().clear_screen();
@@ -467,14 +471,57 @@ std::string Game::get_name_from_user(SpeciesId species, int max_length){
 	return ret;
 }
 
-#if 0
-void CppRedEngine::create_main_characters(const std::string &player_name, const std::string &rival_name){
-	
+void Game::create_main_characters(const std::string &player_name, const std::string &rival_name){
+	this->player_character.reset(new PlayerCharacter(player_name, this->engine->get_renderer()));
+	this->rival.reset(new Trainer(rival_name));
 }
 
-void CppRedEngine::game_loop(){
-	
+void Game::teleport_player(const MapData *destination, const Point &position){
+	this->player_character->teleport(destination, position);
 }
-#endif
+
+void Game::game_loop(){
+	auto &renderer = this->engine->get_renderer();
+	renderer.set_enable_bg(true);
+	renderer.set_enable_sprites(true);
+	renderer.set_palette(PaletteRegion::Background, default_palette);
+	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
+	while (true){
+		this->render();
+		this->engine->yield();
+	}
+}
+
+void Game::render(){
+	auto &renderer = this->engine->get_renderer();
+	auto &bg = renderer.get_tilemap(TileRegion::Background);
+	auto map = this->player_character->get_current_map();
+	this->player_character->set_visible_sprite();
+	if (!map){
+		renderer.fill_rectangle(TileRegion::Background, { 0, 0 }, { Tilemap::w, Tilemap::h }, Tile());
+	}else{
+		auto pos = this->player_character->get_map_position();
+		auto blockset = map->tileset->blockset.first;
+		auto tileset = map->tileset->tiles;
+		auto data = map->map_data.first;
+		for (int y = 0; y < Renderer::logical_screen_tile_height; y++){
+			for (int x = 0; x < Renderer::logical_screen_tile_width; x++){
+				auto &tile = bg.tiles[x + y * Tilemap::w];
+				int x2 = x / 2 - PlayerCharacter::screen_block_offset_x + pos.x;
+				int y2 = y / 2 - PlayerCharacter::screen_block_offset_y + pos.y;
+				if (x2 < 0 || x2 >= map->width || y2 < 0 || y2 >= map->height){
+					tile.tile_no = 3;
+				}else{
+					auto block = data[x2 + y2 * map->width];
+					auto offset = x % 2 + y % 2 * 2;
+					tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
+				}
+				tile.flipped_x = false;
+				tile.flipped_y = false;
+				tile.palette = null_palette;
+			}
+		}
+	}
+}
 
 }

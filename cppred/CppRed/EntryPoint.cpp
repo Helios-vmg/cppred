@@ -7,11 +7,13 @@
 #include "MainMenu.h"
 #include "ClearSave.h"
 #include "OakSpeech.h"
+#include "Maps.h"
 
 namespace CppRed{
 namespace Scripts{
 
 static MainMenuResult initial_sequence(Game &game){
+#ifndef CPPRED_TESTING
 	auto &engine = game.get_engine();
 	while (true){
 		intro(game);
@@ -24,6 +26,9 @@ static MainMenuResult initial_sequence(Game &game){
 		//assert(title_screen_result == TitleScreenResult::GoToClearSaveDialog);
 		//clear_save_dialog(game);
 	}
+#else
+	return MainMenuResult::NewGame;
+#endif
 }
 
 void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program){
@@ -33,6 +38,7 @@ void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgram &p
 	}else{
 		auto names = oak_speech(game);
 		game.create_main_characters(names.player_name, names.rival_name);
+		game.teleport_player(&Maps::RedsHouse2F, {3, 6});
 		game.game_loop();
 		assert(false);
 	}
