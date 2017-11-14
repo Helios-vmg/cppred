@@ -183,8 +183,8 @@ void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
 	auto h = sprite.get_h() * tile_size;
 	auto x0 = std::max(sprx, 0);
 	auto y0 = std::max(spry, 0);
-	auto x1 = std::min(sprx + w, logical_screen_width);
-	auto y1 = std::min(spry + h, logical_screen_height);
+	auto x1 = std::min(sprx + w, (int)logical_screen_width);
+	auto y1 = std::min(spry + h, (int)logical_screen_height);
 
 	for (int y = y0, sprite_offset_y = 0; y < y1; y++, sprite_offset_y++){
 		for (int x = x0, sprite_offset_x = 0; x < x1; x++, sprite_offset_x++){

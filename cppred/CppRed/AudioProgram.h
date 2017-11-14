@@ -187,7 +187,7 @@ class AudioProgram{
 	void compute_fade_out();
 	bool is_sfx_playing();
 public:
-	CppRed::AudioProgram(AudioRenderer &renderer, PokemonVersion);
+	AudioProgram(AudioRenderer &renderer, PokemonVersion);
 	void update(double now);
 	void play_sound(AudioResourceId);
 	void pause_music();
