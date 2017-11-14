@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ParseRgbdsObj
 {
-    class ObjParser
+    public class ObjParser
     {
         static byte ReadByte(byte[] buffer, ref int offset)
         {
@@ -58,7 +58,7 @@ namespace ParseRgbdsObj
             return ret;
         }
 
-        public readonly List<Symbol> Symbols = new List<Symbol>(); 
+        public readonly Dictionary<string, Symbol> Symbols = new Dictionary<string, Symbol>(); 
         public readonly List<Section> Sections = new List<Section>(); 
 
         public ObjParser(string path)
@@ -74,10 +74,27 @@ namespace ParseRgbdsObj
             var symbolCount = ReadUint32(buffer, ref offset);
             var sectionCount = ReadUint32(buffer, ref offset);
             for (uint i = 0; i < symbolCount; i++)
-                Symbols.Add(new Symbol(buffer, ref offset));
+            {
+                var s = new Symbol(buffer, ref offset);
+                Symbols[s.Name] = s;
+            }
             for (uint i = 0; i < sectionCount; i++)
                 Sections.Add(new Section(buffer, ref offset));
             Debug.Assert(offset == buffer.Length);
+        }
+
+        public byte[] CopySymbolData(string name, int length)
+        {
+            var symbol = Symbols[name];
+            var section = Sections[(int)symbol.SectionId];
+            return section.Data.Skip((int)symbol.SectionOffset).Take(length).ToArray();
+        }
+
+        public Tuple<uint, uint> FindSymbolLocation(string name)
+        {
+            var symbol = Symbols[name];
+            var section = Sections[(int)symbol.SectionId];
+            return new Tuple<uint, uint>(section.Bank, section.Org + symbol.SectionOffset + (section.Bank > 0 ? 0x4000U : 0));
         }
 
         public enum SymbolType

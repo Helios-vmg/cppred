@@ -74,8 +74,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;FREEIMAGE_LIB;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\FreeImage\Dist\x32\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -93,8 +93,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;FREEIMAGE_LIB;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\FreeImage\Dist\x32\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -114,8 +114,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;FREEIMAGE_LIB;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\FreeImage\Dist\x32\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -128,24 +128,48 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\base64.h" />
     <ClInclude Include="..\common\sha1.h" />
     <ClInclude Include="code_generators.h" />
+    <ClInclude Include="FreeImageInitializer.h" />
+    <ClInclude Include="generate_audio.h" />
+    <ClInclude Include="generate_graphics.h" />
+    <ClInclude Include="generate_items.h" />
+    <ClInclude Include="generate_maps.h" />
+    <ClInclude Include="generate_moves.h" />
+    <ClInclude Include="generate_pokemon_data.h" />
+    <ClInclude Include="generate_text.h" />
+    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="Maps.h" />
+    <ClInclude Include="Maps2.h" />
+    <ClInclude Include="PokemonData.h" />
+    <ClInclude Include="ReorderedBlockset.h" />
+    <ClInclude Include="Tilesets2.h" />
+    <ClInclude Include="Tilesets.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\base64.cpp" />
     <ClCompile Include="..\common\sha1.cpp" />
-    <ClCompile Include="generate_bitmaps.cpp" />
-    <ClCompile Include="generate_charmap.cpp" />
+    <ClCompile Include="FreeImageInitializer.cpp" />
     <ClCompile Include="generate_graphics.cpp" />
     <ClCompile Include="generate_items.cpp" />
     <ClCompile Include="generate_maps.cpp" />
     <ClCompile Include="generate_moves.cpp" />
     <ClCompile Include="generate_pokemon_data.cpp" />
-    <ClCompile Include="generate_rams.cpp" />
     <ClCompile Include="generate_audio.cpp" />
     <ClCompile Include="generate_text.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Maps.cpp" />
+    <ClCompile Include="Maps2.cpp" />
+    <ClCompile Include="PokemonData.cpp" />
+    <ClCompile Include="ReorderedBlockset.cpp" />
+    <ClCompile Include="Tilesets2.cpp" />
+    <ClCompile Include="Tilesets.cpp" />
     <ClCompile Include="Type.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>

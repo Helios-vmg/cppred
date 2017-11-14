@@ -3,21 +3,18 @@ cmake_minimum_required (VERSION 3.0)
 project (cppred)
 
 file(GLOB SOURCES "*.cpp")
+file(GLOB CPPRED_SOURCES "CppRed/*.cpp")
 
 INCLUDE(FindPkgConfig)
 
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 
-INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
-
-option(BUILD_RED_VERSION "Build Red version" ON)
-
-if(BUILD_RED_VERSION)
-  add_definitions(-DPOKEMON_VERSION=RED)
-else()
-  add_definitions(-DPOKEMON_VERSION=BLUE)
-endif()
+INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} .)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
-add_executable(cppred ${SOURCES})
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_executable(cppred ${SOURCES} ${CPPRED_SOURCES})
 target_link_libraries(cppred ${SDL2_LIBRARIES} pthread boost_coroutine boost_context)

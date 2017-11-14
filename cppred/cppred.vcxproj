@@ -5,12 +5,12 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseFast|Win32">
-      <Configuration>ReleaseFast</Configuration>
+    <ProjectConfiguration Include="ReleaseTesting|Win32">
+      <Configuration>ReleaseTesting</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseFast|x64">
-      <Configuration>ReleaseFast</Configuration>
+    <ProjectConfiguration Include="ReleaseTesting|x64">
+      <Configuration>ReleaseTesting</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -33,34 +33,39 @@
     <ClInclude Include="AudioScheduler.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="CppRedAudioInterface.h" />
-    <ClInclude Include="CppRedAudioProgram.h" />
-    <ClInclude Include="CppRedClearSave.h" />
-    <ClInclude Include="CppRedCommonFunctions.h" />
-    <ClInclude Include="CppRedData.h" />
-    <ClInclude Include="CppRedEngine.h" />
-    <ClInclude Include="CppRedMainMenu.h" />
-    <ClInclude Include="CppRedMiscClasses.h" />
-    <ClInclude Include="CppRedOakSpeech.h" />
-    <ClInclude Include="CppRedSavableData.h" />
-    <ClInclude Include="CppRedTextResources.h" />
-    <ClInclude Include="CppRedTitleScreen.h" />
+    <ClInclude Include="CppRed/AudioInterface.h" />
+    <ClInclude Include="CppRed/AudioProgram.h" />
+    <ClInclude Include="CppRed/ClearSave.h" />
+    <ClInclude Include="CppRed/CommonFunctions.h" />
+    <ClInclude Include="CppRed/Data.h" />
+    <ClInclude Include="CppRed/Game.h" />
+    <ClInclude Include="CppRed/MainMenu.h" />
+    <ClInclude Include="CppRed/MiscClasses.h" />
+    <ClInclude Include="CppRed/OakSpeech.h" />
+    <ClInclude Include="CppRed/Pokemon.h" />
+    <ClInclude Include="CppRed/SavableData.h" />
+    <ClInclude Include="CppRed/Status.h" />
+    <ClInclude Include="CppRed/TextResources.h" />
+    <ClInclude Include="CppRed/TitleScreen.h" />
+    <ClInclude Include="CppRed\PlayerCharacter.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GraphicsAsset.h" />
     <ClInclude Include="HeliosRenderer.h" />
     <ClInclude Include="HighResolutionClock.h" />
-    <ClInclude Include="CppRedIntro.h" />
+    <ClInclude Include="CppRed/Intro.h" />
     <ClInclude Include="InputState.h" />
+    <ClInclude Include="Maps.h" />
     <ClInclude Include="PokemonInfo.h" />
     <ClInclude Include="pokemon_version.h" />
     <ClInclude Include="PublishingResource.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="CppRedEntryPoint.h" />
+    <ClInclude Include="CppRed/EntryPoint.h" />
     <ClInclude Include="RendererStructs.h" />
     <ClInclude Include="SoundGenerators.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StaticSet.h" />
     <ClInclude Include="threads.h" />
+    <ClInclude Include="CppRed/Trainer.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="VideoDevice.h" />
   </ItemGroup>
@@ -69,23 +74,25 @@
     <ClCompile Include="AudioRenderer.cpp" />
     <ClCompile Include="AudioScheduler.cpp" />
     <ClCompile Include="Console.cpp" />
-    <ClCompile Include="CppRedAudioInterface.cpp" />
+    <ClCompile Include="CppRed/AudioInterface.cpp" />
+    <ClCompile Include="CppRed\PlayerCharacter.cpp" />
+    <ClCompile Include="CppRed\Trainer.cpp" />
     <ClCompile Include="HeliosRenderer.cpp" />
-    <ClCompile Include="CppRedAudioProgram.cpp" />
-    <ClCompile Include="CppRedCommonFunctions.cpp" />
-    <ClCompile Include="CppRedData.cpp" />
-    <ClCompile Include="CppRedEngine.cpp" />
-    <ClCompile Include="CppRedIntro.cpp" />
-    <ClCompile Include="CppRedMainMenu.cpp" />
-    <ClCompile Include="CppRedOakSpeech.cpp" />
-    <ClCompile Include="CppRedSavableData.cpp" />
-    <ClCompile Include="CppRedTextResources.cpp" />
-    <ClCompile Include="CppRedTitleScreen.cpp" />
+    <ClCompile Include="CppRed/AudioProgram.cpp" />
+    <ClCompile Include="CppRed/CommonFunctions.cpp" />
+    <ClCompile Include="CppRed/Data.cpp" />
+    <ClCompile Include="CppRed/Game.cpp" />
+    <ClCompile Include="CppRed/Intro.cpp" />
+    <ClCompile Include="CppRed/MainMenu.cpp" />
+    <ClCompile Include="CppRed/OakSpeech.cpp" />
+    <ClCompile Include="CppRed/SavableData.cpp" />
+    <ClCompile Include="CppRed/TextResources.cpp" />
+    <ClCompile Include="CppRed/TitleScreen.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="HighResolutionClock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="CppRedEntryPoint.cpp" />
+    <ClCompile Include="CppRed/EntryPoint.cpp" />
     <ClCompile Include="SoundGenerators.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="threads.cpp" />
@@ -112,7 +119,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -132,7 +139,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -150,7 +157,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -159,7 +166,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|x64'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -173,14 +180,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin64\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin64\</OutDir>
   </PropertyGroup>
@@ -190,7 +197,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -213,7 +220,7 @@ cd %a%
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -262,7 +269,7 @@ cd %a%
 ..\bin\code_generation.exe</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
@@ -270,7 +277,7 @@ cd %a%
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OmitFramePointers>true</OmitFramePointers>
@@ -327,7 +334,7 @@ cd %a%
 ..\bin\code_generation.exe</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFast|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
@@ -335,7 +342,7 @@ cd %a%
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>

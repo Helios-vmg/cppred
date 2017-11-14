@@ -1,4 +1,4 @@
-#include "code_generators.h"
+#include "generate_text.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -221,7 +221,7 @@ static void generate_text_internal(known_hashes_t &known_hashes){
 	std::ofstream text_inl("output/text.inl");
 	text_inl << generated_file_warning <<
 		"\n"
-		"const byte_t packed_text_data[] = ";
+		"extern const byte_t packed_text_data[] = ";
 	write_buffer_to_stream(text_inl, binary_data);
 	text_inl << ";\n";
 

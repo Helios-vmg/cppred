@@ -102,7 +102,7 @@ public:
 		return std::make_unique<IntegerLiteralNumber>(N);
 	}
 	std::string get_actual_type_name() const override;
-	std::string get_virtual_type_name() const{
+	std::string get_virtual_type_name() const override{
 		return "unsigned";
 	}
 	std::string get_callback_struct() const override;

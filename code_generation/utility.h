@@ -4,8 +4,16 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <memory>
+
+#define DELETE_COPY_CONSTRUCTORS(x) \
+	x(const x &) = delete; \
+	x(x &&) = delete; \
+	void operator=(const x &) = delete; \
+	void operator=(x &&) = delete;
 
 typedef std::map<std::string, std::string> known_hashes_t;
+typedef std::uint8_t byte_t;
 
 extern const char * const generated_file_warning;
 
@@ -24,6 +32,10 @@ bool is_hex(char c);
 void write_buffer_to_stream(std::ostream &, const std::vector<std::uint8_t> &);
 void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t);
 void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &);
+typedef std::map<std::string, std::shared_ptr<std::vector<byte_t>>> data_map_t;
+data_map_t read_data_csv(const char *path);
+void write_data_csv(const char *path, const data_map_t &);
+std::vector<byte_t> compress_memory_DEFLATE(std::vector<byte_t> &in_data);
 
 template <typename T>
 void write_collection_to_stream(std::ostream &stream, const T &begin, const T &end){

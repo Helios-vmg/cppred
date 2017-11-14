@@ -21,7 +21,10 @@ class Renderer;
 class Console;
 class AudioDevice;
 class AudioScheduler;
-class CppRedAudioProgram;
+
+namespace CppRed{
+class AudioProgram;
+}
 
 class Engine{
 	HighResolutionClock clock;
@@ -41,12 +44,14 @@ class Engine{
 	std::unique_ptr<AudioScheduler> audio_scheduler;
 	std::unique_ptr<Console> console;
 	bool debug_mode = false;
-	bool restart_requested = false;
+	std::mutex exception_thrown_mutex;
+	std::unique_ptr<std::string> exception_thrown;
 
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRedAudioProgram &);
+	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRed::AudioProgram &);
 	bool handle_events();
+	bool update_console(PokemonVersion &version, CppRed::AudioProgram &program);
 public:
 	Engine();
 	~Engine();
@@ -73,6 +78,7 @@ public:
 
 	void go_to_debug();
 	void restart();
+	void throw_exception(const std::exception &e);
 	static const int screen_scale = 4;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;

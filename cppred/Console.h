@@ -1,27 +1,32 @@
 #pragma once
 #include "common_types.h"
-#include "CppRedAudioInterface.h"
-#include "Renderer.h"
+#include "CppRed/AudioInterface.h"
+#include "VideoDevice.h"
 #include <SDL.h>
 #include <memory>
 #include <vector>
 #include <boost/coroutine2/all.hpp>
+#include "pokemon_version.h"
 
 class Engine;
 
 enum class ConsoleRequestId{
 	None,
 	GetAudioProgram,
+	Restart,
+	FlipVersion,
+	GetVersion,
 };
 
 struct ConsoleCommunicationChannel{
 	ConsoleRequestId request_id = ConsoleRequestId::None;
-	CppRedAudioProgram *audio_program = nullptr;
+	CppRed::AudioProgram *audio_program = nullptr;
+	PokemonVersion version;
 };
 
 class Console{
 	Engine *engine;
-	Renderer *renderer;
+	VideoDevice *device;
 	bool visible;
 	Texture background;
 	Texture text_layer;
@@ -47,12 +52,14 @@ class Console{
 
 	void coroutine_entry_point();
 	void yield();
-	CppRedAudioProgram &get_audio_program();
+	CppRed::AudioProgram &get_audio_program();
 
 	int handle_menu(const std::vector<std::string> &, int default_item = 0, int item_separation = 1);
 	void draw_long_menu(const std::vector<std::string> &strings, int item_separation = 1);
 	void sound_test();
-
+	void restart_game();
+	void flip_version();
+	PokemonVersion get_version();
 public:
 	Console(Engine &engine);
 	void toggle_visible(){

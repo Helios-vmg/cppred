@@ -1,4 +1,4 @@
-#include "code_generators.h"
+#include "generate_audio.h"
 #include "../FreeImage/Source/ZLib/zlib.h"
 #include "../common/calculate_frequency.h"
 #include "../common/AudioCommandType.h"
@@ -691,40 +691,39 @@ public:
 	}
 };
 
-static void write_header(const char *path, const std::vector<AudioHeader> &headers){
-	std::ofstream header(path);
-	header << "#pragma once\n"
-		<< generated_file_warning <<
-		"\n"
-		"extern const byte_t audio_sequence_data[];\n"
-		"extern const size_t audio_sequence_data_size;\n"
-		"extern const byte_t audio_header_data[];\n"
-		"extern const size_t audio_header_data_size;\n"
-		"enum class AudioResourceId{\n"
-		"    None = 0,\n";
-	size_t i = 1;
-	for (auto &h : headers)
-		header << "    " << h.get_name() << " = " << i++ << ",\n";
-	header << "    Stop = " << i++ << ",\n"
-		"};\n";
-}
-
-static void write_source(const char *path, const AudioData &data){
-	std::vector<std::uint8_t> sequences, headers;
+static void write_header_and_source(const char *header_path, const char *source_path, const std::vector<AudioHeader> &headers, const AudioData &data){
+	std::vector<std::uint8_t> sequences, serialized_headers;
 	data.serialize_sequences(sequences);
-	data.serialize_headers(headers);
+	data.serialize_headers(serialized_headers);
 
-	std::ofstream source(path);
-	source << generated_file_warning <<
-		"\n"
-		"const byte_t audio_sequence_data[] = ";
-	write_buffer_to_stream(source, sequences);
-	source << std::dec << ";\n"
-		"const size_t audio_sequence_data_size = " << sequences.size() << ";\n"
-		"const byte_t audio_header_data[] = ";
-	write_buffer_to_stream(source, headers);
-	source << std::dec << ";\n"
-		"const size_t audio_header_data_size = " << headers.size() << ";\n";
+	{
+		std::ofstream header(header_path);
+		header << "#pragma once\n"
+			<< generated_file_warning <<
+			"\n"
+			"extern const byte_t audio_sequence_data[];\n"
+			"static const size_t audio_sequence_data_size = " << sequences.size() << ";\n"
+			"extern const byte_t audio_header_data[];\n"
+			"static const size_t audio_header_data_size = " << serialized_headers.size() << ";\n"
+			"enum class AudioResourceId{\n"
+			"    None = 0,\n";
+		size_t i = 1;
+		for (auto &h : headers)
+			header << "    " << h.get_name() << " = " << i++ << ",\n";
+		header << "    Stop = " << i++ << ",\n"
+			"};\n";
+	}
+	{
+		std::ofstream source(source_path);
+		source << generated_file_warning <<
+			"\n"
+			"extern const byte_t audio_sequence_data[] = ";
+		write_buffer_to_stream(source, sequences);
+		source << std::dec << ";\n"
+			"extern const byte_t audio_header_data[] = ";
+		write_buffer_to_stream(source, serialized_headers);
+		source << std::dec << ";\n";
+	}
 }
 
 static void generate_audio_internal(known_hashes_t &known_hashes){
@@ -738,8 +737,7 @@ static void generate_audio_internal(known_hashes_t &known_hashes){
 	std::ofstream log_file("output/audio_generation.log");
 	AudioData data(log_file);
 
-	write_header("output/audio.h", data.get_headers());
-	write_source("output/audio.inl", data);
+	write_header_and_source("output/audio.h", "output/audio.inl", data.get_headers(), data);
 
 	known_hashes[hash_key] = current_hash;
 }

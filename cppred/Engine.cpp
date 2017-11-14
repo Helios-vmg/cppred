@@ -1,6 +1,6 @@
 #include "Engine.h"
-#include "CppRedEntryPoint.h"
-#include "CppRedAudioProgram.h"
+#include "CppRed/EntryPoint.h"
+#include "CppRed/AudioProgram.h"
 #include "AudioScheduler.h"
 #include "AudioDevice.h"
 #include "HeliosRenderer.h"
@@ -33,11 +33,10 @@ void Engine::initialize_audio(){
 	this->audio_device.reset(new AudioDevice);
 }
 
-const char *to_string(PokemonVersion version){
+static const char *to_string(PokemonVersion version){
 	switch (version){
 		case PokemonVersion::Red:
 			return "Pok\xC3\xA9mon Red";
-			break;
 		case PokemonVersion::Blue:
 			return "Pok\xC3\xA9mon Blue";
 		default:
@@ -54,13 +53,12 @@ void Engine::run(){
 	while (continue_running){
 		this->video_device->set_window_title(to_string(version));
 		this->wait_remainder = 0;
-		this->restart_requested = false;
 		this->debug_mode = false;
 		this->renderer.reset(new Renderer(*this->video_device));
 		if (!this->console)
 			this->console.reset(new Console(*this));
 		auto audio_renderer = std::make_unique<HeliosRenderer>(*this->audio_device);
-		auto programp = std::make_unique<CppRedAudioProgram>(*audio_renderer, version);
+		auto programp = std::make_unique<CppRed::AudioProgram>(*audio_renderer, version);
 		auto &program = *programp;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(audio_renderer), std::move(programp)));
 		this->audio_scheduler->start();
@@ -69,23 +67,18 @@ void Engine::run(){
 		this->yielder = nullptr;
 
 		//Main loop.
-		while ((continue_running &= this->handle_events()) && !this->restart_requested){
+		while ((continue_running &= this->handle_events()) && this->update_console(version, program)){
+			{
+				LOCK_MUTEX(this->exception_thrown_mutex);
+				if (this->exception_thrown)
+					throw std::runtime_error(*this->exception_thrown);
+			}
+
 			if (!this->debug_mode){
 				//Resume game code.
 				std::swap(yielder, this->yielder);
 				continue_running &= !!(*this->coroutine)();
 				std::swap(yielder, this->yielder);
-			}
-
-			auto console_request = this->console->update();
-			if (console_request){
-				switch (console_request->request_id){
-					case ConsoleRequestId::GetAudioProgram:
-						console_request->audio_program = &program;
-						break;
-					default:
-						break;
-				}
 			}
 
 			this->renderer->render();
@@ -99,10 +92,35 @@ void Engine::run(){
 	}
 }
 
-void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRedAudioProgram &program){
+bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgram &program){
+	while (true){
+		auto console_request = this->console->update();
+		if (!console_request)
+			return true;
+		switch (console_request->request_id){
+			case ConsoleRequestId::GetAudioProgram:
+				console_request->audio_program = &program;
+				break;
+			case ConsoleRequestId::Restart:
+				return false;
+			case ConsoleRequestId::FlipVersion:
+				version = version == PokemonVersion::Red ? PokemonVersion::Blue : PokemonVersion::Red;
+				break;
+			case ConsoleRequestId::GetVersion:
+				console_request->version = version;
+				break;
+			default:
+				return true;
+		}
+	}
+	return true;
+}
+
+
+void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRed::AudioProgram &program){
 	this->yielder = &yielder;
 	this->yield();
-	CppRedScripts::entry_point(*this, version, program);
+	CppRed::Scripts::entry_point(*this, version, program);
 }
 
 void Engine::yield(){
@@ -218,6 +236,7 @@ void Engine::go_to_debug(){
 	this->debug_mode = true;
 }
 
-void Engine::restart(){
-	this->restart_requested = true;
+void Engine::throw_exception(const std::exception &e){
+	LOCK_MUTEX(this->exception_thrown_mutex);
+	this->exception_thrown = std::make_unique<std::string>(e.what());
 }
