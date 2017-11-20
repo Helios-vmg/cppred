@@ -179,6 +179,9 @@
     <ClInclude Include="CppRed\PlayerCharacter.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="TrainerData.h">
+      <Filter>Engine code</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">

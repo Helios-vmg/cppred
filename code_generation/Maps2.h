@@ -10,8 +10,12 @@ class Map2{
 	unsigned width, height;
 	std::string map_data_name;
 	std::shared_ptr<std::vector<byte_t>> map_data;
-	//scripts
-	//objects
+	std::string script;
+	std::string objects;
+	std::string random_encounters;
+	std::string fishing_encounters;
+	std::string music;
+	unsigned border_block;
 public:
 	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data);
 	DELETE_COPY_CONSTRUCTORS(Map2);
@@ -33,6 +37,24 @@ public:
 	}
 	unsigned get_height() const{
 		return this->height;
+	}
+	const std::string &get_script() const{
+		return this->script;
+	}
+	const std::string &get_objects() const{
+		return this->objects;
+	}
+	const std::string &get_random_encounters() const{
+		return this->random_encounters;
+	}
+	const std::string &get_fishing_encounters() const{
+		return this->fishing_encounters;
+	}
+	const std::string &get_music() const{
+		return this->music;
+	}
+	unsigned get_border_block() const{
+		return this->border_block;
 	}
 };
 

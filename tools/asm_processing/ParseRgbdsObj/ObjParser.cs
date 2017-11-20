@@ -82,7 +82,7 @@ namespace ParseRgbdsObj
                 Sections.Add(new Section(buffer, ref offset));
             Debug.Assert(offset == buffer.Length);
         }
-
+        
         public byte[] CopySymbolData(string name, int length)
         {
             var symbol = Symbols[name];

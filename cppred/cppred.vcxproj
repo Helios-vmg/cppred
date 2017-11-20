@@ -66,6 +66,7 @@
     <ClInclude Include="StaticSet.h" />
     <ClInclude Include="threads.h" />
     <ClInclude Include="CppRed/Trainer.h" />
+    <ClInclude Include="TrainerData.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="VideoDevice.h" />
   </ItemGroup>

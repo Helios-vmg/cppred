@@ -3,7 +3,20 @@
 #include "../common/csv_parser.h"
 
 Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2 &tilesets){
-	static const std::vector<std::string> order = { "name", "tileset", "width", "height", "map_data", "script", "objects", "id" };
+	static const std::vector<std::string> order = {
+		"name",				  //  0
+		"tileset",			  //  1
+		"width",			  //  2
+		"height",			  //  3
+		"map_data",			  //  4
+		"script",			  //  5
+		"objects",			  //  6
+		"id",				  //  7
+		"random_encounters",  //  8
+		"fishing_encounters", //  9
+		"music",			  // 10
+		"border_block",		  // 11
+	};
 	const int id_offset = 7;
 
 	CsvParser csv(maps_path);
@@ -45,6 +58,12 @@ Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, c
 	this->map_data = it->second;
 	if (this->map_data->size() != this->width * this->height)
 		throw std::runtime_error("Error: Map \"" + this->name + "\" has invalid size.");
+	this->script = columns[5];
+	this->objects = columns[6];
+	this->random_encounters = columns[8];
+	this->fishing_encounters = columns[9];
+	this->music = columns[10];
+	this->border_block = to_unsigned(columns[11]);
 }
 
 std::shared_ptr<Map2> Maps2::get(const std::string &name){
