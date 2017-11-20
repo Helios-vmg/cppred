@@ -81,6 +81,9 @@
     <ClInclude Include="generate_map_objects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="generate_trainer_parties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utility.cpp">
@@ -147,6 +150,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generate_map_objects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generate_trainer_parties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

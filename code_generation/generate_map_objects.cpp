@@ -110,7 +110,10 @@ std::string npc_f(const MapObject &mo){
 }
 
 std::string item_f(const MapObject &mo){
-	return npc_f(mo) + ", ItemId::" + mo.params[5];
+	auto item = mo.params[5];
+	if (!item.size())
+		item = "None";
+	return npc_f(mo) + ", ItemId::" + item;
 }
 
 std::string pokemon_f(const MapObject &mo){
@@ -121,7 +124,7 @@ std::string sign_f(const MapObject &mo){
 }
 
 std::string trainer_f(const MapObject &mo){
-	return npc_f(mo) + ", Trainer::" + mo.params[5] + " + " + mo.params[6];
+	return npc_f(mo) + ", GET_TRAINER(Trainer::" + mo.params[5] + ", " + mo.params[6] + ")";
 }
 
 std::string warp_f(const MapObject &mo){
@@ -133,7 +136,7 @@ std::string warp_f(const MapObject &mo){
 		ret += mo.params[1].substr(4);
 		ret += '"';
 	}else{
-		ret += "Map::";
+		ret += "Maps::";
 		ret += mo.params[1];
 	}
 	ret += "), ";
@@ -149,7 +152,7 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes){
 	}
 	std::cout << "Generating map objects...\n";
 
-	static const std::vector<std::string> columns = {
+	static const std::vector<std::string> order = {
 		"id",
 		"name",
 		"object_name",
@@ -169,7 +172,7 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes){
 	std::map<std::string, std::vector<MapObject>> map_sets;
 	size_t rows = csv.row_count();
 	for (size_t i = 0; i < rows; i++){
-		auto row = csv.get_ordered_row(i, columns);
+		auto row = csv.get_ordered_row(i, order);
 		map_sets[row[1]].emplace_back(row);
 	}
 

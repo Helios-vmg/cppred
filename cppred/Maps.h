@@ -43,9 +43,9 @@ public:
 class HiddenObject : public MapObject{
 protected:
 	const char *script;
-	int script_parameter;
+	const char *script_parameter;
 public:
-	HiddenObject(const char *name, int x, int y, const char *script, int script_parameter):
+	HiddenObject(const char *name, int x, int y, const char *script, const char *script_parameter):
 		MapObject(name, x, y),
 		script(script),
 		script_parameter(script_parameter){}
@@ -57,7 +57,7 @@ struct WarpDestination{
 	bool simple;
 	const MapData *destination_map = nullptr;
 	std::string variable_name;
-	WarpDestination(const MapData *destination_map): simple(true), destination_map(destination_map){}
+	WarpDestination(const MapData &destination_map): simple(true), destination_map(&destination_map){}
 	WarpDestination(const char *variable_name): simple(false), variable_name(variable_name){}
 	WarpDestination(const WarpDestination &) = default;
 };
@@ -84,6 +84,7 @@ public:
 		Right,
 		Down,
 		Left,
+		BoulderMovementByte2,
 	};
 protected:
 	const GraphicsAsset *sprite;
@@ -92,9 +93,9 @@ protected:
 	int range;
 	int text_index;
 public:
-	ObjectWithSprite(const char *name, int x, int y, const GraphicsAsset *sprite, FacingDirection facing_direction, bool wandering, int range, int text_index):
+	ObjectWithSprite(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_index):
 		MapObject(name, x, y),
-		sprite(sprite),
+		sprite(&sprite),
 		facing_direction(facing_direction),
 		wandering(wandering),
 		range(range),
@@ -106,7 +107,7 @@ inline ObjectWithSprite::~ObjectWithSprite(){}
 
 class NpcMapObject : public ObjectWithSprite{
 public:
-	NpcMapObject(const char *name, int x, int y, const GraphicsAsset *sprite, FacingDirection facing_direction, bool wandering, int range, int text_id):
+	NpcMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id){}
 };
 
@@ -114,7 +115,7 @@ class ItemMapObject : public ObjectWithSprite{
 protected:
 	ItemId item;
 public:
-	ItemMapObject(const char *name, int x, int y, const GraphicsAsset *sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
+	ItemMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		item(item){}
 };
@@ -123,7 +124,7 @@ class TrainerMapObject : public ObjectWithSprite{
 protected:
 	const BaseTrainerParty *party;
 public:
-	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset *sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, const BaseTrainerParty *party):
+	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, const BaseTrainerParty *party):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		party(party){}
 };
@@ -133,7 +134,7 @@ protected:
 	SpeciesId species;
 	int level;
 public:
-	PokemonMapObject(const char *name, int x, int y, const GraphicsAsset *sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
+	PokemonMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		species(species),
 		level(level){}

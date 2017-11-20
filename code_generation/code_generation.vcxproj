@@ -143,6 +143,7 @@
     <ClInclude Include="generate_moves.h" />
     <ClInclude Include="generate_pokemon_data.h" />
     <ClInclude Include="generate_text.h" />
+    <ClInclude Include="generate_trainer_parties.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Maps.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="generate_pokemon_data.cpp" />
     <ClCompile Include="generate_audio.cpp" />
     <ClCompile Include="generate_text.cpp" />
+    <ClCompile Include="generate_trainer_parties.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />

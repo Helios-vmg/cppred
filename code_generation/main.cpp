@@ -7,6 +7,7 @@
 #include "generate_items.h"
 #include "generate_audio.h"
 #include "generate_map_objects.h"
+#include "generate_trainer_parties.h"
 #include "PokemonData.h"
 #include "../common/csv_parser.h"
 #include <iostream>
@@ -60,6 +61,7 @@ int main(){
 		generate_items(hashes);
 		generate_audio(hashes);
 		generate_map_objects(hashes);
+		generate_trainer_parties(hashes);
 		save_hashes(hashes);
 		auto t1 = clock();
 		std::cout << "Elapsed: " << (double)(t1 - t0) / CLOCKS_PER_SEC << " s.\n";
