@@ -119,12 +119,13 @@ void write_tilesets(std::ostream &header, std::ostream &source, const Tilesets2 
 	source << "namespace Tilesets{\n";
 	for (auto &tileset : tilesets.get_tilesets()){
 		header << "extern const TilesetData " << tileset->get_name() << ";\n";
-		source << "const TilesetData " << tileset->get_name() << " = { \""
+		auto counters = tileset->get_counters();
+		source << "const TilesetData " << tileset->get_name() << "(\""
 			<< tileset->get_name() << "\", Blocksets::" << tileset->get_blockset_name() << ", &"
-			<< tileset->get_tiles().name << ", Collision::" << tileset->get_collision_name() << ", { ";
-		for (auto i : tileset->get_counters())
+			<< tileset->get_tiles().name << ", Collision::" << tileset->get_collision_name() << ", std::array<short, " << counters.size() << ">{ ";
+		for (auto i : counters)
 			source << i << ", ";
-		source << "}, " << tileset->get_grass() << ", " << to_string(tileset->get_type()) << "};\n";
+		source << "}, " << tileset->get_grass() << ", " << to_string(tileset->get_type()) << ");\n";
 	}
 	header << "}\n\n";
 	source << "}\n\n";

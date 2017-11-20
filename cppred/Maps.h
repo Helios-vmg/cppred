@@ -12,9 +12,25 @@ struct TilesetData{
 	Blocksets::pair_t blockset;
 	const GraphicsAsset *tiles;
 	Collision::pair_t collision;
-	std::vector<int> counters;
+	short counters[16];
 	int grass_tile;
 	TilesetType type;
+
+	template <size_t N>
+	TilesetData(const char *name, Blocksets::pair_t blockset, const GraphicsAsset *tiles, Collision::pair_t collision, const std::array<short, N> &counters, int grass_tile, TilesetType type):
+		name(name),
+		blockset(blockset),
+		tiles(tiles),
+		collision(collision),
+		grass_tile(grass_tile),
+		type(type){
+		
+		int i = 0;
+		for (; i < N && i < array_length(this->counters); i++)
+			this->counters[i] = counters[i];
+		for (; i < array_length(this->counters); i++)
+			this->counters[i] = -1;
+	}
 };
 
 class MapObject{
