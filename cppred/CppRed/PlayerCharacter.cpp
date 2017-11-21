@@ -50,7 +50,7 @@ void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer
 	this->apply_to_all_sprites([&position](auto &sprite){ sprite.set_position(position); });
 }
 
-PlayerCharacter::PlayerCharacter(const std::string &name, Renderer &renderer): Trainer(name){
+PlayerCharacter::PlayerCharacter(const std::string &name, Renderer &renderer): Trainer(name), current_map(Map::Nowhere){
 	this->initialize_sprites(RedSprite, renderer);
 }
 
@@ -65,7 +65,7 @@ void PlayerCharacter::set_visible_sprite(){
 	sprite->set_visible(true);
 }
 
-void PlayerCharacter::teleport(const MapData *destination, const Point &position){
+void PlayerCharacter::teleport(Map destination, const Point &position){
 	this->current_map = destination;
 	this->map_position = position;
 }

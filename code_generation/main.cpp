@@ -60,8 +60,8 @@ int main(){
 		generate_moves(hashes);
 		generate_items(hashes);
 		generate_audio(hashes);
-		generate_map_objects(hashes);
-		generate_trainer_parties(hashes);
+		generate_map_objects(hashes, pokemon_data);
+		generate_trainer_parties(hashes, pokemon_data);
 		save_hashes(hashes);
 		auto t1 = clock();
 		std::cout << "Elapsed: " << (double)(t1 - t0) / CLOCKS_PER_SEC << " s.\n";

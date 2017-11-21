@@ -36,6 +36,7 @@ typedef std::map<std::string, std::shared_ptr<std::vector<byte_t>>> data_map_t;
 data_map_t read_data_csv(const char *path);
 void write_data_csv(const char *path, const data_map_t &);
 std::vector<byte_t> compress_memory_DEFLATE(std::vector<byte_t> &in_data);
+void write_buffer_to_header_and_source(std::ostream &header, std::ostream &source, const std::vector<byte_t> &data, const char *array_name);
 
 template <typename T>
 void write_collection_to_stream(std::ostream &stream, const T &begin, const T &end){

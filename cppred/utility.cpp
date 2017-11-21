@@ -96,3 +96,13 @@ std::string read_string(const byte_t *buffer, size_t &offset, size_t size){
 	}
 	return ret;
 }
+
+std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size){
+	std::vector<byte_t> ret;
+	ret.resize(read_varint(buffer, offset, size));
+	if (offset + ret.size() > size)
+		throw std::runtime_error("read_buffer(): Invalid read.");
+	memcpy(&ret[0], buffer + offset, ret.size());
+	offset += ret.size();
+	return ret;
+}

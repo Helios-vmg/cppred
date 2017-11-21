@@ -2,6 +2,7 @@
 #include "common_types.h"
 #include <array>
 #include <vector>
+#include <map>
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 
@@ -101,3 +102,12 @@ std::uint64_t cast_round_u64(double);
 std::uint32_t read_u32(const void *);
 std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size);
 std::string read_string(const byte_t *buffer, size_t &offset, size_t size);
+std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size);
+
+template <typename K, typename V>
+const V &find_in_constant_map(const std::map<K, V> &map, const K &key){
+	auto it = map.find(key);
+	if (it == map.end())
+		throw std::exception();
+	return it->second;
+}

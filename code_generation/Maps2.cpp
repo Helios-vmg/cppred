@@ -143,3 +143,12 @@ void Map2::render_to_file(const char *imagefile){
 	if (imagefile)
 		save_png(imagefile, &pixel_data[0], pixel_w, pixel_h);
 }
+
+void Map2::serialize(std::vector<byte_t> &dst){
+	write_ascii_string(dst, this->name);
+	write_ascii_string(dst, this->tileset->get_name());
+	write_varint(dst, this->width);
+	write_varint(dst, this->height);
+	write_ascii_string(dst, this->map_data_name);
+	//TODO: Serialize other members.
+}

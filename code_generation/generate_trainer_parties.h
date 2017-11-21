@@ -1,4 +1,6 @@
 #pragma once
 #include "code_generators.h"
 
-void generate_trainer_parties(known_hashes_t &known_hashes);
+class PokemonData;
+
+void generate_trainer_parties(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data);

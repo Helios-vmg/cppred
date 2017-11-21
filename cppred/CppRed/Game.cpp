@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "PlayerCharacter.h"
 #include "Maps.h"
+#include "Data.h"
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 
@@ -476,7 +477,7 @@ void Game::create_main_characters(const std::string &player_name, const std::str
 	this->rival.reset(new Trainer(rival_name));
 }
 
-void Game::teleport_player(const MapData *destination, const Point &position){
+void Game::teleport_player(Map destination, const Point &position){
 	this->player_character->teleport(destination, position);
 }
 
@@ -495,24 +496,25 @@ void Game::game_loop(){
 void Game::render(){
 	auto &renderer = this->engine->get_renderer();
 	auto &bg = renderer.get_tilemap(TileRegion::Background);
-	auto map = this->player_character->get_current_map();
+	auto current_map = this->player_character->get_current_map();
 	this->player_character->set_visible_sprite();
-	if (!map){
+	if (current_map == Map::Nowhere){
 		renderer.fill_rectangle(TileRegion::Background, { 0, 0 }, { Tilemap::w, Tilemap::h }, Tile());
 	}else{
+		auto map = this->map_store.get_map(current_map);
 		auto pos = this->player_character->get_map_position();
-		auto blockset = map->tileset->blockset.first;
-		auto tileset = map->tileset->tiles;
-		auto data = map->map_data.first;
+		auto &blockset = map.tileset->blockset->data;
+		auto tileset = map.tileset->tiles;
+		auto &data = map.map_data->data;
 		for (int y = 0; y < Renderer::logical_screen_tile_height; y++){
 			for (int x = 0; x < Renderer::logical_screen_tile_width; x++){
 				auto &tile = bg.tiles[x + y * Tilemap::w];
 				int x2 = x / 2 - PlayerCharacter::screen_block_offset_x + pos.x;
 				int y2 = y / 2 - PlayerCharacter::screen_block_offset_y + pos.y;
-				if (x2 < 0 || x2 >= map->width || y2 < 0 || y2 >= map->height){
+				if (x2 < 0 || x2 >= map.width || y2 < 0 || y2 >= map.height){
 					tile.tile_no = 3;
 				}else{
-					auto block = data[x2 + y2 * map->width];
+					auto block = data[x2 + y2 * map.width];
 					auto offset = x % 2 + y % 2 * 2;
 					tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
 				}

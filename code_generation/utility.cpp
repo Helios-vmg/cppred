@@ -249,3 +249,12 @@ std::vector<byte_t> compress_memory_DEFLATE(std::vector<byte_t> &in_data){
 	deflateEnd(&stream);
 	return ret;
 }
+
+void write_buffer_to_header_and_source(std::ostream &header, std::ostream &source, const std::vector<byte_t> &data, const char *array_name){
+	header << "extern const byte_t " << array_name << "[" << data.size() << "];\n"
+		"static const size_t " << array_name << "_size = " << data.size() << ";\n";
+
+	source << "extern const byte_t " << array_name << "[" << data.size() << "] = ";
+	write_buffer_to_stream(source, data);
+	source << ";\n";
+}

@@ -6,6 +6,7 @@
 #include "TextResources.h"
 #include "pokemon_version.h"
 #include "AudioInterface.h"
+#include "Maps.h"
 #include <string>
 #include <unordered_map>
 #include <queue>
@@ -54,6 +55,7 @@ class Game{
 	AudioInterface audio_interface;
 	std::unique_ptr<PlayerCharacter> player_character;
 	std::unique_ptr<Trainer> rival;
+	MapStore map_store;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
@@ -114,7 +116,7 @@ public:
 		return this->audio_interface;
 	}
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
-	void teleport_player(const MapData *destination, const Point &position);
+	void teleport_player(Map destination, const Point &position);
 	void game_loop();
 
 	DEFINE_GETTER_SETTER(options)

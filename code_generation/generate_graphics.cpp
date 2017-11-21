@@ -143,6 +143,8 @@ static void generate_graphics_internal(known_hashes_t &known_hashes, GraphicsSto
 			generated_file_warning << "\n"
 			"#pragma once\n"
 			"\n";
+		header << "extern const std::pair<const char *, const GraphicsAsset *> graphics_assets_map[" << graphics.size() << "];\n"
+			"static const size_t graphics_assets_map_size = " << graphics.size() << ";\n";
 		for (auto &g : graphics)
 			header << "extern const GraphicsAsset " << g->name << ";\n";
 	}
@@ -153,6 +155,11 @@ static void generate_graphics_internal(known_hashes_t &known_hashes, GraphicsSto
 		source <<
 			generated_file_warning << "\n"
 			"\n";
+
+		source << "extern const std::pair<const char *, const GraphicsAsset *> graphics_assets_map[" << graphics.size() << "] = {\n";
+		for (auto &g : graphics)
+			source << "\t{ \"" << g->name << "\", &" << g->name << " },\n";
+		source << "};\n\n";
 
 		for (auto &g : graphics)
 			source << "const GraphicsAsset " << g->name << " = { " << g->first_tile << ", " << g->w << ", " << g->h << " };\n";

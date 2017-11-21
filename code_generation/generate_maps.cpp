@@ -27,7 +27,7 @@ static const std::vector<std::string> input_files = {
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
 
-std::shared_ptr<std::vector<byte_t>> serialize_blocksets(const std::vector<Block> &blockset){
+static std::shared_ptr<std::vector<byte_t>> serialize_blocksets(const std::vector<Block> &blockset){
 	auto ret = std::make_shared<std::vector<byte_t>>();
 	ret->reserve(blockset.size() * Block::size);
 	for (auto &block : blockset)
@@ -36,7 +36,7 @@ std::shared_ptr<std::vector<byte_t>> serialize_blocksets(const std::vector<Block
 	return ret;
 }
 
-std::map<std::string, std::shared_ptr<std::vector<byte_t>>> serialize_blocksets(const std::map<std::string, std::shared_ptr<std::vector<Block>>> &blocksets){
+static std::map<std::string, std::shared_ptr<std::vector<byte_t>>> serialize_blocksets(const std::map<std::string, std::shared_ptr<std::vector<Block>>> &blocksets){
 	std::map<std::string, std::shared_ptr<std::vector<byte_t>>> ret;
 	for (auto &kv : blocksets)
 		ret[kv.first] = serialize_blocksets(*kv.second);
@@ -46,131 +46,73 @@ std::map<std::string, std::shared_ptr<std::vector<byte_t>>> serialize_blocksets(
 template <typename T>
 void write_blocksets(std::ostream &header, std::ostream &source, const T &blocksets){
 	std::vector<byte_t> blocksets_data;
-	std::map<std::string, std::pair<size_t, size_t>> blocksets_data_offsets;
 	for (auto &kv : blocksets){
-		auto n = blocksets_data.size();
 		auto m = kv.second->size();
-		blocksets_data_offsets[kv.first] = { n, m };
-		if (!kv.second->size())
+		if (!m)
 			continue;
+		write_ascii_string(blocksets_data, kv.first);
+		write_varint(blocksets_data, m);
+		auto n = blocksets_data.size();
 		blocksets_data.resize(n + m);
 		memcpy(&blocksets_data[n], &(*kv.second)[0], m);
 	}
-	header << "namespace Blocksets{\n"
-		"extern const byte_t data[" << blocksets_data.size() << "];\n"
-		"typedef std::pair<const byte_t *, size_t> pair_t;\n";
-	source << "namespace Blocksets{\n"
-		"extern const byte_t data[" << blocksets_data.size() << "] = ";
-	write_buffer_to_stream(source, blocksets_data);
-	source << ";\n";
-	for (auto &kv : blocksets_data_offsets){
-		auto s = "const pair_t " + kv.first;
-		header << "extern " << s << ";\n";
-		source << s << "(data + " << kv.second.first << ", " << kv.second.second << ");\n";
-	}
-	header << "}\n\n";
-	source << "}\n\n";
+	write_buffer_to_header_and_source(header, source, blocksets_data, "blocksets_data");
 }
 
 template <typename T>
 void write_collision(std::ostream &header, std::ostream &source, const T &collision){
 	std::vector<byte_t> collision_data;
-	std::map<std::string, std::pair<size_t, size_t>> collision_data_offsets;
 	for (auto &kv : collision){
-		auto n = collision_data.size();
 		auto m = kv.second->size();
-		collision_data_offsets[kv.first] = { n, m };
-		if (!kv.second->size())
+		if (!m)
 			continue;
+		write_ascii_string(collision_data, kv.first);
+		write_varint(collision_data, m);
+		auto n = collision_data.size();
 		collision_data.resize(n + m);
 		memcpy(&collision_data[n], &(*kv.second)[0], m);
 	}
-	header << "namespace Collision{\n"
-		"extern const byte_t data[" << collision_data.size() << "];\n"
-		"typedef std::pair<const byte_t *, size_t> pair_t;\n";
-	source << "namespace Collision{\n"
-		"extern const byte_t data[" << collision_data.size() << "] = ";
-	write_buffer_to_stream(source, collision_data);
-	source << ";\n";
-	for (auto &kv : collision_data_offsets){
-		auto s = "const pair_t " + kv.first;
-		header << "extern " << s << ";\n";
-		source << s << "(data + " << kv.second.first << ", " << kv.second.second << ");\n";
-	}
-	header << "}\n\n";
-	source << "}\n\n";
+	write_buffer_to_header_and_source(header, source, collision_data, "collision_data");
 }
 
-const char *to_string(TilesetType type){
-	switch (type){
-		case TilesetType::Indoor:
-			return "TilesetType::Indoor";
-		case TilesetType::Cave:
-			return "TilesetType::Cave";
-		case TilesetType::Outdoor:
-			return "TilesetType::Outdoor";
-		default:
-			throw std::runtime_error("Internal error in to_string(TilesetType).");
-	}
-}
+static void write_tilesets(std::ostream &header, std::ostream &source, const Tilesets2 &tilesets){
+	std::vector<byte_t> tileset_data;
 
-void write_tilesets(std::ostream &header, std::ostream &source, const Tilesets2 &tilesets){
-	header << "namespace Tilesets{\n";
-	source << "namespace Tilesets{\n";
-	for (auto &tileset : tilesets.get_tilesets()){
-		header << "extern const TilesetData " << tileset->get_name() << ";\n";
-		auto counters = tileset->get_counters();
-		source << "const TilesetData " << tileset->get_name() << "(\""
-			<< tileset->get_name() << "\", Blocksets::" << tileset->get_blockset_name() << ", &"
-			<< tileset->get_tiles().name << ", Collision::" << tileset->get_collision_name() << ", std::array<short, " << counters.size() << ">{ ";
-		for (auto i : counters)
-			source << i << ", ";
-		source << "}, " << tileset->get_grass() << ", " << to_string(tileset->get_type()) << ");\n";
-	}
-	header << "}\n\n";
-	source << "}\n\n";
+	for (auto &tileset : tilesets.get_tilesets())
+		tileset->serialize(tileset_data);
+
+	write_buffer_to_header_and_source(header, source, tileset_data, "tileset_data");
 }
 
 template <typename T>
 void write_map_data(std::ostream &header, std::ostream &source, const T &maps){
 	std::vector<byte_t> map_data;
-	std::map<std::string, std::pair<size_t, size_t>> collision_data_offsets;
 	for (auto &kv : maps){
-		auto n = map_data.size();
 		auto m = kv.second->size();
-		collision_data_offsets[kv.first] = { n, m };
-		if (!kv.second->size())
+		if (!m)
 			continue;
+		write_ascii_string(map_data, kv.first);
+		write_varint(map_data, m);
+		auto n = map_data.size();
 		map_data.resize(n + m);
 		memcpy(&map_data[n], &(*kv.second)[0], m);
 	}
-	header << "namespace BinaryMapData{\n"
-		"extern const byte_t data[" << map_data.size() << "];\n"
-		"typedef std::pair<const byte_t *, size_t> pair_t;\n";
-	source << "namespace BinaryMapData{\n"
-		"const byte_t data[" << map_data.size() << "] = ";
-	write_buffer_to_stream(source, map_data);
-	source << ";\n";
-	for (auto &kv : collision_data_offsets){
-		auto s = "const pair_t " + kv.first;
-		header << "extern " << s << ";\n";
-		source << s << "(data + " << kv.second.first << ", " << kv.second.second << ");\n";
-	}
-	header << "}\n\n";
-	source << "}\n\n";
+
+	write_buffer_to_header_and_source(header, source, map_data, "map_data");
 }
 
-void write_maps(std::ostream &header, std::ostream &source, const Maps2 &maps){
-	header << "namespace Maps{\n";
-	source << "namespace Maps{\n";
+static void write_maps(std::ostream &header, std::ostream &source, const Maps2 &maps){
+	std::vector<byte_t> map_definitions;
+	
+	header << "enum class Map{\n"
+		"\tNowhere = 0,\n";
+	int index = 1;
 	for (auto &map : maps.get_maps()){
-		header << "extern const MapData " << map->get_name() << ";\n";
-		source << "const MapData " << map->get_name() << " = { \""
-			<< map->get_name() << "\", &Tilesets::" << map->get_tileset().get_name() << ", "
-			<< map->get_width() << ", " << map->get_height() << ", BinaryMapData::" << map->get_map_data_name() << " };\n";
+		header << "\t" << map->get_name() << " = " << index++ << ",\n";
+		map->serialize(map_definitions);
 	}
-	header << "}\n\n";
-	source << "}\n\n";
+	header << "};\n";
+	write_buffer_to_header_and_source(header, source, map_definitions, "map_definitions");
 }
 
 static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &gs){

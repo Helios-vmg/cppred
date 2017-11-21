@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <map>
 
 class EvolutionTrigger{
 public:
@@ -71,6 +72,7 @@ public:
 
 class PokemonData{
 	std::vector<SpeciesData> species;
+	std::map<std::string, unsigned> map;
 
 	unsigned count_pokedex_species() const;
 public:
@@ -78,4 +80,9 @@ public:
 	void generate_enums(const char *filename) const;
 	void generate_static_data_declarations(const char *filename) const;
 	void generate_static_data_definitions(const char *filename, const char *header_name) const;
+	const std::vector<SpeciesData> &get_species() const{
+		return this->species;
+	}
+	const std::map<std::string, unsigned> &get_species_map();
+	unsigned get_species_id(const std::string &name);
 };

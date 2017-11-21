@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "utility.h"
 
-struct MapData;
+enum class Map;
 
 namespace CppRed{
 
@@ -19,7 +19,7 @@ public:
 	static const int screen_block_offset_x = 4;
 	static const int screen_block_offset_y = 4;
 private:
-	const MapData *current_map = nullptr;
+	Map current_map;
 	Point map_position;
 	std::shared_ptr<Sprite> standing_sprites[4];
 	std::shared_ptr<Sprite> walking_sprites[4 * 4];
@@ -38,7 +38,7 @@ private:
 public:
 	PlayerCharacter(const std::string &name, Renderer &);
 	void set_visible_sprite();
-	void teleport(const MapData *destination, const Point &position);
+	void teleport(Map destination, const Point &position);
 	DEFINE_GETTER_SETTER(facing_direction)
 	DEFINE_GETTER(current_map)
 	DEFINE_GETTER(map_position)

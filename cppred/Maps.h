@@ -3,34 +3,44 @@
 #include "common_types.h"
 #include "GraphicsAsset.h"
 #include "../CodeGeneration/output/maps.h"
+#include "../CodeGeneration/output/items.h"
 #include "../common/TilesetType.h"
 #include "TrainerData.h"
 #include <vector>
+#include <memory>
+#include <map>
+
+struct Blockset{
+	std::string name;
+	std::vector<byte_t> data;
+
+	Blockset(const byte_t *, size_t &, size_t);
+};
+
+struct Collision{
+	std::string name;
+	std::vector<byte_t> data;
+
+	Collision(const byte_t *, size_t &, size_t);
+};
 
 struct TilesetData{
-	const char *name;
-	Blocksets::pair_t blockset;
+	std::string name;
+	std::shared_ptr<Blockset> blockset;
 	const GraphicsAsset *tiles;
-	Collision::pair_t collision;
+	std::shared_ptr<Collision> collision;
 	short counters[16];
 	int grass_tile;
 	TilesetType type;
 
-	template <size_t N>
-	TilesetData(const char *name, Blocksets::pair_t blockset, const GraphicsAsset *tiles, Collision::pair_t collision, const std::array<short, N> &counters, int grass_tile, TilesetType type):
-		name(name),
-		blockset(blockset),
-		tiles(tiles),
-		collision(collision),
-		grass_tile(grass_tile),
-		type(type){
-		
-		int i = 0;
-		for (; i < N && i < array_length(this->counters); i++)
-			this->counters[i] = counters[i];
-		for (; i < array_length(this->counters); i++)
-			this->counters[i] = -1;
-	}
+	TilesetData(
+		const byte_t *,
+		size_t &,
+		size_t,
+		const std::map<std::string, std::shared_ptr<Blockset>> &,
+		const std::map<std::string, std::shared_ptr<Collision>> &,
+		const std::map<std::string, const GraphicsAsset *> &
+	);
 };
 
 class MapObject{
@@ -156,10 +166,38 @@ public:
 		level(level){}
 };
 
+struct BinaryMapData{
+	std::string name;
+	std::vector<byte_t> data;
+
+	BinaryMapData(const byte_t *, size_t &, size_t);
+};
+
 struct MapData{
-	const char *name;
-	const TilesetData *tileset;
+	std::string name;
+	std::shared_ptr<TilesetData> tileset;
 	int width, height;
-	BinaryMapData::pair_t map_data;
-	const char *script;
+	std::shared_ptr<BinaryMapData> map_data;
+	std::string script;
+
+	MapData(const byte_t *, size_t &, size_t, const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets, const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data);
+};
+
+class MapStore{
+	std::vector<std::unique_ptr<MapData>> maps;
+	
+	typedef std::map<std::string, std::shared_ptr<Blockset>> blocksets_t;
+	typedef std::map<std::string, std::shared_ptr<Collision>> collisions_t;
+	typedef std::map<std::string, const GraphicsAsset *> graphics_map_t;
+	typedef std::map<std::string, std::shared_ptr<TilesetData>> tilesets_t;
+	typedef std::map<std::string, std::shared_ptr<BinaryMapData>> map_data_t;
+	static blocksets_t load_blocksets();
+	static collisions_t load_collisions();
+	static graphics_map_t load_graphics_map();
+	static tilesets_t load_tilesets(const blocksets_t &, const collisions_t &, const graphics_map_t &);
+	static map_data_t load_map_data();
+	void load_maps(const tilesets_t &, const map_data_t &);
+public:
+	MapStore();
+	MapData &get_map(Map map);
 };

@@ -1,12 +1,13 @@
 #include "generate_trainer_parties.h"
 #include "../common/sha1.h"
+#include "PokemonData.h"
 
 static const char * const input_file = "input/trainer_parties.csv";
 static const char * const hash_key = "generate_trainer_parties";
 static const char * const date_string = __DATE__ __TIME__;
 
 struct TrainerPartyMember{
-	std::string species;
+	int species;
 	int level;
 };
 
@@ -21,15 +22,32 @@ struct TrainerClass{
 	TrainerClass() = default;
 	TrainerClass(const std::string &name): name(name){}
 	TrainerClass(const TrainerClass &) = default;
+
+	void serialize(std::vector<byte_t> &dst){
+		write_ascii_string(dst, this->name);
+		unsigned index = 0;
+		write_varint(dst, this->parties.size());
+		for (auto &party : this->parties){
+			write_varint(dst, index++);
+			write_varint(dst, party.members.size());
+			for (auto &member : party.members){
+				write_varint(dst, member.species);
+				write_varint(dst, member.level);
+			}
+		}
+	}
 };
 
-static void generate_trainer_parties_internal(known_hashes_t &known_hashes){
+static void generate_trainer_parties_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
 	auto current_hash = hash_file(input_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating trainer parties.\n";
 		return;
 	}
 	std::cout << "Generating trainer parties...\n";
+
+	if (!pokemon_data)
+		pokemon_data.reset(new PokemonData);
 
 	static const std::vector<std::string> order = {
 		"trainer_class_name",
@@ -46,7 +64,7 @@ static void generate_trainer_parties_internal(known_hashes_t &known_hashes){
 		auto row = csv.get_ordered_row(i, order);
 		auto class_name = row[0];
 		auto index = to_unsigned(row[1]) - 1;
-		auto species = row[2];
+		auto species_name = row[2];
 		auto level = to_int(row[3]);
 
 		auto it = classes.find(class_name);
@@ -58,60 +76,34 @@ static void generate_trainer_parties_internal(known_hashes_t &known_hashes){
 
 		if (tc.parties.size() <= index)
 			tc.parties.resize(index + 1);
-		tc.parties[index].members.push_back({ species, level });
+		tc.parties[index].members.push_back({ (int)pokemon_data->get_species_id(species_name), level });
 	}
 
-	{
-		std::ofstream header("output/trainer_parties.h");
+	std::ofstream header("output/trainer_parties.h");
+	std::ofstream source("output/trainer_parties.inl");
 
-		header <<
-			generated_file_warning << "\n"
-			"#pragma once\n"
-			"\n";
+	header <<
+		generated_file_warning << "\n"
+		"#pragma once\n"
+		"\n";
 
-		header << "namespace Trainer{\n";
+	source <<
+		generated_file_warning << "\n"
+		"\n";
 
-		for (auto &kv : classes)
-			header << "extern const BaseTrainerParty * const " << kv.second.name << "[" << kv.second.parties.size() << "];\n";
+	std::vector<byte_t> trainer_parties_data;
 
-		header << "}\n";
-	}
-	{
-		std::ofstream source("output/trainer_parties.inl");
-		source <<
-			generated_file_warning << "\n"
-			"\n";
+	for (auto &kv : classes)
+		kv.second.serialize(trainer_parties_data);
 
-		for (auto &kv : classes){
-			int index = 0;
-			for (auto &party : kv.second.parties){
-				source << "const TrainerParty<" << party.members.size() << "> " << kv.second.name << index++ << "({";
-				for (auto &member : party.members)
-					source << "TrainerPartyMember{SpeciesId::" << member.species << ", " << member.level << "},";
-				source << "});\n";
-			}
-		}
-
-		source << "\n"
-			"namespace Trainer{\n";
-
-		for (auto &kv : classes){
-			source << "extern const BaseTrainerParty * const " << kv.second.name << "[" << kv.second.parties.size() << "] = {\n";
-			int index = 0;
-			for (auto &party : kv.second.parties)
-				source << "\t&" << kv.second.name << index++ << ",\n";
-			source << "};\n";
-		}
-
-		source << "}\n";
-	}
+	write_buffer_to_header_and_source(header, source, trainer_parties_data, "trainer_parties_data");
 
 	known_hashes[hash_key] = current_hash;
 }
 
-void generate_trainer_parties(known_hashes_t &known_hashes){
+void generate_trainer_parties(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
 	try{
-		generate_trainer_parties_internal(known_hashes);
+		generate_trainer_parties_internal(known_hashes, pokemon_data);
 	}catch (std::exception &e){
 		throw std::runtime_error((std::string)"generate_trainer_parties(): " + e.what());
 	}

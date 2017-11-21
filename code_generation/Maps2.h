@@ -56,6 +56,7 @@ public:
 	unsigned get_border_block() const{
 		return this->border_block;
 	}
+	void serialize(std::vector<byte_t> &);
 };
 
 class Maps2{

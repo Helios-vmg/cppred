@@ -38,7 +38,7 @@ void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgram &p
 	}else{
 		auto names = oak_speech(game);
 		game.create_main_characters(names.player_name, names.rival_name);
-		game.teleport_player(&Maps::RedsHouse2F, {3, 6});
+		game.teleport_player(Map::RedsHouse2F, {3, 6});
 		game.game_loop();
 		assert(false);
 	}

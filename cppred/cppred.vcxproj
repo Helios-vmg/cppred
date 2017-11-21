@@ -92,6 +92,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="HighResolutionClock.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Maps.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="CppRed/EntryPoint.cpp" />
     <ClCompile Include="SoundGenerators.cpp" />

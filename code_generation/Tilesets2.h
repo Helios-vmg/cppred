@@ -46,6 +46,7 @@ public:
 	const Graphic &get_tiles() const{
 		return *this->tiles;
 	}
+	void serialize(std::vector<byte_t> &);
 };
 
 class Tilesets2{

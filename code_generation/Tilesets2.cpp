@@ -60,3 +60,34 @@ std::shared_ptr<Tileset2> Tilesets2::get(const std::string &name) const{
 		throw std::runtime_error("Error: Invalid tileset \"" + name + "\"");
 	return it->second;
 }
+
+void Tileset2::serialize(std::vector<byte_t> &dst){
+	write_ascii_string(dst, this->name);
+	write_ascii_string(dst, this->blockset_name);
+	write_ascii_string(dst, this->tiles->name);
+	write_ascii_string(dst, this->collision_name);
+	write_varint(dst, (std::uint32_t)this->counters.size());
+	if (this->counters.size() > 16)
+		throw std::runtime_error("Error: Tileset " + this->name + " has too many counter tiles. Max: 16.");
+	for (auto c : this->counters)
+		write_varint(dst, (std::uint32_t)c);
+	std::uint32_t grass_tile = std::numeric_limits<std::uint32_t>::max();
+	if (this->grass >= 0)
+		grass_tile = this->grass;
+	write_varint(dst, grass_tile);
+	const char *type;
+	switch (this->tileset_type){
+		case TilesetType::Indoor: 
+			type = "indoor";
+			break;
+		case TilesetType::Cave:
+			type = "cave";
+			break;
+		case TilesetType::Outdoor:
+			type = "outdoor";
+			break;
+		default:
+			throw std::exception();
+	}
+	write_ascii_string(dst, type);
+}

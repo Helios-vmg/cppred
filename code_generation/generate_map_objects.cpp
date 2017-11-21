@@ -1,5 +1,6 @@
 #include "generate_map_objects.h"
 #include "../common/sha1.h"
+#include "PokemonData.h"
 
 static const char * const input_file = "input/map_objects.csv";
 static const char * const hash_key = "generate_map_objects";
@@ -27,7 +28,27 @@ std::string sign_f(const MapObject &);
 std::string trainer_f(const MapObject &);
 std::string warp_f(const MapObject &);
 
+void event_disp_f(std::vector<byte_t> &dst, const MapObject &);
+void hidden_f    (std::vector<byte_t> &dst, const MapObject &);
+void item_f      (std::vector<byte_t> &dst, const MapObject &);
+void npc_f       (std::vector<byte_t> &dst, const MapObject &);
+void pokemon_f   (std::vector<byte_t> &dst, const MapObject &);
+void sign_f      (std::vector<byte_t> &dst, const MapObject &);
+void trainer_f   (std::vector<byte_t> &dst, const MapObject &);
+void warp_f      (std::vector<byte_t> &dst, const MapObject &);
+
 static const std::map<std::string, std::string (*)(const MapObject &)> generators_map = {
+	{ "event_disp", event_disp_f, },
+	{ "hidden", hidden_f, },
+	{ "item", item_f, },
+	{ "npc", npc_f, },
+	{ "pokemon", pokemon_f, },
+	{ "sign", sign_f, },
+	{ "trainer", trainer_f, },
+	{ "warp", warp_f, },
+};
+
+static const std::map<std::string, void (*)(std::vector<byte_t> &, const MapObject &)> serializers_map = {
 	{ "event_disp", event_disp_f, },
 	{ "hidden", hidden_f, },
 	{ "item", item_f, },
@@ -45,8 +66,9 @@ struct MapObject{
 	std::string type;
 	unsigned x, y;
 	std::string params[7];
+	PokemonData *pokemon_data;
 
-	MapObject(const std::vector<std::string> &row){
+	MapObject(const std::vector<std::string> &row, PokemonData &pokemon_data): pokemon_data(&pokemon_data){
 		this->id = to_unsigned(row[0]);
 		this->name = row[2];
 		this->type = row[3];
@@ -88,7 +110,20 @@ struct MapObject{
 		ret << "const " << this->get_typename() << ' ' << this->name << "(\"" << this->display_name << "\", " << this->x << ", " << this->y << it->second(*this) << ");";
 		return ret.str();
 	}
+	void serialize(std::vector<byte_t> &dst){
+		auto it = serializers_map.find(this->type);
+		if (it == serializers_map.end())
+			throw std::runtime_error("Invalid map object type: " + this->type);
+
+		write_ascii_string(dst, this->display_name);
+		write_ascii_string(dst, this->type);
+		write_varint(dst, this->x);
+		write_varint(dst, this->y);
+		it->second(dst, *this);
+	}
 };
+
+//------------------------------------------------------------------------------
 
 std::string event_disp_f(const MapObject &mo){
 	return "";
@@ -119,6 +154,7 @@ std::string item_f(const MapObject &mo){
 std::string pokemon_f(const MapObject &mo){
 	return npc_f(mo) + ", SpeciesId::" + mo.params[5] + ", " + mo.params[6];
 }
+
 std::string sign_f(const MapObject &mo){
 	return ", " + mo.params[0];
 }
@@ -144,13 +180,70 @@ std::string warp_f(const MapObject &mo){
 	return ret;
 }
 
-static void generate_map_objects_internal(known_hashes_t &known_hashes){
+//------------------------------------------------------------------------------
+
+void event_disp_f(std::vector<byte_t> &dst, const MapObject &mo){}
+
+void hidden_f(std::vector<byte_t> &dst, const MapObject &mo){
+	write_ascii_string(dst, mo.params[1]);
+	write_ascii_string(dst, mo.params[0]);
+}
+
+void npc_f(std::vector<byte_t> &dst, const MapObject &mo){
+	write_ascii_string(dst, mo.params[0]);
+	std::string s = "Undefined";
+	if (mo.params[1].size())
+		s = mo.params[1];
+	write_ascii_string(dst, s);
+	write_varint(dst, mo.params[2] == "true");
+	write_varint(dst, to_unsigned(mo.params[3]));
+	write_varint(dst, to_unsigned(mo.params[4]));
+}
+
+void item_f(std::vector<byte_t> &dst, const MapObject &mo){
+	npc_f(dst, mo);
+	auto item = mo.params[5];
+	if (!item.size())
+		item = "None";
+	write_ascii_string(dst, item);
+}
+
+void pokemon_f(std::vector<byte_t> &dst, const MapObject &mo){
+	npc_f(dst, mo);
+	write_varint(dst, mo.pokemon_data->get_species_id(mo.params[5]));
+	write_varint(dst, to_unsigned(mo.params[6]));
+}
+
+void sign_f(std::vector<byte_t> &dst, const MapObject &mo){
+	write_varint(dst, to_unsigned(mo.params[0]));
+}
+
+void trainer_f(std::vector<byte_t> &dst, const MapObject &mo){
+	write_ascii_string(dst, mo.params[5]);
+	write_varint(dst, to_unsigned(mo.params[6]) - 1);
+}
+
+void warp_f(std::vector<byte_t> &dst, const MapObject &mo){
+	write_varint(dst, to_unsigned(mo.params[0]));
+	if (mo.params[1].substr(0, 4) == "var:")
+		write_ascii_string(dst, mo.params[1].substr(4));
+	else
+		write_ascii_string(dst, mo.params[1]);
+	write_varint(dst, to_unsigned(mo.params[2]));
+}
+
+//------------------------------------------------------------------------------
+
+static void generate_map_objects_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
 	auto current_hash = hash_file(input_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating map objects.\n";
 		return;
 	}
 	std::cout << "Generating map objects...\n";
+
+	if (!pokemon_data)
+		pokemon_data.reset(new PokemonData);
 
 	static const std::vector<std::string> order = {
 		"id",
@@ -173,46 +266,34 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes){
 	size_t rows = csv.row_count();
 	for (size_t i = 0; i < rows; i++){
 		auto row = csv.get_ordered_row(i, order);
-		map_sets[row[1]].emplace_back(row);
+		map_sets[row[1]].emplace_back(row, *pokemon_data);
 	}
 
-	{
-		std::ofstream header("output/map_objects.h");
-		header <<
-			generated_file_warning << "\n"
-			"#pragma once\n"
-			"\n";
+	std::ofstream header("output/map_objects.h");
+	std::ofstream source("output/map_objects.inl");
+	header <<
+		generated_file_warning << "\n"
+		"#pragma once\n"
+		"\n";
 
-		for (auto &set : map_sets)
-			header << "extern const MapObject * const " << set.first << "[" << set.second.size() << "];\n";
-	}
-	{
-		std::ofstream source("output/map_objects.inl");
-		source <<
-			generated_file_warning << "\n"
-			"\n";
+	source <<
+		generated_file_warning << "\n"
+		"\n";
 
-		for (auto &set : map_sets){
-			for (auto &o : set.second)
-				source << o.generate_definition() << std::endl;
-		}
+	std::vector<byte_t> map_objects_data;
 
-		source << "\n";
+	for (auto &set : map_sets)
+		for (auto &o : set.second)
+			o.serialize(map_objects_data);
 
-		for (auto &set : map_sets){
-			source << "extern const MapObject * const " << set.first << "[" << set.second.size() << "] = {\n";
-			for (auto &o : set.second)
-				source << "\t&" << o.name << ",\n";
-			source << "};\n\n";
-		}
-	}
+	write_buffer_to_header_and_source(header, source, map_objects_data, "map_objects_data");
 
 	known_hashes[hash_key] = current_hash;
 }
 
-void generate_map_objects(known_hashes_t &known_hashes){
+void generate_map_objects(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
 	try{
-		generate_map_objects_internal(known_hashes);
+		generate_map_objects_internal(known_hashes, pokemon_data);
 	}catch (std::exception &e){
 		throw std::runtime_error((std::string)"generate_map_objects(): " + e.what());
 	}

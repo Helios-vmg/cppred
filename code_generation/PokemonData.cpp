@@ -378,3 +378,19 @@ unsigned PokemonData::count_pokedex_species() const{
 		ret += !!species.pokedex_id;
 	return ret;
 }
+
+const std::map<std::string, unsigned> &PokemonData::get_species_map(){
+	if (!this->map.size()){
+		for (auto &p : this->species)
+			this->map[p.name] = p.species_id;
+	}
+	return this->map;
+}
+
+unsigned PokemonData::get_species_id(const std::string &name){
+	auto &map = this->get_species_map();
+	auto it = map.find(name);
+	if (it == map.end())
+		throw std::runtime_error("Error: Invalid SpeciesId: " + name);
+	return it->second;
+}
