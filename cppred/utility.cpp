@@ -1,6 +1,7 @@
 #include "utility.h"
 #include <random>
 #include <cmath>
+#include <cstring>
 
 std::uint32_t XorShift128::operator()(){
 	auto x = this->state[3];

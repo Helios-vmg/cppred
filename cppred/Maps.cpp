@@ -2,6 +2,7 @@
 #include "CppRed/Data.h"
 #include "utility.h"
 #include <map>
+#include <limits>
 
 Blockset::Blockset(const byte_t *buffer, size_t &offset, size_t size){
 	this->name = read_string(buffer, offset, size);
