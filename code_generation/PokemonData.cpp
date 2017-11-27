@@ -280,6 +280,7 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			"const PokemonInfo<" << species.initial_attacks.size() << ", " << species.evolution_triggers.size() << ", " << species.learned_moves.size() << "> pokemoninfo_" << species.name << " = {\n"
 			"    PokedexId::" << (species.pokedex_id ? species.name : "None") << ",\n"
 			"    SpeciesId::" << species.name << ",\n"
+			"    \"" << species.name << "\",\n"
 			"    " << bool_to_string(species.allocated) << ",\n"
 			"    " << species.starter_index << ",\n"
 			"    " << species.base_hp << ",\n"

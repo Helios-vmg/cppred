@@ -101,6 +101,30 @@ MapStore::map_data_t MapStore::load_map_data(){
 	return ret;
 }
 
+MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_map){
+	std::map<std::string, const MapData *> map_maps;
+	std::map<std::string, ItemId> items_map;
+	std::map<std::string, SpeciesId> species_map;
+	std::map<std::string, const BaseTrainerParty *> trainer_map;
+
+	for (auto &map : this->maps)
+		map_maps[map->name] = map.get();
+	for (size_t i = 0; i < item_strings_size; i++)
+		items_map[item_strings[i].first] = item_strings[i].second;
+	for (int i = 0; i < pokemon_species_count; i++){
+		auto pokemon = pokemon_by_pokedex_id[i];
+		species_map[pokemon->internal_name] = pokemon->species_id;
+	}
+
+	map_objects_t ret;
+	size_t offset = 0;
+	while (offset < map_objects_data_size){
+		auto pair = MapObject::create_vector(map_objects_data, offset, map_data_size, map_maps, graphics_map, items_map, species_map);
+		ret[pair.first] = pair.second;
+	}
+	return ret;
+}
+
 MapData::MapData(
 		const byte_t *buffer,
 		size_t &offset,
@@ -128,8 +152,133 @@ MapStore::MapStore(){
 	auto tilesets = this->load_tilesets(blocksets, collisions, graphics_map);
 	auto map_data = this->load_map_data();
 	this->load_maps(tilesets, map_data);
+	auto objects = this->load_objects();
 }
 
 MapData &MapStore::get_map(Map map){
 	return *this->maps[(int)map - 1];
+}
+
+std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> MapObject::create_vector(
+		const byte_t *buffer,
+		size_t &offset,
+		const size_t size,
+		const std::map<std::string, const MapData *> &maps,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, ItemId> &items_map,
+		const std::map<std::string, SpeciesId> &species_map,
+		const std::map<std::string, const BaseTrainerParty *> &trainer_map){
+	auto ret = std::make_shared<std::vector<std::unique_ptr<MapObject>>>();
+	auto name = read_string(buffer, offset, size);
+	auto count = read_varint(buffer, offset, size);
+	for (decltype(count) i = 0; i < count; i++)
+		ret->push_back(create_object(buffer, offset, size, maps, graphics_map, items_map, species_map, trainer_map));
+	return std::make_pair(name, ret);
+}
+
+std::unique_ptr<MapObject> MapObject::create_object(
+		const byte_t *buffer,
+		size_t &offset,
+		const size_t size,
+		const std::map<std::string, const MapData *> &maps,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, ItemId> &items_map,
+		const std::map<std::string, SpeciesId> &species_map,
+		const std::map<std::string, const BaseTrainerParty *> &trainer_map){
+
+	auto object_type = read_string(buffer, offset, size);
+
+	if (object_type == "event_disp")
+		return std::make_unique<EventDisp>(buffer, offset, size);
+	if (object_type == "hidden")
+		return std::make_unique<HiddenObject>(buffer, offset, size);
+	if (object_type == "item")
+		return std::make_unique<ItemMapObject>(buffer, offset, size, graphics_map, items_map);
+	if (object_type == "npc")
+		return std::make_unique<NpcMapObject>(buffer, offset, size, graphics_map);
+	if (object_type == "pokemon")
+		return std::make_unique<PokemonMapObject>(buffer, offset, size, graphics_map, species_map);
+	if (object_type == "sign")
+		return std::make_unique<Sign>(buffer, offset, size);
+	if (object_type == "trainer")
+		return std::make_unique<TrainerMapObject>(buffer, offset, size, graphics_map, trainer_map);
+	if (object_type == "warp")
+		return std::make_unique<MapWarp>(buffer, offset, size, maps);
+	
+	throw std::runtime_error("Internal error: Static data error.");
+}
+
+MapObject::MapObject(const byte_t *buffer, size_t &offset, const size_t size){
+	auto object_name = read_string(buffer, offset, size);
+	auto x = read_varint(buffer, offset, size);
+	auto y = read_varint(buffer, offset, size);
+}
+
+EventDisp::EventDisp(const byte_t *buffer, size_t &offset, const size_t size): MapObject(buffer, offset, size){}
+
+Sign::Sign(const byte_t *buffer, size_t &offset, const size_t size) : MapObject(buffer, offset, size){
+	this->text_index = read_varint(buffer, offset, size);
+}
+
+HiddenObject::HiddenObject(const byte_t *buffer, size_t &offset, const size_t size) : MapObject(buffer, offset, size){
+	this->script = read_string(buffer, offset, size);
+	this->script_parameter = read_string(buffer, offset, size);
+}
+
+MapWarp::MapWarp(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const MapData *> &maps): MapObject(buffer, offset, size){
+	this->index = read_varint(buffer, offset, size);
+	auto temp = read_string(buffer, offset, size);
+	if (temp.size() >= 4 && temp[0] == 'v' && temp[1] == 'a' && temp[2] == 'r' && temp[3] == ':')
+		this->destination = WarpDestination(temp.substr(4));
+	else
+		this->destination = WarpDestination(*find_in_constant_map(maps, temp));
+	this->destination_warp_index = read_varint(buffer, offset, size);
+}
+
+#define CASE_to_MapObjectFacingDirection(x) if (s == #x) return MapObjectFacingDirection::x
+
+MapObjectFacingDirection to_MapObjectFacingDirection(const std::string &s){
+	CASE_to_MapObjectFacingDirection(Undefined);
+	CASE_to_MapObjectFacingDirection(None);
+	CASE_to_MapObjectFacingDirection(Up);
+	CASE_to_MapObjectFacingDirection(Right);
+	CASE_to_MapObjectFacingDirection(Down);
+	CASE_to_MapObjectFacingDirection(Left);
+	CASE_to_MapObjectFacingDirection(BoulderMovementByte2);
+	throw std::runtime_error("Invalid MapObjectFacingDirection value: " + s);
+}
+
+ObjectWithSprite::ObjectWithSprite(
+		const byte_t *buffer,
+		size_t &offset,
+		const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map): MapObject(buffer, offset, size){
+	this->sprite = find_in_constant_map(graphics_map, read_string(buffer, offset, size));
+	this->facing_direction = to_MapObjectFacingDirection(read_string(buffer, offset, size));
+	this->wandering = !!read_varint(buffer, offset, size);
+	this->range = read_varint(buffer, offset, size);
+	this->text_index = read_varint(buffer, offset, size);
+}
+
+NpcMapObject::NpcMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map): ObjectWithSprite(buffer, offset, size, graphics_map){
+}
+
+ItemMapObject::ItemMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, ItemId> &items_map) : ObjectWithSprite(buffer, offset, size, graphics_map){
+	this->item = find_in_constant_map(items_map, read_string(buffer, offset, size));
+}
+
+TrainerMapObject::TrainerMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, const BaseTrainerParty *> &parties_map): ObjectWithSprite(buffer, offset, size, graphics_map){
+	this->party = find_in_constant_map(parties_map, read_string(buffer, offset, size));
+}
+
+PokemonMapObject::PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, SpeciesId> &species_map): ObjectWithSprite(buffer, offset, size, graphics_map){
+	this->species = find_in_constant_map(species_map, read_string(buffer, offset, size));
+	this->level = read_varint(buffer, offset, size);
 }

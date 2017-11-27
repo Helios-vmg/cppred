@@ -24,6 +24,16 @@ struct Collision{
 	Collision(const byte_t *, size_t &, size_t);
 };
 
+enum class MapObjectFacingDirection{
+	Undefined,
+	None,
+	Up,
+	Right,
+	Down,
+	Left,
+	BoulderMovementByte2,
+};
+
 struct TilesetData{
 	std::string name;
 	std::shared_ptr<Blockset> blockset;
@@ -45,33 +55,61 @@ struct TilesetData{
 
 class MapObject{
 protected:
-	const char *name;
-	int x, y;
+	std::string name;
+	int x = -1;
+	int y = -1;
+
+	static std::unique_ptr<MapObject> create_object(
+		const byte_t *buffer,
+		size_t &offset,
+		const size_t size,
+		const std::map<std::string, const MapData *> &maps,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, ItemId> &items_map,
+		const std::map<std::string, SpeciesId> &species_map,
+		const std::map<std::string, const BaseTrainerParty *> &trainer_map
+	);
+	MapObject(const byte_t *buffer, size_t &offset, const size_t size);
 public:
-	MapObject(const char *name, int x, int y): name(name), x(x), y(y){}
+	MapObject(const std::string &name, int x, int y): name(name), x(x), y(y){}
 	virtual ~MapObject() = 0;
+	static std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>>
+		create_vector(
+			const byte_t *buffer,
+			size_t &offset,
+			const size_t map_data_size,
+			const std::map<std::string, const MapData *> &maps,
+			const std::map<std::string, const GraphicsAsset *> &graphics_map,
+			const std::map<std::string, ItemId> &items_map,
+			const std::map<std::string, SpeciesId> &species_map,
+			const std::map<std::string, const BaseTrainerParty *> &trainer_map
+		);
 };
 
 inline MapObject::~MapObject(){}
 
 class EventDisp : public MapObject{
+	EventDisp(const byte_t *buffer, size_t &offset, const size_t size);
 public:
-	EventDisp(const char *name, int x, int y): MapObject(name, x, y){}
+	EventDisp(const std::string &name, int x, int y): MapObject(name, x, y){}
 };
 
 class Sign : public MapObject{
 protected:
 	int text_index;
+	Sign(const byte_t *buffer, size_t &offset, const size_t size);
 public:
-	Sign(const char *name, int x, int y, int text_index): MapObject(name, x, y), text_index(text_index){}
+	Sign(const std::string &name, int x, int y, int text_index): MapObject(name, x, y), text_index(text_index){}
 };
 
 class HiddenObject : public MapObject{
 protected:
-	const char *script;
-	const char *script_parameter;
+	std::string script;
+	std::string script_parameter;
+
+	HiddenObject(const byte_t *buffer, size_t &offset, const size_t size);
 public:
-	HiddenObject(const char *name, int x, int y, const char *script, const char *script_parameter):
+	HiddenObject(const std::string &name, int x, int y, const std::string &script, const std::string &script_parameter):
 		MapObject(name, x, y),
 		script(script),
 		script_parameter(script_parameter){}
@@ -83,8 +121,9 @@ struct WarpDestination{
 	bool simple;
 	const MapData *destination_map = nullptr;
 	std::string variable_name;
+	WarpDestination() = default;
 	WarpDestination(const MapData &destination_map): simple(true), destination_map(&destination_map){}
-	WarpDestination(const char *variable_name): simple(false), variable_name(variable_name){}
+	WarpDestination(const std::string &variable_name): simple(false), variable_name(variable_name){}
 	WarpDestination(const WarpDestination &) = default;
 };
 
@@ -93,8 +132,10 @@ protected:
 	int index;
 	WarpDestination destination;
 	int destination_warp_index;
+
+	MapWarp(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const MapData *> &);
 public:
-	MapWarp(const char *name, int x, int y, int index, const WarpDestination &destination, int destination_warp_index):
+	MapWarp(const std::string &name, int x, int y, int index, const WarpDestination &destination, int destination_warp_index):
 		MapObject(name, x, y),
 		index(index),
 		destination(destination),
@@ -102,24 +143,21 @@ public:
 };
 
 class ObjectWithSprite : public MapObject{
-public:
-	enum class FacingDirection{
-		Undefined,
-		None,
-		Up,
-		Right,
-		Down,
-		Left,
-		BoulderMovementByte2,
-	};
 protected:
 	const GraphicsAsset *sprite;
-	FacingDirection facing_direction;
+	MapObjectFacingDirection facing_direction;
 	bool wandering;
 	int range;
 	int text_index;
+
+	ObjectWithSprite(
+		const byte_t *buffer,
+		size_t &offset,
+		const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map
+	);
 public:
-	ObjectWithSprite(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_index):
+	ObjectWithSprite(const std::string &name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_index):
 		MapObject(name, x, y),
 		sprite(&sprite),
 		facing_direction(facing_direction),
@@ -132,16 +170,22 @@ public:
 inline ObjectWithSprite::~ObjectWithSprite(){}
 
 class NpcMapObject : public ObjectWithSprite{
+	NpcMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map);
 public:
-	NpcMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id):
+	NpcMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id){}
 };
 
 class ItemMapObject : public ObjectWithSprite{
 protected:
 	ItemId item;
+
+	ItemMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, ItemId> &items_map);
 public:
-	ItemMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
+	ItemMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		item(item){}
 };
@@ -149,8 +193,12 @@ public:
 class TrainerMapObject : public ObjectWithSprite{
 protected:
 	const BaseTrainerParty *party;
+
+	TrainerMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, const BaseTrainerParty *> &parties_map);
 public:
-	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, const BaseTrainerParty *party):
+	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const BaseTrainerParty *party):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		party(party){}
 };
@@ -159,8 +207,12 @@ class PokemonMapObject : public ObjectWithSprite{
 protected:
 	SpeciesId species;
 	int level;
+
+	PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, SpeciesId> &species_map);
 public:
-	PokemonMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, FacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
+	PokemonMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		species(species),
 		level(level){}
@@ -175,12 +227,19 @@ struct BinaryMapData{
 
 struct MapData{
 	std::string name;
-	std::shared_ptr<TilesetData> tileset;
 	int width, height;
+	std::shared_ptr<TilesetData> tileset;
 	std::shared_ptr<BinaryMapData> map_data;
-	std::string script;
+	std::string script_name;
+	std::vector<std::shared_ptr<MapObject>> objects;
 
-	MapData(const byte_t *, size_t &, size_t, const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets, const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data);
+	MapData(
+		const byte_t *,
+		size_t &,
+		size_t,
+		const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
+		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data
+	);
 };
 
 class MapStore{
@@ -191,11 +250,13 @@ class MapStore{
 	typedef std::map<std::string, const GraphicsAsset *> graphics_map_t;
 	typedef std::map<std::string, std::shared_ptr<TilesetData>> tilesets_t;
 	typedef std::map<std::string, std::shared_ptr<BinaryMapData>> map_data_t;
+	typedef std::map<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> map_objects_t;
 	static blocksets_t load_blocksets();
 	static collisions_t load_collisions();
 	static graphics_map_t load_graphics_map();
 	static tilesets_t load_tilesets(const blocksets_t &, const collisions_t &, const graphics_map_t &);
 	static map_data_t load_map_data();
+	map_objects_t load_objects(const graphics_map_t &graphics_map);
 	void load_maps(const tilesets_t &, const map_data_t &);
 public:
 	MapStore();

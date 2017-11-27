@@ -115,8 +115,8 @@ struct MapObject{
 		if (it == serializers_map.end())
 			throw std::runtime_error("Invalid map object type: " + this->type);
 
-		write_ascii_string(dst, this->display_name);
 		write_ascii_string(dst, this->type);
+		write_ascii_string(dst, this->display_name);
 		write_varint(dst, this->x);
 		write_varint(dst, this->y);
 		it->second(dst, *this);
@@ -225,10 +225,7 @@ void trainer_f(std::vector<byte_t> &dst, const MapObject &mo){
 
 void warp_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_varint(dst, to_unsigned(mo.params[0]));
-	if (mo.params[1].substr(0, 4) == "var:")
-		write_ascii_string(dst, mo.params[1].substr(4));
-	else
-		write_ascii_string(dst, mo.params[1]);
+	write_ascii_string(dst, mo.params[1]);
 	write_varint(dst, to_unsigned(mo.params[2]));
 }
 
@@ -282,9 +279,12 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 
 	std::vector<byte_t> map_objects_data;
 
-	for (auto &set : map_sets)
+	for (auto &set : map_sets){
+		write_ascii_string(map_objects_data, set.first);
+		write_varint(map_objects_data, set.second.size());
 		for (auto &o : set.second)
 			o.serialize(map_objects_data);
+	}
 
 	write_buffer_to_header_and_source(header, source, map_objects_data, "map_objects_data");
 

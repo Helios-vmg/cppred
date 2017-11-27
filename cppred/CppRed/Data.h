@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 #include <cstddef>
 
 #include "PokemonInfo.h"
@@ -7,4 +8,5 @@
 #include "../CodeGeneration/output/text.h"
 #include "../CodeGeneration/output/graphics_public.h"
 #include "../CodeGeneration/output/trainer_parties.h"
+#include "../CodeGeneration/output/map_objects.h"
 #include "../CodeGeneration/output/maps.h"

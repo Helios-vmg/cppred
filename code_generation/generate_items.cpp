@@ -19,12 +19,16 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 		"name",
 	};
 
-	std::ofstream file("output/items.h");
+	std::ofstream header("output/items.h");
+	std::ofstream source("output/items.inl");
 
-	file << "#pragma once\n"
+	header << "#pragma once\n"
 		<< generated_file_warning <<
 		"\n"
 		"enum class ItemId{\n";
+	source << generated_file_warning <<
+		"\n"
+		"extern const std::pair<const char *, ItemId> item_strings[] = {\n";
 
 	CsvParser csv(input_file);
 	auto rows = csv.row_count();
@@ -33,9 +37,13 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 		auto id = to_unsigned(row[0]);
 		auto name = row[1];
 
-		file << "    " << name << " = " << id << ",\n";
+		header << "    " << name << " = " << id << ",\n";
+		source << "\t{ \"" << name << "\", ItemId::" << name << " },\n";
 	}
-	file << "};\n";
+	header << "};\n"
+		"extern const std::pair<const char *, ItemId> item_strings[];\n"
+		"static const size_t item_strings_size = " << rows << ";\n";
+	source << "};\n";
 
 	known_hashes[hash_key] = current_hash;
 }

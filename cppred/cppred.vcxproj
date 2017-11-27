@@ -81,7 +81,14 @@
     <ClCompile Include="HeliosRenderer.cpp" />
     <ClCompile Include="CppRed/AudioProgram.cpp" />
     <ClCompile Include="CppRed/CommonFunctions.cpp" />
-    <ClCompile Include="CppRed/Data.cpp" />
+    <ClCompile Include="CppRed/Data.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="CppRed/Game.cpp" />
     <ClCompile Include="CppRed/Intro.cpp" />
     <ClCompile Include="CppRed/MainMenu.cpp" />

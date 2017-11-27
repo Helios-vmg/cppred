@@ -73,6 +73,7 @@ struct LearnedMove{
 struct BasePokemonInfo{
 	PokedexId pokedex_id;
 	SpeciesId species_id;
+	const char *internal_name;
 	bool allocated;
 	std::int8_t starter_index;
 	byte_t base_hp;
@@ -94,6 +95,7 @@ struct BasePokemonInfo{
 	BasePokemonInfo(
 		PokedexId pokedex_id,
 		SpeciesId species_id,
+		const char *internal_name,
 		bool allocated,
 		std::int8_t starter_index,
 		byte_t base_hp,
@@ -114,6 +116,7 @@ struct BasePokemonInfo{
 	):
 		pokedex_id(pokedex_id),
 		species_id(species_id),
+		internal_name(internal_name),
 		allocated(allocated),
 		starter_index(starter_index),
 		base_hp(base_hp),
@@ -160,6 +163,7 @@ public:
 	PokemonInfo(
 		PokedexId pokedex_id,
 		SpeciesId species_id,
+		const char *internal_name,
 		bool allocated,
 		std::int8_t starter_index,
 		byte_t base_hp,
@@ -184,6 +188,7 @@ public:
 	BasePokemonInfo(
 		pokedex_id,
 		species_id,
+		internal_name,
 		allocated,
 		starter_index,
 		base_hp,
