@@ -66,8 +66,7 @@ protected:
 		const std::map<std::string, const MapData *> &maps,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::string, ItemId> &items_map,
-		const std::map<std::string, SpeciesId> &species_map,
-		const std::map<std::string, const BaseTrainerParty *> &trainer_map
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map
 	);
 	MapObject(const byte_t *buffer, size_t &offset, const size_t size);
 public:
@@ -81,24 +80,23 @@ public:
 			const std::map<std::string, const MapData *> &maps,
 			const std::map<std::string, const GraphicsAsset *> &graphics_map,
 			const std::map<std::string, ItemId> &items_map,
-			const std::map<std::string, SpeciesId> &species_map,
-			const std::map<std::string, const BaseTrainerParty *> &trainer_map
+			const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map
 		);
 };
 
 inline MapObject::~MapObject(){}
 
 class EventDisp : public MapObject{
-	EventDisp(const byte_t *buffer, size_t &offset, const size_t size);
 public:
+	EventDisp(const byte_t *buffer, size_t &offset, const size_t size);
 	EventDisp(const std::string &name, int x, int y): MapObject(name, x, y){}
 };
 
 class Sign : public MapObject{
 protected:
 	int text_index;
-	Sign(const byte_t *buffer, size_t &offset, const size_t size);
 public:
+	Sign(const byte_t *buffer, size_t &offset, const size_t size);
 	Sign(const std::string &name, int x, int y, int text_index): MapObject(name, x, y), text_index(text_index){}
 };
 
@@ -107,8 +105,8 @@ protected:
 	std::string script;
 	std::string script_parameter;
 
-	HiddenObject(const byte_t *buffer, size_t &offset, const size_t size);
 public:
+	HiddenObject(const byte_t *buffer, size_t &offset, const size_t size);
 	HiddenObject(const std::string &name, int x, int y, const std::string &script, const std::string &script_parameter):
 		MapObject(name, x, y),
 		script(script),
@@ -133,8 +131,8 @@ protected:
 	WarpDestination destination;
 	int destination_warp_index;
 
-	MapWarp(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const MapData *> &);
 public:
+	MapWarp(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const MapData *> &);
 	MapWarp(const std::string &name, int x, int y, int index, const WarpDestination &destination, int destination_warp_index):
 		MapObject(name, x, y),
 		index(index),
@@ -150,13 +148,13 @@ protected:
 	int range;
 	int text_index;
 
+public:
 	ObjectWithSprite(
 		const byte_t *buffer,
 		size_t &offset,
 		const size_t size,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map
 	);
-public:
 	ObjectWithSprite(const std::string &name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_index):
 		MapObject(name, x, y),
 		sprite(&sprite),
@@ -170,9 +168,9 @@ public:
 inline ObjectWithSprite::~ObjectWithSprite(){}
 
 class NpcMapObject : public ObjectWithSprite{
+public:
 	NpcMapObject(const byte_t *buffer, size_t &offset, const size_t size,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map);
-public:
 	NpcMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id){}
 };
@@ -181,10 +179,10 @@ class ItemMapObject : public ObjectWithSprite{
 protected:
 	ItemId item;
 
+public:
 	ItemMapObject(const byte_t *buffer, size_t &offset, const size_t size,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::string, ItemId> &items_map);
-public:
 	ItemMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		item(item){}
@@ -192,13 +190,13 @@ public:
 
 class TrainerMapObject : public ObjectWithSprite{
 protected:
-	const BaseTrainerParty *party;
+	std::shared_ptr<BaseTrainerParty> party;
 
+public:
 	TrainerMapObject(const byte_t *buffer, size_t &offset, const size_t size,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, const BaseTrainerParty *> &parties_map);
-public:
-	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const BaseTrainerParty *party):
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map);
+	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const std::shared_ptr<BaseTrainerParty> &party):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		party(party){}
 };
@@ -208,10 +206,8 @@ protected:
 	SpeciesId species;
 	int level;
 
-	PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, SpeciesId> &species_map);
 public:
+	PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const GraphicsAsset *> &graphics_map);
 	PokemonMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
 		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
 		species(species),
@@ -251,11 +247,13 @@ class MapStore{
 	typedef std::map<std::string, std::shared_ptr<TilesetData>> tilesets_t;
 	typedef std::map<std::string, std::shared_ptr<BinaryMapData>> map_data_t;
 	typedef std::map<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> map_objects_t;
+	typedef std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> trainer_parties_t;
 	static blocksets_t load_blocksets();
 	static collisions_t load_collisions();
 	static graphics_map_t load_graphics_map();
 	static tilesets_t load_tilesets(const blocksets_t &, const collisions_t &, const graphics_map_t &);
 	static map_data_t load_map_data();
+	static trainer_parties_t load_trainer_parties();
 	map_objects_t load_objects(const graphics_map_t &graphics_map);
 	void load_maps(const tilesets_t &, const map_data_t &);
 public:

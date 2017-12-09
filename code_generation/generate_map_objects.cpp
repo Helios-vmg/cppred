@@ -219,6 +219,7 @@ void sign_f(std::vector<byte_t> &dst, const MapObject &mo){
 }
 
 void trainer_f(std::vector<byte_t> &dst, const MapObject &mo){
+	npc_f(dst, mo);
 	write_ascii_string(dst, mo.params[5]);
 	write_varint(dst, to_unsigned(mo.params[6]) - 1);
 }

@@ -1,8 +1,11 @@
 #include "Maps.h"
 #include "CppRed/Data.h"
+#include "CppRed/Pokemon.h"
 #include "utility.h"
 #include <map>
 #include <limits>
+#include <sstream>
+#include <cassert>
 
 Blockset::Blockset(const byte_t *buffer, size_t &offset, size_t size){
 	this->name = read_string(buffer, offset, size);
@@ -101,25 +104,55 @@ MapStore::map_data_t MapStore::load_map_data(){
 	return ret;
 }
 
+template <size_t max>
+void check_max_party(size_t member_count, const std::string &class_name, size_t party_index){
+	if (member_count <= max)
+		return;
+	std::stringstream stream;
+	stream << "Trainer class " << class_name << ", index " << party_index << " contains an invalid number of members (" << member_count << "). Max: " << max;
+	throw std::runtime_error(stream.str());
+}
+
+MapStore::trainer_parties_t MapStore::load_trainer_parties(){
+	trainer_parties_t ret;
+	size_t offset = 0;
+	auto buffer = trainer_parties_data;
+	auto size = trainer_parties_data_size;
+	constexpr auto max = CppRed::Party::max_party_size;
+	while (offset < size){
+		auto class_name = read_string(buffer, offset, size);
+		auto party_count = read_varint(buffer, offset, size);
+		for (decltype(party_count) i = 0; i < party_count; i++){
+			auto party_index = read_varint(buffer, offset, size);
+			auto member_count = read_varint(buffer, offset, size);
+			check_max_party<max>(member_count, class_name, party_index);
+			auto party = allocate_TrainerParty<0, max + 1>(member_count);
+			assert(party->get_length() == member_count);
+			for (decltype(member_count) j = 0; j < member_count; j++){
+				auto &member = party->get_member(j);
+				member.species = (SpeciesId)read_varint(buffer, offset, size);
+				member.level = (int)read_varint(buffer, offset, size);
+			}
+			ret[std::make_pair(class_name, party_index)] = party;
+		}
+	}
+	return ret;
+}
+
 MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_map){
 	std::map<std::string, const MapData *> map_maps;
 	std::map<std::string, ItemId> items_map;
-	std::map<std::string, SpeciesId> species_map;
-	std::map<std::string, const BaseTrainerParty *> trainer_map;
 
 	for (auto &map : this->maps)
 		map_maps[map->name] = map.get();
 	for (size_t i = 0; i < item_strings_size; i++)
 		items_map[item_strings[i].first] = item_strings[i].second;
-	for (int i = 0; i < pokemon_species_count; i++){
-		auto pokemon = pokemon_by_pokedex_id[i];
-		species_map[pokemon->internal_name] = pokemon->species_id;
-	}
+	auto trainer_parties = this->load_trainer_parties();
 
 	map_objects_t ret;
 	size_t offset = 0;
 	while (offset < map_objects_data_size){
-		auto pair = MapObject::create_vector(map_objects_data, offset, map_data_size, map_maps, graphics_map, items_map, species_map);
+		auto pair = MapObject::create_vector(map_objects_data, offset, map_objects_data_size, map_maps, graphics_map, items_map, trainer_parties);
 		ret[pair.first] = pair.second;
 	}
 	return ret;
@@ -152,7 +185,7 @@ MapStore::MapStore(){
 	auto tilesets = this->load_tilesets(blocksets, collisions, graphics_map);
 	auto map_data = this->load_map_data();
 	this->load_maps(tilesets, map_data);
-	auto objects = this->load_objects();
+	auto objects = this->load_objects(graphics_map);
 }
 
 MapData &MapStore::get_map(Map map){
@@ -166,13 +199,12 @@ std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>>
 		const std::map<std::string, const MapData *> &maps,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::string, ItemId> &items_map,
-		const std::map<std::string, SpeciesId> &species_map,
-		const std::map<std::string, const BaseTrainerParty *> &trainer_map){
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map){
 	auto ret = std::make_shared<std::vector<std::unique_ptr<MapObject>>>();
 	auto name = read_string(buffer, offset, size);
 	auto count = read_varint(buffer, offset, size);
 	for (decltype(count) i = 0; i < count; i++)
-		ret->push_back(create_object(buffer, offset, size, maps, graphics_map, items_map, species_map, trainer_map));
+		ret->push_back(create_object(buffer, offset, size, maps, graphics_map, items_map, trainer_map));
 	return std::make_pair(name, ret);
 }
 
@@ -183,8 +215,7 @@ std::unique_ptr<MapObject> MapObject::create_object(
 		const std::map<std::string, const MapData *> &maps,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::string, ItemId> &items_map,
-		const std::map<std::string, SpeciesId> &species_map,
-		const std::map<std::string, const BaseTrainerParty *> &trainer_map){
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map){
 
 	auto object_type = read_string(buffer, offset, size);
 
@@ -197,7 +228,7 @@ std::unique_ptr<MapObject> MapObject::create_object(
 	if (object_type == "npc")
 		return std::make_unique<NpcMapObject>(buffer, offset, size, graphics_map);
 	if (object_type == "pokemon")
-		return std::make_unique<PokemonMapObject>(buffer, offset, size, graphics_map, species_map);
+		return std::make_unique<PokemonMapObject>(buffer, offset, size, graphics_map);
 	if (object_type == "sign")
 		return std::make_unique<Sign>(buffer, offset, size);
 	if (object_type == "trainer")
@@ -209,9 +240,9 @@ std::unique_ptr<MapObject> MapObject::create_object(
 }
 
 MapObject::MapObject(const byte_t *buffer, size_t &offset, const size_t size){
-	auto object_name = read_string(buffer, offset, size);
-	auto x = read_varint(buffer, offset, size);
-	auto y = read_varint(buffer, offset, size);
+	this->name = read_string(buffer, offset, size);
+	this->x = read_varint(buffer, offset, size);
+	this->y = read_varint(buffer, offset, size);
 }
 
 EventDisp::EventDisp(const byte_t *buffer, size_t &offset, const size_t size): MapObject(buffer, offset, size){}
@@ -272,13 +303,14 @@ ItemMapObject::ItemMapObject(const byte_t *buffer, size_t &offset, const size_t 
 
 TrainerMapObject::TrainerMapObject(const byte_t *buffer, size_t &offset, const size_t size,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, const BaseTrainerParty *> &parties_map): ObjectWithSprite(buffer, offset, size, graphics_map){
-	this->party = find_in_constant_map(parties_map, read_string(buffer, offset, size));
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): ObjectWithSprite(buffer, offset, size, graphics_map){
+	auto class_name = read_string(buffer, offset, size);
+	auto party_index = (int)read_varint(buffer, offset, size);
+	this->party = find_in_constant_map(parties_map, std::make_pair(class_name, party_index));
 }
 
-PokemonMapObject::PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, SpeciesId> &species_map): ObjectWithSprite(buffer, offset, size, graphics_map){
-	this->species = find_in_constant_map(species_map, read_string(buffer, offset, size));
-	this->level = read_varint(buffer, offset, size);
+PokemonMapObject::PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const GraphicsAsset *> &graphics_map):
+		ObjectWithSprite(buffer, offset, size, graphics_map){
+	this->species = (SpeciesId)read_varint(buffer, offset, size);
+	this->level = (int)read_varint(buffer, offset, size);
 }
