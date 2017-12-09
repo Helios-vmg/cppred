@@ -89,9 +89,6 @@
     <ClCompile Include="..\common\sha1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Type.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="generate_graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
