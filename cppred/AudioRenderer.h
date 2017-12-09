@@ -68,5 +68,5 @@ public:
 	virtual byte_t get_NR52() const = 0;
 	virtual void copy_voluntary_wave(const void *buffer) = 0;
 
-	void write_data_to_device(Uint8 *stream, int len);
+	void write_data_to_device(Uint8 *stream, int len, StereoSampleFinal *spillover_buffer, size_t &spillover_buffer_size);
 };

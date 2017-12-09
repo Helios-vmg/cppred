@@ -6,8 +6,7 @@ bool operator==(const SDL_AudioSpec &a, const SDL_AudioSpec &b){
 	return
 		a.freq == b.freq &&
 		a.format == b.format &&
-		a.channels == b.channels &&
-		a.samples == b.samples;
+		a.channels == b.channels;
 }
 
 AudioDevice::AudioDevice(){
@@ -42,7 +41,31 @@ void SDLCALL AudioDevice::audio_callback(void *userdata, Uint8 *stream, int len)
 		memset(stream, 0, len);
 		return;
 	}
-	This->renderer->write_data_to_device(stream, len);
+	if (This->spillover_buffer_size){
+		const auto s = sizeof(StereoSampleFinal);
+		const auto size2 = (int)(This->spillover_buffer_size * s);
+		if (len >= size2){
+			memcpy(stream, This->spillover_buffer, size2);
+			stream += size2;
+			len -= size2;
+			This->spillover_buffer_size = 0;
+		}else{
+			memcpy(stream, This->spillover_buffer, len);
+
+			const auto m = (len + (s - 1)) / s * s;
+			assert(m <= size2);
+			if (m < size2){
+				memmove(This->spillover_buffer, (byte_t *)This->spillover_buffer + m, size2 - m);
+				This->spillover_buffer_size = (size2 - m) / s;
+			}
+
+			stream += len;
+			len = 0;
+		}
+	}
+
+	if (len)
+		This->renderer->write_data_to_device(stream, len, This->spillover_buffer, This->spillover_buffer_size);
 }
 
 class AudioLock{
