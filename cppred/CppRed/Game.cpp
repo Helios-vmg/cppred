@@ -567,22 +567,33 @@ std::pair<MapData *, Point> compute_map_connections(Map map, MapData &map_data, 
 			transformed.y += map_data2.height * check.y_multiplier_2;
 		else if (check.y_multiplier_2 < 0)
 			transformed.y += map_data.height * check.y_multiplier_2;
-		if (point_in_map(transformed, map_data2))
-			return {&map_data2, transformed};
+		return {&map_data2, transformed};
 	}
 	return {nullptr, position};
 }
 
-Game::ComputedBlock Game::compute_virtual_block(Map map, const Point &position){
-	auto &map_data = this->map_store.get_map_data(map);
-	if (point_in_map(position, map_data))
-		return {map_data.tileset.get(), map_data.get_block_at_map_position(position)};
-	auto transformed = compute_map_connections(map, map_data, this->map_store, position);
-	if (!transformed.first)
-		return {map_data.tileset.get(), map_data.border_block};
-	auto block = transformed.first->get_block_at_map_position(transformed.second);
-	return {transformed.first->tileset.get(), block};
+std::pair<TilesetData *, int> Game::compute_virtual_block(Map map, const Point &position){
+	auto transformed = this->remap_coordinates(map, position);
+	auto &map_data = this->map_store.get_map_data(transformed.first);
+	if (point_in_map(transformed.second, map_data))
+		return {map_data.tileset.get(), map_data.get_block_at_map_position(transformed.second)};
+	return {map_data.tileset.get(), map_data.border_block};
 }
+
+std::pair<Map, Point> Game::remap_coordinates(Map map, const Point &position_parameter){
+	auto position = position_parameter;
+	while (true){
+		auto &map_data = this->map_store.get_map_data(map);
+		if (point_in_map(position, map_data))
+			return {map, position};
+		auto transformed = compute_map_connections(map, map_data, this->map_store, position);
+		if (!transformed.first)
+			return {map, position};
+		map = transformed.first->map_id;
+		position = transformed.second;
+	}
+}
+
 
 void Game::render(){
 	auto &renderer = this->engine->get_renderer();
@@ -601,9 +612,9 @@ void Game::render(){
 				int y2 = y / 2 - PlayerCharacter::screen_block_offset_y + pos.y;
 				Point map_position(x2, y2);
 				auto computed_block = this->compute_virtual_block(current_map, map_position);
-				auto &blockset = computed_block.tileset->blockset->data;
-				auto tileset = computed_block.tileset->tiles;
-				auto block = computed_block.block;
+				auto &blockset = computed_block.first->blockset->data;
+				auto tileset = computed_block.first->tiles;
+				auto block = computed_block.second;
 				auto offset = x % 2 + y % 2 * 2;
 				tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
 				tile.flipped_x = false;
@@ -635,10 +646,16 @@ MoveQueryResult Game::can_move_to(Map map, const Point &current_position, const 
 
 MoveQueryResult Game::can_move_to_land(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
 	//TODO: Implement full movement check logic.
-	if (!this->check_jumping_and_tile_pair_collisions(map, current_position, next_position, direction, &TilesetData::impassability_pairs) || !this->is_passable(map, next_position))
+	auto remapped_next_position = this->remap_coordinates(map, next_position);
+	auto &map_data = this->map_store.get_map_data(remapped_next_position.first);
+	if (!point_in_map(remapped_next_position.second, map_data))
 		return MoveQueryResult::CantMoveThere;
-	if (!this->is_passable(map, next_position))
-		return MoveQueryResult::CantMoveThere;
+	if (remapped_next_position.first != map)
+		return MoveQueryResult::CanMoveButWillChangeMaps;
+	//if (!this->check_jumping_and_tile_pair_collisions(map, current_position, next_position, direction, &TilesetData::impassability_pairs) || !this->is_passable(map, next_position))
+	//	return MoveQueryResult::CantMoveThere;
+	//if (!this->is_passable(map, next_position))
+	//	return MoveQueryResult::CantMoveThere;
 	return MoveQueryResult::CanMoveThere;
 }
 

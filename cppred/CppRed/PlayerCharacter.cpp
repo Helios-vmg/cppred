@@ -120,21 +120,26 @@ void PlayerCharacter::move(const Point &delta, FacingDirection direction){
 			//TODO: Figure out destination map.
 			break;
 		case MoveQueryResult::CanMoveButWillChangeMaps:
-			//TODO: Figure out destination map.
+			{
+				auto remapped = this->game->remap_coordinates(old_map, new_position);
+				new_map = remapped.first;
+				new_position = remapped.second;
+			}
 			break;
 		default:
 			throw std::runtime_error("Internal error: invalid switch.");
 	}
-	auto &map_instance = this->game->get_map_instance(new_map);
+	auto &old_map_instance = this->game->get_map_instance(old_map);
+	auto &new_map_instance = this->game->get_map_instance(new_map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
-	map_instance.set_cell_occupation(new_position, true);
+	new_map_instance.set_cell_occupation(new_position, true);
 	this->coroutine->wait(5.0 / 60.0);
-	map_instance.set_cell_occupation(old_position, false);
+	old_map_instance.set_cell_occupation(old_position, false);
 	this->current_map = new_map;
+	this->map_position = new_position;
 	if (new_map != old_map){
 		//TODO: Do things that happen when the player enters a new map.
 	}
-	this->map_position = new_position;
 }
 
 }

@@ -253,6 +253,7 @@ struct MapConnection{
 };
 
 struct MapData{
+	Map map_id;
 	std::string name;
 	int width, height;
 	std::shared_ptr<TilesetData> tileset;
@@ -263,6 +264,7 @@ struct MapData{
 	int border_block;
 
 	MapData(
+		Map map_id,
 		const byte_t *,
 		size_t &,
 		size_t,

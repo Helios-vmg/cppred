@@ -177,6 +177,7 @@ MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_ma
 }
 
 MapData::MapData(
+		Map map_id,
 		const byte_t *buffer,
 		size_t &offset,
 		size_t size,
@@ -184,6 +185,7 @@ MapData::MapData(
 		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
 		std::vector<TemporaryMapConnection> &tmcs){
 	
+	this->map_id = map_id;
 	this->name = read_string(buffer, offset, size);
 	this->tileset = find_in_constant_map(tilesets, read_string(buffer, offset, size));
 	this->width = read_varint(buffer, offset, size);
@@ -214,8 +216,9 @@ int MapData::get_partial_tile_at_actor_position(const Point &point){
 void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data){
 	size_t offset = 0;
 	std::vector<TemporaryMapConnection> tmcs;
+	int id = 0;
 	while (offset < map_definitions_size)
-		this->maps.emplace_back(new MapData(map_definitions, offset, map_definitions_size, tilesets, map_data, tmcs));
+		this->maps.emplace_back(new MapData((Map)++id, map_definitions, offset, map_definitions_size, tilesets, map_data, tmcs));
 	
 	for (auto &tmc : tmcs){
 		auto &mc = tmc.source->map_connections[tmc.direction];

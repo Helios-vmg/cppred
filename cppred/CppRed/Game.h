@@ -82,7 +82,7 @@ class Game{
 		TilesetData *tileset;
 		int block;
 	};
-	ComputedBlock compute_virtual_block(Map map, const Point &position);
+	std::pair<TilesetData *, int> compute_virtual_block(Map map, const Point &position);
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
 	Game(Game &&) = delete;
@@ -142,6 +142,7 @@ public:
 	void game_loop();
 	MapInstance &get_map_instance(Map);
 	MoveQueryResult can_move_to(Map, const Point &current_position, const Point &next_position, FacingDirection);
+	std::pair<Map, Point> remap_coordinates(Map, const Point &);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
