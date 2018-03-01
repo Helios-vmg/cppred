@@ -1,8 +1,18 @@
 #pragma once
 #include "common_types.h"
+#include "HighResolutionClock.h"
 #include <array>
 #include <vector>
 #include <map>
+#include <thread>
+#include <boost/coroutine2/all.hpp>
+
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 
@@ -101,6 +111,7 @@ int cast_round(double);
 std::uint64_t cast_round_u64(double);
 std::uint32_t read_u32(const void *);
 std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size);
+std::int32_t read_signed_varint(const byte_t *buffer, size_t &offset, size_t size);
 std::string read_string(const byte_t *buffer, size_t &offset, size_t size);
 std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size);
 
@@ -111,3 +122,68 @@ const V &find_in_constant_map(const std::map<K, V> &map, const K &key){
 		throw std::exception();
 	return it->second;
 }
+
+struct Point{
+	int x, y;
+
+	Point() = default;
+	Point(int x, int y): x(x), y(y){}
+	Point operator+(const Point &p) const{
+		return { this->x + p.x, this->y + p.y };
+	}
+	Point operator-(const Point &p) const{
+		return { this->x - p.x, this->y - p.y };
+	}
+	Point operator-() const{
+		return { -this->x, -this->y };
+	}
+	Point operator*(double x) const{
+		return { cast_round(this->x * x), cast_round(this->y * x) };
+	}
+	const Point &operator+=(const Point &other){
+		this->x += other.x;
+		this->y += other.y;
+		return *this;
+	}
+	const Point &operator-=(const Point &other){
+		this->x -= other.x;
+		this->y -= other.y;
+		return *this;
+	}
+	const Point &operator*=(double x){
+		this->x = cast_round(this->x * x);
+		this->y = cast_round(this->y * x);
+		return *this;
+	}
+	int multiply_components() const{
+		return this->x * this->y;
+	}
+};
+
+class Coroutine{
+public:
+	typedef std::function<void(Coroutine &)> entry_point_t;
+	typedef std::function<void()> on_yield_t;
+private:
+	HighResolutionClock clock;
+	std::thread::id resume_thread_id;
+	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
+	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;
+	std::unique_ptr<coroutine_t> coroutine;
+	on_yield_t on_yield;
+	entry_point_t entry_point;
+	yielder_t *yielder = nullptr;
+	bool first_run = true;
+	double wait_remainder = 0;
+public:
+	Coroutine(entry_point_t &&entry_point);
+	bool resume();
+	void yield();
+	void wait(double seconds);
+	void set_on_yield(on_yield_t &&){
+		this->on_yield = std::move(on_yield);
+	}
+	void clear_on_yield(){
+		this->on_yield = on_yield_t();
+	}
+};

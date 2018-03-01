@@ -91,38 +91,3 @@ struct Tilemap{
 	static const int size = w * h;
 	Tile tiles[size];
 };
-
-struct Point{
-	int x, y;
-
-	Point operator+(const Point &p) const{
-		return { this->x + p.x, this->y + p.y };
-	}
-	Point operator-(const Point &p) const{
-		return { this->x - p.x, this->y - p.y };
-	}
-	Point operator-() const{
-		return { -this->x, -this->y };
-	}
-	Point operator*(double x) const{
-		return { cast_round(this->x * x), cast_round(this->y * x) };
-	}
-	const Point &operator+=(const Point &other){
-		this->x += other.x;
-		this->y += other.y;
-		return *this;
-	}
-	const Point &operator-=(const Point &other){
-		this->x -= other.x;
-		this->y -= other.y;
-		return *this;
-	}
-	const Point &operator*=(double x){
-		this->x = cast_round(this->x * x);
-		this->y = cast_round(this->y * x);
-		return *this;
-	}
-	int multiply_components() const{
-		return this->x * this->y;
-	}
-};

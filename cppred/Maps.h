@@ -42,6 +42,8 @@ struct TilesetData{
 	short counters[16];
 	int grass_tile;
 	TilesetType type;
+	std::pair<short, short> impassability_pairs[16];
+	std::pair<short, short> impassability_pairs_water[16];
 
 	TilesetData(
 		const byte_t *,
@@ -221,6 +223,35 @@ struct BinaryMapData{
 	BinaryMapData(const byte_t *, size_t &, size_t);
 };
 
+struct Point;
+
+struct TemporaryMapConnection{
+	MapData *source;
+	std::string destination;
+	int direction;
+	int local_pos, remote_pos;
+	TemporaryMapConnection() = default;
+	TemporaryMapConnection(const TemporaryMapConnection &) = delete;
+	TemporaryMapConnection(TemporaryMapConnection &&other): destination(std::move(other.destination)){
+		this->source = other.source;
+		this->direction = other.direction;
+		this->local_pos = other.local_pos;
+		this->remote_pos = other.remote_pos;
+	}
+};
+
+struct MapConnection{
+	Map destination = Map::Nowhere;
+	int local_position;
+	int remote_position;
+	operator bool() const{
+		return this->destination != Map::Nowhere;
+	}
+	bool operator!() const{
+		return !(bool)*this;
+	}
+};
+
 struct MapData{
 	std::string name;
 	int width, height;
@@ -228,18 +259,39 @@ struct MapData{
 	std::shared_ptr<BinaryMapData> map_data;
 	std::string script_name;
 	std::vector<std::shared_ptr<MapObject>> objects;
+	MapConnection map_connections[4];
+	int border_block;
 
 	MapData(
 		const byte_t *,
 		size_t &,
 		size_t,
 		const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
-		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data
+		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
+		std::vector<TemporaryMapConnection> &tmcs
 	);
+	int get_block_at_map_position(const Point &);
+	int get_partial_tile_at_actor_position(const Point &);
+};
+
+class MapStore;
+
+class MapInstance{
+	Map map;
+	MapStore *store;
+	int w, h;
+	std::vector<bool> occupation_bitmap;
+
+	void check_map_location(const Point &);
+public:
+	MapInstance(Map, MapStore &);
+	void set_cell_occupation(const Point &, bool);
+	bool get_cell_occupation(const Point &);
 };
 
 class MapStore{
 	std::vector<std::unique_ptr<MapData>> maps;
+	std::vector<std::unique_ptr<MapInstance>> map_instances;
 	
 	typedef std::map<std::string, std::shared_ptr<Blockset>> blocksets_t;
 	typedef std::map<std::string, std::shared_ptr<Collision>> collisions_t;
@@ -258,5 +310,6 @@ class MapStore{
 	void load_maps(const tilesets_t &, const map_data_t &);
 public:
 	MapStore();
-	MapData &get_map(Map map);
+	MapData &get_map_data(Map map);
+	MapInstance &get_map_instance(Map map);
 };

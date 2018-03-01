@@ -150,5 +150,66 @@ void Map2::serialize(std::vector<byte_t> &dst){
 	write_varint(dst, this->width);
 	write_varint(dst, this->height);
 	write_ascii_string(dst, this->map_data_name);
+	for (auto &mc : this->map_connections){
+		write_ascii_string(dst, mc.destination);
+		if (!mc.destination.size())
+			continue;
+		write_signed_varint(dst, mc.local_position);
+		write_signed_varint(dst, mc.remote_position);
+	}
+	write_varint(dst, this->border_block);
 	//TODO: Serialize other members.
+}
+
+int to_direction(const std::string &s){
+	if (s.size() == 1){
+		switch (s[0]){
+			case 'N':
+				return 0;
+			case 'E':
+				return 1;
+			case 'S':
+				return 2;
+			case 'W':
+				return 3;
+		}
+	}
+	throw std::runtime_error("Invalid map connection direction: " + s);
+}
+
+void Maps2::load_map_connections(const char *map_connections_path){
+	static const std::vector<std::string> order = {
+		"map_name",
+		"direction",
+		"destination",
+		"local_position",
+		"remote_position",
+	};
+	CsvParser csv(map_connections_path);
+	auto rows = csv.row_count();
+	for (size_t i = 0; i < rows; i++){
+		auto columns = csv.get_ordered_row(i, order);
+		auto source = columns[0];
+		auto it = this->map.find(source);
+		if (it == this->map.end())
+			throw std::runtime_error("Invalid map connection. Source not found: " + source);
+		auto destination = columns[2];
+		auto it2 = this->map.find(destination);
+		if (it2 == this->map.end())
+			throw std::runtime_error("Invalid map connection. Destination not found: " + destination);
+		auto direction = to_direction(columns[1]);
+		auto local_position = to_int(columns[3]);
+		auto remote_position = to_int(columns[4]);
+		MapConnection mc;
+		mc.destination = destination;
+		mc.local_position = local_position;
+		mc.remote_position = remote_position;
+		it->second->set_map_connection(direction, mc);
+	}
+}
+
+void Map2::set_map_connection(int direction, const MapConnection &mc){
+	if (direction < 0 || (size_t)direction >= array_length(this->map_connections))
+		throw std::runtime_error("Internal error.");
+	this->map_connections[direction] = mc;
 }

@@ -30,6 +30,15 @@ public:
 	InputState operator~() const{
 		return ~this->value;
 	}
+	bool any_direction() const{
+		return !!(this->value & (mask_up | mask_right | mask_down | mask_left));
+	}
+	bool any_main_button() const{
+		return !!(this->value & (mask_a | mask_b));
+	}
+	bool any_secondary_button() const{
+		return !!(this->value & (mask_start | mask_select));
+	}
 	DEFINE_GETTER_SETTER(value);
 
 	static const byte_t mask_a = 1 << 0;

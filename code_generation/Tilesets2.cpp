@@ -4,7 +4,7 @@
 #include <sstream>
 
 Tilesets2::Tilesets2(const char *path, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs){
-	static const std::vector<std::string> order = { "name", "blockset", "tiles", "collision_data", "counters", "grass", "type", };
+	static const std::vector<std::string> order = { "name", "blockset", "tiles", "collision_data", "counters", "grass", "type", "impassability_pairs", "impassability_pairs_water", };
 
 	CsvParser csv(path);
 	auto rows = csv.row_count();
@@ -35,6 +35,28 @@ const V &get(const std::map<K, V> &map, const K &key){
 	return it->second;
 }
 
+std::vector<int> to_int_vector(const std::string &s){
+	std::vector<int> ret;
+	std::stringstream stream(s);
+	int i;
+	while (stream >> i)
+		ret.push_back(i);
+	return ret;
+}
+
+std::vector<std::pair<int, int>> read_pairs(const std::string &s, const std::string &name, const char *column_name){
+	auto pairs = to_int_vector(s);
+	std::vector<std::pair<int, int>> ret;
+	if (pairs.size()){
+		if (pairs.size() % 2)
+			throw std::runtime_error("Error: Tileset \"" + name + "\" has a malformed " + column_name + ". Must be a list of evenly-many numbers.");
+		ret.reserve(pairs.size() / 2);
+		for (size_t i = 0; i < pairs.size(); i += 2)
+			ret.push_back(std::make_pair(pairs[i], pairs[i + 1]));
+	}
+	return ret;
+}
+
 Tileset2::Tileset2(const std::vector<std::string> &columns, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blocksets, const data_map_t &collision, GraphicsStore &gs){
 	this->name = columns[0];
 	this->blockset_name = columns[1];
@@ -44,14 +66,11 @@ Tileset2::Tileset2(const std::vector<std::string> &columns, const std::map<std::
 	this->tiles = gs.get(columns[2]);
 	this->collision_name = columns[3];
 	this->collision = get(collision, this->collision_name);
-	{
-		std::stringstream stream(columns[4]);
-		int i;
-		while (stream >> i)
-			this->counters.push_back(i);
-	}
+	this->counters = to_int_vector(columns[4]);
 	this->grass = columns[5].size() ? (int)to_unsigned(columns[5]) : -1;
 	this->tileset_type = to_TilesetType(columns[6]);
+	this->impassability_pairs = read_pairs(columns[7], this->name, "impassability_pairs");
+	this->impassability_pairs_water = read_pairs(columns[8], this->name, "impassability_pairs_water");
 }
 
 std::shared_ptr<Tileset2> Tilesets2::get(const std::string &name) const{
@@ -61,14 +80,24 @@ std::shared_ptr<Tileset2> Tilesets2::get(const std::string &name) const{
 	return it->second;
 }
 
+void write_pair_list(std::vector<byte_t> &dst, const std::vector<std::pair<int, int>> &list, const std::string &name, const char *what){
+	if (list.size() > 16)
+		throw std::runtime_error("Error: Tileset " + name + " has too many " + what + ". Max: 16.");
+	write_varint(dst, (std::uint32_t)list.size());
+	for (auto &p : list){
+		write_varint(dst, (std::uint32_t)p.first);
+		write_varint(dst, (std::uint32_t)p.second);
+	}
+}
+
 void Tileset2::serialize(std::vector<byte_t> &dst){
 	write_ascii_string(dst, this->name);
 	write_ascii_string(dst, this->blockset_name);
 	write_ascii_string(dst, this->tiles->name);
 	write_ascii_string(dst, this->collision_name);
-	write_varint(dst, (std::uint32_t)this->counters.size());
 	if (this->counters.size() > 16)
 		throw std::runtime_error("Error: Tileset " + this->name + " has too many counter tiles. Max: 16.");
+	write_varint(dst, (std::uint32_t)this->counters.size());
 	for (auto c : this->counters)
 		write_varint(dst, (std::uint32_t)c);
 	std::uint32_t grass_tile = std::numeric_limits<std::uint32_t>::max();
@@ -90,4 +119,6 @@ void Tileset2::serialize(std::vector<byte_t> &dst){
 			throw std::exception();
 	}
 	write_ascii_string(dst, type);
+	write_pair_list(dst, this->impassability_pairs, this->name, "impassability pairs");
+	write_pair_list(dst, this->impassability_pairs_water, this->name, "water impassability pairs");
 }

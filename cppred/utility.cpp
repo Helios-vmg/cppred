@@ -85,6 +85,18 @@ std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size){
 	return ret;
 }
 
+template <typename T>
+typename std::make_signed<T>::type uints_to_ints(T n){
+	typedef typename std::make_signed<T>::type s;
+	if ((n & 1) == 0)
+		return (s)(n / 2);
+	return -(s)((n - 1) / 2) - 1;
+}
+
+std::int32_t read_signed_varint(const byte_t *buffer, size_t &offset, size_t size){
+	return uints_to_ints(read_varint(buffer, offset, size));
+}
+
 std::string read_string(const byte_t *buffer, size_t &offset, size_t size){
 	std::string ret;
 	while (true){
@@ -106,4 +118,46 @@ std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t siz
 	memcpy(&ret[0], buffer + offset, ret.size());
 	offset += ret.size();
 	return ret;
+}
+
+Coroutine::Coroutine(entry_point_t &&entry_point): entry_point(std::move(entry_point)){
+	this->coroutine.reset(new coroutine_t([this](yielder_t &y){
+		this->resume_thread_id = std::this_thread::get_id();
+		this->yielder = &y;
+		if (this->first_run){
+			this->yield();
+			this->first_run = false;
+		}
+		this->entry_point(*this);
+	}));
+}
+
+void Coroutine::yield(){
+	if (std::this_thread::get_id() != this->resume_thread_id)
+		throw std::runtime_error("Coroutine::yield() must be called from the thread that resumed the coroutine!");
+	if (!this->yielder)
+		throw std::runtime_error("Coroutine::yield() must be called while the coroutine is active!");
+	auto yielder = this->yielder;
+	this->yielder = nullptr;
+	(*yielder)();
+	this->yielder = yielder;
+	if (this->on_yield)
+		this->on_yield();
+}
+
+bool Coroutine::resume(){
+	this->resume_thread_id = std::this_thread::get_id();
+	return !!(*this->coroutine)();
+}
+
+void Coroutine::wait(double s){
+	auto target = this->clock.get() + s + this->wait_remainder;
+	while (true){
+		this->yield();
+		auto now = this->clock.get();
+		if (now >= target){
+			this->wait_remainder = target - now;
+			return;
+		}
+	}
 }

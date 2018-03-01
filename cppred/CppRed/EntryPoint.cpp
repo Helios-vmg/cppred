@@ -33,12 +33,17 @@ static MainMenuResult initial_sequence(Game &game){
 
 void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program){
 	Game game(engine, version, program);
+#ifndef CPPRED_TESTING
 	if (initial_sequence(game) == MainMenuResult::ContinueGame){
+#else
+	if (false){
+#endif
 		//Continue game.
 	}else{
 		auto names = oak_speech(game);
 		game.create_main_characters(names.player_name, names.rival_name);
-		game.teleport_player(Map::RedsHouse2F, {3, 6});
+		//game.teleport_player(Map::RedsHouse2F, {3, 6});
+		game.teleport_player(Map::PalletTown, {3, 6});
 		game.game_loop();
 		assert(false);
 	}

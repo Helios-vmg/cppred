@@ -16,6 +16,8 @@ class Tileset2{
 	std::vector<int> counters;
 	int grass = -1;
 	TilesetType tileset_type;
+	std::vector<std::pair<int, int>> impassability_pairs;
+	std::vector<std::pair<int, int>> impassability_pairs_water;
 public:
 	Tileset2(const std::vector<std::string> &columns, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs);
 	DELETE_COPY_CONSTRUCTORS(Tileset2);

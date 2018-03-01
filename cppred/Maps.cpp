@@ -1,6 +1,7 @@
 #include "Maps.h"
 #include "CppRed/Data.h"
 #include "CppRed/Pokemon.h"
+#include "RendererStructs.h"
 #include "utility.h"
 #include <map>
 #include <limits>
@@ -20,6 +21,20 @@ Collision::Collision(const byte_t *buffer, size_t &offset, size_t size){
 BinaryMapData::BinaryMapData(const byte_t *buffer, size_t &offset, size_t size){
 	this->name = read_string(buffer, offset, size);
 	this->data = read_buffer(buffer, offset, size);
+}
+
+template <typename T, size_t N>
+void read_pair_list(T (&dst)[N], const byte_t *buffer, size_t &offset, size_t size){
+	auto pairs = (int)read_varint(buffer, offset, size);
+	int i = 0;
+	for (; i < pairs; i++){
+		dst[i].first = read_varint(buffer, offset, size);
+		dst[i].second = read_varint(buffer, offset, size);
+	}
+	for (; i < N; i++){
+		dst[i].first = -1;
+		dst[i].second = -1;
+	}
 }
 
 TilesetData::TilesetData(
@@ -55,6 +70,9 @@ TilesetData::TilesetData(
 		this->type = TilesetType::Outdoor;
 	else
 		throw std::exception();
+
+	read_pair_list(this->impassability_pairs, buffer, offset, size);
+	read_pair_list(this->impassability_pairs_water, buffer, offset, size);
 }
 
 MapStore::blocksets_t MapStore::load_blocksets(){
@@ -163,19 +181,57 @@ MapData::MapData(
 		size_t &offset,
 		size_t size,
 		const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
-		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data){
+		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
+		std::vector<TemporaryMapConnection> &tmcs){
 	
 	this->name = read_string(buffer, offset, size);
 	this->tileset = find_in_constant_map(tilesets, read_string(buffer, offset, size));
 	this->width = read_varint(buffer, offset, size);
 	this->height = read_varint(buffer, offset, size);
 	this->map_data = find_in_constant_map(map_data, read_string(buffer, offset, size));
+	for (int i = 0; i < 4; i++){
+		TemporaryMapConnection tmc;
+		tmc.destination = read_string(buffer, offset, size);
+		if (!tmc.destination.size())
+			continue;
+		tmc.source = this;
+		tmc.direction = i;
+		tmc.local_pos = read_signed_varint(buffer, offset, size);
+		tmc.remote_pos = read_signed_varint(buffer, offset, size);
+		tmcs.emplace_back(std::move(tmc));
+	}
+	this->border_block = read_varint(buffer, offset, size);
+}
+
+int MapData::get_block_at_map_position(const Point &point){
+	return this->map_data->data[point.x + point.y * this->width];
+}
+
+int MapData::get_partial_tile_at_actor_position(const Point &point){
+	return this->tileset->blockset->data[this->get_block_at_map_position(point) * 4 + 2];
 }
 
 void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data){
 	size_t offset = 0;
+	std::vector<TemporaryMapConnection> tmcs;
 	while (offset < map_definitions_size)
-		this->maps.emplace_back(new MapData(map_definitions, offset, map_definitions_size, tilesets, map_data));
+		this->maps.emplace_back(new MapData(map_definitions, offset, map_definitions_size, tilesets, map_data, tmcs));
+	
+	for (auto &tmc : tmcs){
+		auto &mc = tmc.source->map_connections[tmc.direction];
+		int found = -1;
+		for (size_t i = 0; i < this->maps.size(); i++){
+			if (this->maps[i]->name == tmc.destination){
+				found = (int)i;
+				break;
+			}
+		}
+		if (found < 0)
+			throw std::runtime_error("Internal error: Static data error.");
+		mc.destination = (Map)(found + 1);
+		mc.local_position = tmc.local_pos;
+		mc.remote_position = tmc.remote_pos;
+	}
 }
 
 MapStore::MapStore(){
@@ -186,10 +242,18 @@ MapStore::MapStore(){
 	auto map_data = this->load_map_data();
 	this->load_maps(tilesets, map_data);
 	auto objects = this->load_objects(graphics_map);
+	this->map_instances.resize(this->maps.size());
 }
 
-MapData &MapStore::get_map(Map map){
+MapData &MapStore::get_map_data(Map map){
 	return *this->maps[(int)map - 1];
+}
+
+MapInstance &MapStore::get_map_instance(Map map){
+	auto index = (int)map - 1;
+	if (!this->map_instances[index])
+		this->map_instances[index].reset(new MapInstance(map, *this));
+	return *this->map_instances[index];
 }
 
 std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> MapObject::create_vector(
@@ -313,4 +377,30 @@ PokemonMapObject::PokemonMapObject(const byte_t *buffer, size_t &offset, const s
 		ObjectWithSprite(buffer, offset, size, graphics_map){
 	this->species = (SpeciesId)read_varint(buffer, offset, size);
 	this->level = (int)read_varint(buffer, offset, size);
+}
+
+MapInstance::MapInstance(Map map, MapStore &store): map(map), store(&store){
+	auto &map_data = store.get_map_data(map);
+	this->w = map_data.width;
+	this->h = map_data.height;
+	this->occupation_bitmap.resize(this->w * this->h, false);
+}
+
+void MapInstance::check_map_location(const Point &p){
+	if (p.x < 0 || p.y < 0 || p.x >= this->w || p.y >= this->h){
+		auto &map_data = this->store->get_map_data(map);
+		std::stringstream stream;
+		stream << "Invalid map coordinates: " << p.x << ", " << p.y << ". Name: \"" << map_data.name << "\" with dimensions: " << this->w << "x" << this->h;
+		throw std::runtime_error(stream.str());
+	}
+}
+
+void MapInstance::set_cell_occupation(const Point &p, bool state){
+	this->check_map_location(p);
+	this->occupation_bitmap[p.x + p.y * this->w] = state;
+}
+
+bool MapInstance::get_cell_occupation(const Point &p){
+	this->check_map_location(p);
+	return this->occupation_bitmap[p.x + p.y * this->w];
 }

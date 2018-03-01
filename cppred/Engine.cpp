@@ -12,8 +12,7 @@ const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_di
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
 
 Engine::Engine():
-		prng(get_seed()),
-		main_thread_id(std::this_thread::get_id()){
+		prng(get_seed()){
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
 	this->initialize_video();
@@ -45,14 +44,10 @@ static const char *to_string(PokemonVersion version){
 }
 
 void Engine::run(){
-	if (std::this_thread::get_id() != this->main_thread_id)
-		throw std::runtime_error("Engine::run() must be called from the main thread!");
-
 	PokemonVersion version = PokemonVersion::Red;
 	bool continue_running = true;
 	while (continue_running){
 		this->video_device->set_window_title(to_string(version));
-		this->wait_remainder = 0;
 		this->debug_mode = false;
 		this->renderer.reset(new Renderer(*this->video_device));
 		if (!this->console)
@@ -62,9 +57,7 @@ void Engine::run(){
 		auto &program = *programp;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(audio_renderer), std::move(programp)));
 		this->audio_scheduler->start();
-		this->coroutine.reset(new coroutine_t([this, version, &program](yielder_t &y){ this->coroutine_entry_point(y, version, program); }));
-		auto yielder = this->yielder;
-		this->yielder = nullptr;
+		this->coroutine.reset(new Coroutine([this, version, &program](Coroutine &){ this->coroutine_entry_point(version, program); }));
 
 		//Main loop.
 		while ((continue_running &= this->handle_events()) && this->update_console(version, program)){
@@ -76,9 +69,7 @@ void Engine::run(){
 
 			if (!this->debug_mode){
 				//Resume game code.
-				std::swap(yielder, this->yielder);
-				continue_running &= !!(*this->coroutine)();
-				std::swap(yielder, this->yielder);
+				continue_running &= this->coroutine->resume();
 			}
 
 			this->renderer->render();
@@ -86,7 +77,6 @@ void Engine::run(){
 			this->video_device->present();
 		}
 
-		this->on_yield = decltype(this->on_yield)();
 		this->coroutine.reset();
 		this->audio_scheduler.reset();
 	}
@@ -117,32 +107,17 @@ bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgram &progr
 }
 
 
-void Engine::coroutine_entry_point(yielder_t &yielder, PokemonVersion version, CppRed::AudioProgram &program){
-	this->yielder = &yielder;
+void Engine::coroutine_entry_point(PokemonVersion version, CppRed::AudioProgram &program){
 	this->yield();
 	CppRed::Scripts::entry_point(*this, version, program);
 }
 
 void Engine::yield(){
-	if (std::this_thread::get_id() != this->main_thread_id)
-		throw std::runtime_error("Engine::yield() must be called from the main thread!");
-	if (!this->yielder)
-		throw std::runtime_error("Engine::yield() must be called while the coroutine is active!");
-	(*this->yielder)();
-	if (this->on_yield)
-		this->on_yield();
+	this->coroutine->yield();
 }
 
 void Engine::wait(double s){
-	auto target = this->get_clock() + s + this->wait_remainder;
-	while (true){
-		this->yield();
-		auto now = this->get_clock();
-		if (now >= target){
-			this->wait_remainder = target - now;
-			return;
-		}
-	}
+	this->coroutine->wait(s);
 }
 
 double Engine::get_clock(){
@@ -229,7 +204,7 @@ void Engine::wait_frames(int frames){
 }
 
 void Engine::set_on_yield(std::function<void()> &&callback){
-	this->on_yield = std::move(callback);
+	this->coroutine->set_on_yield(std::move(callback));
 }
 
 void Engine::go_to_debug(){

@@ -17,12 +17,14 @@ static const char * const map_data2_file = "input/map_data2.csv";
 static const char * const blocksets_file = "input/blocksets.csv";
 static const char * const blocksets2_file = "input/blocksets2.csv";
 static const char * const collision_file = "input/collision.csv";
+static const char * const map_connections_file = "input/map_connections.csv";
 static const std::vector<std::string> input_files = {
 	maps_file,
 	tilesets_file,
 	map_data2_file,
 	blocksets2_file,
 	graphics_csv_path,
+	map_connections_file,
 };
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
@@ -129,6 +131,7 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	
 	Tilesets2 tilesets2(tilesets_file, blocksets, collision, gs);
 	Maps2 maps2(maps_file, map_data, tilesets2);
+	maps2.load_map_connections(map_connections_file);
 
 	//Do consistency check.
 	for (auto &map : maps2.get_maps())

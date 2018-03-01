@@ -4,6 +4,12 @@
 #include "ReorderedBlockset.h"
 #include "utility.h"
 
+struct MapConnection{
+	std::string destination;
+	int local_position;
+	int remote_position;
+};
+
 class Map2{
 	std::string name;
 	std::shared_ptr<Tileset2> tileset;
@@ -16,6 +22,7 @@ class Map2{
 	std::string fishing_encounters;
 	std::string music;
 	unsigned border_block;
+	MapConnection map_connections[4];
 public:
 	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data);
 	DELETE_COPY_CONSTRUCTORS(Map2);
@@ -57,6 +64,7 @@ public:
 		return this->border_block;
 	}
 	void serialize(std::vector<byte_t> &);
+	void set_map_connection(int direction, const MapConnection &);
 };
 
 class Maps2{
@@ -69,4 +77,5 @@ public:
 	const decltype(maps) &get_maps() const{
 		return this->maps;
 	}
+	void load_map_connections(const char *map_connections_path);
 };

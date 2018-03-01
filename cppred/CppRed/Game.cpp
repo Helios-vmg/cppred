@@ -473,7 +473,7 @@ std::string Game::get_name_from_user(SpeciesId species, int max_length){
 }
 
 void Game::create_main_characters(const std::string &player_name, const std::string &rival_name){
-	this->player_character.reset(new PlayerCharacter(player_name, this->engine->get_renderer()));
+	this->player_character.reset(new PlayerCharacter(*this, player_name, this->engine->get_renderer()));
 	this->rival.reset(new Trainer(rival_name));
 }
 
@@ -488,9 +488,100 @@ void Game::game_loop(){
 	renderer.set_palette(PaletteRegion::Background, default_palette);
 	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
 	while (true){
+		this->player_character->update();
 		this->render();
 		this->engine->yield();
 	}
+}
+
+static bool point_in_rectangle(const Point &p, int w, int h){
+	return p.x >= 0 && p.y >= 0 && p.x < w && p.y < h;
+}
+
+static bool point_in_map(const Point &p, const MapData &map_data){
+	return point_in_rectangle(p, map_data.width, map_data.height);
+}
+
+int reduce_by_region(int x, int begin, int end){
+	if (x < begin)
+		return -1;
+	if (x >= end)
+		return 1;
+	return 0;
+}
+
+Point reduce_by_region(const Point &p, const MapData &m){
+	return {
+		reduce_by_region(p.x, 0, m.width),
+		reduce_by_region(p.y, 0, m.height),
+	};
+}
+
+bool in_applicable_region(const Point &reduced, const Point &region){
+	return (!region.x || region.x == reduced.x) && (!region.y || region.y == reduced.y);
+}
+
+std::pair<MapData *, Point> compute_map_connections(Map map, MapData &map_data, MapStore &map_store, const Point &position){
+	struct SimplifiedCheck{
+		Point applicable_region;
+		int x_multiplier_1;
+		int x_multiplier_2;
+		int y_multiplier_1;
+		int y_multiplier_2;
+	};
+	static const SimplifiedCheck checks[] = {
+		{
+			{0, -1},
+			1, 0, 0, 1,
+		},
+		{
+			{1, 0},
+			0, -1, 1, 0,
+		},
+		{
+			{0, 1},
+			1, 0, 0, -1,
+		},
+		{
+			{-1, 0},
+			0, 1, 1, 0,
+		},
+	};
+	auto reduced = reduce_by_region(position, map_data);
+	for (size_t i = 0; i < array_length(checks); i++){
+		if (!map_data.map_connections[i])
+			continue;
+		auto &check = checks[i];
+		if (!in_applicable_region(reduced, check.applicable_region))
+			continue;
+		auto &mc = map_data.map_connections[i];
+		auto &map_data2 = map_store.get_map_data(mc.destination);
+		auto transformed = position;
+		transformed.x += (mc.local_position - mc.remote_position) * check.x_multiplier_1;
+		if (check.x_multiplier_2 > 0)
+			transformed.x += map_data2.width * check.x_multiplier_2;
+		else if (check.x_multiplier_2 < 0)
+			transformed.x += map_data.width * check.x_multiplier_2;
+		transformed.y += (mc.local_position - mc.remote_position) * check.y_multiplier_1;
+		if (check.y_multiplier_2 > 0)
+			transformed.y += map_data2.height * check.y_multiplier_2;
+		else if (check.y_multiplier_2 < 0)
+			transformed.y += map_data.height * check.y_multiplier_2;
+		if (point_in_map(transformed, map_data2))
+			return {&map_data2, transformed};
+	}
+	return {nullptr, position};
+}
+
+Game::ComputedBlock Game::compute_virtual_block(Map map, const Point &position){
+	auto &map_data = this->map_store.get_map_data(map);
+	if (point_in_map(position, map_data))
+		return {map_data.tileset.get(), map_data.get_block_at_map_position(position)};
+	auto transformed = compute_map_connections(map, map_data, this->map_store, position);
+	if (!transformed.first)
+		return {map_data.tileset.get(), map_data.border_block};
+	auto block = transformed.first->get_block_at_map_position(transformed.second);
+	return {transformed.first->tileset.get(), block};
 }
 
 void Game::render(){
@@ -501,29 +592,83 @@ void Game::render(){
 	if (current_map == Map::Nowhere){
 		renderer.fill_rectangle(TileRegion::Background, { 0, 0 }, { Tilemap::w, Tilemap::h }, Tile());
 	}else{
-		auto map = this->map_store.get_map(current_map);
+		auto map_data = this->map_store.get_map_data(current_map);
 		auto pos = this->player_character->get_map_position();
-		auto &blockset = map.tileset->blockset->data;
-		auto tileset = map.tileset->tiles;
-		auto &data = map.map_data->data;
 		for (int y = 0; y < Renderer::logical_screen_tile_height; y++){
 			for (int x = 0; x < Renderer::logical_screen_tile_width; x++){
 				auto &tile = bg.tiles[x + y * Tilemap::w];
 				int x2 = x / 2 - PlayerCharacter::screen_block_offset_x + pos.x;
 				int y2 = y / 2 - PlayerCharacter::screen_block_offset_y + pos.y;
-				if (x2 < 0 || x2 >= map.width || y2 < 0 || y2 >= map.height){
-					tile.tile_no = 3;
-				}else{
-					auto block = data[x2 + y2 * map.width];
-					auto offset = x % 2 + y % 2 * 2;
-					tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
-				}
+				Point map_position(x2, y2);
+				auto computed_block = this->compute_virtual_block(current_map, map_position);
+				auto &blockset = computed_block.tileset->blockset->data;
+				auto tileset = computed_block.tileset->tiles;
+				auto block = computed_block.block;
+				auto offset = x % 2 + y % 2 * 2;
+				tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
 				tile.flipped_x = false;
 				tile.flipped_y = false;
 				tile.palette = null_palette;
 			}
 		}
 	}
+}
+
+MapInstance &Game::get_map_instance(Map map){
+	return this->map_store.get_map_instance(map);
+}
+
+bool Game::is_passable(Map map, const Point &point){
+	auto &map_data = this->map_store.get_map_data(map);
+	if (!point_in_map(point, map_data))
+		return false;
+	auto tile = map_data.get_partial_tile_at_actor_position(point);
+	auto &v = map_data.tileset->collision->data;
+	auto it = std::lower_bound(v.begin(), v.end(), tile);
+	return it != v.end() && *it == tile;
+}
+
+MoveQueryResult Game::can_move_to(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
+	//TODO: Implement full movement check logic.
+	return this->can_move_to_land(map, current_position, next_position, direction);
+}
+
+MoveQueryResult Game::can_move_to_land(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
+	//TODO: Implement full movement check logic.
+	if (!this->check_jumping_and_tile_pair_collisions(map, current_position, next_position, direction, &TilesetData::impassability_pairs) || !this->is_passable(map, next_position))
+		return MoveQueryResult::CantMoveThere;
+	if (!this->is_passable(map, next_position))
+		return MoveQueryResult::CantMoveThere;
+	return MoveQueryResult::CanMoveThere;
+}
+
+bool Game::check_jumping_and_tile_pair_collisions(Map map, const Point &current_position, const Point &next_position, FacingDirection direction, pairs_t pairs){
+	if (!this->check_jumping(map, current_position, next_position, direction))
+		return false;
+	return this->check_tile_pair_collisions(map, current_position, next_position, pairs);
+}
+
+bool Game::check_jumping(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
+	auto &map_data = this->map_store.get_map_data(map);
+	if (!point_in_map(next_position, map_data))
+		return false;
+	//TODO: See HandleLedges
+	return true;
+}
+
+bool Game::check_tile_pair_collisions(Map map, const Point &current_position, const Point &next_position, pairs_t pairs){
+	auto &map_data = this->map_store.get_map_data(map);
+	if (!point_in_map(current_position, map_data) || !point_in_map(next_position, map_data))
+		return true;
+	auto tile0 = map_data.get_partial_tile_at_actor_position(current_position);
+	auto tile1 = map_data.get_partial_tile_at_actor_position(next_position);
+	for (auto &pair : (*map_data.tileset).*pairs){
+		if (pair.first < 0)
+			break;
+		if (pair.first == tile0 && pair.second == tile1 || pair.first == tile1 && pair.second == tile0)
+			return false;
+	}
+	return true;
 }
 
 }

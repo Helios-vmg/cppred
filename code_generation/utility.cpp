@@ -175,6 +175,18 @@ void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t n){
 	}while (n);
 }
 
+template <typename T>
+typename std::make_unsigned<T>::type ints_to_uints(T z){
+	typedef typename std::make_unsigned<T>::type u;
+	if (z >= 0)
+		return (u)z * 2;
+	return (u)-(z + 1) * 2 + 1;
+}
+
+void write_signed_varint(std::vector<std::uint8_t> &dst, std::int32_t s){
+	write_varint(dst, ints_to_uints(s));
+}
+
 void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &s){
 	for (auto c : s){
 		if (!c)

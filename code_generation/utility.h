@@ -31,6 +31,7 @@ bool check_for_known_hash(const known_hashes_t &, const std::string &key, const 
 bool is_hex(char c);
 void write_buffer_to_stream(std::ostream &, const std::vector<std::uint8_t> &);
 void write_varint(std::vector<std::uint8_t> &dst, std::uint32_t);
+void write_signed_varint(std::vector<std::uint8_t> &dst, std::int32_t);
 void write_ascii_string(std::vector<std::uint8_t> &dst, const std::string &);
 typedef std::map<std::string, std::shared_ptr<std::vector<byte_t>>> data_map_t;
 data_map_t read_data_csv(const char *path);

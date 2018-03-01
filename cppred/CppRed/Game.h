@@ -40,6 +40,15 @@ enum class NameEntryType{
 	Pokemon,
 };
 
+enum class MoveQueryResult{
+	CantMoveThere = 0,
+	CanMoveThere = 1,
+	CanMoveButWillTeleport = 2,
+	CanMoveButWillChangeMaps = 3,
+};
+
+enum class FacingDirection;
+
 class Game{
 	Engine *engine;
 	PokemonVersion version;
@@ -61,6 +70,19 @@ class Game{
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 	void render();
+	bool is_passable(Map, const Point &);
+	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
+	bool check_jumping_and_tile_pair_collisions(Map, const Point &current_position, const Point &next_position, FacingDirection, pairs_t pairs);
+	bool check_jumping(Map, const Point &current_position, const Point &next_position, FacingDirection);
+	bool check_tile_pair_collisions(Map, const Point &current_position, const Point &next_position, pairs_t pairs);
+	MoveQueryResult can_move_to_land(Map map, const Point &current_position, const Point &next_position, FacingDirection direction);
+	MoveQueryResult can_move_to_water(Map map, const Point &current_position, const Point &next_position, FacingDirection direction);
+
+	struct ComputedBlock{
+		TilesetData *tileset;
+		int block;
+	};
+	ComputedBlock compute_virtual_block(Map map, const Point &position);
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
 	Game(Game &&) = delete;
@@ -118,6 +140,8 @@ public:
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	void teleport_player(Map destination, const Point &position);
 	void game_loop();
+	MapInstance &get_map_instance(Map);
+	MoveQueryResult can_move_to(Map, const Point &current_position, const Point &next_position, FacingDirection);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

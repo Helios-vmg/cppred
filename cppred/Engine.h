@@ -33,14 +33,8 @@ class Engine{
 	std::unique_ptr<VideoDevice> video_device;
 	std::unique_ptr<Renderer> renderer;
 	XorShift128 prng;
-	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
-	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;
-	std::unique_ptr<coroutine_t> coroutine;
-	yielder_t *yielder = nullptr;
-	std::thread::id main_thread_id;
-	double wait_remainder = 0;
+	std::unique_ptr<Coroutine> coroutine;
 	InputState input_state;
-	std::function<void()> on_yield;
 	std::unique_ptr<AudioScheduler> audio_scheduler;
 	std::unique_ptr<Console> console;
 	bool debug_mode = false;
@@ -49,7 +43,7 @@ class Engine{
 
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(yielder_t &, PokemonVersion, CppRed::AudioProgram &);
+	void coroutine_entry_point(PokemonVersion, CppRed::AudioProgram &);
 	bool handle_events();
 	bool update_console(PokemonVersion &version, CppRed::AudioProgram &program);
 public:
