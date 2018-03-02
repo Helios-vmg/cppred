@@ -104,6 +104,24 @@ void set_and_swap(T1 &dst, T1 &src, const T2 &null_value){
 	src = null_value;
 }
 
+template<class It, class F>
+It find_first_true(It begin, It end, const F &f){
+	if (begin >= end)
+		return end;
+	if (f(*begin))
+		return begin;
+	auto diff = end - begin;
+	while (diff > 1){
+		auto pivot = begin + diff / 2;
+		if (!f(*pivot))
+			begin = pivot;
+		else
+			end = pivot;
+		diff = end - begin;
+	}
+	return end;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);
@@ -158,6 +176,45 @@ struct Point{
 	int multiply_components() const{
 		return this->x * this->y;
 	}
+	bool operator==(const Point &other) const{
+		return this->x == other.x && this->y == other.y;
+	}
+};
+
+enum class Map;
+
+struct WorldCoordinates{
+	Map map;
+	Point position;
+
+	WorldCoordinates() = default;
+	WorldCoordinates(Map map): map(map){}
+	WorldCoordinates(Map map, const Point &p): map(map), position(p){}
+
+	WorldCoordinates operator+(const Point &p) const{
+		return { this->map, this->position + p };
+	}
+	WorldCoordinates operator-(const Point &p) const{
+		return { this->map, this->position - p };
+	}
+	WorldCoordinates operator-() const{
+		return { this->map, -this->position };
+	}
+	WorldCoordinates operator*(double x) const{
+		return { this->map, this->position * x };
+	}
+	const WorldCoordinates &operator+=(const Point &other){
+		this->position += other;
+		return *this;
+	}
+	const WorldCoordinates &operator-=(const Point &other){
+		this->position -= other;
+		return *this;
+	}
+	const WorldCoordinates &operator*=(double x){
+		this->position *= x;
+		return *this;
+	}
 };
 
 class Coroutine{
@@ -185,5 +242,28 @@ public:
 	}
 	void clear_on_yield(){
 		this->on_yield = on_yield_t();
+	}
+};
+
+class BufferReader{
+	const byte_t *buffer;
+	size_t size;
+	size_t offset = 0;
+public:
+	BufferReader(const byte_t *buffer, size_t size): buffer(buffer), size(size){}
+	std::string read_string(){
+		return ::read_string(this->buffer, this->offset, this->size);
+	}
+	std::uint32_t read_varint(){
+		return ::read_varint(this->buffer, this->offset, this->size);
+	}
+	std::int32_t read_signed_varint(){
+		return ::read_signed_varint(this->buffer, this->offset, this->size);
+	}
+	std::vector<byte_t> read_buffer(){
+		return ::read_buffer(this->buffer, this->offset, this->size);
+	}
+	bool empty() const{
+		return this->offset >= this->size;
 	}
 };

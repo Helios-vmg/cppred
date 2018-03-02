@@ -158,6 +158,7 @@ void Map2::serialize(std::vector<byte_t> &dst){
 		write_signed_varint(dst, mc.remote_position);
 	}
 	write_varint(dst, this->border_block);
+	write_ascii_string(dst, this->objects);
 	//TODO: Serialize other members.
 }
 

@@ -40,13 +40,6 @@ enum class NameEntryType{
 	Pokemon,
 };
 
-enum class MoveQueryResult{
-	CantMoveThere = 0,
-	CanMoveThere = 1,
-	CanMoveButWillTeleport = 2,
-	CanMoveButWillChangeMaps = 3,
-};
-
 enum class FacingDirection;
 
 class Game{
@@ -65,6 +58,7 @@ class Game{
 	std::unique_ptr<PlayerCharacter> player_character;
 	std::unique_ptr<Trainer> rival;
 	MapStore map_store;
+	std::vector<std::pair<MapObject *, std::shared_ptr<Sprite>>> map_sprites;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
@@ -72,17 +66,12 @@ class Game{
 	void render();
 	bool is_passable(Map, const Point &);
 	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
-	bool check_jumping_and_tile_pair_collisions(Map, const Point &current_position, const Point &next_position, FacingDirection, pairs_t pairs);
-	bool check_jumping(Map, const Point &current_position, const Point &next_position, FacingDirection);
-	bool check_tile_pair_collisions(Map, const Point &current_position, const Point &next_position, pairs_t pairs);
-	MoveQueryResult can_move_to_land(Map map, const Point &current_position, const Point &next_position, FacingDirection direction);
-	MoveQueryResult can_move_to_water(Map map, const Point &current_position, const Point &next_position, FacingDirection direction);
-
-	struct ComputedBlock{
-		TilesetData *tileset;
-		int block;
-	};
-	std::pair<TilesetData *, int> compute_virtual_block(Map map, const Point &position);
+	bool check_jumping_and_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection, pairs_t pairs);
+	bool check_jumping(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
+	bool check_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, pairs_t pairs);
+	bool can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
+	bool can_move_to_water(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
+	std::pair<TilesetData *, int> compute_virtual_block(const WorldCoordinates &position);
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
 	Game(Game &&) = delete;
@@ -138,11 +127,13 @@ public:
 		return this->audio_interface;
 	}
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
-	void teleport_player(Map destination, const Point &position);
+	void teleport_player(const WorldCoordinates &);
 	void game_loop();
 	MapInstance &get_map_instance(Map);
-	MoveQueryResult can_move_to(Map, const Point &current_position, const Point &next_position, FacingDirection);
-	std::pair<Map, Point> remap_coordinates(Map, const Point &);
+	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
+	WorldCoordinates remap_coordinates(const WorldCoordinates &);
+	void entered_map(Map);
+	MapObject *get_object_at_location(const WorldCoordinates &);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

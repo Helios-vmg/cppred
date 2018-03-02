@@ -29,7 +29,7 @@ enum class PokemonOverworldSprite{
 	Mon       = 0, //Generic mon
 	Ball      = 1, //Pokeball
 	Helix     = 2, //Spiral shell
-	Fairy     = 3, //Cleraify-like
+	Fairy     = 3, //Clefairy-like
 	Bird      = 4, //Bird
 	Water     = 5, //Seal
 	Bug       = 6, //Bug

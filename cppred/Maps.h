@@ -6,6 +6,7 @@
 #include "../CodeGeneration/output/items.h"
 #include "../common/TilesetType.h"
 #include "TrainerData.h"
+#include "utility.h"
 #include <vector>
 #include <memory>
 #include <map>
@@ -55,51 +56,43 @@ struct TilesetData{
 	);
 };
 
+class MapStore;
+
 class MapObject{
 protected:
 	std::string name;
-	int x = -1;
-	int y = -1;
+	Point position = {-1, -1};
 
-	static std::unique_ptr<MapObject> create_object(
-		const byte_t *buffer,
-		size_t &offset,
-		const size_t size,
-		const std::map<std::string, const MapData *> &maps,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, ItemId> &items_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map
-	);
-	MapObject(const byte_t *buffer, size_t &offset, const size_t size);
+	MapObject(BufferReader &);
 public:
-	MapObject(const std::string &name, int x, int y): name(name), x(x), y(y){}
+	MapObject(const std::string &name, const Point &position): name(name), position(position){}
 	virtual ~MapObject() = 0;
-	static std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>>
-		create_vector(
-			const byte_t *buffer,
-			size_t &offset,
-			const size_t map_data_size,
-			const std::map<std::string, const MapData *> &maps,
-			const std::map<std::string, const GraphicsAsset *> &graphics_map,
-			const std::map<std::string, ItemId> &items_map,
-			const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map
-		);
+	static std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> create_vector(BufferReader &buffer, const std::function<std::unique_ptr<MapObject>(BufferReader &)> &);
+	virtual const char *get_type_string() const = 0;
+	DEFINE_GETTER(position)
+	DEFINE_GETTER(name)
 };
 
 inline MapObject::~MapObject(){}
 
 class EventDisp : public MapObject{
 public:
-	EventDisp(const byte_t *buffer, size_t &offset, const size_t size);
-	EventDisp(const std::string &name, int x, int y): MapObject(name, x, y){}
+	EventDisp(BufferReader &);
+	EventDisp(const std::string &name, const Point &position): MapObject(name, position){}
+	const char *get_type_string() const override{
+		return "event_disp";
+	}
 };
 
 class Sign : public MapObject{
 protected:
 	int text_index;
 public:
-	Sign(const byte_t *buffer, size_t &offset, const size_t size);
-	Sign(const std::string &name, int x, int y, int text_index): MapObject(name, x, y), text_index(text_index){}
+	Sign(BufferReader &);
+	Sign(const std::string &name, const Point &position, int text_index): MapObject(name, position), text_index(text_index){}
+	const char *get_type_string() const override{
+		return "sign";
+	}
 };
 
 class HiddenObject : public MapObject{
@@ -108,11 +101,14 @@ protected:
 	std::string script_parameter;
 
 public:
-	HiddenObject(const byte_t *buffer, size_t &offset, const size_t size);
-	HiddenObject(const std::string &name, int x, int y, const std::string &script, const std::string &script_parameter):
-		MapObject(name, x, y),
+	HiddenObject(BufferReader &);
+	HiddenObject(const std::string &name, const Point &position, const std::string &script, const std::string &script_parameter):
+		MapObject(name, position),
 		script(script),
 		script_parameter(script_parameter){}
+	const char *get_type_string() const override{
+		return "hidden_object";
+	}
 };
 
 struct MapData;
@@ -124,7 +120,6 @@ struct WarpDestination{
 	WarpDestination() = default;
 	WarpDestination(const MapData &destination_map): simple(true), destination_map(&destination_map){}
 	WarpDestination(const std::string &variable_name): simple(false), variable_name(variable_name){}
-	WarpDestination(const WarpDestination &) = default;
 };
 
 class MapWarp : public MapObject{
@@ -134,12 +129,15 @@ protected:
 	int destination_warp_index;
 
 public:
-	MapWarp(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const MapData *> &);
-	MapWarp(const std::string &name, int x, int y, int index, const WarpDestination &destination, int destination_warp_index):
-		MapObject(name, x, y),
+	MapWarp(BufferReader &, const MapStore &);
+	MapWarp(const std::string &name, const Point &position, int index, const WarpDestination &destination, int destination_warp_index):
+		MapObject(name, position),
 		index(index),
 		destination(destination),
 		destination_warp_index(destination_warp_index){}
+	const char *get_type_string() const override{
+		return "map_warp";
+	}
 };
 
 class ObjectWithSprite : public MapObject{
@@ -151,14 +149,9 @@ protected:
 	int text_index;
 
 public:
-	ObjectWithSprite(
-		const byte_t *buffer,
-		size_t &offset,
-		const size_t size,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map
-	);
-	ObjectWithSprite(const std::string &name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_index):
-		MapObject(name, x, y),
+	ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map);
+	ObjectWithSprite(const std::string &name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_index):
+		MapObject(name, position),
 		sprite(&sprite),
 		facing_direction(facing_direction),
 		wandering(wandering),
@@ -171,10 +164,12 @@ inline ObjectWithSprite::~ObjectWithSprite(){}
 
 class NpcMapObject : public ObjectWithSprite{
 public:
-	NpcMapObject(const byte_t *buffer, size_t &offset, const size_t size,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map);
-	NpcMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id):
-		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id){}
+	NpcMapObject(BufferReader &, const std::map<std::string, const GraphicsAsset *> &graphics_map);
+	NpcMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id):
+		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id){}
+	const char *get_type_string() const override{
+		return "npc";
+	}
 };
 
 class ItemMapObject : public ObjectWithSprite{
@@ -182,12 +177,15 @@ protected:
 	ItemId item;
 
 public:
-	ItemMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+	ItemMapObject(BufferReader &,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::string, ItemId> &items_map);
-	ItemMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
-		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
+	ItemMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
+		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
 		item(item){}
+	const char *get_type_string() const override{
+		return "item";
+	}
 };
 
 class TrainerMapObject : public ObjectWithSprite{
@@ -195,12 +193,15 @@ protected:
 	std::shared_ptr<BaseTrainerParty> party;
 
 public:
-	TrainerMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+	TrainerMapObject(BufferReader &,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map);
-	TrainerMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const std::shared_ptr<BaseTrainerParty> &party):
-		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
+	TrainerMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const std::shared_ptr<BaseTrainerParty> &party):
+		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
 		party(party){}
+	const char *get_type_string() const override{
+		return "trainer";
+	}
 };
 
 class PokemonMapObject : public ObjectWithSprite{
@@ -209,11 +210,14 @@ protected:
 	int level;
 
 public:
-	PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const GraphicsAsset *> &graphics_map);
-	PokemonMapObject(const char *name, int x, int y, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
-		ObjectWithSprite(name, x, y, sprite, facing_direction, wandering, range, text_id),
+	PokemonMapObject(BufferReader &, const std::map<std::string, const GraphicsAsset *> &graphics_map);
+	PokemonMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
+		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
 		species(species),
 		level(level){}
+	const char *get_type_string() const override{
+		return "pokemon";
+	}
 };
 
 struct BinaryMapData{
@@ -259,18 +263,17 @@ struct MapData{
 	std::shared_ptr<TilesetData> tileset;
 	std::shared_ptr<BinaryMapData> map_data;
 	std::string script_name;
-	std::vector<std::shared_ptr<MapObject>> objects;
 	MapConnection map_connections[4];
 	int border_block;
+	std::shared_ptr<std::vector<std::unique_ptr<MapObject>>> objects;
 
 	MapData(
 		Map map_id,
-		const byte_t *,
-		size_t &,
-		size_t,
+		BufferReader &buffer,
 		const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
 		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
-		std::vector<TemporaryMapConnection> &tmcs
+		std::vector<TemporaryMapConnection> &tmcs,
+		std::vector<std::pair<MapData *, std::string>> &map_objects
 	);
 	int get_block_at_map_position(const Point &);
 	int get_partial_tile_at_actor_position(const Point &);
@@ -293,6 +296,7 @@ public:
 
 class MapStore{
 	std::vector<std::unique_ptr<MapData>> maps;
+	std::vector<std::pair<std::string, MapData *>> maps_by_name;
 	std::vector<std::unique_ptr<MapInstance>> map_instances;
 	
 	typedef std::map<std::string, std::shared_ptr<Blockset>> blocksets_t;
@@ -309,9 +313,11 @@ class MapStore{
 	static map_data_t load_map_data();
 	static trainer_parties_t load_trainer_parties();
 	map_objects_t load_objects(const graphics_map_t &graphics_map);
-	void load_maps(const tilesets_t &, const map_data_t &);
+	void load_maps(const tilesets_t &, const map_data_t &, const graphics_map_t &);
+	//void load_map_objects();
 public:
 	MapStore();
 	MapData &get_map_data(Map map);
 	MapInstance &get_map_instance(Map map);
+	MapData &get_map_by_name(const std::string &) const;
 };

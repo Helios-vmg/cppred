@@ -2,6 +2,7 @@
 #include "Game.h"
 #include <cassert>
 #include <complex>
+#include <iostream>
 
 static void initialize_sprite(std::shared_ptr<Sprite> &sprite, Renderer &renderer, const GraphicsAsset &graphics, int first_tile, bool flip_x = false){
 	sprite = renderer.create_sprite(2, 2);
@@ -54,7 +55,7 @@ void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer
 PlayerCharacter::PlayerCharacter(Game &game, const std::string &name, Renderer &renderer):
 		Trainer(name),
 		game(&game),
-		current_map(Map::Nowhere){
+		position(Map::Nowhere){
 	this->coroutine.reset(new Coroutine([this](Coroutine &){ this->coroutine_entry_point(); }));
 	this->initialize_sprites(RedSprite, renderer);
 }
@@ -70,9 +71,11 @@ void PlayerCharacter::set_visible_sprite(){
 	sprite->set_visible(true);
 }
 
-void PlayerCharacter::teleport(Map destination, const Point &position){
-	this->current_map = destination;
-	this->map_position = position;
+void PlayerCharacter::teleport(const WorldCoordinates &destination){
+	auto old_map = this->position.map;
+	this->position = destination;
+	if (old_map != destination.map)
+		this->entered_new_map(old_map, destination.map);
 }
 
 void PlayerCharacter::update(){
@@ -84,6 +87,11 @@ void PlayerCharacter::coroutine_entry_point(){
 		auto input = this->game->get_engine().get_input_state();
 		if (input.get_start()){
 			//handle menu
+			this->coroutine->yield();
+		}else if (input.get_a()){
+			auto object = this->game->get_object_at_location(this->game->remap_coordinates(this->position + Point{0, 1}));
+			if (object)
+				std::cout << "You're looking at a " << object->get_type_string() << "! Name: " << object->get_name() << std::endl;
 			this->coroutine->yield();
 		}else if (input.any_direction()){
 			this->handle_movement(input);
@@ -106,40 +114,30 @@ void PlayerCharacter::handle_movement(InputState &input){
 }
 
 void PlayerCharacter::move(const Point &delta, FacingDirection direction){
-	auto old_map = this->current_map;
-	auto old_position = this->map_position;
-	auto new_position = old_position + delta;
-	auto new_map = old_map;
-	switch (this->game->can_move_to(new_map, old_position, new_position, direction)){
-		case MoveQueryResult::CantMoveThere:
-			this->coroutine->yield();
-			return;
-		case MoveQueryResult::CanMoveThere:
-			break;
-		case MoveQueryResult::CanMoveButWillTeleport:
-			//TODO: Figure out destination map.
-			break;
-		case MoveQueryResult::CanMoveButWillChangeMaps:
-			{
-				auto remapped = this->game->remap_coordinates(old_map, new_position);
-				new_map = remapped.first;
-				new_position = remapped.second;
-			}
-			break;
-		default:
-			throw std::runtime_error("Internal error: invalid switch.");
+	auto pos0 = this->position;
+	auto pos1 = this->game->remap_coordinates(pos0 + delta);
+	if (!this->game->can_move_to(pos0, pos1, direction)){
+		this->coroutine->yield();
+		return;
 	}
-	auto &old_map_instance = this->game->get_map_instance(old_map);
-	auto &new_map_instance = this->game->get_map_instance(new_map);
+	auto &map0 = this->game->get_map_instance(pos0.map);
+	auto &map1 = this->game->get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
-	new_map_instance.set_cell_occupation(new_position, true);
+	map1.set_cell_occupation(pos1.position, true);
+	this->run_walking_animation(direction);
+	map0.set_cell_occupation(pos0.position, false);
+	this->position = pos1;
+	if (pos0.map != pos1.map)
+		this->entered_new_map(pos0.map, pos1.map);
+}
+
+void PlayerCharacter::run_walking_animation(FacingDirection direction){
+	//TODO
 	this->coroutine->wait(5.0 / 60.0);
-	old_map_instance.set_cell_occupation(old_position, false);
-	this->current_map = new_map;
-	this->map_position = new_position;
-	if (new_map != old_map){
-		//TODO: Do things that happen when the player enters a new map.
-	}
+}
+
+void PlayerCharacter::entered_new_map(Map old_map, Map new_map){
+	this->game->entered_map(new_map);
 }
 
 }

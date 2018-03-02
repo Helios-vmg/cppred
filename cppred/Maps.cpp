@@ -158,19 +158,41 @@ MapStore::trainer_parties_t MapStore::load_trainer_parties(){
 }
 
 MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_map){
-	std::map<std::string, const MapData *> map_maps;
 	std::map<std::string, ItemId> items_map;
 
-	for (auto &map : this->maps)
-		map_maps[map->name] = map.get();
 	for (size_t i = 0; i < item_strings_size; i++)
 		items_map[item_strings[i].first] = item_strings[i].second;
-	auto trainer_parties = this->load_trainer_parties();
+	auto trainer_map = this->load_trainer_parties();
 
+	std::vector<std::pair<std::string, std::function<std::unique_ptr<MapObject>(BufferReader &)>>> constructors;
+	constructors.emplace_back("event_disp", [](BufferReader &buffer){ return std::make_unique<EventDisp>(buffer); });
+	constructors.emplace_back("hidden", [](BufferReader &buffer){ return std::make_unique<HiddenObject>(buffer); });
+	constructors.emplace_back("item", [&graphics_map, &items_map](BufferReader &buffer){ return std::make_unique<ItemMapObject>(buffer, graphics_map, items_map); });
+	constructors.emplace_back("npc", [&graphics_map](BufferReader &buffer){ return std::make_unique<NpcMapObject>(buffer, graphics_map); });
+	constructors.emplace_back("pokemon", [&graphics_map](BufferReader &buffer){ return std::make_unique<PokemonMapObject>(buffer, graphics_map); });
+	constructors.emplace_back("sign", [](BufferReader &buffer){ return std::make_unique<Sign>(buffer); });
+	constructors.emplace_back("trainer", [&graphics_map, &trainer_map](BufferReader &buffer){ return std::make_unique<TrainerMapObject>(buffer, graphics_map, trainer_map); });
+	constructors.emplace_back("warp", [this](BufferReader &buffer){ return std::make_unique<MapWarp>(buffer, *this); });
+	
+	typedef decltype(constructors)::value_type T;
+
+	std::sort(constructors.begin(), constructors.end(), [](const T &a, const T &b){ return a.first < b.first; });
+	
+	auto begin = constructors.begin();
+	auto end = constructors.end();
+
+	std::function<std::unique_ptr<MapObject>(BufferReader &)> constructor = [&begin, &end](BufferReader &buffer){
+		auto type = buffer.read_string();
+		auto it = find_first_true(begin, end, [&type](const T &x){ return type <= x.first; });
+		if (it == end || it->first != type)
+			throw std::runtime_error("Invalid map object type: " + type);
+		return it->second(buffer);
+	};
+	
 	map_objects_t ret;
-	size_t offset = 0;
-	while (offset < map_objects_data_size){
-		auto pair = MapObject::create_vector(map_objects_data, offset, map_objects_data_size, map_maps, graphics_map, items_map, trainer_parties);
+	BufferReader buffer(map_objects_data, map_objects_data_size);
+	while (!buffer.empty()){
+		auto pair = MapObject::create_vector(buffer, constructor);
 		ret[pair.first] = pair.second;
 	}
 	return ret;
@@ -178,31 +200,31 @@ MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_ma
 
 MapData::MapData(
 		Map map_id,
-		const byte_t *buffer,
-		size_t &offset,
-		size_t size,
+		BufferReader &buffer,
 		const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
 		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
-		std::vector<TemporaryMapConnection> &tmcs){
+		std::vector<TemporaryMapConnection> &tmcs,
+		std::vector<std::pair<MapData *, std::string>> &map_objects){
 	
 	this->map_id = map_id;
-	this->name = read_string(buffer, offset, size);
-	this->tileset = find_in_constant_map(tilesets, read_string(buffer, offset, size));
-	this->width = read_varint(buffer, offset, size);
-	this->height = read_varint(buffer, offset, size);
-	this->map_data = find_in_constant_map(map_data, read_string(buffer, offset, size));
+	this->name = buffer.read_string();
+	this->tileset = find_in_constant_map(tilesets, buffer.read_string());
+	this->width = buffer.read_varint();
+	this->height = buffer.read_varint();
+	this->map_data = find_in_constant_map(map_data, buffer.read_string());
 	for (int i = 0; i < 4; i++){
 		TemporaryMapConnection tmc;
-		tmc.destination = read_string(buffer, offset, size);
+		tmc.destination = buffer.read_string();
 		if (!tmc.destination.size())
 			continue;
 		tmc.source = this;
 		tmc.direction = i;
-		tmc.local_pos = read_signed_varint(buffer, offset, size);
-		tmc.remote_pos = read_signed_varint(buffer, offset, size);
+		tmc.local_pos = buffer.read_signed_varint();
+		tmc.remote_pos = buffer.read_signed_varint();
 		tmcs.emplace_back(std::move(tmc));
 	}
-	this->border_block = read_varint(buffer, offset, size);
+	this->border_block = buffer.read_varint();
+	map_objects.emplace_back(this, buffer.read_string());
 }
 
 int MapData::get_block_at_map_position(const Point &point){
@@ -213,27 +235,40 @@ int MapData::get_partial_tile_at_actor_position(const Point &point){
 	return this->tileset->blockset->data[this->get_block_at_map_position(point) * 4 + 2];
 }
 
-void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data){
-	size_t offset = 0;
+MapData &MapStore::get_map_by_name(const std::string &map_name) const{
+	typedef decltype(this->maps_by_name)::value_type T;
+	auto begin = this->maps_by_name.begin();
+	auto end = this->maps_by_name.end();
+	auto it = find_first_true(begin, end, [&map_name](const T &a){ return map_name <= a.first; });
+	if (it == end || it->first != map_name)
+		throw std::runtime_error("Map not found: " + map_name);
+	return *it->second;
+}
+
+void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data, const graphics_map_t &graphics_map){
 	std::vector<TemporaryMapConnection> tmcs;
+	std::vector<std::pair<MapData *, std::string>> object_names;
 	int id = 0;
-	while (offset < map_definitions_size)
-		this->maps.emplace_back(new MapData((Map)++id, map_definitions, offset, map_definitions_size, tilesets, map_data, tmcs));
+	BufferReader buffer(map_definitions, map_definitions_size);
+	while (!buffer.empty()){
+		this->maps.emplace_back(new MapData((Map)++id, buffer, tilesets, map_data, tmcs, object_names));
+		this->maps_by_name.emplace_back(this->maps.back()->name, this->maps.back().get());
+	}
+	std::sort(this->maps_by_name.begin(), this->maps_by_name.end());
 	
 	for (auto &tmc : tmcs){
 		auto &mc = tmc.source->map_connections[tmc.direction];
-		int found = -1;
-		for (size_t i = 0; i < this->maps.size(); i++){
-			if (this->maps[i]->name == tmc.destination){
-				found = (int)i;
-				break;
-			}
-		}
-		if (found < 0)
-			throw std::runtime_error("Internal error: Static data error.");
-		mc.destination = (Map)(found + 1);
+		mc.destination = this->get_map_by_name(tmc.destination).map_id;
 		mc.local_position = tmc.local_pos;
 		mc.remote_position = tmc.remote_pos;
+	}
+	
+	auto objects = this->load_objects(graphics_map);
+	for (auto &pair : object_names){
+		auto it = objects.find(pair.second);
+		if (it == objects.end())
+			throw std::runtime_error("Internal error: Map " + pair.first->name + " references non-existing object set " + pair.second);
+		pair.first->objects = it->second;
 	}
 }
 
@@ -243,8 +278,7 @@ MapStore::MapStore(){
 	auto graphics_map = this->load_graphics_map();
 	auto tilesets = this->load_tilesets(blocksets, collisions, graphics_map);
 	auto map_data = this->load_map_data();
-	this->load_maps(tilesets, map_data);
-	auto objects = this->load_objects(graphics_map);
+	this->load_maps(tilesets, map_data, graphics_map);
 	this->map_instances.resize(this->maps.size());
 }
 
@@ -260,77 +294,42 @@ MapInstance &MapStore::get_map_instance(Map map){
 }
 
 std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> MapObject::create_vector(
-		const byte_t *buffer,
-		size_t &offset,
-		const size_t size,
-		const std::map<std::string, const MapData *> &maps,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, ItemId> &items_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map){
+		BufferReader &buffer,
+		const std::function<std::unique_ptr<MapObject>(BufferReader &)> &constructor){
 	auto ret = std::make_shared<std::vector<std::unique_ptr<MapObject>>>();
-	auto name = read_string(buffer, offset, size);
-	auto count = read_varint(buffer, offset, size);
-	for (decltype(count) i = 0; i < count; i++)
-		ret->push_back(create_object(buffer, offset, size, maps, graphics_map, items_map, trainer_map));
-	return std::make_pair(name, ret);
+	auto name = buffer.read_string();
+	auto count = buffer.read_varint();
+	ret->reserve(count);
+	while (count--)
+		ret->push_back(constructor(buffer));
+	return {name, ret};
 }
 
-std::unique_ptr<MapObject> MapObject::create_object(
-		const byte_t *buffer,
-		size_t &offset,
-		const size_t size,
-		const std::map<std::string, const MapData *> &maps,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, ItemId> &items_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &trainer_map){
-
-	auto object_type = read_string(buffer, offset, size);
-
-	if (object_type == "event_disp")
-		return std::make_unique<EventDisp>(buffer, offset, size);
-	if (object_type == "hidden")
-		return std::make_unique<HiddenObject>(buffer, offset, size);
-	if (object_type == "item")
-		return std::make_unique<ItemMapObject>(buffer, offset, size, graphics_map, items_map);
-	if (object_type == "npc")
-		return std::make_unique<NpcMapObject>(buffer, offset, size, graphics_map);
-	if (object_type == "pokemon")
-		return std::make_unique<PokemonMapObject>(buffer, offset, size, graphics_map);
-	if (object_type == "sign")
-		return std::make_unique<Sign>(buffer, offset, size);
-	if (object_type == "trainer")
-		return std::make_unique<TrainerMapObject>(buffer, offset, size, graphics_map, trainer_map);
-	if (object_type == "warp")
-		return std::make_unique<MapWarp>(buffer, offset, size, maps);
-	
-	throw std::runtime_error("Internal error: Static data error.");
+MapObject::MapObject(BufferReader &buffer){
+	this->name = buffer.read_string();
+	this->position.x = buffer.read_varint();
+	this->position.y = buffer.read_varint();
 }
 
-MapObject::MapObject(const byte_t *buffer, size_t &offset, const size_t size){
-	this->name = read_string(buffer, offset, size);
-	this->x = read_varint(buffer, offset, size);
-	this->y = read_varint(buffer, offset, size);
+EventDisp::EventDisp(BufferReader &buffer): MapObject(buffer){}
+
+Sign::Sign(BufferReader &buffer) : MapObject(buffer){
+	this->text_index = buffer.read_varint();
 }
 
-EventDisp::EventDisp(const byte_t *buffer, size_t &offset, const size_t size): MapObject(buffer, offset, size){}
-
-Sign::Sign(const byte_t *buffer, size_t &offset, const size_t size) : MapObject(buffer, offset, size){
-	this->text_index = read_varint(buffer, offset, size);
+HiddenObject::HiddenObject(BufferReader &buffer) : MapObject(buffer){
+	this->script = buffer.read_string();
+	this->script_parameter = buffer.read_string();
 }
 
-HiddenObject::HiddenObject(const byte_t *buffer, size_t &offset, const size_t size) : MapObject(buffer, offset, size){
-	this->script = read_string(buffer, offset, size);
-	this->script_parameter = read_string(buffer, offset, size);
-}
-
-MapWarp::MapWarp(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const MapData *> &maps): MapObject(buffer, offset, size){
-	this->index = read_varint(buffer, offset, size);
-	auto temp = read_string(buffer, offset, size);
+MapWarp::MapWarp(BufferReader &buffer, const MapStore &map_store): MapObject(buffer){
+	this->index = buffer.read_varint();
+	auto temp = buffer.read_string();
 	if (temp.size() >= 4 && temp[0] == 'v' && temp[1] == 'a' && temp[2] == 'r' && temp[3] == ':')
 		this->destination = WarpDestination(temp.substr(4));
 	else
-		this->destination = WarpDestination(*find_in_constant_map(maps, temp));
-	this->destination_warp_index = read_varint(buffer, offset, size);
+		this->destination = WarpDestination(map_store.get_map_by_name(temp));
+	this->destination_warp_index = buffer.read_varint();
 }
 
 #define CASE_to_MapObjectFacingDirection(x) if (s == #x) return MapObjectFacingDirection::x
@@ -346,40 +345,35 @@ MapObjectFacingDirection to_MapObjectFacingDirection(const std::string &s){
 	throw std::runtime_error("Invalid MapObjectFacingDirection value: " + s);
 }
 
-ObjectWithSprite::ObjectWithSprite(
-		const byte_t *buffer,
-		size_t &offset,
-		const size_t size,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map): MapObject(buffer, offset, size){
-	this->sprite = find_in_constant_map(graphics_map, read_string(buffer, offset, size));
-	this->facing_direction = to_MapObjectFacingDirection(read_string(buffer, offset, size));
-	this->wandering = !!read_varint(buffer, offset, size);
-	this->range = read_varint(buffer, offset, size);
-	this->text_index = read_varint(buffer, offset, size);
+ObjectWithSprite::ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map): MapObject(buffer){
+	this->sprite = find_in_constant_map(graphics_map, buffer.read_string());
+	this->facing_direction = to_MapObjectFacingDirection(buffer.read_string());
+	this->wandering = !!buffer.read_varint();
+	this->range = buffer.read_varint();
+	this->text_index = buffer.read_varint();
 }
 
-NpcMapObject::NpcMapObject(const byte_t *buffer, size_t &offset, const size_t size,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map): ObjectWithSprite(buffer, offset, size, graphics_map){
+NpcMapObject::NpcMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map): ObjectWithSprite(buffer, graphics_map){
 }
 
-ItemMapObject::ItemMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+ItemMapObject::ItemMapObject(BufferReader &buffer,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, ItemId> &items_map) : ObjectWithSprite(buffer, offset, size, graphics_map){
-	this->item = find_in_constant_map(items_map, read_string(buffer, offset, size));
+		const std::map<std::string, ItemId> &items_map) : ObjectWithSprite(buffer, graphics_map){
+	this->item = find_in_constant_map(items_map, buffer.read_string());
 }
 
-TrainerMapObject::TrainerMapObject(const byte_t *buffer, size_t &offset, const size_t size,
+TrainerMapObject::TrainerMapObject(BufferReader &buffer,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): ObjectWithSprite(buffer, offset, size, graphics_map){
-	auto class_name = read_string(buffer, offset, size);
-	auto party_index = (int)read_varint(buffer, offset, size);
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): ObjectWithSprite(buffer, graphics_map){
+	auto class_name = buffer.read_string();
+	auto party_index = (int)buffer.read_varint();
 	this->party = find_in_constant_map(parties_map, std::make_pair(class_name, party_index));
 }
 
-PokemonMapObject::PokemonMapObject(const byte_t *buffer, size_t &offset, const size_t size, const std::map<std::string, const GraphicsAsset *> &graphics_map):
-		ObjectWithSprite(buffer, offset, size, graphics_map){
-	this->species = (SpeciesId)read_varint(buffer, offset, size);
-	this->level = (int)read_varint(buffer, offset, size);
+PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map):
+		ObjectWithSprite(buffer, graphics_map){
+	this->species = (SpeciesId)buffer.read_varint();
+	this->level = (int)buffer.read_varint();
 }
 
 MapInstance::MapInstance(Map map, MapStore &store): map(map), store(&store){
@@ -407,3 +401,29 @@ bool MapInstance::get_cell_occupation(const Point &p){
 	this->check_map_location(p);
 	return this->occupation_bitmap[p.x + p.y * this->w];
 }
+
+/*
+void MapStore::load_map_objects(){
+	std::vector<std::pair<std::string, std::function<std::unique_ptr<MapObject>(BufferReader *)>>> constructors;
+	constructors.emplace_back("event_disp", [](BufferReader *buffer){ return std::make_unique<EventDisp>(*buffer); });
+	
+	BufferReader buffer(map_objects_data, map_objects_data_size);
+
+	typedef decltype(constructors)::value_type T;
+	auto begin = constructors.begin();
+	auto end = constructors.end();
+	while (!buffer.empty()){
+		auto map_name = buffer.read_string();
+		auto &map = this->get_map_by_name(map_name);
+		auto object_count = buffer.read_varint();
+		map.objects.reserve(object_count);
+		while (object_count--){
+			auto object_type = buffer.read_string();
+			auto it = find_first_true(begin, end, [&object_type](const T &x){ return object_type <= x.first; });
+			if (it == end || it->first != object_type)
+				throw std::runtime_error("Unknown map object type: " + object_type);
+			map.objects.emplace_back(it->second(&buffer));
+		}
+	}
+}
+*/

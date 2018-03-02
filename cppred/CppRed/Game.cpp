@@ -477,8 +477,8 @@ void Game::create_main_characters(const std::string &player_name, const std::str
 	this->rival.reset(new Trainer(rival_name));
 }
 
-void Game::teleport_player(Map destination, const Point &position){
-	this->player_character->teleport(destination, position);
+void Game::teleport_player(const WorldCoordinates &destination){
+	this->player_character->teleport(destination);
 }
 
 void Game::game_loop(){
@@ -521,7 +521,7 @@ bool in_applicable_region(const Point &reduced, const Point &region){
 	return (!region.x || region.x == reduced.x) && (!region.y || region.y == reduced.y);
 }
 
-std::pair<MapData *, Point> compute_map_connections(Map map, MapData &map_data, MapStore &map_store, const Point &position){
+std::pair<MapData *, Point> compute_map_connections(const WorldCoordinates &position, MapData &map_data, MapStore &map_store){
 	struct SimplifiedCheck{
 		Point applicable_region;
 		int x_multiplier_1;
@@ -530,24 +530,12 @@ std::pair<MapData *, Point> compute_map_connections(Map map, MapData &map_data, 
 		int y_multiplier_2;
 	};
 	static const SimplifiedCheck checks[] = {
-		{
-			{0, -1},
-			1, 0, 0, 1,
-		},
-		{
-			{1, 0},
-			0, -1, 1, 0,
-		},
-		{
-			{0, 1},
-			1, 0, 0, -1,
-		},
-		{
-			{-1, 0},
-			0, 1, 1, 0,
-		},
+		{ { 0, -1}, 1,  0, 0,  1, },
+		{ { 1,  0}, 0, -1, 1,  0, },
+		{ { 0,  1}, 1,  0, 0, -1, },
+		{ {-1,  0}, 0,  1, 1,  0, },
 	};
-	auto reduced = reduce_by_region(position, map_data);
+	auto reduced = reduce_by_region(position.position, map_data);
 	for (size_t i = 0; i < array_length(checks); i++){
 		if (!map_data.map_connections[i])
 			continue;
@@ -556,7 +544,7 @@ std::pair<MapData *, Point> compute_map_connections(Map map, MapData &map_data, 
 			continue;
 		auto &mc = map_data.map_connections[i];
 		auto &map_data2 = map_store.get_map_data(mc.destination);
-		auto transformed = position;
+		auto transformed = position.position;
 		transformed.x += (mc.local_position - mc.remote_position) * check.x_multiplier_1;
 		if (check.x_multiplier_2 > 0)
 			transformed.x += map_data2.width * check.x_multiplier_2;
@@ -569,28 +557,29 @@ std::pair<MapData *, Point> compute_map_connections(Map map, MapData &map_data, 
 			transformed.y += map_data.height * check.y_multiplier_2;
 		return {&map_data2, transformed};
 	}
-	return {nullptr, position};
+	return {nullptr, position.position};
 }
 
-std::pair<TilesetData *, int> Game::compute_virtual_block(Map map, const Point &position){
-	auto transformed = this->remap_coordinates(map, position);
-	auto &map_data = this->map_store.get_map_data(transformed.first);
-	if (point_in_map(transformed.second, map_data))
-		return {map_data.tileset.get(), map_data.get_block_at_map_position(transformed.second)};
+std::pair<TilesetData *, int> Game::compute_virtual_block(const WorldCoordinates &position){
+	auto transformed = this->remap_coordinates(position);
+	auto &map_data = this->map_store.get_map_data(transformed.map);
+	if (point_in_map(transformed.position, map_data))
+		return {map_data.tileset.get(), map_data.get_block_at_map_position(transformed.position)};
 	return {map_data.tileset.get(), map_data.border_block};
 }
 
-std::pair<Map, Point> Game::remap_coordinates(Map map, const Point &position_parameter){
+WorldCoordinates Game::remap_coordinates(const WorldCoordinates &position_parameter){
 	auto position = position_parameter;
+	auto *map_data = &this->map_store.get_map_data(position.map);
 	while (true){
-		auto &map_data = this->map_store.get_map_data(map);
-		if (point_in_map(position, map_data))
-			return {map, position};
-		auto transformed = compute_map_connections(map, map_data, this->map_store, position);
+		if (point_in_map(position.position, *map_data))
+			return position;
+		auto transformed = compute_map_connections(position, *map_data, this->map_store);
 		if (!transformed.first)
-			return {map, position};
-		map = transformed.first->map_id;
-		position = transformed.second;
+			return position;
+		map_data = transformed.first;
+		position.map = map_data->map_id;
+		position.position = transformed.second;
 	}
 }
 
@@ -603,15 +592,23 @@ void Game::render(){
 	if (current_map == Map::Nowhere){
 		renderer.fill_rectangle(TileRegion::Background, { 0, 0 }, { Tilemap::w, Tilemap::h }, Tile());
 	}else{
-		auto map_data = this->map_store.get_map_data(current_map);
+		auto &map_data = this->map_store.get_map_data(current_map);
 		auto pos = this->player_character->get_map_position();
+		for (auto &pair : this->map_sprites){
+			auto offset = pair.first->get_position() - pos;
+			offset.x += PlayerCharacter::screen_block_offset_x;
+			offset.y += PlayerCharacter::screen_block_offset_y;
+			offset *= Renderer::tile_size * 2;
+			pair.second->set_x(offset.x);
+			pair.second->set_y(offset.y);
+		}
 		for (int y = 0; y < Renderer::logical_screen_tile_height; y++){
 			for (int x = 0; x < Renderer::logical_screen_tile_width; x++){
 				auto &tile = bg.tiles[x + y * Tilemap::w];
 				int x2 = x / 2 - PlayerCharacter::screen_block_offset_x + pos.x;
 				int y2 = y / 2 - PlayerCharacter::screen_block_offset_y + pos.y;
 				Point map_position(x2, y2);
-				auto computed_block = this->compute_virtual_block(current_map, map_position);
+				auto computed_block = this->compute_virtual_block({current_map, map_position});
 				auto &blockset = computed_block.first->blockset->data;
 				auto tileset = computed_block.first->tiles;
 				auto block = computed_block.second;
@@ -639,53 +636,73 @@ bool Game::is_passable(Map map, const Point &point){
 	return it != v.end() && *it == tile;
 }
 
-MoveQueryResult Game::can_move_to(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
+bool Game::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
 	//TODO: Implement full movement check logic.
-	return this->can_move_to_land(map, current_position, next_position, direction);
+	return this->can_move_to_land(current_position, next_position, direction);
 }
 
-MoveQueryResult Game::can_move_to_land(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
+bool Game::can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
 	//TODO: Implement full movement check logic.
-	auto remapped_next_position = this->remap_coordinates(map, next_position);
-	auto &map_data = this->map_store.get_map_data(remapped_next_position.first);
-	if (!point_in_map(remapped_next_position.second, map_data))
-		return MoveQueryResult::CantMoveThere;
-	if (remapped_next_position.first != map)
-		return MoveQueryResult::CanMoveButWillChangeMaps;
-	//if (!this->check_jumping_and_tile_pair_collisions(map, current_position, next_position, direction, &TilesetData::impassability_pairs) || !this->is_passable(map, next_position))
-	//	return MoveQueryResult::CantMoveThere;
-	//if (!this->is_passable(map, next_position))
-	//	return MoveQueryResult::CantMoveThere;
-	return MoveQueryResult::CanMoveThere;
-}
-
-bool Game::check_jumping_and_tile_pair_collisions(Map map, const Point &current_position, const Point &next_position, FacingDirection direction, pairs_t pairs){
-	if (!this->check_jumping(map, current_position, next_position, direction))
+	auto &map_data = this->map_store.get_map_data(next_position.map);
+	if (!point_in_map(next_position.position, map_data))
 		return false;
-	return this->check_tile_pair_collisions(map, current_position, next_position, pairs);
+	//if (!this->check_jumping_and_tile_pair_collisions(map, current_position, next_position, direction, &TilesetData::impassability_pairs) || !this->is_passable(map, next_position))
+	//	return false;
+	//if (!this->is_passable(map, next_position))
+	//	return false;
+	return true;
 }
 
-bool Game::check_jumping(Map map, const Point &current_position, const Point &next_position, FacingDirection direction){
-	auto &map_data = this->map_store.get_map_data(map);
-	if (!point_in_map(next_position, map_data))
+bool Game::check_jumping_and_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction, pairs_t pairs){
+	if (!this->check_jumping(current_position, next_position, direction))
+		return false;
+	return this->check_tile_pair_collisions(current_position, next_position, pairs);
+}
+
+bool Game::check_jumping(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
+	auto &map_data = this->map_store.get_map_data(next_position.map);
+	if (!point_in_map(next_position.position, map_data))
 		return false;
 	//TODO: See HandleLedges
 	return true;
 }
 
-bool Game::check_tile_pair_collisions(Map map, const Point &current_position, const Point &next_position, pairs_t pairs){
-	auto &map_data = this->map_store.get_map_data(map);
-	if (!point_in_map(current_position, map_data) || !point_in_map(next_position, map_data))
+bool Game::check_tile_pair_collisions(const WorldCoordinates &pos0, const WorldCoordinates &pos1, pairs_t pairs){
+	auto &map_data0 = this->map_store.get_map_data(pos0.map);
+	auto &map_data1 = this->map_store.get_map_data(pos1.map);
+	if (map_data0.tileset != map_data1.tileset || !point_in_map(pos0.position, map_data0) || !point_in_map(pos1.position, map_data1))
 		return true;
-	auto tile0 = map_data.get_partial_tile_at_actor_position(current_position);
-	auto tile1 = map_data.get_partial_tile_at_actor_position(next_position);
-	for (auto &pair : (*map_data.tileset).*pairs){
+	auto tile0 = map_data0.get_partial_tile_at_actor_position(pos0.position);
+	auto tile1 = map_data1.get_partial_tile_at_actor_position(pos1.position);
+	for (auto &pair : (*map_data0.tileset).*pairs){
 		if (pair.first < 0)
 			break;
 		if (pair.first == tile0 && pair.second == tile1 || pair.first == tile1 && pair.second == tile0)
 			return false;
 	}
 	return true;
+}
+
+void Game::entered_map(Map map){
+	this->map_sprites.clear();
+	auto &map_data = this->map_store.get_map_data(map);
+	auto &renderer = this->engine->get_renderer();
+	for (auto &object : *map_data.objects){
+		auto sprite = renderer.create_sprite(BallSprite);
+		this->map_sprites.emplace_back(object.get(), sprite);
+		sprite->set_visible(true);
+		auto tiles = sprite->iterate_tiles();
+		for (auto i = tiles.first; i != tiles.second; ++i)
+			i->has_priority = true;
+	}
+}
+
+MapObject *Game::get_object_at_location(const WorldCoordinates &location){
+	auto &map_data = this->map_store.get_map_data(location.map);
+	for (auto &object : *map_data.objects)
+		if (object->get_position() == location.position)
+			return object.get();
+	return nullptr;
 }
 
 }
