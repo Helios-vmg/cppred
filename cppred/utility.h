@@ -144,7 +144,7 @@ const V &find_in_constant_map(const std::map<K, V> &map, const K &key){
 struct Point{
 	int x, y;
 
-	Point() = default;
+	Point(): x(0), y(0){}
 	Point(int x, int y): x(x), y(y){}
 	Point operator+(const Point &p) const{
 		return { this->x + p.x, this->y + p.y };
@@ -180,6 +180,10 @@ struct Point{
 		return this->x == other.x && this->y == other.y;
 	}
 };
+
+inline std::ostream &operator<<(std::ostream &stream, const Point &p){
+	return stream << '(' << p.x << ", " << p.y << ')';
+}
 
 enum class Map;
 

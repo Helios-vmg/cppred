@@ -24,6 +24,7 @@ public:
 private:
 	Game *game;
 	WorldCoordinates position;
+	Point pixel_offset;
 	std::shared_ptr<Sprite> standing_sprites[4];
 	std::shared_ptr<Sprite> walking_sprites[4 * 4];
 	FacingDirection facing_direction = FacingDirection::Down;
@@ -42,20 +43,22 @@ private:
 	void coroutine_entry_point();
 	void handle_movement(InputState &);
 	void move(const Point &delta, FacingDirection);
-	void run_walking_animation(FacingDirection);
+	void run_walking_animation(const Point &delta, FacingDirection);
 	void entered_new_map(Map old_map, Map new_map);
 public:
 	PlayerCharacter(Game &game, const std::string &name, Renderer &);
 	void set_visible_sprite();
 	void teleport(const WorldCoordinates &);
 	void update();
-	DEFINE_GETTER_SETTER(facing_direction)
 	Map get_current_map() const{
 		return this->position.map;
 	}
 	Point get_map_position() const{
 		return this->position.position;
 	}
+
+	DEFINE_GETTER_SETTER(facing_direction)
+	DEFINE_GETTER_SETTER(pixel_offset)
 };
 
 }

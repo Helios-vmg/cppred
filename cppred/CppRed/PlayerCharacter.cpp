@@ -124,16 +124,25 @@ void PlayerCharacter::move(const Point &delta, FacingDirection direction){
 	auto &map1 = this->game->get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
 	map1.set_cell_occupation(pos1.position, true);
-	this->run_walking_animation(direction);
+	this->run_walking_animation(delta, direction);
 	map0.set_cell_occupation(pos0.position, false);
 	this->position = pos1;
 	if (pos0.map != pos1.map)
 		this->entered_new_map(pos0.map, pos1.map);
 }
 
-void PlayerCharacter::run_walking_animation(FacingDirection direction){
+void PlayerCharacter::run_walking_animation(const Point &delta, FacingDirection direction){
 	//TODO
-	this->coroutine->wait(5.0 / 60.0);
+	auto &E = this->game->get_engine();
+	auto t0 = E.get_clock();
+	double t;
+	const double frames = 16;
+	const double movement_per_frame = Renderer::tile_size * 2 / frames;
+	while ((t = E.get_clock() - t0) < frames / 60){
+		this->pixel_offset = delta * (movement_per_frame * (t * 60));
+		this->coroutine->yield();
+	}
+	this->pixel_offset = Point();
 }
 
 void PlayerCharacter::entered_new_map(Map old_map, Map new_map){

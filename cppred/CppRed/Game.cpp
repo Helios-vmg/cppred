@@ -587,6 +587,8 @@ WorldCoordinates Game::remap_coordinates(const WorldCoordinates &position_parame
 void Game::render(){
 	auto &renderer = this->engine->get_renderer();
 	auto &bg = renderer.get_tilemap(TileRegion::Background);
+	auto pixel_offset = this->player_character->get_pixel_offset();
+	renderer.set_bg_global_offset(Point(Renderer::tile_size * 2, Renderer::tile_size * 2) + pixel_offset);
 	auto current_map = this->player_character->get_current_map();
 	this->player_character->set_visible_sprite();
 	if (current_map == Map::Nowhere){
@@ -599,20 +601,22 @@ void Game::render(){
 			offset.x += PlayerCharacter::screen_block_offset_x;
 			offset.y += PlayerCharacter::screen_block_offset_y;
 			offset *= Renderer::tile_size * 2;
+			offset -= pixel_offset;
 			pair.second->set_x(offset.x);
 			pair.second->set_y(offset.y);
 		}
-		for (int y = 0; y < Renderer::logical_screen_tile_height; y++){
-			for (int x = 0; x < Renderer::logical_screen_tile_width; x++){
-				auto &tile = bg.tiles[x + y * Tilemap::w];
-				int x2 = x / 2 - PlayerCharacter::screen_block_offset_x + pos.x;
-				int y2 = y / 2 - PlayerCharacter::screen_block_offset_y + pos.y;
+		const int k = 2;
+		for (int y = -k; y < Renderer::logical_screen_tile_height + k; y++){
+			for (int x = -k; x < Renderer::logical_screen_tile_width + k; x++){
+				auto &tile = bg.tiles[(x + k) + (y + k) * Tilemap::w];
+				int x2 = (x + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset_x + pos.x;
+				int y2 = (y + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset_y + pos.y;
 				Point map_position(x2, y2);
 				auto computed_block = this->compute_virtual_block({current_map, map_position});
 				auto &blockset = computed_block.first->blockset->data;
 				auto tileset = computed_block.first->tiles;
 				auto block = computed_block.second;
-				auto offset = x % 2 + y % 2 * 2;
+				auto offset = euclidean_modulo_u(x, 2) + euclidean_modulo_u(y, 2) * 2;
 				tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
 				tile.flipped_x = false;
 				tile.flipped_y = false;
