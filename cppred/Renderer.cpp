@@ -157,8 +157,8 @@ void Renderer::render_sprites(){
 		auto sprite = kv.second;
 		auto x0 = sprite->get_x();
 		auto y0 = sprite->get_y();
-		auto x1 = x0 + sprite->get_w();
-		auto y1 = y0 + sprite->get_h();
+		auto x1 = x0 + sprite->get_w() * tile_size;
+		auto y1 = y0 + sprite->get_h() * tile_size;
 		if (!sprite->get_visible() | (y0 >= logical_screen_height) | (x0 >= logical_screen_width) | (y1 <= 0) | (x1 <= 0))
 			continue;
 		this->sprite_list.push_back(sprite);
@@ -185,9 +185,11 @@ void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
 	auto y0 = std::max(spry, 0);
 	auto x1 = std::min(sprx + w, (int)logical_screen_width);
 	auto y1 = std::min(spry + h, (int)logical_screen_height);
+	auto sprite_offset_x0 = x0 - sprx;
+	auto sprite_offset_y0 = y0 - spry;
 
-	for (int y = y0, sprite_offset_y = 0; y < y1; y++, sprite_offset_y++){
-		for (int x = x0, sprite_offset_x = 0; x < x1; x++, sprite_offset_x++){
+	for (int y = y0, sprite_offset_y = sprite_offset_y0; y < y1; y++, sprite_offset_y++){
+		for (int x = x0, sprite_offset_x = sprite_offset_x0; x < x1; x++, sprite_offset_x++){
 			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
 			auto &color_index = point.value;
 			auto &palette = point.palette;
