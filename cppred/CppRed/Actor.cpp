@@ -15,10 +15,11 @@ static void initialize_sprite(std::shared_ptr<Sprite> &sprite, Renderer &rendere
 		auto iterators = sprite->iterate_tiles();
 		assert(iterators.end() - iterators.begin() == 4 && sprite->get_w() == 2 && sprite->get_h() == 2);
 		auto i = iterators.begin();
+		first_tile += graphics.first_tile;
 		for (int y = 0; y < 2; y++){
 			for (int x = 0; x < 2; x++){
 				auto &tile = *(i++);
-				tile.tile_no = graphics.first_tile + y * 2 + (1 - x);
+				tile.tile_no = first_tile + y * 2 + (1 - x);
 				tile.flipped_x = true;
 				tile.has_priority = true;
 			}
@@ -88,6 +89,9 @@ void Actor::update(){
 bool Actor::move(const Point &delta, FacingDirection direction){
 	auto pos0 = this->position;
 	auto pos1 = this->game->remap_coordinates(pos0 + delta);
+	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
+	this->facing_direction = direction;
+	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
 	if (!this->game->can_move_to(pos0, pos1, direction))
 		return false;
 	auto &map0 = this->game->get_map_instance(pos0.map);
