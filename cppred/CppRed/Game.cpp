@@ -473,12 +473,28 @@ std::string Game::get_name_from_user(SpeciesId species, int max_length){
 }
 
 void Game::create_main_characters(const std::string &player_name, const std::string &rival_name){
-	this->player_character.reset(new PlayerCharacter(*this, player_name, this->engine->get_renderer()));
-	this->rival.reset(new Trainer(rival_name));
+	this->player_character = create_actor<PlayerCharacter>(*this, player_name, this->engine->get_renderer());
+	this->rival = create_actor<Trainer>(*this, rival_name, this->engine->get_renderer(), BlueSprite);
 }
 
 void Game::teleport_player(const WorldCoordinates &destination){
 	this->player_character->teleport(destination);
+}
+
+void Game::set_camera_position(){
+	this->camera_position = this->player_character->get_map_position() - PlayerCharacter::screen_block_offset;
+	this->pixel_offset = -this->player_character->get_pixel_offset();
+	
+		//for (auto &pair : this->map_sprites){
+		//	auto offset = pair.first->get_position() - pos;
+		//	offset.x += PlayerCharacter::screen_block_offset_x;
+		//	offset.y += PlayerCharacter::screen_block_offset_y;
+		//	offset *= Renderer::tile_size * 2;
+		//	offset -= pixel_offset;
+		//	pair.second->set_x(offset.x);
+		//	pair.second->set_y(offset.y);
+		//}
+	
 }
 
 void Game::game_loop(){
@@ -489,6 +505,9 @@ void Game::game_loop(){
 	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
 	while (true){
 		this->player_character->update();
+		this->set_camera_position();
+		for (auto &actor : this->actors)
+			actor->update();
 		this->render();
 		this->engine->yield();
 	}
@@ -583,12 +602,10 @@ WorldCoordinates Game::remap_coordinates(const WorldCoordinates &position_parame
 	}
 }
 
-
 void Game::render(){
 	auto &renderer = this->engine->get_renderer();
 	auto &bg = renderer.get_tilemap(TileRegion::Background);
-	auto pixel_offset = this->player_character->get_pixel_offset();
-	renderer.set_bg_global_offset(Point(Renderer::tile_size * 2, Renderer::tile_size * 2) + pixel_offset);
+	renderer.set_bg_global_offset(Point(Renderer::tile_size * 2, Renderer::tile_size * 2) - this->pixel_offset);
 	auto current_map = this->player_character->get_current_map();
 	this->player_character->set_visible_sprite();
 	if (current_map == Map::Nowhere){
@@ -596,21 +613,21 @@ void Game::render(){
 	}else{
 		auto &map_data = this->map_store.get_map_data(current_map);
 		auto pos = this->player_character->get_map_position();
-		for (auto &pair : this->map_sprites){
-			auto offset = pair.first->get_position() - pos;
-			offset.x += PlayerCharacter::screen_block_offset_x;
-			offset.y += PlayerCharacter::screen_block_offset_y;
-			offset *= Renderer::tile_size * 2;
-			offset -= pixel_offset;
-			pair.second->set_x(offset.x);
-			pair.second->set_y(offset.y);
-		}
+		//for (auto &pair : this->map_sprites){
+		//	auto offset = pair.first->get_position() - pos;
+		//	offset.x += PlayerCharacter::screen_block_offset_x;
+		//	offset.y += PlayerCharacter::screen_block_offset_y;
+		//	offset *= Renderer::tile_size * 2;
+		//	offset -= pixel_offset;
+		//	pair.second->set_x(offset.x);
+		//	pair.second->set_y(offset.y);
+		//}
 		const int k = 2;
 		for (int y = -k; y < Renderer::logical_screen_tile_height + k; y++){
 			for (int x = -k; x < Renderer::logical_screen_tile_width + k; x++){
 				auto &tile = bg.tiles[(x + k) + (y + k) * Tilemap::w];
-				int x2 = (x + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset_x + pos.x;
-				int y2 = (y + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset_y + pos.y;
+				int x2 = (x + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset.x + pos.x;
+				int y2 = (y + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset.y + pos.y;
 				Point map_position(x2, y2);
 				auto computed_block = this->compute_virtual_block({current_map, map_position});
 				auto &blockset = computed_block.first->blockset->data;
@@ -687,26 +704,42 @@ bool Game::check_tile_pair_collisions(const WorldCoordinates &pos0, const WorldC
 	return true;
 }
 
-void Game::entered_map(Map map){
-	this->map_sprites.clear();
-	auto &map_data = this->map_store.get_map_data(map);
+void Game::entered_map(Map old_map, Map new_map){
+	this->map_store.release_map_instance(old_map);
+	auto &instance = this->map_store.get_map_instance(new_map);
+	this->actors.clear();
+	auto &map_data = this->map_store.get_map_data(new_map);
 	auto &renderer = this->engine->get_renderer();
-	for (auto &object : *map_data.objects){
-		auto sprite = renderer.create_sprite(BallSprite);
-		this->map_sprites.emplace_back(object.get(), sprite);
-		sprite->set_visible(true);
-		auto tiles = sprite->iterate_tiles();
-		for (auto i = tiles.first; i != tiles.second; ++i)
-			i->has_priority = true;
+	for (MapObjectInstance &object_instance : instance.get_objects()){
+		if (object_instance.requires_actor()){
+			auto actor = object_instance.get_object().create_actor(*this, this->engine->get_renderer());
+			if (!actor)
+				continue;
+			this->actors.emplace_back(std::move(actor));
+		}
 	}
+	//for (auto &object : *map_data.objects){
+	//	auto sprite = renderer.create_sprite(BallSprite);
+	//	this->map_sprites.emplace_back(object.get(), sprite);
+	//	sprite->set_visible(true);
+	//	auto tiles = sprite->iterate_tiles();
+	//	for (auto i = tiles.first; i != tiles.second; ++i)
+	//		i->has_priority = true;
+	//}
 }
 
-MapObject *Game::get_object_at_location(const WorldCoordinates &location){
-	auto &map_data = this->map_store.get_map_data(location.map);
-	for (auto &object : *map_data.objects)
-		if (object->get_position() == location.position)
-			return object.get();
-	return nullptr;
+bool Game::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &location){
+	auto &instance = this->map_store.get_map_instance(location.map);
+	size_t count = 0;
+	for (MapObjectInstance &object : instance.get_objects()){
+		if (object.get_object().get_position() == location.position){
+			if (count == array_length(dst))
+				return true;
+			dst[count++] = &object;
+		}
+	}
+	std::fill(dst + count, dst + array_length(dst), nullptr);
+	return false;
 }
 
 }

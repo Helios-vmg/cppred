@@ -1,5 +1,6 @@
 #pragma once
 #include "Pokemon.h"
+#include "Actor.h"
 
 namespace CppRed{
 
@@ -8,15 +9,16 @@ struct InventorySpace{
 	int quantity;
 };
 
-class Trainer{
+class Trainer : public Actor{
 public:
 	static const size_t max_inventory_size;
 protected:
-	std::string name;
 	Party party;
 	std::vector<InventorySpace> inventory;
+	virtual void coroutine_entry_point() override{}
 public:
-	Trainer(const std::string &name);
+	Trainer(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
+	virtual ~Trainer(){}
 };
 
 }

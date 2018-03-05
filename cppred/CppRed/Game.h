@@ -7,6 +7,7 @@
 #include "pokemon_version.h"
 #include "AudioInterface.h"
 #include "Maps.h"
+#include "Actor.h"
 #include <string>
 #include <unordered_map>
 #include <queue>
@@ -55,10 +56,12 @@ class Game{
 	bool dialog_box_visible = false;
 	VariableStore variable_store;
 	AudioInterface audio_interface;
-	std::unique_ptr<PlayerCharacter> player_character;
-	std::unique_ptr<Trainer> rival;
+	actor_ptr<PlayerCharacter> player_character = null_actor_ptr<PlayerCharacter>();
+	actor_ptr<Trainer> rival = null_actor_ptr<Trainer>();
 	MapStore map_store;
-	std::vector<std::pair<MapObject *, std::shared_ptr<Sprite>>> map_sprites;
+	std::vector<actor_ptr<Actor>> actors;
+	Point camera_position;
+	Point pixel_offset;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
@@ -72,6 +75,7 @@ class Game{
 	bool can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	bool can_move_to_water(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	std::pair<TilesetData *, int> compute_virtual_block(const WorldCoordinates &position);
+	void set_camera_position();
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
 	Game(Game &&) = delete;
@@ -132,11 +136,13 @@ public:
 	MapInstance &get_map_instance(Map);
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
 	WorldCoordinates remap_coordinates(const WorldCoordinates &);
-	void entered_map(Map);
-	MapObject *get_object_at_location(const WorldCoordinates &);
+	void entered_map(Map old_map, Map new_map);
+	bool get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
+	DEFINE_GETTER(camera_position)
+	DEFINE_GETTER(pixel_offset)
 };
 
 }

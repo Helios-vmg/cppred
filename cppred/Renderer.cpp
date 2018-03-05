@@ -337,9 +337,8 @@ void Renderer::clear_subpalettes(SubPaletteRegion region){
 		case SubPaletteRegion::Sprites:
 			for (auto &sprite : this->sprites){
 				sprite.second->set_palette(null_palette);
-				auto its = sprite.second->iterate_tiles();
-				for (auto it = its.first; it != its.second; ++it)
-					it->palette = null_palette;
+				for (auto &tile : sprite.second->iterate_tiles())
+					tile.palette = null_palette;
 			}
 			if (region != SubPaletteRegion::All)
 				break;
@@ -396,10 +395,9 @@ std::shared_ptr<Sprite> Renderer::create_sprite(int tiles_w, int tiles_h){
 
 std::shared_ptr<Sprite> Renderer::create_sprite(const GraphicsAsset &asset){
 	auto ret = this->create_sprite(asset.width, asset.height);
-	auto its = ret->iterate_tiles();
 	auto i = asset.first_tile;
-	for (auto it = its.first; it != its.second; ++it)
-		it->tile_no = i++;
+	for (auto &tile : ret->iterate_tiles())
+		tile.tile_no = i++;
 	return ret;
 }
 

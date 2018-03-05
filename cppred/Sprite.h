@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RendererStructs.h"
+#include "utility.h"
 
 class Renderer;
 
@@ -20,8 +21,8 @@ public:
 	void operator=(const Sprite &) = delete;
 	void operator=(Sprite &&) = delete;
 	SpriteTile &get_tile(int x, int y);
-	iterator_pair<decltype(tiles)> iterate_tiles(){
-		return { this->tiles.begin(), this->tiles.end() };
+	auto iterate_tiles(){
+		return make_range(this->tiles);
 	}
 
 	DEFINE_GETTER(id)

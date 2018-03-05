@@ -36,9 +36,6 @@
 
 typedef std::array<std::uint32_t, 4> xorshift128_state;
 
-template <typename T>
-using iterator_pair = std::pair<typename T::iterator, typename T::iterator>;
-
 class XorShift128{
 	xorshift128_state state;
 public:
@@ -271,3 +268,26 @@ public:
 		return this->offset >= this->size;
 	}
 };
+
+template <typename T>
+class iterator_range{
+	T b, e;
+public:
+	iterator_range(const T &begin, const T &end): b(begin), e(end){}
+	T begin() const{
+		return this->b;
+	}
+	T end() const{
+		return this->e;
+	}
+};
+
+template <typename T>
+auto make_range(const T &xs){
+	return iterator_range<decltype(std::begin(xs))>(std::begin(xs), std::end(xs));
+}
+
+template <typename T>
+auto make_range(T &xs){
+	return iterator_range<decltype(std::begin(xs))>(std::begin(xs), std::end(xs));
+}

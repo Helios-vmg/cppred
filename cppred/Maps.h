@@ -2,6 +2,7 @@
 
 #include "common_types.h"
 #include "GraphicsAsset.h"
+#include "Objects.h"
 #include "../CodeGeneration/output/maps.h"
 #include "../CodeGeneration/output/items.h"
 #include "../common/TilesetType.h"
@@ -10,6 +11,12 @@
 #include <vector>
 #include <memory>
 #include <map>
+
+namespace CppRed{
+class Actor;
+}
+
+class MapStore;
 
 struct Blockset{
 	std::string name;
@@ -56,178 +63,12 @@ struct TilesetData{
 	);
 };
 
-class MapStore;
-
-class MapObject{
-protected:
-	std::string name;
-	Point position = {-1, -1};
-
-	MapObject(BufferReader &);
-public:
-	MapObject(const std::string &name, const Point &position): name(name), position(position){}
-	virtual ~MapObject() = 0;
-	static std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> create_vector(BufferReader &buffer, const std::function<std::unique_ptr<MapObject>(BufferReader &)> &);
-	virtual const char *get_type_string() const = 0;
-	DEFINE_GETTER(position)
-	DEFINE_GETTER(name)
-};
-
-inline MapObject::~MapObject(){}
-
-class EventDisp : public MapObject{
-public:
-	EventDisp(BufferReader &);
-	EventDisp(const std::string &name, const Point &position): MapObject(name, position){}
-	const char *get_type_string() const override{
-		return "event_disp";
-	}
-};
-
-class Sign : public MapObject{
-protected:
-	int text_index;
-public:
-	Sign(BufferReader &);
-	Sign(const std::string &name, const Point &position, int text_index): MapObject(name, position), text_index(text_index){}
-	const char *get_type_string() const override{
-		return "sign";
-	}
-};
-
-class HiddenObject : public MapObject{
-protected:
-	std::string script;
-	std::string script_parameter;
-
-public:
-	HiddenObject(BufferReader &);
-	HiddenObject(const std::string &name, const Point &position, const std::string &script, const std::string &script_parameter):
-		MapObject(name, position),
-		script(script),
-		script_parameter(script_parameter){}
-	const char *get_type_string() const override{
-		return "hidden_object";
-	}
-};
-
-struct MapData;
-
-struct WarpDestination{
-	bool simple;
-	const MapData *destination_map = nullptr;
-	std::string variable_name;
-	WarpDestination() = default;
-	WarpDestination(const MapData &destination_map): simple(true), destination_map(&destination_map){}
-	WarpDestination(const std::string &variable_name): simple(false), variable_name(variable_name){}
-};
-
-class MapWarp : public MapObject{
-protected:
-	int index;
-	WarpDestination destination;
-	int destination_warp_index;
-
-public:
-	MapWarp(BufferReader &, const MapStore &);
-	MapWarp(const std::string &name, const Point &position, int index, const WarpDestination &destination, int destination_warp_index):
-		MapObject(name, position),
-		index(index),
-		destination(destination),
-		destination_warp_index(destination_warp_index){}
-	const char *get_type_string() const override{
-		return "map_warp";
-	}
-};
-
-class ObjectWithSprite : public MapObject{
-protected:
-	const GraphicsAsset *sprite;
-	MapObjectFacingDirection facing_direction;
-	bool wandering;
-	int range;
-	int text_index;
-
-public:
-	ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map);
-	ObjectWithSprite(const std::string &name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_index):
-		MapObject(name, position),
-		sprite(&sprite),
-		facing_direction(facing_direction),
-		wandering(wandering),
-		range(range),
-		text_index(text_index){}
-	virtual ~ObjectWithSprite() = 0;
-};
-
-inline ObjectWithSprite::~ObjectWithSprite(){}
-
-class NpcMapObject : public ObjectWithSprite{
-public:
-	NpcMapObject(BufferReader &, const std::map<std::string, const GraphicsAsset *> &graphics_map);
-	NpcMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id):
-		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id){}
-	const char *get_type_string() const override{
-		return "npc";
-	}
-};
-
-class ItemMapObject : public ObjectWithSprite{
-protected:
-	ItemId item;
-
-public:
-	ItemMapObject(BufferReader &,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, ItemId> &items_map);
-	ItemMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, ItemId item):
-		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
-		item(item){}
-	const char *get_type_string() const override{
-		return "item";
-	}
-};
-
-class TrainerMapObject : public ObjectWithSprite{
-protected:
-	std::shared_ptr<BaseTrainerParty> party;
-
-public:
-	TrainerMapObject(BufferReader &,
-		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map);
-	TrainerMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const std::shared_ptr<BaseTrainerParty> &party):
-		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
-		party(party){}
-	const char *get_type_string() const override{
-		return "trainer";
-	}
-};
-
-class PokemonMapObject : public ObjectWithSprite{
-protected:
-	SpeciesId species;
-	int level;
-
-public:
-	PokemonMapObject(BufferReader &, const std::map<std::string, const GraphicsAsset *> &graphics_map);
-	PokemonMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, SpeciesId species, int level):
-		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
-		species(species),
-		level(level){}
-	const char *get_type_string() const override{
-		return "pokemon";
-	}
-};
-
 struct BinaryMapData{
 	std::string name;
 	std::vector<byte_t> data;
 
 	BinaryMapData(const byte_t *, size_t &, size_t);
 };
-
-struct Point;
 
 struct TemporaryMapConnection{
 	MapData *source;
@@ -236,7 +77,7 @@ struct TemporaryMapConnection{
 	int local_pos, remote_pos;
 	TemporaryMapConnection() = default;
 	TemporaryMapConnection(const TemporaryMapConnection &) = delete;
-	TemporaryMapConnection(TemporaryMapConnection &&other): destination(std::move(other.destination)){
+	TemporaryMapConnection(TemporaryMapConnection &&other) : destination(std::move(other.destination)){
 		this->source = other.source;
 		this->direction = other.direction;
 		this->local_pos = other.local_pos;
@@ -279,26 +120,47 @@ struct MapData{
 	int get_partial_tile_at_actor_position(const Point &);
 };
 
-class MapStore;
+class MapObjectInstance{
+	Point position;
+	CppRed::Actor *actor = nullptr;
+	const MapObject *full_object;
+public:
+	MapObjectInstance(const MapObject &);
+	MapObjectInstance(const MapObjectInstance &) = default;
+	const MapObject &get_object() const{
+		return *this->full_object;
+	}
+	bool requires_actor() const{
+		return this->full_object->requires_actor();
+	}
+	void activate(const CppRed::Actor &activator);
+};
 
 class MapInstance{
 	Map map;
+	MapData *data;
 	MapStore *store;
-	int w, h;
 	std::vector<bool> occupation_bitmap;
+	std::vector<MapObjectInstance> objects;
 
 	void check_map_location(const Point &);
 public:
 	MapInstance(Map, MapStore &);
 	void set_cell_occupation(const Point &, bool);
 	bool get_cell_occupation(const Point &);
+	auto get_objects() const{
+		return make_range(this->objects);
+	}
+	auto get_objects(){
+		return make_range(this->objects);
+	}
 };
 
 class MapStore{
 	std::vector<std::unique_ptr<MapData>> maps;
 	std::vector<std::pair<std::string, MapData *>> maps_by_name;
 	std::vector<std::unique_ptr<MapInstance>> map_instances;
-	
+
 	typedef std::map<std::string, std::shared_ptr<Blockset>> blocksets_t;
 	typedef std::map<std::string, std::shared_ptr<Collision>> collisions_t;
 	typedef std::map<std::string, const GraphicsAsset *> graphics_map_t;
@@ -320,4 +182,5 @@ public:
 	MapData &get_map_data(Map map);
 	MapInstance &get_map_instance(Map map);
 	MapData &get_map_by_name(const std::string &) const;
+	void release_map_instance(Map);
 };

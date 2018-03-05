@@ -2,7 +2,8 @@
 
 namespace CppRed{
 
-Trainer::Trainer(const std::string &name): name(name){
+Trainer::Trainer(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite):
+		Actor(game, name, renderer, sprite){
 }
 
 }
