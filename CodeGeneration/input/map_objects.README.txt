@@ -1,0 +1,47 @@
+event_disp:
+    no extra parameters
+
+hidden:
+    param1: script parameter
+    param2: script name
+
+item:
+    param1: sprite
+    param2: facing_direction
+    param3: wandering
+    param4: wandering range
+    param5: text index
+    param6: item
+
+npc:
+    param1: sprite
+    param2: facing_direction
+    param3: wandering
+    param4: wandering range
+    param5: text index
+
+pokemon:
+    param1: sprite
+    param2: facing_direction
+    param3: wandering
+    param4: wandering range
+    param5: map text index
+    param6: pokemon species
+    param7: level
+
+sign:
+    param1: map text index
+
+npc:
+    param1: sprite
+    param2: facing_direction
+    param3: wandering
+    param4: wandering range
+    param5: text index
+    param6: trainer class
+    param7: party index
+
+warp:
+    param1: warp index
+    param2: map destination (if it starts with "var:", the destination is pulled from a variable)
+    param3: destination warp index
