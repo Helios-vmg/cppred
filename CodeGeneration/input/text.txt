@@ -9587,7 +9587,7 @@ room for stuff!<done>
 Not thirsty!<done>
 
 .CeladonMansion1Text1
-MEOWTH: Meow!<end>
+MEOWTH: Meow!<cry,Meowth><end>
 
 .CeladonMansion1Text2
 My dear POKÈMON
@@ -9597,11 +9597,11 @@ money home!<done>
 
 .CeladonMansion1Text3
 CLEFAIRY: Pi
-pippippi!<end>
+pippippi!<cry,Clefairy><end>
 
 .CeladonMansion1Text4
 NIDORAN: Kya
-kyaoo!<end>
+kyaoo!<cry,NidoranFemale><end>
 
 .CeladonMansion1Text5
 CELADON MANSION
@@ -12288,7 +12288,7 @@ used WATER STONE!<done>
 
 .CeladonCityText7
 POLIWRATH: Ribi
-ribit!<end>
+ribit!<cry,Poliwrath><end>
 
 .CeladonCityText8
 What are you
