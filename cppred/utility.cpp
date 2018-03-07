@@ -3,7 +3,7 @@
 #include <cmath>
 #include <cstring>
 
-std::uint32_t XorShift128::operator()(){
+std::uint32_t XorShift128::gen(){
 	auto x = this->state[3];
 	x ^= x << 11;
 	x ^= x >> 8;
@@ -16,6 +16,22 @@ std::uint32_t XorShift128::operator()(){
 	return x;
 }
 
+std::uint32_t XorShift128::gen(std::uint32_t max){
+	const auto u32_max = std::numeric_limits<std::uint32_t>::max();
+	const auto u32_max2 = u32_max / 2;
+	const std::uint32_t rand_max = max > u32_max2 ? u32_max2 : u32_max - (u32_max2 + 1) % (max + 1);
+    std::uint32_t r;
+    do
+        r = (*this)();
+    while (r > rand_max);
+	return max <= u32_max2 ? r % (max + 1) : r;
+}
+
+std::uint32_t XorShift128::operator()(std::uint32_t max){
+	if (!max)
+		return this->gen();
+	return this->gen(max - 1);
+}
 
 void XorShift128::generate_block(void *buffer, size_t size){
 	auto dst = (std::uint8_t *)buffer;
@@ -26,6 +42,22 @@ void XorShift128::generate_block(void *buffer, size_t size){
 			u >>= 8;
 		}
 	}
+}
+
+double XorShift128::generate_double(){
+	double ret = 0;
+	double addend = 0.5;
+	auto n = (*this)();
+	for (int i = 32; i--;){
+		ret += addend;
+		addend *= 0.5;
+	}
+	n = (*this)();
+	for (int i = 53 - 32; i--;){
+		ret += addend;
+		addend *= 0.5;
+	}
+	return ret;
 }
 
 xorshift128_state get_seed(){

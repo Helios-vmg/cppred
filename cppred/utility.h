@@ -38,11 +38,19 @@ typedef std::array<std::uint32_t, 4> xorshift128_state;
 
 class XorShift128{
 	xorshift128_state state;
+	std::uint32_t gen();
+	std::uint32_t gen(std::uint32_t max);
 public:
 	XorShift128(const xorshift128_state &seed): state(seed){}
 	XorShift128(xorshift128_state &&seed): state(std::move(seed)){}
-	std::uint32_t operator()();
+	//Generates in range [0; end)
+	std::uint32_t operator()(std::uint32_t end = 0);
+	//Generates in range [begin; end)
+	std::uint32_t operator()(std::uint32_t begin, std::uint32_t end){
+		return (*this)(end - begin) + begin;
+	}
 	void generate_block(void *buffer, size_t size);
+	double generate_double();
 };
 
 template <typename T, size_t N>
