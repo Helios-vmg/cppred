@@ -29,6 +29,7 @@ public:
 	void set_string(const std::string &key, const std::string &value);
 	void set_number(const std::string &key, int *value);
 	void set_number(const std::string &key, int value);
+	const std::string *try_get_string(const std::string &key);
 	const std::string &get_string(const std::string &key);
 	int get_number(const std::string &key);
 	void delete_string(const std::string &key);
@@ -67,7 +68,7 @@ class Game{
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 	void render();
-	bool is_passable(Map, const Point &);
+	bool is_passable(const WorldCoordinates &);
 	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
 	bool check_jumping_and_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection, pairs_t pairs);
 	bool check_jumping(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
@@ -119,6 +120,9 @@ public:
 	void run_dialog(TextResourceId);
 	void reset_dialog_state();
 	void text_print_delay();
+	MapStore &get_map_store(){
+		return this->map_store;
+	}
 	VariableStore &get_variable_store(){
 		return this->variable_store;
 	}
@@ -132,6 +136,7 @@ public:
 	}
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	void teleport_player(const WorldCoordinates &);
+	void teleport_player(const MapWarp &);
 	void game_loop();
 	MapInstance &get_map_instance(Map);
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);

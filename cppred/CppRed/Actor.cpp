@@ -86,13 +86,37 @@ void Actor::update(){
 	this->coroutine->resume();
 }
 
+Point Actor::direction_to_vector(FacingDirection direction){
+	static const Point deltas[] = {
+		{ 0, -1},
+		{ 1,  0},
+		{ 0,  1},
+		{-1,  0},
+	};
+	return deltas[(int)direction];
+}
+
+bool Actor::move(FacingDirection direction){
+	static const Point deltas[] = {
+		{ 0, -1},
+		{ 1,  0},
+		{ 0,  1},
+		{-1,  0},
+	};
+	return this->move(direction_to_vector(direction), direction);
+}
+
+bool Actor::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
+	return this->game->can_move_to(current_position, next_position, direction);
+}
+
 bool Actor::move(const Point &delta, FacingDirection direction){
 	auto pos0 = this->position;
 	auto pos1 = this->game->remap_coordinates(pos0 + delta);
 	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
 	this->facing_direction = direction;
 	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
-	if (!this->game->can_move_to(pos0, pos1, direction))
+	if (!this->can_move_to(pos0, pos1, direction))
 		return false;
 	auto &map0 = this->game->get_map_instance(pos0.map);
 	auto &map1 = this->game->get_map_instance(pos1.map);
@@ -111,7 +135,7 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 	auto &E = this->game->get_engine();
 	auto t0 = E.get_clock();
 	double t;
-	const double frames = 16;
+	const double frames = this->movement_duration();
 	const double movement_per_frame = Renderer::tile_size * 2 / frames;
 	while ((t = E.get_clock() - t0) < frames / 60){
 		this->pixel_offset = delta * (movement_per_frame * (t * 60));

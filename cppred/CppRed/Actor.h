@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "../utility.h"
 
+class MapObjectInstance;
+
 namespace CppRed{
 
 enum class FacingDirection{
@@ -28,6 +30,7 @@ protected:
 	int walking_animation_state = 0;
 	std::unique_ptr<Coroutine> coroutine;
 	bool quit_coroutine = false;
+	MapObjectInstance *object_instance = nullptr;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -39,14 +42,21 @@ protected:
 	virtual void initialize_sprites(const GraphicsAsset &graphics, Renderer &);
 	virtual void coroutine_entry_point();
 	void run_walking_animation(const Point &delta, FacingDirection);
+	bool move(FacingDirection);
 	bool move(const Point &delta, FacingDirection);
 	virtual void entered_new_map(Map old_map, Map new_map){}
+	virtual double movement_duration() const{
+		return Renderer::tile_size * 2;
+	}
+	static Point direction_to_vector(FacingDirection);
+	virtual bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 public:
 	Actor(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
 	virtual void init();
 	virtual ~Actor(){}
 	virtual void uninit();
 	virtual void update();
+	virtual void update_sprites(){}
 	void set_visible_sprite();
 
 	void set_current_map(Map map){

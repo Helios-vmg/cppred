@@ -3,6 +3,7 @@
 #include "CppRed/Actor.h"
 #include "CppRed/Trainer.h"
 #include "CppRed/Npc.h"
+#include "CppRed/Game.h"
 
 MapObject::~MapObject(){}
 
@@ -18,7 +19,7 @@ std::pair<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>>
 	return{name, ret};
 }
 
-CppRed::actor_ptr<CppRed::Actor> MapObject::create_actor(CppRed::Game &game, Renderer &renderer) const{
+CppRed::actor_ptr<CppRed::Actor> MapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
 	return CppRed::null_actor_ptr<CppRed::Actor>();
 }
 
@@ -70,7 +71,7 @@ ObjectWithSprite::ObjectWithSprite(BufferReader &buffer, const std::map<std::str
 	this->text_index = buffer.read_varint();
 }
 
-NpcMapObject::NpcMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map) : ObjectWithSprite(buffer, graphics_map){
+NpcMapObject::NpcMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map): ObjectWithSprite(buffer, graphics_map){
 }
 
 ItemMapObject::ItemMapObject(BufferReader &buffer,
@@ -93,8 +94,40 @@ PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::str
 	this->level = (int)buffer.read_varint();
 }
 
-CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, Renderer &renderer) const{
-	auto ret = CppRed::create_actor2<CppRed::Npc>(game, this->name, renderer, *this->sprite);
-	ret->set_map_position(this->position);
+CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
+	auto ret = CppRed::create_actor2<CppRed::Npc>(game, this->name, renderer, *this->sprite, instance);
+	auto temp = (CppRed::Npc *)ret.get();
+	temp->set_current_map(map);
+	temp->set_map_position(this->position);
+	switch (this->facing_direction){
+		case MapObjectFacingDirection::Undefined:
+		case MapObjectFacingDirection::None:
+		case MapObjectFacingDirection::BoulderMovementByte2:
+			break;
+		case MapObjectFacingDirection::Up:
+			temp->set_facing_direction(CppRed::FacingDirection::Up);
+			break;
+		case MapObjectFacingDirection::Right:
+			temp->set_facing_direction(CppRed::FacingDirection::Right);
+			break;
+		case MapObjectFacingDirection::Down:
+			temp->set_facing_direction(CppRed::FacingDirection::Down);
+			break;
+		case MapObjectFacingDirection::Left:
+			temp->set_facing_direction(CppRed::FacingDirection::Left);
+			break;
+		default:
+			throw std::exception();
+	}
+	if (this->wandering)
+		temp->set_wandering(this->range);
+	game.get_map_store().get_map_instance(map).set_cell_occupation(this->position, true);
 	return ret;
+}
+
+void NpcMapObject::activate(CppRed::Game &game, const CppRed::Actor &activator){
+	if (this->text_index < 0 || this->text_index >= this->map_data->map_text.size())
+		return;
+	auto text = this->map_data->map_text[this->text_index];
+	game.run_dialog(text);
 }

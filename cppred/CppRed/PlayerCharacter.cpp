@@ -35,17 +35,28 @@ void PlayerCharacter::coroutine_entry_point(){
 			//handle menu
 			this->coroutine->yield();
 		}else if (input.get_a()){
-			MapObjectInstance *objects[8];
-			this->game->get_objects_at_location(objects, this->game->remap_coordinates(this->position + Point{0, 1}));
-			for (auto o : objects){
-				if (!o)
+			MapObjectInstance *instances[8];
+			this->game->get_objects_at_location(instances, this->game->remap_coordinates(this->position + Point{0, 1}));
+			for (auto instance : instances){
+				if (!instance)
 					break;
-				o->activate(*this);
+				instance->activate(*this);
 			}
 			this->coroutine->yield();
 		}else if (input.any_direction()){
 			if (!this->handle_movement(input))
 				this->coroutine->yield();
+			MapObjectInstance *instances[8];
+			this->game->get_objects_at_location(instances, this->position);
+			for (auto instance : instances){
+				if (!instance)
+					break;
+				auto object = dynamic_cast<const MapWarp *>(&instance->get_object());
+				if (!object)
+					continue;
+				this->game->teleport_player(*object);
+				break;
+			}
 		}else
 			this->coroutine->yield();
 	}
