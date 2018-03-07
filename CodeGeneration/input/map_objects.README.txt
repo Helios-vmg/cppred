@@ -10,7 +10,7 @@ item:
     param2: facing_direction
     param3: wandering
     param4: wandering range
-    param5: text index
+    param5: map text index
     param6: item
 
 npc:
@@ -18,7 +18,7 @@ npc:
     param2: facing_direction
     param3: wandering
     param4: wandering range
-    param5: text index
+    param5: map text index
 
 pokemon:
     param1: sprite
@@ -37,7 +37,7 @@ npc:
     param2: facing_direction
     param3: wandering
     param4: wandering range
-    param5: text index
+    param5: map text index
     param6: trainer class
     param7: party index
 
