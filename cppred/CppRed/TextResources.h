@@ -25,6 +25,7 @@ enum class TextResourceCommandType{
 	Autocont,
 	Mem,
 	Num,
+	Cry,
 };
 
 class TextState{
@@ -113,6 +114,13 @@ public:
 	void execute(Game &, TextState &) override;
 };
 
+class CryCommand : public TextResourceCommand{
+	SpeciesId species;
+public:
+	CryCommand(SpeciesId species): species(species){}
+	void execute(Game &, TextState &) override;
+};
+
 class TextResource{
 public:
 	TextResourceId id;
@@ -124,8 +132,8 @@ public:
 class TextStore{
 	std::vector<std::unique_ptr<TextResource>> resources;
 
-	std::unique_ptr<TextResource> parse_resource(const byte_t *&, size_t &);
-	std::unique_ptr<TextResourceCommand> parse_command(const byte_t *&, size_t &, bool &stop);
+	std::unique_ptr<TextResource> parse_resource(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&, size_t &);
+	std::unique_ptr<TextResourceCommand> parse_command(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&, size_t &, bool &stop);
 public:
 	TextStore();
 	void execute(Game &, TextResourceId, TextState &);

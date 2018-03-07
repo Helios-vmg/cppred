@@ -84,6 +84,9 @@
     <ClInclude Include="generate_trainer_parties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextStore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utility.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generate_trainer_parties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextStore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

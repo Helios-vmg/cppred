@@ -3,11 +3,22 @@
 #include "Tilesets2.h"
 #include "ReorderedBlockset.h"
 #include "utility.h"
+#include "TextStore.h"
+
+class TextStore;
 
 struct MapConnection{
 	std::string destination;
 	int local_position;
 	int remote_position;
+};
+
+struct MapTextEntry2{
+	int text;
+	std::string script;
+
+	MapTextEntry2(int t): text(t){}
+	MapTextEntry2(const std:: string &s): text(-1), script(s){}
 };
 
 class Map2{
@@ -23,6 +34,7 @@ class Map2{
 	std::string music;
 	unsigned border_block;
 	MapConnection map_connections[4];
+	std::vector<MapTextEntry2> map_text;
 public:
 	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data);
 	DELETE_COPY_CONSTRUCTORS(Map2);
@@ -65,6 +77,7 @@ public:
 	}
 	void serialize(std::vector<byte_t> &);
 	void set_map_connection(int direction, const MapConnection &);
+	void set_map_text(const std::vector<MapTextEntry> &map_text, TextStore &);
 };
 
 class Maps2{
@@ -78,4 +91,5 @@ public:
 		return this->maps;
 	}
 	void load_map_connections(const char *map_connections_path);
+	void load_map_text(const std::map<std::string, std::vector<MapTextEntry>> &, TextStore &);
 };

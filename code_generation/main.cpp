@@ -9,6 +9,7 @@
 #include "generate_map_objects.h"
 #include "generate_trainer_parties.h"
 #include "PokemonData.h"
+#include "TextStore.h"
 #include "../common/csv_parser.h"
 #include <iostream>
 #include <stdexcept>
@@ -17,6 +18,7 @@
 #include <ctime>
 
 const char * const hashes_path = "output/hashes.csv";
+const char * const text_file = "input/text.txt";
 
 known_hashes_t load_hashes(){
 	known_hashes_t ret;
@@ -52,11 +54,12 @@ int main(){
 		auto t0 = clock();
 		auto hashes = load_hashes();
 		GraphicsStore gs;
+		TextStore ts(text_file);
 		std::unique_ptr<PokemonData> pokemon_data;
 		generate_graphics(hashes, gs);
-		generate_maps(hashes, gs);
+		generate_maps(hashes, gs, ts);
 		generate_pokemon_data(hashes, pokemon_data);
-		generate_text(hashes);
+		generate_text(hashes, ts);
 		generate_moves(hashes);
 		generate_items(hashes);
 		generate_audio(hashes);

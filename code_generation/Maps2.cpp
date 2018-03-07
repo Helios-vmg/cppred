@@ -1,6 +1,7 @@
 #include "Maps2.h"
 #include "utility.h"
 #include "../common/csv_parser.h"
+#include "TextStore.h"
 
 Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2 &tilesets){
 	static const std::vector<std::string> order = {
@@ -159,6 +160,11 @@ void Map2::serialize(std::vector<byte_t> &dst){
 	}
 	write_varint(dst, this->border_block);
 	write_ascii_string(dst, this->objects);
+	write_varint(dst, this->map_text.size());
+	for (auto &text : this->map_text){
+		write_signed_varint(dst, text.text);
+		write_ascii_string(dst, text.script);
+	}
 	//TODO: Serialize other members.
 }
 
@@ -213,4 +219,24 @@ void Map2::set_map_connection(int direction, const MapConnection &mc){
 	if (direction < 0 || (size_t)direction >= array_length(this->map_connections))
 		throw std::runtime_error("Internal error.");
 	this->map_connections[direction] = mc;
+}
+
+void Maps2::load_map_text(const std::map<std::string, std::vector<MapTextEntry>> &map_text, TextStore &text_store){
+	for (auto &map : this->maps){
+		auto it = map_text.find(map->get_name());
+		if (it == map_text.end())
+			continue;
+		map->set_map_text(it->second, text_store);
+	}
+}
+
+void Map2::set_map_text(const std::vector<MapTextEntry> &map_text, TextStore &text_store){
+	this->map_text.clear();
+	this->map_text.reserve(map_text.size());
+	for (auto &text : map_text){
+		if (text.text.size())
+			this->map_text.emplace_back(text_store.get_text_id_by_name(text.text));
+		else
+			this->map_text.emplace_back(text.script);
+	}
 }

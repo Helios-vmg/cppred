@@ -227,6 +227,20 @@ MapData::MapData(
 	}
 	this->border_block = buffer.read_varint();
 	map_objects.emplace_back(this, buffer.read_string());
+	this->map_text.reserve(buffer.read_varint());
+	while (this->map_text.size() < this->map_text.capacity()){
+		auto text = buffer.read_signed_varint();
+		auto script = buffer.read_string();
+		MapTextEntry entry;
+		if (text >= 0){
+			entry.simple_text = true;
+			entry.text = (TextResourceId)text;
+		}else{
+			entry.simple_text = false;
+			entry.script = script;
+		}
+		this->map_text.push_back(entry);
+	}
 }
 
 int MapData::get_block_at_map_position(const Point &point){

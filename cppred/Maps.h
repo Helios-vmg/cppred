@@ -17,6 +17,7 @@ class Actor;
 }
 
 class MapStore;
+enum class TextResourceId;
 
 struct Blockset{
 	std::string name;
@@ -97,6 +98,12 @@ struct MapConnection{
 	}
 };
 
+struct MapTextEntry{
+	bool simple_text;
+	TextResourceId text;
+	std::string script;
+};
+
 struct MapData{
 	Map map_id;
 	std::string name;
@@ -107,6 +114,7 @@ struct MapData{
 	MapConnection map_connections[4];
 	int border_block;
 	std::shared_ptr<std::vector<std::unique_ptr<MapObject>>> objects;
+	std::vector<MapTextEntry> map_text;
 
 	MapData(
 		Map map_id,
@@ -134,6 +142,7 @@ public:
 		return this->full_object->requires_actor();
 	}
 	void activate(const CppRed::Actor &activator);
+	DEFINE_GETTER_SETTER(position)
 };
 
 class MapInstance{

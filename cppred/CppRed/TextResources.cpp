@@ -1,23 +1,29 @@
 #include "TextResources.h"
 #include "Game.h"
 #include "utility.h"
+#include "../PokemonInfo.h"
 #include "../CodeGeneration/output/audio.h"
+#include "../CodeGeneration/output/pokemon_declarations.h"
 #include <sstream>
 
 namespace CppRed{
 
 TextStore::TextStore(){
+	std::vector<std::pair<std::string, SpeciesId>> species;
+	for (auto &p : pokemon_by_pokedex_id)
+		species.emplace_back(p->internal_name, p->species_id);
+	std::sort(species.begin(), species.end(), [](const auto &a, const auto &b){ return a.first < b.first; });
 	auto buffer = packed_text_data;
 	size_t size = packed_text_data_size;
 	while (size){
-		auto resource = this->parse_resource(buffer, size);
+		auto resource = this->parse_resource(species, buffer, size);
 		if ((size_t)resource->id >= this->resources.size())
 			this->resources.resize((size_t)resource->id);
 		this->resources.emplace_back(std::move(resource));
 	}
 }
 
-std::unique_ptr<TextResource> TextStore::parse_resource(const byte_t *&buffer, size_t &size){
+std::unique_ptr<TextResource> TextStore::parse_resource(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&buffer, size_t &size){
 	if (size < 4)
 		throw std::runtime_error("TextStore::parse_command(): Parse error.");
 	auto id = (TextResourceId)read_u32(buffer);
@@ -28,14 +34,14 @@ std::unique_ptr<TextResource> TextStore::parse_resource(const byte_t *&buffer, s
 	ret->id = id;
 	bool stop;
 	do{
-		auto command = this->parse_command(buffer, size, stop);
+		auto command = this->parse_command(species, buffer, size, stop);
 		if (command)
 			ret->commands.emplace_back(std::move(command));
 	}while (!stop);
 	return ret;
 }
 
-std::unique_ptr<TextResourceCommand> TextStore::parse_command(const byte_t *&buffer, size_t &size, bool &stop){
+std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&buffer, size_t &size, bool &stop){
 	if (size < 1)
 		throw std::runtime_error("TextStore::parse_command(): Parse error.");
 	auto command = (TextResourceCommandType)*(buffer++);
@@ -131,6 +137,28 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const byte_t *&buf
 				buffer += 4;
 				size -= 5;
 				ret.reset((TextResourceCommand *)new NumCommand(std::move(variable), digits));
+			}
+			break;
+		case TextResourceCommandType::Cry:
+			{
+				std::string species_name;
+				while (true){
+					if (!size)
+						throw std::runtime_error("TextStore::parse_command(): Parse error.");
+					if (!*buffer)
+						break;
+					species_name.push_back(*buffer);
+					buffer++;
+					size--;
+				}
+				buffer++;
+				if (!size)
+					throw std::runtime_error("TextStore::parse_command(): Parse error.");
+				size--;
+				auto it = find_first_true(species.begin(), species.end(), [species_name](const auto &a){ return species_name <= a.first; });
+				if (it == species.end() || it->first != species_name)
+					throw std::runtime_error("Unknown species: " + species_name);
+				ret.reset((TextResourceCommand *)new CryCommand(it->second));
 			}
 			break;
 		default:
@@ -250,6 +278,10 @@ void NumCommand::execute(Game &game, TextState &state){
 	std::stringstream stream;
 	stream << game.get_variable_store().get_number(this->variable);
 	progressively_write_text(stream.str(), game, state);
+}
+
+void CryCommand::execute(Game &game, TextState &state){
+	throw std::runtime_error("Not implemented.");
 }
 
 }

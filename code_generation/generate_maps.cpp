@@ -4,11 +4,12 @@
 #include "../common/csv_parser.h"
 #include "../common/base64.h"
 #include "utility.h"
+#include "Tilesets2.h"
+#include "Maps2.h"
+#include "TextStore.h"
 #include <string>
 #include <stdexcept>
 #include <iostream>
-#include "Tilesets2.h"
-#include "Maps2.h"
 
 static const char * const maps_file = "input/maps.csv";
 static const char * const tilesets_file = "input/tilesets.csv";
@@ -18,6 +19,8 @@ static const char * const blocksets_file = "input/blocksets.csv";
 static const char * const blocksets2_file = "input/blocksets2.csv";
 static const char * const collision_file = "input/collision.csv";
 static const char * const map_connections_file = "input/map_connections.csv";
+static const char * const map_text_file = "input/map_text.csv";
+static const char * const text_file = "input/text.txt";
 static const std::vector<std::string> input_files = {
 	maps_file,
 	tilesets_file,
@@ -25,6 +28,8 @@ static const std::vector<std::string> input_files = {
 	blocksets2_file,
 	graphics_csv_path,
 	map_connections_file,
+	map_text_file,
+	text_file,
 };
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
@@ -117,7 +122,24 @@ static void write_maps(std::ostream &header, std::ostream &source, const Maps2 &
 	write_buffer_to_header_and_source(header, source, map_definitions, "map_definitions");
 }
 
-static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &gs){
+static std::map<std::string, std::vector<MapTextEntry>> read_string_map(const char *path){
+	static const std::vector<std::string> order = { "map_name", "text", "script", };
+	
+	CsvParser csv(path);
+	auto rows = csv.row_count();
+
+	std::map<std::string, std::vector<MapTextEntry>> ret;
+	for (size_t i = 0; i < rows; i++){
+		auto columns = csv.get_ordered_row(i, order);
+		MapTextEntry entry;
+		entry.text = columns[1];
+		entry.script = columns[2];
+		ret[columns[0]].push_back(entry);
+	}
+	return ret;
+}
+
+static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &gs, TextStore &text_store){
 	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating maps.\n";
@@ -127,11 +149,15 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 
 	auto blocksets = read_data_csv(blocksets2_file);
 	auto collision = read_data_csv(collision_file);
+	for (auto &kv : collision)
+		std::sort(kv.second->begin(), kv.second->end());
 	auto map_data = read_data_csv(map_data2_file);
+	auto map_text = read_string_map(map_text_file);
 	
 	Tilesets2 tilesets2(tilesets_file, blocksets, collision, gs);
 	Maps2 maps2(maps_file, map_data, tilesets2);
 	maps2.load_map_connections(map_connections_file);
+	maps2.load_map_text(map_text, text_store);
 
 	//Do consistency check.
 	for (auto &map : maps2.get_maps())
@@ -161,9 +187,9 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	known_hashes[hash_key] = current_hash;
 }
 
-void generate_maps(known_hashes_t &known_hashes, GraphicsStore &gs){
+void generate_maps(known_hashes_t &known_hashes, GraphicsStore &gs, TextStore &text_store){
 	try{
-		generate_maps_internal(known_hashes, gs);
+		generate_maps_internal(known_hashes, gs, text_store);
 	}catch (std::exception &e){
 		throw std::runtime_error((std::string)"generate_maps(): " + e.what());
 	}
