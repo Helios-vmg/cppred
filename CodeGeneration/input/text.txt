@@ -9041,10 +9041,10 @@ more attractive!<done>
 
 .FanClubPikachuText
 PIKACHU: Chu!
-Pikachu!<done>
+Pikachu!<cry,Pikachu><done>
 
 .FanClubSeelText
-SEEL: Kyuoo!<done>
+SEEL: Kyuoo!<cry,Seel><done>
 
 .FanClubMeetChairText
 I chair the
@@ -10934,7 +10934,7 @@ around here!<done>
 
 .CopycatsHouse1FText3
 CHANSEY: Chaan!
-Sii!<end>
+Sii!<cry,Chansey><end>
 
 .CopycatsHouse2FText_5ccd4
 <mem,player_name>: Hi! Do
