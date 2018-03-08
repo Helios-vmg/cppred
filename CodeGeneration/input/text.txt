@@ -4430,7 +4430,7 @@ You don't have any
 room for this.<done>
 
 .Route16HouseText_1e652
-FEAROW: Kyueen!<done>
+FEAROW: Kyueen!<cry,Fearow><done>
 
 .Route18GateText_49928
 You need a BICYCLE
@@ -8154,7 +8154,7 @@ You're POKÈMON<cont>
 champ material!<done>
 
 .PewterHouse1Text1
-NIDORAN: Bowbow!<end>
+NIDORAN: Bowbow!<cry,NidoranMale><end>
 
 .PewterHouse1Text2
 NIDORAN sit!<done>
@@ -8869,10 +8869,10 @@ POKÈMON are so<cont>
 nice to hug!<done>
 
 .LavenderHouse1Text3
-PSYDUCK: Gwappa!<end>
+PSYDUCK: Gwappa!<cry,Psyduck><end>
 
 .LavenderHouse1Text4
-NIDORINO: Gaoo!<end>
+NIDORINO: Gaoo!<cry,Nidorino><end>
 
 .LavenderHouse1Text_1d94c
 MR.FUJI: <mem,player_name>.<para>
@@ -8939,7 +8939,7 @@ useless, but it<cont>
 sold for $5000!<done>
 
 .LavenderHouse2Text1
-CUBONE: Kyarugoo!<end>
+CUBONE: Kyarugoo!<cry,Cubone><end>
 
 .LavenderHouse2Text_1d9dc
 I hate those
