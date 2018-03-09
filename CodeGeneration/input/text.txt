@@ -11312,7 +11312,7 @@ Hey! Don't look
 at my letter!<done>
 
 .SaffronHouse1Text2
-PIDGEY: Kurukkoo!<end>
+PIDGEY: Kurukkoo!<cry,Pidgey><end>
 
 .SaffronHouse1Text3
 The COPYCAT is
@@ -12530,7 +12530,7 @@ I missed the<cont>
 media action.<done>
 
 .SaffronCityText12
-PIDGEOT: Bi bibii!<end>
+PIDGEOT: Bi bibii!<cry,Pidgeot><end>
 
 .SaffronCityText13
 I saw ROCKET
