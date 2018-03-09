@@ -48,14 +48,14 @@ CeladonGameCorner,,CeladonGameCornerText9
 CeladonGameCorner,,CeladonGameCornerText10
 CeladonGameCorner,,CeladonGameCornerText11
 CeladonGameCorner,,CeladonGameCornerText12
-CeladonGameCorner,CeladonGameCornerText13,
+CeladonGameCorner,CeladonGameCornerText_48ed8,
 CeladonGym,,CeladonGymText1
 CeladonGym,,CeladonGymText2
 CeladonGym,,CeladonGymText3
 CeladonGym,,CeladonGymText4
 CeladonGym,,CeladonGymText5
-CeladonGym,CeladonGymText6,
-CeladonGym,CeladonGymText7,
+CeladonGym,,CeladonGymText6
+CeladonGym,,CeladonGymText7
 CeladonGym,,CeladonGymText8
 CeladonGym,CeladonGymText9,
 CeladonGym,,TM21Text
@@ -209,7 +209,7 @@ CopycatsHouse2F,CopycatsHouse2FText3,
 CopycatsHouse2F,CopycatsHouse2FText6,
 CopycatsHouse2F,,CopycatsHouse2FText7
 DayCareM,,DayCareMText1
-DiglettsCaveEntranceRoute11,DiglettsCaveEntranceRoute11Text1,
+DiglettsCaveEntranceRoute11,DiglettsCaveEntRoute11Text1,
 DiglettsCaveRoute2,DiglettsCaveRoute2Text1,
 FanClub,,FanClubText1
 FanClub,,FanClubText2
@@ -278,7 +278,7 @@ FuchsiaMeetingRoom,FuchsiaMeetingRoomText1,
 FuchsiaMeetingRoom,FuchsiaMeetingRoomText2,
 FuchsiaMeetingRoom,FuchsiaMeetingRoomText3,
 FuchsiaPokecenter,,FuchsiaHealNurseText
-FuchsiaPokecenter,FuchsiaPokecenterText2,
+FuchsiaPokecenter,FuchsiaPokecenterText1,
 FuchsiaPokecenter,FuchsiaPokecenterText3,
 FuchsiaPokecenter,,FuchsiaTradeNurseText
 Gary,,GaryText1
@@ -384,7 +384,7 @@ MtMoon3,,PickUpItemText
 MtMoon3,,PickUpItemText
 MtMoon3,MtMoon3Text_49f99,
 MtMoonPokecenter,,MtMoonHealNurseText
-MtMoonPokecenter,MtMoonPokecenterText2,
+MtMoonPokecenter,MtMoonPokecenterText1,
 MtMoonPokecenter,MtMoonPokecenterText3,
 MtMoonPokecenter,,MagikarpSalesmanText
 MtMoonPokecenter,MtMoonPokecenterText5,
@@ -1006,9 +1006,9 @@ SilphCo7,,SilphCo7Text9
 SilphCo7,,PickUpItemText
 SilphCo7,,PickUpItemText
 SilphCo7,,PickUpItemText
-SilphCo7,SilphCo7Text13,
-SilphCo7,SilphCo7Text14,
-SilphCo7,SilphCo7Text15,
+SilphCo7,SilphCo7Text_51ec3,
+SilphCo7,SilphCo7Text_51ec8,
+SilphCo7,SilphCo7Text_51ed2,
 SilphCo8,,SilphCo8Text1
 SilphCo8,,SilphCo8Text2
 SilphCo8,,SilphCo8Text3
@@ -1076,8 +1076,8 @@ SSAnne9,SSAnne9Text_61c3d,
 SSAnne9,SSAnne9Text_61c4c,
 TradeCenter,TradeCenterText1,
 UndergroundPathEntranceRoute5,,UndergroundPathEntranceRoute5Text1
-UndergroundPathEntranceRoute6,UndergroundPathEntranceRoute6Text1,
-UndergroundPathEntranceRoute7,UndergroundPathEntranceRoute7Text1,
+UndergroundPathEntranceRoute6,UndergrdTunnelEntRoute6Text1,
+UndergroundPathEntranceRoute7,UndergroundPathEntRoute7Text1,
 UndergroundPathEntranceRoute7Copy,UGPathRoute7EntranceUnusedText_5d773,
 UndergroundPathEntranceRoute7Copy,UGPathRoute7EntranceUnusedText_5d77d,
 UndergroundPathEntranceRoute8,UndergroundPathEntRoute8Text1,
@@ -1109,7 +1109,7 @@ VermilionGym,,VermilionGymText2
 VermilionGym,,VermilionGymText3
 VermilionGym,,VermilionGymText4
 VermilionGym,,VermilionGymText5
-VermilionGym,VermilionGymText6,
+VermilionGym,VermilionGymText_5cb77,
 VermilionGym,,VermilionGymText7
 VermilionGym,TM24NoRoomText,
 VermilionHouse1,VermilionHouse1Text1,
@@ -1210,7 +1210,7 @@ ViridianMart,ViridianMartText2,
 ViridianMart,ViridianMartText3,
 ViridianMart,ViridianMartText4,
 ViridianMart,,ViridianMartText5
-ViridianMart,ViridianCashierText,
+ViridianMart,,ViridianCashierText
 ViridianMart,ViridianMartText2,
 ViridianMart,ViridianMartText3,
 ViridianPokecenter,,ViridianHealNurseText
