@@ -615,7 +615,7 @@ reading this!<done>
 
 .SSAnne8Text8
 WIGGLYTUFF: Puup
-pupuu!<end>
+pupuu!<cry,Wigglytuff><end>
 
 .SSAnne8BattleText1
 I travel alone
@@ -791,7 +791,7 @@ strong POKÈMON!<done>
 
 .SSAnne10Text8
 MACHOKE: Gwoh!
-Goggoh!<end>
+Goggoh!<cry,Machoke><end>
 
 .SSAnne10BattleText1
 You know what they
@@ -4430,7 +4430,7 @@ You don't have any
 room for this.<done>
 
 .Route16HouseText_1e652
-FEAROW: Kyueen!<done>
+FEAROW: Kyueen!<cry,Fearow><done>
 
 .Route18GateText_49928
 You need a BICYCLE
@@ -7699,7 +7699,7 @@ My Daddy loves
 POKÈMON too.<done>
 
 .ViridianHouseText_1d5b1
-SPEARY: Tetweet!<done>
+SPEARY: Tetweet!<cry,Spearow><done>
 
 .ViridianHouseText4
 SPEAROW
@@ -8154,7 +8154,7 @@ You're POKÈMON<cont>
 champ material!<done>
 
 .PewterHouse1Text1
-NIDORAN: Bowbow!<end>
+NIDORAN: Bowbow!<cry,NidoranMale><end>
 
 .PewterHouse1Text2
 NIDORAN sit!<done>
@@ -8869,10 +8869,10 @@ POKÈMON are so<cont>
 nice to hug!<done>
 
 .LavenderHouse1Text3
-PSYDUCK: Gwappa!<end>
+PSYDUCK: Gwappa!<cry,Psyduck><end>
 
 .LavenderHouse1Text4
-NIDORINO: Gaoo!<end>
+NIDORINO: Gaoo!<cry,Nidorino><end>
 
 .LavenderHouse1Text_1d94c
 MR.FUJI: <mem,player_name>.<para>
@@ -8939,7 +8939,7 @@ useless, but it<cont>
 sold for $5000!<done>
 
 .LavenderHouse2Text1
-CUBONE: Kyarugoo!<end>
+CUBONE: Kyarugoo!<cry,Cubone><end>
 
 .LavenderHouse2Text_1d9dc
 I hate those
@@ -9041,10 +9041,10 @@ more attractive!<done>
 
 .FanClubPikachuText
 PIKACHU: Chu!
-Pikachu!<done>
+Pikachu!<cry,Pikachu><done>
 
 .FanClubSeelText
-SEEL: Kyuoo!<done>
+SEEL: Kyuoo!<cry,Seel><done>
 
 .FanClubMeetChairText
 I chair the
@@ -9285,7 +9285,7 @@ letter to SAFFRON<cont>
 in the north!<done>
 
 .VermilionHouse1Text2
-PIDGEY: Kurukkoo!<end>
+PIDGEY: Kurukkoo!<cry,Pidgey><end>
 
 .VermilionHouse1Text3
 Dear PIPPI, I hope
@@ -10934,7 +10934,7 @@ around here!<done>
 
 .CopycatsHouse1FText3
 CHANSEY: Chaan!
-Sii!<end>
+Sii!<cry,Chansey><end>
 
 .CopycatsHouse2FText_5ccd4
 <mem,player_name>: Hi! Do
@@ -11312,7 +11312,7 @@ Hey! Don't look
 at my letter!<done>
 
 .SaffronHouse1Text2
-PIDGEY: Kurukkoo!<end>
+PIDGEY: Kurukkoo!<cry,Pidgey><end>
 
 .SaffronHouse1Text3
 The COPYCAT is
@@ -12186,7 +12186,7 @@ tamping the land.<done>
 
 .VermilionCityText5
 MACHOP: Guoh!
-Gogogoh!<end>
+Gogogoh!<cry,Machop><end>
 
 .VermilionCityText14
 <para>
@@ -12530,7 +12530,7 @@ I missed the<cont>
 media action.<done>
 
 .SaffronCityText12
-PIDGEOT: Bi bibii!<end>
+PIDGEOT: Bi bibii!<cry,Pidgeot><end>
 
 .SaffronCityText13
 I saw ROCKET
