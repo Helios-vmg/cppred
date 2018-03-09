@@ -615,7 +615,7 @@ reading this!<done>
 
 .SSAnne8Text8
 WIGGLYTUFF: Puup
-pupuu!<end>
+pupuu!<cry,Wigglytuff><end>
 
 .SSAnne8BattleText1
 I travel alone
@@ -791,7 +791,7 @@ strong POKÈMON!<done>
 
 .SSAnne10Text8
 MACHOKE: Gwoh!
-Goggoh!<end>
+Goggoh!<cry,Machoke><end>
 
 .SSAnne10BattleText1
 You know what they
@@ -7699,7 +7699,7 @@ My Daddy loves
 POKÈMON too.<done>
 
 .ViridianHouseText_1d5b1
-SPEARY: Tetweet!<done>
+SPEARY: Tetweet!<cry,Spearow><done>
 
 .ViridianHouseText4
 SPEAROW
@@ -9285,7 +9285,7 @@ letter to SAFFRON<cont>
 in the north!<done>
 
 .VermilionHouse1Text2
-PIDGEY: Kurukkoo!<end>
+PIDGEY: Kurukkoo!<cry,Pidgey><end>
 
 .VermilionHouse1Text3
 Dear PIPPI, I hope
@@ -12186,7 +12186,7 @@ tamping the land.<done>
 
 .VermilionCityText5
 MACHOP: Guoh!
-Gogogoh!<end>
+Gogogoh!<cry,Machop><end>
 
 .VermilionCityText14
 <para>
