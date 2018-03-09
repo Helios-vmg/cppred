@@ -1,6 +1,8 @@
 #include "Actor.h"
 #include "Maps.h"
 #include "Game.h"
+#include "World.h"
+#include <iostream>
 
 static void initialize_sprite(std::shared_ptr<Sprite> &sprite, Renderer &renderer, const GraphicsAsset &graphics, int first_tile, bool flip_x = false){
 	sprite = renderer.create_sprite(2, 2);
@@ -35,8 +37,10 @@ Actor::Actor(Game &game, const std::string &name, Renderer &renderer, const Grap
 		position(Map::Nowhere),
 		sprite(&sprite),
 		renderer(&renderer){
-	this->coroutine.reset(new Coroutine([this](Coroutine &){ this->coroutine_entry_point(); }));
+	this->coroutine.reset(new Coroutine(this->name + " coroutine", [this](Coroutine &){ this->coroutine_entry_point(); }));
 }
+
+Actor::~Actor(){}
 
 void Actor::init(){
 	this->initialize_sprites(*this->sprite, *this->renderer);
@@ -84,6 +88,7 @@ void Actor::set_visible_sprite(){
 
 void Actor::update(){
 	this->coroutine->resume();
+	this->update_sprites();
 }
 
 Point Actor::direction_to_vector(FacingDirection direction){
@@ -107,19 +112,21 @@ bool Actor::move(FacingDirection direction){
 }
 
 bool Actor::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
-	return this->game->can_move_to(current_position, next_position, direction);
+	auto &world = this->game->get_world();
+	return world.can_move_to(current_position, next_position, direction);
 }
 
 bool Actor::move(const Point &delta, FacingDirection direction){
 	auto pos0 = this->position;
-	auto pos1 = this->game->remap_coordinates(pos0 + delta);
+	auto &world = this->game->get_world();
+	auto pos1 = world.remap_coordinates(pos0 + delta);
 	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
 	this->facing_direction = direction;
 	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
 	if (!this->can_move_to(pos0, pos1, direction))
 		return false;
-	auto &map0 = this->game->get_map_instance(pos0.map);
-	auto &map1 = this->game->get_map_instance(pos1.map);
+	auto &map0 = world.get_map_instance(pos0.map);
+	auto &map1 = world.get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
 	map1.set_cell_occupation(pos1.position, true);
 	this->run_walking_animation(delta, direction);
@@ -142,6 +149,15 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 		this->coroutine->yield();
 	}
 	this->pixel_offset = Point();
+}
+
+
+void Actor::set_new_screen_owner(std::unique_ptr<ScreenOwner> &&owner){
+	this->screen_owner = std::move(owner);
+}
+
+std::unique_ptr<ScreenOwner> Actor::get_new_screen_owner(){
+	return std::move(this->screen_owner);
 }
 
 }

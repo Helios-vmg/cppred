@@ -250,7 +250,7 @@ TitleScreenResult title_screen(Game &game){
 	//Bounce logo.
 	bounce_logo(game);
 
-	engine.wait_frames(36);
+	Coroutine::get_current_coroutine().wait_frames(36);
 	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Whoosh);
 
 	draw_image_from_offsets(renderer, { 7, 8 }, RedBlueVersion, version_offsets);

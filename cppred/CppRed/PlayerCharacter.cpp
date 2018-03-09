@@ -1,9 +1,9 @@
 #include "PlayerCharacter.h"
 #include "Game.h"
 #include "Actor.h"
+#include "../Maps.h"
+#include "World.h"
 #include <cassert>
-#include <complex>
-#include <iostream>
 
 namespace CppRed{
 
@@ -31,12 +31,13 @@ void PlayerCharacter::teleport(const WorldCoordinates &destination){
 void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
 		auto input = this->game->get_engine().get_input_state();
+		auto &world = this->game->get_world();
 		if (input.get_start()){
 			//handle menu
 			this->coroutine->yield();
 		}else if (input.get_a()){
 			MapObjectInstance *instances[8];
-			this->game->get_objects_at_location(instances, this->game->remap_coordinates(this->position + Point{0, 1}));
+			world.get_objects_at_location(instances, world.remap_coordinates(this->position + direction_to_vector(this->facing_direction)));
 			for (auto instance : instances){
 				if (!instance)
 					break;
@@ -47,14 +48,14 @@ void PlayerCharacter::coroutine_entry_point(){
 			if (!this->handle_movement(input))
 				this->coroutine->yield();
 			MapObjectInstance *instances[8];
-			this->game->get_objects_at_location(instances, this->position);
+			world.get_objects_at_location(instances, this->position);
 			for (auto instance : instances){
 				if (!instance)
 					break;
 				auto object = dynamic_cast<const MapWarp *>(&instance->get_object());
 				if (!object)
 					continue;
-				this->game->teleport_player(*object);
+				world.teleport_player(*object);
 				break;
 			}
 		}else

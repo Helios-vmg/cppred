@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <thread>
+#include <string>
 #include <boost/coroutine2/all.hpp>
 
 #ifdef max
@@ -231,7 +232,10 @@ public:
 	typedef std::function<void(Coroutine &)> entry_point_t;
 	typedef std::function<void()> on_yield_t;
 private:
+	thread_local static std::vector<Coroutine *> coroutine_stack;
+	std::string name;
 	HighResolutionClock clock;
+	bool active = false;
 	std::thread::id resume_thread_id;
 	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
 	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;
@@ -242,15 +246,23 @@ private:
 	bool first_run = true;
 	double wait_remainder = 0;
 public:
-	Coroutine(entry_point_t &&entry_point);
+	Coroutine(const std::string &name, entry_point_t &&entry_point);
 	bool resume();
 	void yield();
 	void wait(double seconds);
-	void set_on_yield(on_yield_t &&){
+	void wait_frames(int frames);
+	void set_on_yield(on_yield_t &&on_yield){
 		this->on_yield = std::move(on_yield);
 	}
 	void clear_on_yield(){
 		this->on_yield = on_yield_t();
+	}
+	static Coroutine *get_current_coroutine_ptr();
+	static Coroutine &get_current_coroutine(){
+		auto p = get_current_coroutine_ptr();
+		if (!p)
+			throw std::runtime_error("No coroutine is running!");
+		return *p;
 	}
 };
 
@@ -263,9 +275,12 @@ public:
 	std::string read_string(){
 		return ::read_string(this->buffer, this->offset, this->size);
 	}
+	std::vector<byte_t> read_string_as_vector();
 	std::uint32_t read_varint(){
 		return ::read_varint(this->buffer, this->offset, this->size);
 	}
+	byte_t read_byte();
+	std::uint32_t read_u32();
 	std::int32_t read_signed_varint(){
 		return ::read_signed_varint(this->buffer, this->offset, this->size);
 	}
@@ -274,6 +289,9 @@ public:
 	}
 	bool empty() const{
 		return this->offset >= this->size;
+	}
+	size_t remaining_bytes() const{
+		return this->size - this->offset;
 	}
 };
 

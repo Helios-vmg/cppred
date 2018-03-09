@@ -1,5 +1,7 @@
 #include "Npc.h"
 #include "Game.h"
+#include "../Maps.h"
+#include "World.h"
 
 namespace CppRed{
 
@@ -54,8 +56,9 @@ void Npc::coroutine_entry_point(){
 }
 
 void Npc::update_sprites(){
-	auto cam = this->game->get_camera_position();
-	auto po = this->game->get_pixel_offset();
+	auto &world = this->game->get_world();
+	auto cam = world.get_camera_position();
+	auto po = world.get_pixel_offset();
 	auto position = (this->position.position - cam) * (Renderer::tile_size * 2) - po + this->pixel_offset;
 	position.y -= Renderer::tile_size / 2;
 	this->apply_to_all_sprites([&position](Sprite &sprite){ sprite.set_position(position); });
@@ -70,7 +73,8 @@ bool Npc::can_move_to(const WorldCoordinates &current_position, const WorldCoord
 	if (!Actor::can_move_to(current_position, next_position, direction))
 		return false;
 	MapObjectInstance *instances[8];
-	this->game->get_objects_at_location(instances, this->position);
+	auto &world = this->game->get_world();
+	world.get_objects_at_location(instances, this->position);
 	for (auto instance : instances){
 		if (!instance)
 			break;

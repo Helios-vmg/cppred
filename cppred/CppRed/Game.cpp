@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 #include "Maps.h"
 #include "Data.h"
+#include "World.h"
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 #include <sstream>
@@ -33,15 +34,18 @@ Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program
 		engine(&engine),
 		version(version),
 		audio_interface(program){
+	this->world.reset(new World(*this));
 	this->engine->set_on_yield([this](){ this->update_joypad_state(); });
 	this->reset_dialog_state();
 }
 
-Game::~Game(){}
+Game::~Game(){
+	std::cout << "Exiting.\n";
+}
 
 void Game::clear_screen(){
 	this->engine->get_renderer().clear_screen();
-	this->engine->wait_frames(3);
+	Coroutine::get_current_coroutine().wait_frames(3);
 }
 
 void Game::fade_out_to_white(){
@@ -52,7 +56,7 @@ void Game::fade_out_to_white(){
 		renderer.set_palette(PaletteRegion::Background, palette.background_palette);
 		renderer.set_palette(PaletteRegion::Sprites0, palette.obp0_palette);
 		renderer.set_palette(PaletteRegion::Sprites1, palette.obp1_palette);
-		engine.wait_frames(8);
+		Coroutine::get_current_coroutine().wait_frames(8);
 	}
 }
 
@@ -65,9 +69,12 @@ void Game::palette_whiteout(){
 }
 
 bool Game::check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *input_state){
+	auto coroutine = Coroutine::get_current_coroutine_ptr();
+	if (!coroutine)
+		throw std::runtime_error("Internal error: check_for_user_interruption_internal() must be called while a coroutine is running!");
 	timeout += this->engine->get_clock();
 	do{
-		this->engine->wait_exactly_one_frame();
+		coroutine->yield();
 		auto input = autorepeat ? this->joypad_auto_repeat() : this->joypad_only_newly_pressed();
 		auto held = this->joypad_held;
 		const auto mask = InputState::mask_up | InputState::mask_select | InputState::mask_b;
@@ -258,7 +265,7 @@ void Game::reset_dialog_state(){
 }
 
 void Game::text_print_delay(){
-	this->engine->wait_frames((int)this->options.text_speed);
+	Coroutine::get_current_coroutine().wait_frames((int)this->options.text_speed);
 }
 
 void VariableStore::set_string(const std::string &key, std::string *value){
@@ -481,280 +488,33 @@ std::string Game::get_name_from_user(SpeciesId species, int max_length){
 }
 
 void Game::create_main_characters(const std::string &player_name, const std::string &rival_name){
-	this->player_character = create_actor<PlayerCharacter>(*this, player_name, this->engine->get_renderer());
-	this->rival = create_actor<Trainer>(*this, rival_name, this->engine->get_renderer(), BlueSprite);
-}
-
-void Game::teleport_player(const WorldCoordinates &destination){
-	this->player_character->teleport(destination);
-}
-
-void Game::teleport_player(const MapWarp &warp){
-	auto &destination = warp.get_destination();
-	auto index = warp.get_destination_warp_index();
-	const MapData *map;
-	if (destination.simple)
-		map = destination.destination_map;
-	else{
-		auto map_name = this->variable_store.try_get_string(destination.variable_name);
-		if (!map_name)
-			map = &this->map_store.get_map_data(Map::PalletTown);
-		else
-			map = &this->map_store.get_map_by_name(*map_name);
-	}
-	for (auto &object : *map->objects){
-		auto casted = dynamic_cast<MapWarp *>(object.get());
-		if (!casted)
-			continue;
-		if (casted->get_index() == index){
-			auto &map2 = this->map_store.get_map_data(this->player_character->get_current_map());
-			if (map2.tileset->type == TilesetType::Outdoor)
-				this->variable_store.set_string("LastOutdoorsMap", map2.name);
-			this->teleport_player({map->map_id, casted->get_position()});
-			return;
-		}
-	}
-	std::stringstream stream;
-	stream << "Invalid map warp (" << warp.get_name() << "). Destination not found.";
-	throw std::runtime_error(stream.str());
-}
-
-void Game::set_camera_position(){
-	this->camera_position = this->player_character->get_map_position() - PlayerCharacter::screen_block_offset;
-	this->pixel_offset = this->player_character->get_pixel_offset();
+	this->world->create_main_characters(player_name, rival_name);
 }
 
 void Game::game_loop(){
-	auto &renderer = this->engine->get_renderer();
-	renderer.set_enable_bg(true);
-	renderer.set_enable_sprites(true);
-	renderer.set_palette(PaletteRegion::Background, default_palette);
-	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
+	std::vector<std::unique_ptr<ScreenOwner>> owners_stack;
 	while (true){
-		this->player_character->update();
-		this->player_character->update_sprites();
-		this->set_camera_position();
-		for (auto &actor : this->actors){
-			actor->update();
-			actor->update_sprites();
-		}
-		this->render();
-		this->engine->yield();
+		ScreenOwner *current_owner;
+		if (owners_stack.size())
+			current_owner = owners_stack.back().get();
+		else
+			current_owner = this->world.get();
+		auto new_owner = current_owner->run();
+		if (!new_owner){
+			if (!owners_stack.size())
+				return;
+			owners_stack.pop_back();
+		}else
+			owners_stack.emplace_back(std::move(new_owner));
 	}
-}
-
-static bool point_in_rectangle(const Point &p, int w, int h){
-	return p.x >= 0 && p.y >= 0 && p.x < w && p.y < h;
-}
-
-static bool point_in_map(const Point &p, const MapData &map_data){
-	return point_in_rectangle(p, map_data.width, map_data.height);
-}
-
-int reduce_by_region(int x, int begin, int end){
-	if (x < begin)
-		return -1;
-	if (x >= end)
-		return 1;
-	return 0;
-}
-
-Point reduce_by_region(const Point &p, const MapData &m){
-	return {
-		reduce_by_region(p.x, 0, m.width),
-		reduce_by_region(p.y, 0, m.height),
-	};
-}
-
-bool in_applicable_region(const Point &reduced, const Point &region){
-	return (!region.x || region.x == reduced.x) && (!region.y || region.y == reduced.y);
-}
-
-std::pair<MapData *, Point> compute_map_connections(const WorldCoordinates &position, MapData &map_data, MapStore &map_store){
-	struct SimplifiedCheck{
-		Point applicable_region;
-		int x_multiplier_1;
-		int x_multiplier_2;
-		int y_multiplier_1;
-		int y_multiplier_2;
-	};
-	static const SimplifiedCheck checks[] = {
-		{ { 0, -1}, 1,  0, 0,  1, },
-		{ { 1,  0}, 0, -1, 1,  0, },
-		{ { 0,  1}, 1,  0, 0, -1, },
-		{ {-1,  0}, 0,  1, 1,  0, },
-	};
-	auto reduced = reduce_by_region(position.position, map_data);
-	for (size_t i = 0; i < array_length(checks); i++){
-		if (!map_data.map_connections[i])
-			continue;
-		auto &check = checks[i];
-		if (!in_applicable_region(reduced, check.applicable_region))
-			continue;
-		auto &mc = map_data.map_connections[i];
-		auto &map_data2 = map_store.get_map_data(mc.destination);
-		auto transformed = position.position;
-		transformed.x += (mc.local_position - mc.remote_position) * check.x_multiplier_1;
-		if (check.x_multiplier_2 > 0)
-			transformed.x += map_data2.width * check.x_multiplier_2;
-		else if (check.x_multiplier_2 < 0)
-			transformed.x += map_data.width * check.x_multiplier_2;
-		transformed.y += (mc.local_position - mc.remote_position) * check.y_multiplier_1;
-		if (check.y_multiplier_2 > 0)
-			transformed.y += map_data2.height * check.y_multiplier_2;
-		else if (check.y_multiplier_2 < 0)
-			transformed.y += map_data.height * check.y_multiplier_2;
-		return {&map_data2, transformed};
-	}
-	return {nullptr, position.position};
-}
-
-std::pair<TilesetData *, int> Game::compute_virtual_block(const WorldCoordinates &position){
-	auto transformed = this->remap_coordinates(position);
-	auto &map_data = this->map_store.get_map_data(transformed.map);
-	if (point_in_map(transformed.position, map_data))
-		return {map_data.tileset.get(), map_data.get_block_at_map_position(transformed.position)};
-	return {map_data.tileset.get(), map_data.border_block};
-}
-
-WorldCoordinates Game::remap_coordinates(const WorldCoordinates &position_parameter){
-	auto position = position_parameter;
-	auto *map_data = &this->map_store.get_map_data(position.map);
-	while (true){
-		if (point_in_map(position.position, *map_data))
-			return position;
-		auto transformed = compute_map_connections(position, *map_data, this->map_store);
-		if (!transformed.first)
-			return position;
-		map_data = transformed.first;
-		position.map = map_data->map_id;
-		position.position = transformed.second;
-	}
-}
-
-void Game::render(){
-	auto &renderer = this->engine->get_renderer();
-	auto &bg = renderer.get_tilemap(TileRegion::Background);
-	renderer.set_bg_global_offset(Point(Renderer::tile_size * 2, Renderer::tile_size * 2) + this->pixel_offset);
-	auto current_map = this->player_character->get_current_map();
-	this->player_character->set_visible_sprite();
-	if (current_map == Map::Nowhere){
-		renderer.fill_rectangle(TileRegion::Background, { 0, 0 }, { Tilemap::w, Tilemap::h }, Tile());
-	}else{
-		auto &map_data = this->map_store.get_map_data(current_map);
-		auto pos = this->player_character->get_map_position();
-		const int k = 2;
-		for (int y = -k; y < Renderer::logical_screen_tile_height + k; y++){
-			for (int x = -k; x < Renderer::logical_screen_tile_width + k; x++){
-				auto &tile = bg.tiles[(x + k) + (y + k) * Tilemap::w];
-				int x2 = (x + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset.x + pos.x;
-				int y2 = (y + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset.y + pos.y;
-				Point map_position(x2, y2);
-				auto computed_block = this->compute_virtual_block({current_map, map_position});
-				auto &blockset = computed_block.first->blockset->data;
-				auto tileset = computed_block.first->tiles;
-				auto block = computed_block.second;
-				auto offset = euclidean_modulo_u(x, 2) + euclidean_modulo_u(y, 2) * 2;
-				tile.tile_no = tileset->first_tile + blockset[block * 4 + offset];
-				tile.flipped_x = false;
-				tile.flipped_y = false;
-				tile.palette = null_palette;
-			}
-		}
-	}
-}
-
-MapInstance &Game::get_map_instance(Map map){
-	return this->map_store.get_map_instance(map);
-}
-
-bool Game::is_passable(const WorldCoordinates &point){
-	auto &map_data = this->map_store.get_map_data(point.map);
-	if (!point_in_map(point.position, map_data))
-		return false;
-	auto tile = map_data.get_partial_tile_at_actor_position(point.position);
-	auto &v = map_data.tileset->collision->data;
-	auto it = find_first_true(v.begin(), v.end(), [tile](byte_t b){ return tile <= b; });
-	return it != v.end() && *it == tile;
-}
-
-bool Game::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
-	//TODO: Implement full movement check logic.
-	return this->can_move_to_land(current_position, next_position, direction);
-}
-
-bool Game::can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
-	//TODO: Implement full movement check logic.
-	auto &map_data = this->map_store.get_map_data(next_position.map);
-	if (!point_in_map(next_position.position, map_data))
-		return false;
-	if (this->map_store.get_map_instance(next_position.map).get_cell_occupation(next_position.position))
-		return false;
-	if (!this->check_jumping_and_tile_pair_collisions(current_position, next_position, direction, &TilesetData::impassability_pairs))
-		return false;
-	if (!this->is_passable(next_position))
-		return false;
-	return true;
-}
-
-bool Game::check_jumping_and_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction, pairs_t pairs){
-	if (!this->check_jumping(current_position, next_position, direction))
-		return false;
-	return this->check_tile_pair_collisions(current_position, next_position, pairs);
-}
-
-bool Game::check_jumping(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
-	auto &map_data = this->map_store.get_map_data(next_position.map);
-	if (!point_in_map(next_position.position, map_data))
-		return false;
-	//TODO: See HandleLedges
-	return true;
-}
-
-bool Game::check_tile_pair_collisions(const WorldCoordinates &pos0, const WorldCoordinates &pos1, pairs_t pairs){
-	auto &map_data0 = this->map_store.get_map_data(pos0.map);
-	auto &map_data1 = this->map_store.get_map_data(pos1.map);
-	if (map_data0.tileset != map_data1.tileset || !point_in_map(pos0.position, map_data0) || !point_in_map(pos1.position, map_data1))
-		return true;
-	auto tile0 = map_data0.get_partial_tile_at_actor_position(pos0.position);
-	auto tile1 = map_data1.get_partial_tile_at_actor_position(pos1.position);
-	for (auto &pair : (*map_data0.tileset).*pairs){
-		if (pair.first < 0)
-			break;
-		if (pair.first == tile0 && pair.second == tile1 || pair.first == tile1 && pair.second == tile0)
-			return false;
-	}
-	return true;
 }
 
 void Game::entered_map(Map old_map, Map new_map){
-	this->map_store.release_map_instance(old_map);
-	auto &instance = this->map_store.get_map_instance(new_map);
-	this->actors.clear();
-	auto &map_data = this->map_store.get_map_data(new_map);
-	auto &renderer = this->engine->get_renderer();
-	for (MapObjectInstance &object_instance : instance.get_objects()){
-		if (object_instance.requires_actor()){
-			auto actor = object_instance.get_object().create_actor(*this, this->engine->get_renderer(), new_map);
-			if (!actor)
-				continue;
-			this->actors.emplace_back(std::move(actor));
-		}
-	}
+	this->world->entered_map(old_map, new_map);
 }
 
-bool Game::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &location){
-	auto &instance = this->map_store.get_map_instance(location.map);
-	size_t count = 0;
-	for (MapObjectInstance &object : instance.get_objects()){
-		if (object.get_object().get_position() == location.position){
-			if (count == array_length(dst))
-				return true;
-			dst[count++] = &object;
-		}
-	}
-	std::fill(dst + count, dst + array_length(dst), nullptr);
-	return false;
+void Game::teleport_player(const WorldCoordinates &wc){
+	this->world->teleport_player(wc);
 }
 
 }

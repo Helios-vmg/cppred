@@ -57,7 +57,7 @@ void Engine::run(){
 		auto &program = *programp;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(audio_renderer), std::move(programp)));
 		this->audio_scheduler->start();
-		this->coroutine.reset(new Coroutine([this, version, &program](Coroutine &){ this->coroutine_entry_point(version, program); }));
+		this->coroutine.reset(new Coroutine("Engine coroutine", [this, version, &program](Coroutine &){ this->coroutine_entry_point(version, program); }));
 
 		//Main loop.
 		while ((continue_running &= this->handle_events()) && this->update_console(version, program)){
@@ -197,10 +197,6 @@ bool Engine::handle_events(){
 		//Do soft reset
 	}
 	return true;
-}
-
-void Engine::wait_frames(int frames){
-	this->wait(frames * logical_refresh_period);
 }
 
 void Engine::set_on_yield(std::function<void()> &&callback){

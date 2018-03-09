@@ -13,39 +13,32 @@ TextStore::TextStore(){
 	for (auto &p : pokemon_by_pokedex_id)
 		species.emplace_back(p->internal_name, p->species_id);
 	std::sort(species.begin(), species.end(), [](const auto &a, const auto &b){ return a.first < b.first; });
-	auto buffer = packed_text_data;
-	size_t size = packed_text_data_size;
-	while (size){
-		auto resource = this->parse_resource(species, buffer, size);
+	BufferReader buffer(packed_text_data, packed_text_data_size);
+	while (!buffer.empty()){
+		auto resource = this->parse_resource(species, buffer);
 		if ((size_t)resource->id >= this->resources.size())
 			this->resources.resize((size_t)resource->id);
 		this->resources.emplace_back(std::move(resource));
 	}
 }
 
-std::unique_ptr<TextResource> TextStore::parse_resource(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&buffer, size_t &size){
-	if (size < 4)
+std::unique_ptr<TextResource> TextStore::parse_resource(const std::vector<std::pair<std::string, SpeciesId>> &species, BufferReader &buffer){
+	if (buffer.remaining_bytes() < 4)
 		throw std::runtime_error("TextStore::parse_command(): Parse error.");
-	auto id = (TextResourceId)read_u32(buffer);
-	
-	buffer += 4;
-	size -= 4;
+	auto id = (TextResourceId)buffer.read_u32();
 	auto ret = std::make_unique<TextResource>();
 	ret->id = id;
 	bool stop;
 	do{
-		auto command = this->parse_command(species, buffer, size, stop);
+		auto command = this->parse_command(species, buffer, stop);
 		if (command)
 			ret->commands.emplace_back(std::move(command));
 	}while (!stop);
 	return ret;
 }
 
-std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&buffer, size_t &size, bool &stop){
-	if (size < 1)
-		throw std::runtime_error("TextStore::parse_command(): Parse error.");
-	auto command = (TextResourceCommandType)*(buffer++);
-	size--;
+std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<std::pair<std::string, SpeciesId>> &species, BufferReader &buffer, bool &stop){
+	auto command = (TextResourceCommandType)buffer.read_byte();
 	stop = false;
 	std::unique_ptr<TextResourceCommand> ret;
 	switch (command){
@@ -53,22 +46,7 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<
 			stop = true;
 			break;
 		case TextResourceCommandType::Text:
-			{
-				size_t n = 0;
-				while (true){
-					if (!size)
-						throw std::runtime_error("TextStore::parse_command(): Parse error.");
-					if (!buffer[n])
-						break;
-					n++;
-					size--;
-				}
-				ret.reset(new TextCommand(buffer, n));
-				buffer += n + 1;
-				if (!size)
-					throw std::runtime_error("TextStore::parse_command(): Parse error.");
-				size--;
-			}
+			ret.reset(new TextCommand(buffer.read_string_as_vector()));
 			break;
 		case TextResourceCommandType::Line:
 			ret.reset(new LineCommand);
@@ -100,70 +78,20 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<
 			ret.reset(new AutocontCommand);
 			break;
 		case TextResourceCommandType::Mem:
-			{
-				std::string variable;
-				while (true){
-					if (!size)
-						throw std::runtime_error("TextStore::parse_command(): Parse error.");
-					if (!*buffer)
-						break;
-					variable.push_back(*buffer);
-					buffer++;
-					size--;
-				}
-				buffer++;
-				if (!size)
-					throw std::runtime_error("TextStore::parse_command(): Parse error.");
-				size--;
-				ret.reset((TextResourceCommand *)new MemCommand(std::move(variable)));
-			}
+			ret.reset(new MemCommand(buffer.read_string()));
 			break;
 		case TextResourceCommandType::Num:
 			{
-				std::string variable;
-				while (true){
-					if (!size)
-						throw std::runtime_error("TextStore::parse_command(): Parse error.");
-					if (!*buffer)
-						break;
-					variable.push_back(*buffer);
-					buffer++;
-					size--;
-				}
-				buffer++;
-				if (size < 5)
-					throw std::runtime_error("TextStore::parse_command(): Parse error.");
-				auto digits = read_u32(buffer);
-				buffer += 4;
-				size -= 5;
-				ret.reset((TextResourceCommand *)new NumCommand(std::move(variable), digits));
+				auto variable = buffer.read_string();
+				auto digits = buffer.read_u32();
+				ret.reset(new NumCommand(std::move(variable), digits));
 			}
 			break;
 		case TextResourceCommandType::Cry:
-			{
-				std::string species_name;
-				while (true){
-					if (!size)
-						throw std::runtime_error("TextStore::parse_command(): Parse error.");
-					if (!*buffer)
-						break;
-					species_name.push_back(*buffer);
-					buffer++;
-					size--;
-				}
-				buffer++;
-				if (!size)
-					throw std::runtime_error("TextStore::parse_command(): Parse error.");
-				size--;
-				auto it = find_first_true(species.begin(), species.end(), [species_name](const auto &a){ return species_name <= a.first; });
-				if (it == species.end() || it->first != species_name)
-					throw std::runtime_error("Unknown species: " + species_name);
-				ret.reset((TextResourceCommand *)new CryCommand(it->second));
-			}
+			ret.reset(new CryCommand((SpeciesId)buffer.read_varint()));
 			break;
 		default:
 			throw std::runtime_error("TextStore::parse_command(): Invalid switch.");
-			break;
 	}
 	return ret;
 }
@@ -171,11 +99,6 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<
 void TextResource::execute(Game &game, TextState &state){
 	for (auto &p : this->commands)
 		p->execute(game, state);
-}
-
-TextCommand::TextCommand(const byte_t *buffer, size_t size){
-	this->data.resize(size);
-	memcpy(&this->data[0], buffer, size);
 }
 
 void TextStore::execute(Game &game, TextResourceId id, TextState &state){
@@ -237,7 +160,7 @@ void ContCommand::execute(Game &game, TextState &state){
 		auto y0 = (state.box_corner.y + state.box_size.y - 1) * Tilemap::w;
 		for (int x = 0; x < state.box_size.x; x++)
 			tilemap[state.box_corner.x + x + y0].tile_no = ' ';
-		engine.wait_frames(6);
+		Coroutine::get_current_coroutine().wait_frames(6);
 	}
 	state.position = state.start_of_line;
 }

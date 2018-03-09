@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <memory>
 
 enum class CommandType{
 	None = 0,
@@ -23,6 +24,8 @@ enum class CommandType{
 	End,
 };
 
+class PokemonData;
+
 typedef std::uint8_t byte_t;
 
 struct MapTextEntry{
@@ -36,10 +39,13 @@ class TextStore{
 	std::vector<byte_t> binary_data;
 	std::map<std::string, int> sections;
 	std::vector<std::pair<std::string, int>> text_by_id;
+	std::unique_ptr<PokemonData> &pokemon_data;
 
 	void load_data();
 public:
-	TextStore(const char *path): path(path){}
+	TextStore(const char *path, std::unique_ptr<PokemonData> &pokemon_data):
+		path(path),
+		pokemon_data(pokemon_data){}
 	const std::vector<byte_t> &get_binary_data();
 	const std::map<std::string, int> &get_sections();
 	const std::vector<std::pair<std::string, int>> &get_text_by_id();

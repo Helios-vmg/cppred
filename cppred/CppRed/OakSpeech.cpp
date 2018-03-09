@@ -17,7 +17,7 @@ static void fade_in(CppRed::Game &game){
 
 	for (auto &p : palettes){
 		renderer.set_palette(PaletteRegion::Background, p);
-		engine.wait_frames(10);
+		Coroutine::get_current_coroutine().wait_frames(10);
 	}
 }
 
@@ -171,7 +171,7 @@ static void red_closing(CppRed::Game &game){
 
 	game.run_dialog(TextResourceId::OakSpeechText3);
 	game.get_audio_interface().play_sound(AudioResourceId::SFX_Shrink);
-	engine.wait_frames(4);
+	Coroutine::get_current_coroutine().wait_frames(4);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic1);
 	engine.wait(0.5);
 	auto to_erase = renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic2);

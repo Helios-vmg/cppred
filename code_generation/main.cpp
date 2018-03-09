@@ -54,8 +54,8 @@ int main(){
 		auto t0 = clock();
 		auto hashes = load_hashes();
 		GraphicsStore gs;
-		TextStore ts(text_file);
 		std::unique_ptr<PokemonData> pokemon_data;
+		TextStore ts(text_file, pokemon_data);
 		generate_graphics(hashes, gs);
 		generate_maps(hashes, gs, ts);
 		generate_pokemon_data(hashes, pokemon_data);

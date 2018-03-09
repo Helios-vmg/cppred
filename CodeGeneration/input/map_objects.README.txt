@@ -32,7 +32,7 @@ pokemon:
 sign:
     param1: map text index
 
-npc:
+trainer:
     param1: sprite
     param2: facing_direction
     param3: wandering

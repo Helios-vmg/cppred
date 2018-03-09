@@ -50,6 +50,9 @@
     <ClInclude Include="CppRed\Actor.h" />
     <ClInclude Include="CppRed\Npc.h" />
     <ClInclude Include="CppRed\PlayerCharacter.h" />
+    <ClInclude Include="CppRed\ScreenOwner.h" />
+    <ClInclude Include="CppRed\TextDisplay.h" />
+    <ClInclude Include="CppRed\World.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GraphicsAsset.h" />
     <ClInclude Include="HeliosRenderer.h" />
@@ -82,7 +85,10 @@
     <ClCompile Include="CppRed\Actor.cpp" />
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
+    <ClCompile Include="CppRed\ScreenOwner.cpp" />
+    <ClCompile Include="CppRed\TextDisplay.cpp" />
     <ClCompile Include="CppRed\Trainer.cpp" />
+    <ClCompile Include="CppRed\World.cpp" />
     <ClCompile Include="HeliosRenderer.cpp" />
     <ClCompile Include="CppRed/AudioProgram.cpp" />
     <ClCompile Include="CppRed/CommonFunctions.cpp" />

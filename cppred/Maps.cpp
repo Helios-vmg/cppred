@@ -284,6 +284,8 @@ void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data,
 		auto it = objects.find(pair.second);
 		if (it == objects.end())
 			throw std::runtime_error("Internal error: Map " + pair.first->name + " references non-existing object set " + pair.second);
+		for (auto &object : *it->second)
+			object->set_map_data(pair.first);
 		pair.first->objects = it->second;
 	}
 }
@@ -302,21 +304,21 @@ MapData &MapStore::get_map_data(Map map){
 	return *this->maps[(int)map - 1];
 }
 
-MapInstance &MapStore::get_map_instance(Map map){
+MapInstance &MapStore::get_map_instance(Map map, CppRed::Game &game){
 	auto index = (int)map - 1;
 	if (index >= this->map_instances.size())
 		this->map_instances.resize(index + 1);
 	if (!this->map_instances[index])
-		this->map_instances[index].reset(new MapInstance(map, *this));
+		this->map_instances[index].reset(new MapInstance(map, *this, game));
 	return *this->map_instances[index];
 }
 
-MapInstance::MapInstance(Map map, MapStore &store) : map(map), store(&store){
+MapInstance::MapInstance(Map map, MapStore &store, CppRed::Game &game): map(map), store(&store){
 	this->data = &store.get_map_data(map);
 	this->occupation_bitmap.resize(this->data->width * this->data->height, false);
 	this->objects.reserve(this->data->objects->size());
 	for (auto &object : *this->data->objects)
-		this->objects.emplace_back(*object);
+		this->objects.emplace_back(*object, game);
 }
 
 void MapInstance::check_map_location(const Point &p){
@@ -338,12 +340,13 @@ bool MapInstance::get_cell_occupation(const Point &p){
 	return this->occupation_bitmap[p.x + p.y * this->data->width];
 }
 
-MapObjectInstance::MapObjectInstance(const MapObject &object){
+MapObjectInstance::MapObjectInstance(MapObject &object, CppRed::Game &game): game(&game){
 	this->position = object.get_position();
 	this->full_object = &object;
 }
 
-void MapObjectInstance::activate(const CppRed::Actor &activator){
+void MapObjectInstance::activate(CppRed::Actor &activator){
+	this->full_object->activate(*this->game, activator);
 }
 
 void MapStore::release_map_instance(Map map){

@@ -32,7 +32,7 @@ public:
 	virtual bool npcs_can_walk_over() const{
 		return true;
 	}
-	virtual void activate(CppRed::Game &, const CppRed::Actor &activator){}
+	virtual void activate(CppRed::Game &, CppRed::Actor &activator){}
 	DEFINE_GETTER(position)
 	DEFINE_GETTER(name)
 	DEFINE_GETTER_SETTER(map_data)
@@ -153,7 +153,7 @@ public:
 		return "npc";
 	}
 	CppRed::actor_ptr<CppRed::Actor> create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const override;
-	void activate(CppRed::Game &, const CppRed::Actor &activator) override;
+	void activate(CppRed::Game &, CppRed::Actor &activator) override;
 };
 
 class ItemMapObject : public ObjectWithSprite{

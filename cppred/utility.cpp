@@ -2,6 +2,10 @@
 #include <random>
 #include <cmath>
 #include <cstring>
+#include <iostream>
+#include "Engine.h"
+
+thread_local std::vector<Coroutine *> Coroutine::coroutine_stack;
 
 std::uint32_t XorShift128::gen(){
 	auto x = this->state[3];
@@ -127,17 +131,22 @@ std::int32_t read_signed_varint(const byte_t *buffer, size_t &offset, size_t siz
 	return uints_to_ints(read_varint(buffer, offset, size));
 }
 
-std::string read_string(const byte_t *buffer, size_t &offset, size_t size){
-	std::string ret;
+template <typename DstT, typename ElemT = byte_t>
+DstT basic_read_string(const byte_t *buffer, size_t &offset, size_t size){
+	DstT ret;
 	while (true){
 		if (offset >= size)
 			throw std::runtime_error("read_string(): Invalid read.");
 		auto byte = buffer[offset++];
 		if (!byte)
 			break;
-		ret.push_back((char)byte);
+		ret.push_back((ElemT)byte);
 	}
 	return ret;
+}
+
+std::string read_string(const byte_t *buffer, size_t &offset, size_t size){
+	return basic_read_string<std::string, char>(buffer, offset, size);
 }
 
 std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size){
@@ -150,7 +159,10 @@ std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t siz
 	return ret;
 }
 
-Coroutine::Coroutine(entry_point_t &&entry_point): entry_point(std::move(entry_point)){
+Coroutine::Coroutine(const std::string &name, entry_point_t &&entry_point):
+		name(name),
+		entry_point(std::move(entry_point)){
+	this->coroutine_stack.push_back(this);
 	this->coroutine.reset(new coroutine_t([this](yielder_t &y){
 		this->resume_thread_id = std::this_thread::get_id();
 		this->yielder = &y;
@@ -160,9 +172,12 @@ Coroutine::Coroutine(entry_point_t &&entry_point): entry_point(std::move(entry_p
 		}
 		this->entry_point(*this);
 	}));
+	this->coroutine_stack.pop_back();
 }
 
 void Coroutine::yield(){
+	if (!this->coroutine_stack.size() || this->coroutine_stack.back() != this)
+		throw std::runtime_error("Coroutine::yield() was used incorrectly!");
 	if (std::this_thread::get_id() != this->resume_thread_id)
 		throw std::runtime_error("Coroutine::yield() must be called from the thread that resumed the coroutine!");
 	if (!this->yielder)
@@ -177,7 +192,22 @@ void Coroutine::yield(){
 
 bool Coroutine::resume(){
 	this->resume_thread_id = std::this_thread::get_id();
-	return !!(*this->coroutine)();
+	if (this->active)
+		throw std::runtime_error("Attempting to resume a running coroutine!");
+	this->active = true;
+	this->coroutine_stack.push_back(this);
+	//std::cout << this->name << " RESUMES\n";
+	auto ret = !!(*this->coroutine)();
+	//std::cout << this->name << " PAUSES\n";
+	this->coroutine_stack.pop_back();
+	this->active = false;
+	return ret;
+}
+
+Coroutine *Coroutine::get_current_coroutine_ptr(){
+	if (!Coroutine::coroutine_stack.size())
+		return nullptr;
+	return Coroutine::coroutine_stack.back();
 }
 
 void Coroutine::wait(double s){
@@ -190,4 +220,26 @@ void Coroutine::wait(double s){
 			return;
 		}
 	}
+}
+
+void Coroutine::wait_frames(int frames){
+	this->wait(frames * Engine::logical_refresh_period);
+}
+
+byte_t BufferReader::read_byte(){
+	if (this->remaining_bytes() < 1)
+		throw std::runtime_error("Buffer too short.");
+	return this->buffer[this->offset++];
+}
+
+std::uint32_t BufferReader::read_u32(){
+	if (this->remaining_bytes() < 4)
+		throw std::runtime_error("Buffer too short.");
+	auto ret = ::read_u32(this->buffer + this->offset);
+	this->offset += 4;
+	return ret;
+}
+
+std::vector<byte_t> BufferReader::read_string_as_vector(){
+	return basic_read_string<std::vector<byte_t>>(this->buffer, this->offset, this->size);
 }

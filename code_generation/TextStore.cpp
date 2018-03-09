@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "PokemonData.h"
 #include "../common/csv_parser.h"
 #include "utility.h"
 
@@ -18,7 +19,7 @@ static void write_u32(std::vector<byte_t> &dst, std::uint32_t n){
 	}
 }
 
-static void process_command(std::vector<byte_t> &dst, const std::string &command, CommandType &last_command){
+static void process_command(std::vector<byte_t> &dst, const std::string &command, CommandType &last_command, PokemonData &pokemon_data){
 	if (command == "cont"){
 		last_command = CommandType::Cont;
 		dst.push_back((byte_t)last_command);
@@ -90,9 +91,13 @@ static void process_command(std::vector<byte_t> &dst, const std::string &command
 		auto species = command.substr(4);
 		last_command = CommandType::Cry;
 		dst.push_back((byte_t)last_command);
-		for (auto c : species)
-			dst.push_back(c);
-		dst.push_back(0);
+		unsigned species_id;
+		try{
+			species_id = pokemon_data.get_species_id(species);
+		}catch (std::exception &e){
+			throw std::runtime_error("Error parsing \"" + command + "\". " + e.what());
+		}
+		write_varint(dst, species_id);
 		return;
 	}
 	throw std::runtime_error("Unrecognized command: " + command);
@@ -104,11 +109,12 @@ static void set_text_command(std::vector<byte_t> &dst, CommandType &last_command
 	last_command = CommandType::Text;
 }
 
-static std::vector<byte_t> parse_text_format(std::ifstream &stream, std::map<std::string, int> &section_names){
+static std::vector<byte_t> parse_text_format(std::ifstream &input, std::map<std::string, int> &section_names, PokemonData &pokemon_data){
 	std::vector<byte_t> ret;
 	bool in_section = false;
 	CommandType last_command = CommandType::None;
-	auto lines = file_splitter(stream);
+	auto lines = file_splitter(input);
+	std::string current_label;
 	for (int line_no = 1; lines.size(); line_no++){
 		auto line = move_pop_front(lines);
 		if (!in_section){
@@ -120,6 +126,7 @@ static std::vector<byte_t> parse_text_format(std::ifstream &stream, std::map<std
 					throw std::runtime_error("Duplicate label: " + label_name);
 				auto id = section_names.size();
 				section_names[label_name] = id;
+				current_label = label_name;
 				write_u32(ret, id);
 				in_section = true;
 				last_command = CommandType::None;
@@ -130,56 +137,62 @@ static std::vector<byte_t> parse_text_format(std::ifstream &stream, std::map<std
 			throw std::runtime_error(sstream.str());
 		}
 
-		std::string accum;
-		bool in_command = false;
-		bool apostrophe_seen = false;
-		for (char c : line){
-			unsigned char uc = c;
-			if (in_command){
-				if (c == '>'){
-					process_command(ret, accum, last_command);
-					accum.clear();
-					in_command = false;
-				}else
-					accum.push_back(c);
-				continue;
-			}
-			if (apostrophe_seen){
-				apostrophe_seen = false;
-				set_text_command(ret, last_command);
-				if (apostrophed_letters.find(c) != apostrophed_letters.end()){ 
-					ret.push_back((byte_t)c + 128);
+		try{
+			std::string accum;
+			bool in_command = false;
+			bool apostrophe_seen = false;
+			for (char c : line){
+				unsigned char uc = c;
+				if (in_command){
+					if (c == '>'){
+						process_command(ret, accum, last_command, pokemon_data);
+						accum.clear();
+						in_command = false;
+					} else
+						accum.push_back(c);
 					continue;
 				}
-				ret.push_back('\'');
-			}
-			if (c == '<'){
-				if (last_command == CommandType::Text)
-					ret.push_back(0);
-				in_command = true;
-				continue;
-			}
-			if ((byte_t)c == e_with_acute){
+				if (apostrophe_seen){
+					apostrophe_seen = false;
+					set_text_command(ret, last_command);
+					if (apostrophed_letters.find(c) != apostrophed_letters.end()){
+						ret.push_back((byte_t)c + 128);
+						continue;
+					}
+					ret.push_back('\'');
+				}
+				if (c == '<'){
+					if (last_command == CommandType::Text)
+						ret.push_back(0);
+					in_command = true;
+					continue;
+				}
+				if ((byte_t)c == e_with_acute){
+					set_text_command(ret, last_command);
+					ret.push_back((byte_t)'e' + 128);
+					continue;
+				}
+				if (c == '\''){
+					apostrophe_seen = true;
+					continue;
+				}
 				set_text_command(ret, last_command);
-				ret.push_back((byte_t)'e' + 128);
+				ret.push_back(c);
+			}
+			if (last_command == CommandType::End || last_command == CommandType::Done || last_command == CommandType::Dex){
+				in_section = false;
 				continue;
 			}
-			if (c == '\''){
-				apostrophe_seen = true;
-				continue;
+			if (last_command == CommandType::Text)
+				ret.push_back(0);
+			if (!(last_command == CommandType::Cont || last_command == CommandType::Para || last_command == CommandType::Page || last_command == CommandType::Prompt)){
+				last_command = CommandType::Line;
+				ret.push_back((byte_t)last_command);
 			}
-			set_text_command(ret, last_command);
-			ret.push_back(c);
-		}
-		if (last_command == CommandType::End || last_command == CommandType::Done || last_command == CommandType::Dex){
-			in_section = false;
-			continue;
-		}
-		if (last_command == CommandType::Text)
-			ret.push_back(0);
-		if (!(last_command == CommandType::Cont || last_command == CommandType::Para || last_command == CommandType::Page || last_command == CommandType::Prompt)){
-			last_command = CommandType::Line;
-			ret.push_back((byte_t)last_command);
+		}catch (std::exception &e){
+			std::stringstream stream;
+			stream << "Error on line " << line_no << " (section " << current_label << "). " << e.what();
+			throw std::runtime_error(stream.str());
 		}
 	}
 	return ret;
@@ -189,10 +202,12 @@ void TextStore::load_data(){
 	if (this->initialized)
 		return;
 	this->initialized = true;
+	if (!this->pokemon_data)
+		this->pokemon_data.reset(new PokemonData);
 	std::ifstream input(this->path, std::ios::binary);
 	if (!input)
 		throw std::runtime_error(this->path + " not found!");
-	this->binary_data = parse_text_format(input, this->sections);
+	this->binary_data = parse_text_format(input, this->sections, *this->pokemon_data);
 	for (auto &kv : sections)
 		this->text_by_id.push_back(kv);
 	std::sort(this->text_by_id.begin(), this->text_by_id.end(), [](const auto &a, const auto &b){ return a.second < b.second; });

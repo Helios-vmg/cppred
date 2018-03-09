@@ -50,7 +50,7 @@ public:
 class TextCommand : public TextResourceCommand{
 	std::vector<byte_t> data;
 public:
-	TextCommand(const byte_t *, size_t);
+	TextCommand(std::vector<byte_t> &&data): data(std::move(data)){}
 	void execute(Game &, TextState &) override;
 };
 
@@ -132,8 +132,8 @@ public:
 class TextStore{
 	std::vector<std::unique_ptr<TextResource>> resources;
 
-	std::unique_ptr<TextResource> parse_resource(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&, size_t &);
-	std::unique_ptr<TextResourceCommand> parse_command(const std::vector<std::pair<std::string, SpeciesId>> &species, const byte_t *&, size_t &, bool &stop);
+	std::unique_ptr<TextResource> parse_resource(const std::vector<std::pair<std::string, SpeciesId>> &species, BufferReader &);
+	std::unique_ptr<TextResourceCommand> parse_command(const std::vector<std::pair<std::string, SpeciesId>> &species, BufferReader &, bool &stop);
 public:
 	TextStore();
 	void execute(Game &, TextResourceId, TextState &);

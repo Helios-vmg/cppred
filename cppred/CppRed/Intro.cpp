@@ -234,7 +234,7 @@ static BattleSceneSprites battle_scene(CppRed::Game &game){
 	auto &renderer = engine.get_renderer();
 	game.get_audio_interface().play_sound(AudioResourceId::Music_IntroBattle);
 	clear_middle_of_screen<4>(engine);
-	engine.wait_frames(3);
+	Coroutine::get_current_coroutine().wait_frames(3);
 	renderer.set_default_palettes();
 	renderer.draw_image_to_tilemap(gengar_position, FightIntroBackMon1);
 
@@ -373,10 +373,10 @@ void intro(Game &game){
 	
 	clear_screen(game.get_engine());
 	draw_black_bars<4>(engine);
-	engine.wait_frames(64);
+	Coroutine::get_current_coroutine().wait_frames(64);
 
 	if (!shooting_star_scene(game))
-		engine.wait_frames(40);
+		Coroutine::get_current_coroutine().wait_frames(40);
 
 	{
 		//Warning: temp contains side effect in its destructor. Do not remove this!

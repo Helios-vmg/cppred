@@ -130,10 +130,11 @@ struct MapData{
 
 class MapObjectInstance{
 	Point position;
+	CppRed::Game *game = nullptr;
 	CppRed::Actor *actor = nullptr;
-	const MapObject *full_object;
+	MapObject *full_object;
 public:
-	MapObjectInstance(const MapObject &);
+	MapObjectInstance(MapObject &, CppRed::Game &);
 	MapObjectInstance(const MapObjectInstance &) = default;
 	const MapObject &get_object() const{
 		return *this->full_object;
@@ -141,7 +142,7 @@ public:
 	bool requires_actor() const{
 		return this->full_object->requires_actor();
 	}
-	void activate(const CppRed::Actor &activator);
+	void activate(CppRed::Actor &activator);
 	DEFINE_GETTER_SETTER(position)
 };
 
@@ -154,7 +155,7 @@ class MapInstance{
 
 	void check_map_location(const Point &);
 public:
-	MapInstance(Map, MapStore &);
+	MapInstance(Map, MapStore &, CppRed::Game &);
 	void set_cell_occupation(const Point &, bool);
 	bool get_cell_occupation(const Point &);
 	auto get_objects() const{
@@ -189,7 +190,7 @@ class MapStore{
 public:
 	MapStore();
 	MapData &get_map_data(Map map);
-	MapInstance &get_map_instance(Map map);
+	MapInstance &get_map_instance(Map map, CppRed::Game &);
 	MapData &get_map_by_name(const std::string &) const;
 	void release_map_instance(Map);
 };

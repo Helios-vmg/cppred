@@ -191,6 +191,15 @@
     <ClInclude Include="CppRed\Npc.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRed\World.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed\ScreenOwner.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed\TextDisplay.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -287,6 +296,15 @@
       <Filter>Engine code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed\Npc.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\World.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\ScreenOwner.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\TextDisplay.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

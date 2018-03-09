@@ -14,6 +14,7 @@ enum class FacingDirection{
 };
 
 class Game;
+class ScreenOwner;
 
 class Actor{
 protected:
@@ -31,6 +32,7 @@ protected:
 	std::unique_ptr<Coroutine> coroutine;
 	bool quit_coroutine = false;
 	MapObjectInstance *object_instance = nullptr;
+	std::unique_ptr<ScreenOwner> screen_owner;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -50,13 +52,13 @@ protected:
 	}
 	static Point direction_to_vector(FacingDirection);
 	virtual bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
+	virtual void update_sprites(){}
 public:
 	Actor(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
+	virtual ~Actor();
 	virtual void init();
-	virtual ~Actor(){}
 	virtual void uninit();
 	virtual void update();
-	virtual void update_sprites(){}
 	void set_visible_sprite();
 
 	void set_current_map(Map map){
@@ -71,6 +73,8 @@ public:
 	Point get_map_position() const{
 		return this->position.position;
 	}
+	void set_new_screen_owner(std::unique_ptr<ScreenOwner> &&);
+	std::unique_ptr<ScreenOwner> get_new_screen_owner();
 	DEFINE_GETTER_SETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)
 };
@@ -80,12 +84,16 @@ using actor_ptr = std::unique_ptr<T, void (*)(T *)>;
 
 template <typename T>
 void actor_deleter(T *p){
+	if (!p)
+		return;
 	p->uninit();
 	delete p;
 }
 
 template <typename T>
 void actor_deleter2(Actor *p){
+	if (!p)
+		return;
 	p->uninit();
 	delete (T *)p;
 }

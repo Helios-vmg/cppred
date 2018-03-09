@@ -4,6 +4,8 @@
 #include "CppRed/Trainer.h"
 #include "CppRed/Npc.h"
 #include "CppRed/Game.h"
+#include "CppRed/World.h"
+#include "CppRed/TextDisplay.h"
 
 MapObject::~MapObject(){}
 
@@ -121,13 +123,19 @@ CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, 
 	}
 	if (this->wandering)
 		temp->set_wandering(this->range);
-	game.get_map_store().get_map_instance(map).set_cell_occupation(this->position, true);
+	game.get_world().get_map_store().get_map_instance(map, game).set_cell_occupation(this->position, true);
 	return ret;
 }
 
-void NpcMapObject::activate(CppRed::Game &game, const CppRed::Actor &activator){
+void NpcMapObject::activate(CppRed::Game &game, CppRed::Actor &activator){
 	if (this->text_index < 0 || this->text_index >= this->map_data->map_text.size())
 		return;
-	auto text = this->map_data->map_text[this->text_index];
-	game.run_dialog(text);
+	const auto &text = this->map_data->map_text[this->text_index];
+	if (text.simple_text){
+		std::unique_ptr<CppRed::ScreenOwner> p(new CppRed::TextDisplay(game, text.text));
+		activator.set_new_screen_owner(std::move(p));
+	}else{
+		//TODO: Run script.
+	}
+		
 }
