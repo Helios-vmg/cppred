@@ -15,6 +15,17 @@ enum class MapObjectFacingDirection;
 enum class ItemId;
 enum class SpeciesId;
 
+enum class MapObjectType{
+	EventDisp,
+	Hidden,
+	Item,
+	Npc,
+	Pokemon,
+	Sign,
+	Trainer,
+	Warp,
+};
+
 class MapObject{
 protected:
 	std::string name;
@@ -33,9 +44,20 @@ public:
 		return true;
 	}
 	virtual void activate(CppRed::Game &, CppRed::Actor &activator){}
+	virtual MapObjectType get_type() const = 0;
 	DEFINE_GETTER(position)
 	DEFINE_GETTER(name)
 	DEFINE_GETTER_SETTER(map_data)
+};
+
+class DialogingMapObject : public MapObject{
+protected:
+	DialogingMapObject(BufferReader &buffer): MapObject(buffer){}
+	DialogingMapObject(const std::string &name, const Point &position): MapObject(name, position){}
+public:
+	virtual ~DialogingMapObject(){}
+	virtual int get_text_index() const = 0;
+	void activate(CppRed::Game &game, CppRed::Actor &activator) override;
 };
 
 class EventDisp : public MapObject{
@@ -48,19 +70,30 @@ public:
 	bool requires_actor() const override{
 		return false;
 	}
+	MapObjectType get_type() const override{
+		return MapObjectType::EventDisp;
+	}
 };
 
-class Sign : public MapObject{
+class Sign : public DialogingMapObject{
 protected:
 	int text_index;
 public:
 	Sign(BufferReader &);
-	Sign(const std::string &name, const Point &position, int text_index): MapObject(name, position), text_index(text_index){}
+	Sign(const std::string &name, const Point &position, int text_index):
+		DialogingMapObject(name, position),
+		text_index(text_index){}
 	const char *get_type_string() const override{
 		return "sign";
 	}
 	bool requires_actor() const override{
 		return false;
+	}
+	int get_text_index() const override{
+		return this->text_index;
+	}
+	MapObjectType get_type() const override{
+		return MapObjectType::Sign;
 	}
 };
 
@@ -80,6 +113,9 @@ public:
 	}
 	bool requires_actor() const override{
 		return false;
+	}
+	MapObjectType get_type() const override{
+		return MapObjectType::Hidden;
 	}
 };
 
@@ -114,12 +150,15 @@ public:
 	bool npcs_can_walk_over() const override{
 		return false;
 	}
+	MapObjectType get_type() const override{
+		return MapObjectType::Warp;
+	}
 	DEFINE_GETTER(index)
 	DEFINE_GETTER(destination)
 	DEFINE_GETTER(destination_warp_index)
 };
 
-class ObjectWithSprite : public MapObject{
+class ObjectWithSprite : public DialogingMapObject{
 protected:
 	const GraphicsAsset *sprite;
 	MapObjectFacingDirection facing_direction;
@@ -130,7 +169,7 @@ protected:
 public:
 	ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map);
 	ObjectWithSprite(const std::string &name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_index):
-		MapObject(name, position),
+		DialogingMapObject(name, position),
 		sprite(&sprite),
 		facing_direction(facing_direction),
 		wandering(wandering),
@@ -139,6 +178,9 @@ public:
 	virtual ~ObjectWithSprite() = 0;
 	bool requires_actor() const override{
 		return true;
+	}
+	int get_text_index() const override{
+		return this->text_index;
 	}
 };
 
@@ -153,7 +195,9 @@ public:
 		return "npc";
 	}
 	CppRed::actor_ptr<CppRed::Actor> create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const override;
-	void activate(CppRed::Game &, CppRed::Actor &activator) override;
+	MapObjectType get_type() const override{
+		return MapObjectType::Npc;
+	}
 };
 
 class ItemMapObject : public ObjectWithSprite{
@@ -169,6 +213,9 @@ public:
 		item(item){}
 	const char *get_type_string() const override{
 		return "item";
+	}
+	MapObjectType get_type() const override{
+		return MapObjectType::Item;
 	}
 };
 
@@ -186,6 +233,9 @@ public:
 	const char *get_type_string() const override{
 		return "trainer";
 	}
+	MapObjectType get_type() const override{
+		return MapObjectType::Trainer;
+	}
 };
 
 class PokemonMapObject : public ObjectWithSprite{
@@ -201,5 +251,8 @@ public:
 		level(level){}
 	const char *get_type_string() const override{
 		return "pokemon";
+	}
+	MapObjectType get_type() const override{
+		return MapObjectType::Pokemon;
 	}
 };

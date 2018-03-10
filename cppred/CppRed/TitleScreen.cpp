@@ -71,7 +71,8 @@ static void bounce_logo(CppRed::Game &game){
 			game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
 			played = true;
 		}
-		renderer.set_y_bg_offset(0, 64, { 0, cast_round(64 * EasingCurve::f(x, base)) });
+		renderer.set_window_origin({0, -cast_round(64 * EasingCurve::f(x, base))});
+
 		engine.wait_exactly_one_frame();
 	}while (x < limit);
 }
@@ -220,13 +221,12 @@ TitleScreenResult title_screen(Game &game){
 	renderer.set_enable_window(true);
 	renderer.set_enable_sprites(true);
 
-	renderer.draw_image_to_tilemap({2, 1}, PokemonLogoGraphics);
+	renderer.draw_image_to_tilemap({2, 1}, PokemonLogoGraphics, TileRegion::Window);
 	const Point copyright_location = {(Renderer::logical_screen_tile_width - CopyrightTitleScreen.width) / 2, Renderer::logical_screen_tile_height - 1};
-	const Point window_offset = {0, 10};
+	const Point window_offset = {0, 0};
 	int current_pokemon = 0;
-	renderer.draw_image_to_tilemap(copyright_location - window_offset, CopyrightTitleScreen, TileRegion::Window);
-	renderer.draw_image_to_tilemap(pokemon_location - window_offset, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front, TileRegion::Window);
-	renderer.set_window_global_offset(window_offset * Renderer::tile_size);
+	renderer.draw_image_to_tilemap(copyright_location - window_offset, CopyrightTitleScreen);
+	renderer.draw_image_to_tilemap(pokemon_location - window_offset, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
 
 	auto pc = renderer.create_sprite(PlayerCharacterTitleGraphics);
 	//Hide pokeball in Red's hand.
@@ -243,7 +243,8 @@ TitleScreenResult title_screen(Game &game){
 	for (auto &tile : pokeball->iterate_tiles())
 		tile.has_priority = true;
 
-	renderer.set_y_bg_offset(0, 64, { 0, 64 });
+	renderer.set_window_region_size({Renderer::logical_screen_width, 64});
+	renderer.set_window_origin({0, -64});
 
 	game.get_audio_interface().play_sound(AudioResourceId::SFX_Intro_Crash);
 
@@ -260,6 +261,7 @@ TitleScreenResult title_screen(Game &game){
 	game.get_audio_interface().play_sound(AudioResourceId::Music_TitleScreen);
 
 	renderer.set_enable_window(false);
+	renderer.draw_image_to_tilemap({2, 1}, PokemonLogoGraphics, TileRegion::Background);
 	renderer.draw_image_to_tilemap(copyright_location, CopyrightTitleScreen);
 	renderer.draw_image_to_tilemap(pokemon_location, *pokemon_by_species_id[(int)pokemons[current_pokemon]]->front);
 

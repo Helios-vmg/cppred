@@ -129,18 +129,21 @@ void LineCommand::execute(Game &game, TextState &state){
 	state.position = state.start_of_line;
 }
 
-void TextResourceCommand::wait_for_continue(Game &game, TextState &state){
+void TextResourceCommand::wait_for_continue(Game &game, TextState &state, bool display_arrow){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto tilemap = renderer.get_tilemap(state.region).tiles;
 	auto &arrow_location = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w].tile_no;
 	for (bool b = true;; b = !b){
-		arrow_location = b ? down_arrow : ' ';
+		if (display_arrow)
+			arrow_location = b ? down_arrow : ' ';
 		if (game.check_for_user_interruption_no_auto_repeat(0.5))
 			break;
 	}
-	arrow_location = ' ';
-	game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+	if (display_arrow){
+		arrow_location = ' ';
+		game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+	}
 }
 
 void ContCommand::execute(Game &game, TextState &state){

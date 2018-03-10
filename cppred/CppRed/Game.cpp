@@ -245,22 +245,36 @@ int Game::handle_standard_menu(TileRegion region, const Point &position, const s
 	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b);
 }
 
-void Game::run_dialog(TextResourceId resource){
+void Game::run_dialog(TextResourceId resource, TileRegion region, bool wait_at_end){
 	if (!this->dialog_box_visible){
-		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Background);
+		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, region);
 		this->dialog_box_visible = true;
 	}
+	this->text_state.region = region;
 	this->text_store.execute(*this, resource, this->text_state);
+	if (wait_at_end)
+		PromptCommand::wait_for_continue(*this, this->text_state, false);
+	this->joypad_pressed = InputState();
+}
+
+void Game::run_dialog(TextResourceId resource, bool wait_at_end){
+	this->run_dialog(resource, TileRegion::Background, wait_at_end);
+}
+
+TextState Game::get_default_dialog_state(){
+	TextState ret;
+	ret.region = TileRegion::Background;
+	ret.first_position =
+		ret.position =
+		ret.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
+	ret.box_corner = { 1, Renderer::logical_screen_tile_height - 5 };
+	ret.box_size = { Renderer::logical_screen_tile_width - 2, 4 };
+	ret.continue_location = { 18, 16 };
+	return ret;
 }
 
 void Game::reset_dialog_state(){
-	this->text_state.region = TileRegion::Background;
-	this->text_state.first_position =
-		this->text_state.position =
-		this->text_state.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
-	this->text_state.box_corner = { 1, Renderer::logical_screen_tile_height - 5 };
-	this->text_state.box_size = { Renderer::logical_screen_tile_width - 2, 4 };
-	this->text_state.continue_location = { 18, 16 };
+	this->text_state = this->get_default_dialog_state();
 	this->dialog_box_visible = false;
 }
 
@@ -489,6 +503,8 @@ std::string Game::get_name_from_user(SpeciesId species, int max_length){
 
 void Game::create_main_characters(const std::string &player_name, const std::string &rival_name){
 	this->world->create_main_characters(player_name, rival_name);
+	this->variable_store.set_string("player_name", player_name);
+	this->variable_store.set_string("rival_name", rival_name);
 }
 
 void Game::game_loop(){

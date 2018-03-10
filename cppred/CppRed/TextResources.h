@@ -41,10 +41,10 @@ public:
 
 class TextResourceCommand{
 protected:
-	void wait_for_continue(Game &game, TextState &state);
 public:
 	virtual ~TextResourceCommand(){}
 	virtual void execute(Game &, TextState &) = 0;
+	static void wait_for_continue(Game &game, TextState &state, bool display_arrow = true);
 };
 
 class TextCommand : public TextResourceCommand{

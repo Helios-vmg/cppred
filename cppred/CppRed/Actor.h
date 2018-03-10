@@ -77,6 +77,7 @@ public:
 	std::unique_ptr<ScreenOwner> get_new_screen_owner();
 	DEFINE_GETTER_SETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)
+	DEFINE_GETTER(name)
 };
 
 template <typename T> 

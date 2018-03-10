@@ -77,8 +77,9 @@ void Renderer::do_software_rendering(){
 		point.palette = nullptr;
 	}
 
-	this->render_non_sprites();
+	this->render_background();
 	this->render_sprites();
+	this->render_window();
 	this->final_render(surf);
 	
 #ifdef MEASURE_RENDERING_TIMES
@@ -87,13 +88,13 @@ void Renderer::do_software_rendering(){
 #endif
 }
 
-void Renderer::render_non_sprites(){
+void Renderer::render_background(){
 	for (int y = 0; y < logical_screen_height; y++){
 		auto bg_offset = this->bg_global_offset + this->bg_offsets[y];
-		auto window_offset = this->window_global_offset + this->window_offsets[y];
-		auto wy_prime = y - window_offset.y;
-		bool window_enabled = this->enable_window && wy_prime >= 0 && wy_prime < logical_screen_height;
-		auto y_prime = wy_prime / tile_size * tilemap_width;
+		//auto window_offset = this->window_global_offset + this->window_offsets[y];
+		//auto wy_prime = y - window_offset.y;
+		//bool window_enabled = this->enable_window && wy_prime >= 0 && wy_prime < logical_screen_height;
+		//auto y_prime = wy_prime / tile_size * tilemap_width;
 		//if (window_enabled){
 		//	for (int x = 0; x < logical_screen_width; x++)
 		//		*(pixels++) = {0xFF,0x00,0x00,0xFF};
@@ -108,23 +109,23 @@ void Renderer::render_non_sprites(){
 			color_index = -1;
 			palette = nullptr;
 
-			if (window_enabled){
-				auto p = window_offset;
-				p.x = euclidean_modulo(p.x, Tilemap::w * tile_size);
-				p.y = euclidean_modulo(p.y, Tilemap::h * tile_size);
-				auto src_x = x - p.x;
-				if ((src_x >= 0) & (src_x < (int)logical_screen_width)){
-					auto &tile = this->window_tilemap.tiles[src_x / tile_size + y_prime];
-					auto tile_no = tile.tile_no;
-					tile_no = tile_mapping[tile_no];
-					auto tile_offset_x = src_x % tile_size;
-					auto tile_offset_y = wy_prime % tile_size;
-					color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
-					palette = &tile.palette;
-					if (!*palette)
-						palette = &this->bg_palette;
-				}
-			}
+			//if (window_enabled){
+			//	auto p = window_offset;
+			//	p.x = euclidean_modulo(p.x, Tilemap::w * tile_size);
+			//	p.y = euclidean_modulo(p.y, Tilemap::h * tile_size);
+			//	auto src_x = x - p.x;
+			//	if ((src_x >= 0) & (src_x < (int)logical_screen_width)){
+			//		auto &tile = this->window_tilemap.tiles[src_x / tile_size + y_prime];
+			//		auto tile_no = tile.tile_no;
+			//		tile_no = tile_mapping[tile_no];
+			//		auto tile_offset_x = src_x % tile_size;
+			//		auto tile_offset_y = wy_prime % tile_size;
+			//		color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
+			//		palette = &tile.palette;
+			//		if (!*palette)
+			//			palette = &this->bg_palette;
+			//	}
+			//}
 
 			if (this->enable_bg & !palette){
 				auto p = bg_offset + Point{ x, y };
@@ -220,6 +221,35 @@ void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
 				if (!*palette)
 					palette = sprite_palettes[(int)sprite.get_palette_region()];
 			}
+		}
+	}
+}
+
+void Renderer::render_window(){
+	if (!this->enable_window)
+		return;
+	auto end = this->window_region_start + this->window_region_size;
+	for (int y = this->window_region_start.y; y < end.y; y++){
+		for (int x = this->window_region_start.x; x < end.x; x++){
+			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
+			auto &color_index = point.value;
+			auto &palette = point.palette;
+
+			color_index = -1;
+			palette = nullptr;
+
+			auto src = Point(x, y) - this->window_origin;
+			src.x = euclidean_modulo(src.x, Tilemap::w * tile_size);
+			src.y = euclidean_modulo(src.y, Tilemap::h * tile_size);
+			auto &tile = this->window_tilemap.tiles[src.x / tile_size + src.y / tile_size * Tilemap::w];
+			auto tile_no = tile.tile_no;
+			tile_no = tile_mapping[tile_no];
+			auto tile_offset_x = src.x % tile_size;
+			auto tile_offset_y = src.y % tile_size;
+			color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
+			palette = &tile.palette;
+			if (!*palette)
+				palette = &this->bg_palette;
 		}
 	}
 }
@@ -353,7 +383,10 @@ void Renderer::clear_screen(){
 	fill(this->bg_offsets, zero);
 	fill(this->window_offsets, zero);
 	this->bg_global_offset = zero;
-	this->window_global_offset = zero;
+	//this->window_global_offset = zero;
+	this->window_origin = zero;
+	this->window_region_start = zero;
+	this->window_region_size = zero;
 	this->set_default_palettes();
 }
 

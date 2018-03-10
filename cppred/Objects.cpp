@@ -31,18 +31,18 @@ MapObject::MapObject(BufferReader &buffer){
 	this->position.y = buffer.read_varint();
 }
 
-EventDisp::EventDisp(BufferReader &buffer) : MapObject(buffer){}
+EventDisp::EventDisp(BufferReader &buffer): MapObject(buffer){}
 
-Sign::Sign(BufferReader &buffer) : MapObject(buffer){
+Sign::Sign(BufferReader &buffer): DialogingMapObject(buffer){
 	this->text_index = buffer.read_varint();
 }
 
-HiddenObject::HiddenObject(BufferReader &buffer) : MapObject(buffer){
+HiddenObject::HiddenObject(BufferReader &buffer): MapObject(buffer){
 	this->script = buffer.read_string();
 	this->script_parameter = buffer.read_string();
 }
 
-MapWarp::MapWarp(BufferReader &buffer, const MapStore &map_store) : MapObject(buffer){
+MapWarp::MapWarp(BufferReader &buffer, const MapStore &map_store): MapObject(buffer){
 	this->index = buffer.read_varint();
 	auto temp = buffer.read_string();
 	if (temp.size() >= 4 && temp[0] == 'v' && temp[1] == 'a' && temp[2] == 'r' && temp[3] == ':')
@@ -65,7 +65,7 @@ MapObjectFacingDirection to_MapObjectFacingDirection(const std::string &s){
 	throw std::runtime_error("Invalid MapObjectFacingDirection value: " + s);
 }
 
-ObjectWithSprite::ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map) : MapObject(buffer){
+ObjectWithSprite::ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map): DialogingMapObject(buffer){
 	this->sprite = find_in_constant_map(graphics_map, buffer.read_string());
 	this->facing_direction = to_MapObjectFacingDirection(buffer.read_string());
 	this->wandering = !!buffer.read_varint();
@@ -77,21 +77,21 @@ NpcMapObject::NpcMapObject(BufferReader &buffer, const std::map<std::string, con
 }
 
 ItemMapObject::ItemMapObject(BufferReader &buffer,
-	const std::map<std::string, const GraphicsAsset *> &graphics_map,
-	const std::map<std::string, ItemId> &items_map) : ObjectWithSprite(buffer, graphics_map){
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::string, ItemId> &items_map): ObjectWithSprite(buffer, graphics_map){
 	this->item = find_in_constant_map(items_map, buffer.read_string());
 }
 
 TrainerMapObject::TrainerMapObject(BufferReader &buffer,
-	const std::map<std::string, const GraphicsAsset *> &graphics_map,
-	const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map) : ObjectWithSprite(buffer, graphics_map){
+		const std::map<std::string, const GraphicsAsset *> &graphics_map,
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): ObjectWithSprite(buffer, graphics_map){
 	auto class_name = buffer.read_string();
 	auto party_index = (int)buffer.read_varint();
 	this->party = find_in_constant_map(parties_map, std::make_pair(class_name, party_index));
 }
 
-PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map) :
-	ObjectWithSprite(buffer, graphics_map){
+PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map):
+		ObjectWithSprite(buffer, graphics_map){
 	this->species = (SpeciesId)buffer.read_varint();
 	this->level = (int)buffer.read_varint();
 }
@@ -127,15 +127,15 @@ CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, 
 	return ret;
 }
 
-void NpcMapObject::activate(CppRed::Game &game, CppRed::Actor &activator){
-	if (this->text_index < 0 || this->text_index >= this->map_data->map_text.size())
+void DialogingMapObject::activate(CppRed::Game &game, CppRed::Actor &activator){
+	auto index = get_text_index();
+	if (index < 0 || index >= this->map_data->map_text.size())
 		return;
-	const auto &text = this->map_data->map_text[this->text_index];
+	const auto &text = this->map_data->map_text[index];
 	if (text.simple_text){
 		std::unique_ptr<CppRed::ScreenOwner> p(new CppRed::TextDisplay(game, text.text));
 		activator.set_new_screen_owner(std::move(p));
 	}else{
 		//TODO: Run script.
 	}
-		
 }

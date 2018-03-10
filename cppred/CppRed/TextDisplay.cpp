@@ -25,7 +25,12 @@ std::unique_ptr<ScreenOwner> TextDisplay::run(){
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
 			tilemap.tiles[x + y * Tilemap::w] = original_contents[(x + 2) + (y + 2) * w2];
-	this->game->run_dialog(this->text_id);
+	renderer.set_enable_window(true);
+	auto dialog_state = Game::get_default_dialog_state();
+	renderer.set_window_region_start((dialog_state.box_corner - Point(1, 1)) * Renderer::tile_size);
+	renderer.set_window_region_size((dialog_state.box_size + Point(2, 2)) * Renderer::tile_size);
+	this->game->run_dialog(this->text_id, TileRegion::Window, true);
+	renderer.set_enable_window(false);
 
 	renderer.set_bg_global_offset(original_offset);
 	for (int y = 0; y < h2; y++)

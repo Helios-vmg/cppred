@@ -39,7 +39,9 @@ private:
 	Point bg_offsets[logical_screen_height];
 	Point window_offsets[logical_screen_height];
 	Point bg_global_offset = { 0, 0 };
-	Point window_global_offset = { 0, 0 };
+	Point window_origin;
+	Point window_region_start;
+	Point window_region_size;
 	sprite_map_t sprites;
 	std::vector<Sprite *> sprite_list;
 	std::uint64_t next_sprite_id = 0;
@@ -55,9 +57,10 @@ private:
 	void initialize_assets();
 	void initialize_data();
 	void do_software_rendering();
-	void render_non_sprites();
+	void render_background();
 	void render_sprites();
 	void render_sprite(Sprite &, const Palette **);
+	void render_window();
 	void final_render(TextureSurface &);
 	void set_y_offset(Point (&)[logical_screen_height], int y0, int y1, const Point &);
 	std::vector<Point> draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &, TileRegion, Palette, bool);
@@ -96,7 +99,9 @@ public:
 	void release_sprite(std::uint64_t);
 	std::uint64_t get_id();
 	DEFINE_GETTER_SETTER(bg_global_offset)
-	DEFINE_GETTER_SETTER(window_global_offset)
+	DEFINE_GETTER_SETTER(window_origin)
+	DEFINE_GETTER_SETTER(window_region_start)
+	DEFINE_GETTER_SETTER(window_region_size)
 	void set_y_bg_offset(int y0, int y1, const Point &);
 	void set_y_window_offset(int y0, int y1, const Point &);
 };

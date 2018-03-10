@@ -4,11 +4,12 @@
 #include "CppRed/Actor.h"
 #include "RendererStructs.h"
 #include "utility.h"
+#include "Objects.h"
 #include <map>
 #include <limits>
 #include <sstream>
 #include <cassert>
-#include "Objects.h"
+#include <iostream>
 
 Blockset::Blockset(const byte_t *buffer, size_t &offset, size_t size){
 	this->name = read_string(buffer, offset, size);
@@ -346,6 +347,7 @@ MapObjectInstance::MapObjectInstance(MapObject &object, CppRed::Game &game): gam
 }
 
 void MapObjectInstance::activate(CppRed::Actor &activator){
+	std::cout << activator.get_name() << " activated " << this->full_object->get_name() << std::endl;
 	this->full_object->activate(*this->game, activator);
 }
 
