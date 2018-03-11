@@ -6,7 +6,6 @@ AudioRenderer::AudioRenderer(AudioDevice &device): device(&device){
 }
 
 AudioRenderer::~AudioRenderer(){
-	this->device->clear_renderer();
 }
 
 void AudioRenderer::write_data_to_device(Uint8 *stream, int len, StereoSampleFinal *spillover_buffer, size_t &spillover_buffer_size){

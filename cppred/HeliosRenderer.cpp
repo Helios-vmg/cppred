@@ -61,6 +61,10 @@ HeliosRenderer::HeliosRenderer(AudioDevice &dev):
 #endif
 }
 
+HeliosRenderer::~HeliosRenderer(){
+	this->device->clear_renderer();
+}
+
 void HeliosRenderer::update(double now){
 	this->current_clock = cast_round_u64(now * gb_cpu_frequency);
 	if (this->set_audio_turned_on_at_at_next_update){
