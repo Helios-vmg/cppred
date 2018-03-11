@@ -107,16 +107,16 @@ CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, 
 		case MapObjectFacingDirection::BoulderMovementByte2:
 			break;
 		case MapObjectFacingDirection::Up:
-			temp->set_facing_direction(CppRed::FacingDirection::Up);
+			temp->set_facing_direction(FacingDirection::Up);
 			break;
 		case MapObjectFacingDirection::Right:
-			temp->set_facing_direction(CppRed::FacingDirection::Right);
+			temp->set_facing_direction(FacingDirection::Right);
 			break;
 		case MapObjectFacingDirection::Down:
-			temp->set_facing_direction(CppRed::FacingDirection::Down);
+			temp->set_facing_direction(FacingDirection::Down);
 			break;
 		case MapObjectFacingDirection::Left:
-			temp->set_facing_direction(CppRed::FacingDirection::Left);
+			temp->set_facing_direction(FacingDirection::Left);
 			break;
 		default:
 			throw std::exception();

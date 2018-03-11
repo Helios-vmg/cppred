@@ -3,8 +3,22 @@
 #include "utility.h"
 #include <sstream>
 
+int Tileset2::next_id = 1;
+
 Tilesets2::Tilesets2(const char *path, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs){
-	static const std::vector<std::string> order = { "name", "blockset", "tiles", "collision_data", "counters", "grass", "type", "impassability_pairs", "impassability_pairs_water", };
+	static const std::vector<std::string> order = {
+		"name",
+		"blockset",
+		"tiles",
+		"collision_data",
+		"counters",
+		"grass",
+		"type",
+		"impassability_pairs",
+		"impassability_pairs_water",
+		"warp_check",
+		"warp_tiles",
+	};
 
 	CsvParser csv(path);
 	auto rows = csv.row_count();
@@ -35,15 +49,6 @@ const V &get(const std::map<K, V> &map, const K &key){
 	return it->second;
 }
 
-std::vector<int> to_int_vector(const std::string &s){
-	std::vector<int> ret;
-	std::stringstream stream(s);
-	int i;
-	while (stream >> i)
-		ret.push_back(i);
-	return ret;
-}
-
 std::vector<std::pair<int, int>> read_pairs(const std::string &s, const std::string &name, const char *column_name){
 	auto pairs = to_int_vector(s);
 	std::vector<std::pair<int, int>> ret;
@@ -71,6 +76,8 @@ Tileset2::Tileset2(const std::vector<std::string> &columns, const std::map<std::
 	this->tileset_type = to_TilesetType(columns[6]);
 	this->impassability_pairs = read_pairs(columns[7], this->name, "impassability_pairs");
 	this->impassability_pairs_water = read_pairs(columns[8], this->name, "impassability_pairs_water");
+	this->warp_check = to_unsigned(columns[9]);
+	this->warp_tiles = to_int_vector(columns[10], true);
 }
 
 std::shared_ptr<Tileset2> Tilesets2::get(const std::string &name) const{
@@ -91,6 +98,7 @@ void write_pair_list(std::vector<byte_t> &dst, const std::vector<std::pair<int, 
 }
 
 void Tileset2::serialize(std::vector<byte_t> &dst){
+	write_varint(dst, this->id);
 	write_ascii_string(dst, this->name);
 	write_ascii_string(dst, this->blockset_name);
 	write_ascii_string(dst, this->tiles->name);

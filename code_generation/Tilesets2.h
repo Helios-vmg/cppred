@@ -7,6 +7,8 @@
 #include "ReorderedBlockset.h"
 
 class Tileset2{
+	static int next_id;
+	int id = next_id++;
 	std::string name;
 	std::string blockset_name;
 	std::shared_ptr<std::vector<byte_t>> blockset;
@@ -18,6 +20,8 @@ class Tileset2{
 	TilesetType tileset_type;
 	std::vector<std::pair<int, int>> impassability_pairs;
 	std::vector<std::pair<int, int>> impassability_pairs_water;
+	int warp_check;
+	std::vector<int> warp_tiles;
 public:
 	Tileset2(const std::vector<std::string> &columns, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs);
 	DELETE_COPY_CONSTRUCTORS(Tileset2);
@@ -47,6 +51,15 @@ public:
 	}
 	const Graphic &get_tiles() const{
 		return *this->tiles;
+	}
+	int get_id() const{
+		return this->id;
+	}
+	int get_warp_check() const{
+		return this->warp_check;
+	}
+	const std::vector<int> &get_warp_tiles() const{
+		return this->warp_tiles;
 	}
 	void serialize(std::vector<byte_t> &);
 };

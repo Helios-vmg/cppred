@@ -89,6 +89,11 @@ static void write_tilesets(std::ostream &header, std::ostream &source, const Til
 		tileset->serialize(tileset_data);
 
 	write_buffer_to_header_and_source(header, source, tileset_data, "tileset_data");
+
+	header << "enum class TilesetId{\n";
+	for (auto &tileset : tilesets.get_tilesets())
+		header << "\t" << tileset->get_name() << " = " << tileset->get_id() << ",\n";
+	header << "};\n";
 }
 
 template <typename T>

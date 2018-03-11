@@ -243,3 +243,13 @@ std::uint32_t BufferReader::read_u32(){
 std::vector<byte_t> BufferReader::read_string_as_vector(){
 	return basic_read_string<std::vector<byte_t>>(this->buffer, this->offset, this->size);
 }
+
+Point direction_to_vector(FacingDirection direction){
+	static const Point deltas[] = {
+		{ 0, -1},
+		{ 1,  0},
+		{ 0,  1},
+		{-1,  0},
+	};
+	return deltas[(int)direction];
+}

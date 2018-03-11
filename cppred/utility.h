@@ -317,3 +317,12 @@ template <typename T>
 auto make_range(T &xs){
 	return iterator_range<decltype(std::begin(xs))>(std::begin(xs), std::end(xs));
 }
+
+enum class FacingDirection{
+	Up = 0,
+	Right,
+	Down,
+	Left,
+};
+
+Point direction_to_vector(FacingDirection);

@@ -91,16 +91,6 @@ void Actor::update(){
 	this->update_sprites();
 }
 
-Point Actor::direction_to_vector(FacingDirection direction){
-	static const Point deltas[] = {
-		{ 0, -1},
-		{ 1,  0},
-		{ 0,  1},
-		{-1,  0},
-	};
-	return deltas[(int)direction];
-}
-
 bool Actor::move(FacingDirection direction){
 	static const Point deltas[] = {
 		{ 0, -1},
@@ -125,6 +115,7 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
 	if (!this->can_move_to(pos0, pos1, direction))
 		return false;
+	this->about_to_move();
 	auto &map0 = world.get_map_instance(pos0.map);
 	auto &map1 = world.get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.

@@ -270,3 +270,14 @@ void write_buffer_to_header_and_source(std::ostream &header, std::ostream &sourc
 	write_buffer_to_stream(source, data);
 	source << ";\n";
 }
+
+std::vector<int> to_int_vector(const std::string &s, bool sort){
+	std::vector<int> ret;
+	std::stringstream stream(s);
+	int i;
+	while (stream >> i)
+		ret.push_back(i);
+	if (sort)
+		std::sort(ret.begin(), ret.end());
+	return ret;
+}

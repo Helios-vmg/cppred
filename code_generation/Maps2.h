@@ -35,6 +35,8 @@ class Map2{
 	unsigned border_block;
 	MapConnection map_connections[4];
 	std::vector<MapTextEntry2> map_text;
+	int special_warp_check = 0;
+	std::vector<int> special_warp_tiles;
 public:
 	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data);
 	DELETE_COPY_CONSTRUCTORS(Map2);

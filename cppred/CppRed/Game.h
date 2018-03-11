@@ -48,8 +48,6 @@ enum class GameState{
 	TextDisplay,
 };
 
-enum class FacingDirection;
-
 class Game{
 	Engine *engine;
 	PokemonVersion version;

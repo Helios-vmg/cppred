@@ -77,7 +77,7 @@ bool in_applicable_region(const Point &reduced, const Point &region){
 	return (!region.x || region.x == reduced.x) && (!region.y || region.y == reduced.y);
 }
 
-std::pair<MapData *, Point> compute_map_connections(const WorldCoordinates &position, MapData &map_data, MapStore &map_store){
+std::pair<const MapData *, Point> compute_map_connections(const WorldCoordinates &position, const MapData &map_data, MapStore &map_store){
 	struct SimplifiedCheck{
 		Point applicable_region;
 		int x_multiplier_1;
@@ -140,6 +140,10 @@ WorldCoordinates World::remap_coordinates(const WorldCoordinates &position_param
 }
 
 MapInstance &World::get_map_instance(Map map){
+	return this->map_store.get_map_instance(map, *this->game);
+}
+
+const MapInstance &World::get_map_instance(Map map) const{
 	return this->map_store.get_map_instance(map, *this->game);
 }
 
@@ -270,6 +274,14 @@ void World::create_main_characters(const std::string &player_name, const std::st
 	auto &engine = this->game->get_engine();
 	this->player_character = create_actor<PlayerCharacter>(*this->game, player_name, engine.get_renderer());
 	this->rival = create_actor<Trainer>(*this->game, rival_name, engine.get_renderer(), BlueSprite);
+}
+
+bool World::facing_edge_of_map(const WorldCoordinates &pos, FacingDirection dir) const{
+	auto &map = this->map_store.get_map_data(pos.map);
+	if (!(!pos.position.x || !pos.position.y || pos.position.x == map.width - 1 || pos.position.y == map.height - 1))
+		return false;
+	auto pos2 = pos.position + direction_to_vector(dir);
+	return !point_in_map(pos2, map);
 }
 
 void World::render(Renderer &renderer){

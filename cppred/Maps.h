@@ -44,6 +44,7 @@ enum class MapObjectFacingDirection{
 };
 
 struct TilesetData{
+	TilesetId id;
 	std::string name;
 	std::shared_ptr<Blockset> blockset;
 	const GraphicsAsset *tiles;
@@ -115,6 +116,8 @@ struct MapData{
 	int border_block;
 	std::shared_ptr<std::vector<std::unique_ptr<MapObject>>> objects;
 	std::vector<MapTextEntry> map_text;
+	int warp_check;
+	int warp_tiles[8];
 
 	MapData(
 		Map map_id,
@@ -124,8 +127,8 @@ struct MapData{
 		std::vector<TemporaryMapConnection> &tmcs,
 		std::vector<std::pair<MapData *, std::string>> &map_objects
 	);
-	int get_block_at_map_position(const Point &);
-	int get_partial_tile_at_actor_position(const Point &);
+	int get_block_at_map_position(const Point &) const;
+	int get_partial_tile_at_actor_position(const Point &) const;
 };
 
 class MapObjectInstance{
@@ -148,16 +151,20 @@ public:
 
 class MapInstance{
 	Map map;
-	MapData *data;
+	const MapData *data;
 	MapStore *store;
+	//Even bits: cell is occupied.
+	//Odd bits: cell has a warp.
 	std::vector<bool> occupation_bitmap;
 	std::vector<MapObjectInstance> objects;
 
-	void check_map_location(const Point &);
+	void check_map_location(const Point &) const;
+	int get_block_number(const Point &) const;
 public:
 	MapInstance(Map, MapStore &, CppRed::Game &);
 	void set_cell_occupation(const Point &, bool);
-	bool get_cell_occupation(const Point &);
+	bool get_cell_occupation(const Point &) const;
+	bool is_warp_tile(const Point &) const;
 	auto get_objects() const{
 		return make_range(this->objects);
 	}
@@ -189,8 +196,9 @@ class MapStore{
 	//void load_map_objects();
 public:
 	MapStore();
-	MapData &get_map_data(Map map);
+	const MapData &get_map_data(Map map) const;
 	MapInstance &get_map_instance(Map map, CppRed::Game &);
-	MapData &get_map_by_name(const std::string &) const;
+	const MapInstance &get_map_instance(Map map, CppRed::Game &) const;
+	const MapData &get_map_by_name(const std::string &) const;
 	void release_map_instance(Map);
 };

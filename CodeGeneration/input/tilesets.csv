@@ -1,20 +1,20 @@
-name,blockset,tiles,collision_data,counters,grass,type,impassability_pairs,impassability_pairs_water
-Overworld,Overworld_Block,Overworld_GFX,Overworld_Coll,,82,Outdoor,,
-RedsHouse,RedsHouse_Block,RedsHouse_GFX,RedsHouse_Coll,,,Indoor,,
-Forest,Forest_Block,Forest_GFX,Forest_Coll,,32,Cave,48 46 82 46 85 46 86 46 32 46 94 46 95 46,20 46 72 46
-Pokecenter,Pokecenter_Block,Pokecenter_GFX,Pokecenter_Coll,24 25 30,,Indoor,,
-Gym,Gym_Block,Gym_GFX,Gym_Coll,58,,Outdoor,,
-House,House_Block,House_GFX,House_Coll,,,Indoor,,
-Underground,Underground_Block,Underground_GFX,Underground_Coll,,,Indoor,,
-Gate,Gate_Block,Gate_GFX,Gate_Coll,23 50,,Indoor,,
-Ship,Ship_Block,Ship_GFX,Ship_Coll,,,Cave,,
-ShipPort,ShipPort_Block,ShipPort_GFX,ShipPort_Coll,,,Cave,,
-Cemetery,Cemetery_Block,Cemetery_GFX,Cemetery_Coll,18,,Indoor,,
-Interior,Interior_Block,Interior_GFX,Interior_Coll,,,Indoor,,
-Cavern,Cavern_Block,Cavern_GFX,Cavern_Coll,,,Cave,32 5 65 5 42 5 5 33,20 5
-Lobby,Lobby_Block,Lobby_GFX,Lobby_Coll,21 54,,Indoor,,
-Mansion,Mansion_Block,Mansion_GFX,Mansion_Coll,,,Indoor,,
-Lab,Lab_Block,Lab_GFX,Lab_Coll,,,Indoor,,
-Club,Club_Block,Club_GFX,Club_Coll,7 23,,Indoor,,
-Facility,Facility_Block,Facility_GFX,Facility_Coll,18,,Cave,,
-Plateau,Plateau_Block,Plateau_GFX,Plateau_Coll,,69,Cave,,
+name,blockset,tiles,collision_data,counters,grass,type,impassability_pairs,impassability_pairs_water,warp_check,warp_tiles
+Cavern,Cavern_Block,Cavern_GFX,Cavern_Coll,,,Cave,32 5 65 5 42 5 5 33,20 5,1,24 26 34
+Cemetery,Cemetery_Block,Cemetery_GFX,Cemetery_Coll,18,,Indoor,,,1,27 19
+Club,Club_Block,Club_GFX,Club_Coll,7 23,,Indoor,,,1,
+Facility,Facility_Block,Facility_GFX,Facility_Coll,18,,Cave,,,1,67 88 32 27 19
+Forest,Forest_Block,Forest_GFX,Forest_Coll,,32,Cave,48 46 82 46 85 46 86 46 32 46 94 46 95 46,20 46 72 46,1,90 92 58
+Gate,Gate_Block,Gate_GFX,Gate_Coll,23 50,,Indoor,,,1,59 26 28
+Gym,Gym_Block,Gym_GFX,Gym_Coll,58,,Outdoor,,,1,74
+House,House_Block,House_GFX,House_Coll,,,Indoor,,,1,84 92 50
+Interior,Interior_Block,Interior_GFX,Interior_Coll,,,Indoor,,,1,21 85 4
+Lab,Lab_Block,Lab_GFX,Lab_Coll,,,Indoor,,,1,52
+Lobby,Lobby_Block,Lobby_GFX,Lobby_Coll,21 54,,Indoor,,,1,26 28 56
+Mansion,Mansion_Block,Mansion_GFX,Mansion_Coll,,,Indoor,,,1,26 28 83
+Overworld,Overworld_Block,Overworld_GFX,Overworld_Coll,,82,Outdoor,,,2,27 88
+Plateau,Plateau_Block,Plateau_GFX,Plateau_Coll,,69,Cave,,,2,27 59
+Pokecenter,Pokecenter_Block,Pokecenter_GFX,Pokecenter_Coll,24 25 30,,Indoor,,,1,94
+RedsHouse,RedsHouse_Block,RedsHouse_GFX,RedsHouse_Coll,,,Indoor,,,1,26 28
+Ship,Ship_Block,Ship_GFX,Ship_Coll,,,Cave,,,2,55 57 30 74
+ShipPort,ShipPort_Block,ShipPort_GFX,ShipPort_Coll,,,Cave,,,2,
+Underground,Underground_Block,Underground_GFX,Underground_Coll,,,Indoor,,,1,19

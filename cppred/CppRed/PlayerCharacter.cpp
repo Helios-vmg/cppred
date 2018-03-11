@@ -9,6 +9,10 @@
 namespace CppRed{
 
 const Point PlayerCharacter::screen_block_offset(4, 4);
+const PlayerCharacter::warp_check_f PlayerCharacter::warp_check_functions[2] = {
+	&PlayerCharacter::facing_edge_of_map,
+	&PlayerCharacter::is_in_front_of_warp_tile,
+};
 
 PlayerCharacter::PlayerCharacter(Game &game, const std::string &name, Renderer &renderer):
 		Trainer(game, name, renderer, RedSprite){
@@ -33,42 +37,27 @@ void PlayerCharacter::teleport(const WorldCoordinates &destination){
 	map_instance.set_cell_occupation(destination.position, true);
 }
 
+bool PlayerCharacter::try_moving(const InputState &input){
+	while (true){
+		if (this->handle_movement(input))
+			return true;
+		if (!this->run_warp_logic_collision())
+			return false;
+	}
+}
+
 void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
 		auto &engine = this->game->get_engine();
 		auto input = engine.get_input_state();
-		auto &world = this->game->get_world();
 		if (input.any_direction()){
-			if (!this->handle_movement(input)){
+			if (!this->try_moving(input))
 				this->coroutine->yield();
-				continue;
+			else if (this->saved_warp){
+				this->game->get_world().teleport_player(*this->saved_warp);
+				this->saved_warp = nullptr;
 			}
-			MapObjectInstance *instances[8];
-			world.get_objects_at_location(instances, this->position);
-			const MapWarp *warp = nullptr;
-			for (auto instance : instances){
-				if (!instance)
-					break;
-				auto &o = instance->get_object();
-				if (o.get_type() == MapObjectType::Warp){
-					warp = static_cast<const MapWarp *>(&o);
-					break;
-				}
-			}
-			if (!warp)
-				continue;
-			bool at_event_disp = false;
-			for (auto instance : instances){
-				if (!instance)
-					break;
-				if (instance->get_object().get_type() == MapObjectType::EventDisp){
-					at_event_disp = true;
-					break;
-				}
-			}
-			if (at_event_disp)
-				std::cout << "At event disp! (" << warp->get_name() << ")\n";
-			world.teleport_player(*warp);
+			continue;
 		}else{
 			input = this->game->joypad_only_newly_pressed();
 			if (input.get_start()){
@@ -76,6 +65,7 @@ void PlayerCharacter::coroutine_entry_point(){
 				this->coroutine->yield();
 			}else if (input.get_a()){
 				MapObjectInstance *instances[8];
+				auto &world = this->game->get_world();
 				world.get_objects_at_location(instances, world.remap_coordinates(this->position + direction_to_vector(this->facing_direction)));
 				for (auto instance : instances){
 					if (!instance)
@@ -89,7 +79,75 @@ void PlayerCharacter::coroutine_entry_point(){
 	}
 }
 
-bool PlayerCharacter::handle_movement(InputState &input){
+bool PlayerCharacter::run_warp_logic_collision(){
+	auto &world = this->game->get_world();
+
+	auto &ms = world.get_map_store();
+	auto &map_data = ms.get_map_data(this->position.map);
+	if (!(map_data.warp_check >= 0 && map_data.warp_check < array_length(this->warp_check_functions)))
+		return false;
+	if (!(this->*this->warp_check_functions[map_data.warp_check])(world))
+		return false;
+
+	MapObjectInstance *instances[8];
+	world.get_objects_at_location(instances, this->position);
+	const MapWarp *warp = nullptr;
+	for (auto instance : instances){
+		if (!instance)
+			break;
+		auto &o = instance->get_object();
+		if (o.get_type() != MapObjectType::Warp)
+			continue;
+		warp = static_cast<const MapWarp *>(&o);
+	}
+	if (!warp)
+		return false;
+	world.teleport_player(*warp);
+	return true;
+}
+
+bool PlayerCharacter::run_warp_logic_no_collision(){
+	auto &world = this->game->get_world();
+	auto &ms = world.get_map_store();
+	auto &map_data = ms.get_map_data(this->position.map);
+	auto &map_instance = world.get_map_instance(this->position.map);
+	auto pos2 = this->position + direction_to_vector(this->facing_direction);
+	
+	MapObjectInstance *instances[8];
+	world.get_objects_at_location(instances, pos2);
+	const MapWarp *warp = nullptr;
+	for (auto instance : instances){
+		if (!instance)
+			break;
+		auto &o = instance->get_object();
+		if (o.get_type() != MapObjectType::Warp)
+			continue;
+		if (!map_instance.is_warp_tile(pos2.position)){
+			if (!(map_data.warp_check >= 0 && map_data.warp_check < array_length(this->warp_check_functions)))
+				continue;
+			if (!(this->*this->warp_check_functions[map_data.warp_check])(world))
+				continue;
+		}
+		warp = static_cast<const MapWarp *>(&o);
+	}
+	if (!warp)
+		return false;
+	//bool at_event_disp = false;
+	//for (auto instance : instances){
+	//	if (!instance)
+	//		break;
+	//	if (instance->get_object().get_type() == MapObjectType::EventDisp){
+	//		at_event_disp = true;
+	//		break;
+	//	}
+	//}
+	//if (at_event_disp)
+	//	std::cout << "At event disp! (" << warp->get_name() << ")\n";
+	this->saved_warp = warp;
+	return true;
+}
+
+bool PlayerCharacter::handle_movement(const InputState &input){
 	if (input.get_up())
 		return this->move({0, -1}, FacingDirection::Up);
 	if (input.get_right())
@@ -103,5 +161,19 @@ bool PlayerCharacter::handle_movement(InputState &input){
 void PlayerCharacter::entered_new_map(Map old_map, Map new_map){
 	this->game->entered_map(old_map, new_map);
 }
+
+bool PlayerCharacter::facing_edge_of_map(const World &world) const{
+	return world.facing_edge_of_map(this->position, this->facing_direction);
+}
+
+bool PlayerCharacter::is_in_front_of_warp_tile(const World &world) const{
+	auto pos2 = this->position + direction_to_vector(this->facing_direction);
+	return world.get_map_instance(pos2.map).is_warp_tile(pos2.position);
+}
+
+void PlayerCharacter::about_to_move(){
+	this->run_warp_logic_no_collision();
+}
+
 
 }

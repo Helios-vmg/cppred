@@ -17,6 +17,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 		"fishing_encounters", //  9
 		"music",			  // 10
 		"border_block",		  // 11
+		"special_warp_check", // 12
 	};
 	const int id_offset = 7;
 
@@ -65,6 +66,9 @@ Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, c
 	this->fishing_encounters = columns[9];
 	this->music = columns[10];
 	this->border_block = to_unsigned(columns[11]);
+	if (columns[12].size())
+		this->special_warp_check = to_unsigned(columns[12]);
+	this->special_warp_tiles = to_int_vector(columns[10], true);
 }
 
 std::shared_ptr<Map2> Maps2::get(const std::string &name){
@@ -165,6 +169,17 @@ void Map2::serialize(std::vector<byte_t> &dst){
 		write_signed_varint(dst, text.text);
 		write_ascii_string(dst, text.script);
 	}
+	write_varint(dst, this->special_warp_check > 0 ? this->special_warp_check : this->tileset->get_warp_check());
+	const std::vector<int> *warp_tiles = nullptr;
+	if (this->special_warp_tiles.size())
+		warp_tiles = &this->special_warp_tiles;
+	else
+		warp_tiles = &this->tileset->get_warp_tiles();
+	if (warp_tiles->size() > 8)
+		throw std::runtime_error("Error: map " + this->name + " has too many warp tiles. Max: 8");
+	write_varint(dst, warp_tiles->size());
+	for (auto tile : *warp_tiles)
+		write_varint(dst, tile);
 	//TODO: Serialize other members.
 }
 

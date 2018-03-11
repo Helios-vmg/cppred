@@ -6,13 +6,6 @@ class MapObjectInstance;
 
 namespace CppRed{
 
-enum class FacingDirection{
-	Up = 0,
-	Right,
-	Down,
-	Left,
-};
-
 class Game;
 class ScreenOwner;
 
@@ -50,9 +43,9 @@ protected:
 	virtual double movement_duration() const{
 		return Renderer::tile_size * 2;
 	}
-	static Point direction_to_vector(FacingDirection);
 	virtual bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	virtual void update_sprites(){}
+	virtual void about_to_move(){}
 public:
 	Actor(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
 	virtual ~Actor();

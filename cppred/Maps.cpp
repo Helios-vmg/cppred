@@ -48,6 +48,7 @@ TilesetData::TilesetData(
 	const std::map<std::string, std::shared_ptr<Collision>> &collisions,
 	const std::map<std::string, const GraphicsAsset *> &graphics_map){
 
+	this->id = (TilesetId)read_varint(buffer, offset, size);
 	this->name = read_string(buffer, offset, size);
 	this->blockset = find_in_constant_map(blocksets, read_string(buffer, offset, size));
 	this->tiles = find_in_constant_map(graphics_map, read_string(buffer, offset, size));
@@ -242,17 +243,26 @@ MapData::MapData(
 		}
 		this->map_text.push_back(entry);
 	}
+	this->warp_check = (int)buffer.read_varint() - 1;
+	auto warp_tile_count = buffer.read_varint();
+	{
+		unsigned i = 0;
+		for (; i < warp_tile_count; i++)
+			this->warp_tiles[i] = buffer.read_varint();
+		for (; i < array_length(this->warp_tiles); i++)
+			this->warp_tiles[i] = -1;
+	}
 }
 
-int MapData::get_block_at_map_position(const Point &point){
+int MapData::get_block_at_map_position(const Point &point) const{
 	return this->map_data->data[point.x + point.y * this->width];
 }
 
-int MapData::get_partial_tile_at_actor_position(const Point &point){
+int MapData::get_partial_tile_at_actor_position(const Point &point) const{
 	return this->tileset->blockset->data[this->get_block_at_map_position(point) * 4 + 2];
 }
 
-MapData &MapStore::get_map_by_name(const std::string &map_name) const{
+const MapData &MapStore::get_map_by_name(const std::string &map_name) const{
 	typedef decltype(this->maps_by_name)::value_type T;
 	auto begin = this->maps_by_name.begin();
 	auto end = this->maps_by_name.end();
@@ -301,7 +311,7 @@ MapStore::MapStore(){
 	this->map_instances.reserve(this->maps.size());
 }
 
-MapData &MapStore::get_map_data(Map map){
+const MapData &MapStore::get_map_data(Map map) const{
 	return *this->maps[(int)map - 1];
 }
 
@@ -314,15 +324,33 @@ MapInstance &MapStore::get_map_instance(Map map, CppRed::Game &game){
 	return *this->map_instances[index];
 }
 
-MapInstance::MapInstance(Map map, MapStore &store, CppRed::Game &game): map(map), store(&store){
-	this->data = &store.get_map_data(map);
-	this->occupation_bitmap.resize(this->data->width * this->data->height, false);
-	this->objects.reserve(this->data->objects->size());
-	for (auto &object : *this->data->objects)
-		this->objects.emplace_back(*object, game);
+const MapInstance &MapStore::get_map_instance(Map map, CppRed::Game &game) const{
+	auto index = (int)map - 1;
+	if (index >= this->map_instances.size() || !this->map_instances[index])
+		throw std::runtime_error("Internal error. Map instance not loaded.");
+	return *this->map_instances[index];
 }
 
-void MapInstance::check_map_location(const Point &p){
+MapInstance::MapInstance(Map map, MapStore &store, CppRed::Game &game): map(map), store(&store){
+	this->data = &store.get_map_data(map);
+	this->occupation_bitmap.resize(this->data->width * this->data->height * 2, false);
+	this->objects.reserve(this->data->objects->size());
+	auto &map_data = this->data->map_data->data;
+	auto begin = this->data->warp_tiles;
+	auto end = begin + array_length(this->data->warp_tiles); 
+	for (auto &object : *this->data->objects)
+		this->objects.emplace_back(*object, game);
+	for (int y = 0; y < this->data->height; y++){
+		for (int x = 0; x < this->data->width; x++){
+			Point p(x, y);
+			auto tile = this->data->get_partial_tile_at_actor_position(p);
+			auto it = std::find(begin, end, tile);
+			this->occupation_bitmap[this->get_block_number(p) * 2 + 1] = it != end;
+		}
+	}
+}
+
+void MapInstance::check_map_location(const Point &p) const{
 	if (p.x < 0 || p.y < 0 || p.x >= this->data->width || p.y >= this->data->height){
 		auto &map_data = this->store->get_map_data(map);
 		std::stringstream stream;
@@ -331,14 +359,24 @@ void MapInstance::check_map_location(const Point &p){
 	}
 }
 
-void MapInstance::set_cell_occupation(const Point &p, bool state){
-	this->check_map_location(p);
-	this->occupation_bitmap[p.x + p.y * this->data->width] = state;
+int MapInstance::get_block_number(const Point &p) const{
+	return p.x + p.y * this->data->width;
 }
 
-bool MapInstance::get_cell_occupation(const Point &p){
+void MapInstance::set_cell_occupation(const Point &p, bool state){
 	this->check_map_location(p);
-	return this->occupation_bitmap[p.x + p.y * this->data->width];
+	this->occupation_bitmap[this->get_block_number(p) * 2] = state;
+}
+
+bool MapInstance::get_cell_occupation(const Point &p) const{
+	this->check_map_location(p);
+	return this->occupation_bitmap[this->get_block_number(p) * 2];
+}
+
+bool MapInstance::is_warp_tile(const Point &p) const{
+	if (p.x < 0 || p.y < 0 || p.x >= this->data->width || p.y >= this->data->height)
+		return false;
+	return this->occupation_bitmap[this->get_block_number(p) * 2 + 1];
 }
 
 MapObjectInstance::MapObjectInstance(MapObject &object, CppRed::Game &game): game(&game){
