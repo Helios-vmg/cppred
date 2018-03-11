@@ -12,6 +12,7 @@ class AudioInterface{
 	AudioResourceId new_sound_id;
 	AudioResourceId last_music_sound_id;
 	AudioResourceId after_fade_out_play_this;
+	void play_sound_internal(AudioResourceId);
 public:
 	AudioInterface(AudioProgram &program);
 	AudioInterface(const AudioInterface &) = delete;

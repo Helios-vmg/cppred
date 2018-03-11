@@ -55,7 +55,6 @@ class AudioProgram{
 	int tempo_modifier = 0;
 	int frequency_modifier = 0;
 	bool stop_when_sfx_ends = false;
-	const AudioResource *current_resource = nullptr;
 	std::mutex mutex;
 	int fade_out_control = 0;
 	int fade_out_counter = 0;
@@ -167,7 +166,7 @@ class AudioProgram{
 
 	void load_commands();
 	void load_resources();
-	bool is_cry();
+	bool is_cry_playing();
 	enum class RegisterId{
 		DutySoundLength = 1,
 		VolumeEnvelope = 2,
@@ -186,11 +185,13 @@ class AudioProgram{
 	void update_channel(int);
 	void compute_fade_out();
 	bool is_sfx_playing();
+	bool channel_is_busy(int);
 public:
 	AudioProgram(AudioRenderer &renderer, PokemonVersion);
 	void update(double now);
 	void play_sound(AudioResourceId);
 	void pause_music();
+	void pause_music_no_lock();
 	void unpause_music();
 	void clear_channel(int channel);
 	std::vector<std::string> get_resource_strings();
@@ -203,6 +204,12 @@ public:
 	}
 	void copy_fade_control();
 	void wait_for_sfx_to_end();
+	void set_frequency_modifier(int value){
+		this->frequency_modifier = value;
+	}
+	void set_tempo_modifier(int value){
+		this->tempo_modifier = value;
+	}
 };
 
 }

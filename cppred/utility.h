@@ -139,6 +139,12 @@ std::int32_t read_signed_varint(const byte_t *buffer, size_t &offset, size_t siz
 std::string read_string(const byte_t *buffer, size_t &offset, size_t size);
 std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size);
 
+template <typename T>
+typename std::enable_if<std::is_unsigned<T>::value, int>::type
+euclidean_modulo(int n, T mod){
+	return euclidean_modulo_u(n, (int)mod);
+}
+
 template <typename K, typename V>
 const V &find_in_constant_map(const std::map<K, V> &map, const K &key){
 	auto it = map.find(key);

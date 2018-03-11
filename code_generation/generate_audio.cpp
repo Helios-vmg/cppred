@@ -510,7 +510,7 @@ class AudioData{
 		bool reading_sequences = true;
 		while (lines.size()){
 			auto line = move_pop_front(lines);
-			if (!line.size())
+			if (!line.size() || line[0] == '#')
 				continue;
 			if (line == ":headers"){
 				if (this->headers.size())

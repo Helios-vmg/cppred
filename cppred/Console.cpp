@@ -4,6 +4,8 @@
 #include "CppRed/AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 #include "font.inl"
+#include <sstream>
+#include <iomanip>
 
 #ifdef RGB
 #undef RGB
@@ -278,6 +280,7 @@ void Console::coroutine_entry_point(){
 		main_menu.push_back("Restart");
 		main_menu.push_back((std::string)"Version: " + to_string(this->get_version()));
 		main_menu.push_back("Sound test");
+		main_menu.push_back("Pok\x82mon cries");
 
 		bool run = true;
 		while (run){
@@ -295,6 +298,9 @@ void Console::coroutine_entry_point(){
 				case 2:
 					this->sound_test();
 					break;
+				case 3:
+					this->cry_test();
+					break;
 			}
 		}
 	}
@@ -311,6 +317,25 @@ void Console::sound_test(){
 	while (true){
 		item = this->handle_menu(sounds, item);
 		audio_interface.play_sound((AudioResourceId)(item + 1));
+	}
+}
+
+void Console::cry_test(){
+	this->engine->go_to_debug();
+	auto &program = this->get_audio_program();
+	CppRed::AudioInterface audio_interface(program);
+	std::vector<std::string> cries;
+	cries.reserve(array_length(pokemon_by_pokedex_id));
+	for (size_t i = 0; i < cries.capacity(); i++){
+		std::stringstream stream;
+		stream << std::setw(3) << std::setfill('0') << i + 1 << " " << pokemon_by_pokedex_id[i]->internal_name;
+		cries.push_back(stream.str());
+	}
+	int item = 0;
+	audio_interface.play_sound(AudioResourceId::Music_TitleScreen);
+	while (true){
+		item = this->handle_menu(cries, item);
+		audio_interface.play_cry(pokemon_by_pokedex_id[item]->species_id);
 	}
 }
 

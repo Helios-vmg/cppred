@@ -57,6 +57,7 @@ class Console{
 	int handle_menu(const std::vector<std::string> &, int default_item = 0, int item_separation = 1);
 	void draw_long_menu(const std::vector<std::string> &strings, int item_separation = 1);
 	void sound_test();
+	void cry_test();
 	void restart_game();
 	void flip_version();
 	PokemonVersion get_version();

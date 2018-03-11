@@ -18,10 +18,10 @@ AudioScheduler::~AudioScheduler(){
 }
 
 void AudioScheduler::start(){
-	if (this->thread)
+	if (this->thread.joinable())
 		return;
 	this->continue_running = true;
-	this->thread.reset(new std::thread([this](){ this->processor(); }));
+	this->thread = std::thread([this](){ this->processor(); });
 }
 
 void AudioScheduler::processor(){
@@ -42,10 +42,9 @@ void AudioScheduler::processor(){
 }
 
 void AudioScheduler::stop(){
-	if (this->thread){
+	if (this->thread.joinable()){
 		this->continue_running = false;
-		this->thread->join();
-		this->thread.reset();
+		this->thread.join();
 	}
 }
 

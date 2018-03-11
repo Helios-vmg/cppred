@@ -291,6 +291,10 @@ void AudioProgram::perform_update(){
 
 void AudioProgram::pause_music(){
 	LOCK_MUTEX(this->mutex);
+	this->pause_music_no_lock();
+}
+
+void AudioProgram::pause_music_no_lock(){
 	this->pause_music_state = PauseMusicState::PauseRequested;
 }
 
@@ -307,7 +311,7 @@ bool AudioProgram::Channel::apply_effects(){
 	if (this->note_delay_counter == 1)
 		return this->play_next_note();
 	this->note_delay_counter--;
-	if (this->channel_no < 4 && this->program->channels[4 + this->channel_no])
+	if (this->channel_no < 4 && this->program->channel_is_busy(4 + this->channel_no))
 		return true;
 	if (this->do_rotate_duty)
 		this->apply_duty_cycle();
@@ -374,7 +378,7 @@ bool AudioProgram::Channel::continue_execution(){
 DEFINE_COMMAND_FUNCTION(Tempo){
 	TempoAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "tempo " << command.tempo << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "tempo " << command.tempo << std::endl;
 #endif
 	int offset;
 	if (this->channel_no < 4){
@@ -395,7 +399,7 @@ DEFINE_COMMAND_FUNCTION(Tempo){
 DEFINE_COMMAND_FUNCTION(Volume){
 	VolumeAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "volume " << command.vol1 << " " << command.vol2 << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "volume " << command.vol1 << " " << command.vol2 << std::endl;
 #endif
 	this->program->renderer->set_NR50((byte_t)((command.vol1 & 0x0F) | ((command.vol2 & 0x0F) << 4)));
 	return true;
@@ -404,7 +408,7 @@ DEFINE_COMMAND_FUNCTION(Volume){
 DEFINE_COMMAND_FUNCTION(Duty){
 	DutyAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "duty " << command.duty << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "duty " << command.duty << std::endl;
 #endif
 	this->duty = command.duty;
 	return true;
@@ -413,7 +417,7 @@ DEFINE_COMMAND_FUNCTION(Duty){
 DEFINE_COMMAND_FUNCTION(DutyCycle){
 	DutyCycleAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "duty_cycle " << command.duty << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "duty_cycle " << command.duty << std::endl;
 #endif
 	this->duty_cycle = command.duty;
 	this->duty = command.duty & 0xC0;
@@ -424,7 +428,7 @@ DEFINE_COMMAND_FUNCTION(DutyCycle){
 DEFINE_COMMAND_FUNCTION(Vibrato){
 	VibratoAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "vibrato " << command.delay << " " << command.rate << " " << command.depth << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "vibrato " << command.delay << " " << command.rate << " " << command.depth << std::endl;
 #endif
 	this->vibrato_delay_counter_reload_value = this->vibrato_delay_counter = command.delay;
 	this->vibrato_extent = command.rate / 2;
@@ -435,7 +439,7 @@ DEFINE_COMMAND_FUNCTION(Vibrato){
 
 DEFINE_COMMAND_FUNCTION(TogglePerfectPitch){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "toggle_perfect_pitch\n";
+	std::cout << "(" << this->channel_no << ") " << "toggle_perfect_pitch\n";
 #endif
 	this->perfect_pitch = !this->perfect_pitch;
 	return true;
@@ -444,7 +448,7 @@ DEFINE_COMMAND_FUNCTION(TogglePerfectPitch){
 DEFINE_COMMAND_FUNCTION(NoteType){
 	NoteTypeAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "note_type " << command.speed << " " << command.volume << " " << command.fade << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "note_type " << command.speed << " " << command.volume << " " << command.fade << std::endl;
 #endif
 	this->note_speed = command.speed;
 
@@ -466,10 +470,10 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 DEFINE_COMMAND_FUNCTION(Rest){
 	RestAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "rest " << command.length << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "rest " << command.length << std::endl;
 #endif
 	this->set_delay_counters(command.length);
-	if (this->channel_no < 4 && this->program->channels[4 + this->channel_no])
+	if (this->channel_no < 4 && this->program->channel_is_busy(4 + this->channel_no))
 		return true;
 	if (this->channel_no % 4 == 2){
 		this->disable_this_hardware_channel();
@@ -484,7 +488,7 @@ DEFINE_COMMAND_FUNCTION(Rest){
 DEFINE_COMMAND_FUNCTION(Octave){
 	OctaveAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "octave " << command.octave << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "octave " << command.octave << std::endl;
 #endif
 	this->octave = command.octave;
 	return true;
@@ -493,7 +497,7 @@ DEFINE_COMMAND_FUNCTION(Octave){
 DEFINE_COMMAND_FUNCTION(Note){
 	NoteAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "note " << command.pitch << " " << command.length << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "note " << command.pitch << " " << command.length << std::endl;
 #endif
 	this->note_length(command.length, command.pitch);
 	return false;
@@ -502,7 +506,7 @@ DEFINE_COMMAND_FUNCTION(Note){
 DEFINE_COMMAND_FUNCTION(DSpeed){
 	DSpeedAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "dspeed " << command.speed << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "dspeed " << command.speed << std::endl;
 #endif
 	this->note_speed = command.speed;
 	return true;
@@ -511,7 +515,7 @@ DEFINE_COMMAND_FUNCTION(DSpeed){
 DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 	NoiseInstrumentAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "noise_instrument " << command.pitch << " " << command.length << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "noise_instrument " << command.pitch << " " << command.length << std::endl;
 #endif
 	if (!this->program->stop_when_sfx_ends){
 		static const AudioResourceId noises[] = {
@@ -554,7 +558,7 @@ DEFINE_COMMAND_FUNCTION(UnknownSfx10){
 	UnknownSfx10AudioCommand command(command_);
 #else
 	UnknownSfx10AudioCommand command(command_);
-	std::cout << "unknown_sfx_10 " << command.nr10 << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "unknown_sfx_10 " << command.nr10 << std::endl;
 	if (this->channel_no < 4 || this->do_execute_music)
 		return true;
 #endif
@@ -577,7 +581,7 @@ bool AudioProgram::Channel::unknown20(const AudioCommand &command_, bool &dont_s
 	UnknownSfx20AudioCommand command(command_);
 #else
 	UnknownSfx20AudioCommand command(command_);
-	std::cout << (noise ? "unknown_noise_20 " : "unknown_sfx_20 ") << command.length << " " << command.envelope << " " << command.frequency << std::endl;
+	std::cout << "(" << this->channel_no << ") " << (noise ? "unknown_noise_20 " : "unknown_sfx_20 ") << command.length << " " << command.envelope << " " << command.frequency << std::endl;
 	if (this->channel_no < 3 || this->do_execute_music)
 		return true;
 #endif
@@ -592,7 +596,7 @@ bool AudioProgram::Channel::unknown20(const AudioCommand &command_, bool &dont_s
 
 DEFINE_COMMAND_FUNCTION(ExecuteMusic){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "execute_music\n";
+	std::cout << "(" << this->channel_no << ") " << "execute_music\n";
 #endif
 	this->do_execute_music = true;
 	return true;
@@ -601,7 +605,7 @@ DEFINE_COMMAND_FUNCTION(ExecuteMusic){
 DEFINE_COMMAND_FUNCTION(PitchBend){
 	PitchBendAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "pitch_bend " << command.length << " " << command.frequency << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "pitch_bend " << command.length << " " << command.frequency << std::endl;
 #endif
 	this->pitch_bend_length = command.length;
 	this->pitch_bend_target_frequency = command.frequency;
@@ -612,7 +616,7 @@ DEFINE_COMMAND_FUNCTION(PitchBend){
 DEFINE_COMMAND_FUNCTION(StereoPanning){
 	StereoPanningAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "stereo_panning " << command.value << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "stereo_panning " << command.value << std::endl;
 #endif
 	this->program->stereo_panning = command.value;
 	return true;
@@ -621,7 +625,7 @@ DEFINE_COMMAND_FUNCTION(StereoPanning){
 DEFINE_COMMAND_FUNCTION(Loop){
 	LoopAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "loop " << command.times << " " << command.dst << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "loop " << command.times << " " << command.dst << std::endl;
 #endif
 	if (!command.times){
 		this->program_counter = command.dst;
@@ -639,7 +643,7 @@ DEFINE_COMMAND_FUNCTION(Loop){
 DEFINE_COMMAND_FUNCTION(Call){
 	CallAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "call " << command.dst << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "call " << command.dst << std::endl;
 #endif
 	if (this->call_stack.size())
 		std::cout << "Assumption in audio program might have been invalidated.\n";
@@ -651,7 +655,7 @@ DEFINE_COMMAND_FUNCTION(Call){
 DEFINE_COMMAND_FUNCTION(Goto){
 	GotoAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "goto " << command.dst << std::endl;
+	std::cout << "(" << this->channel_no << ") " << "goto " << command.dst << std::endl;
 #endif
 	this->program_counter = command.dst;
 	return true;
@@ -659,7 +663,7 @@ DEFINE_COMMAND_FUNCTION(Goto){
 
 DEFINE_COMMAND_FUNCTION(IfRed){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "ifred\n";
+	std::cout << "(" << this->channel_no << ") " << "ifred\n";
 #endif
 	this->ifred_execute_bit = this->program->version == PokemonVersion::Red;
 	return true;
@@ -667,7 +671,7 @@ DEFINE_COMMAND_FUNCTION(IfRed){
 
 DEFINE_COMMAND_FUNCTION(Else){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "else\n";
+	std::cout << "(" << this->channel_no << ") " << "else\n";
 #endif
 	this->ifred_execute_bit = !ifred_execute_bit;
 	return true;
@@ -675,7 +679,7 @@ DEFINE_COMMAND_FUNCTION(Else){
 
 DEFINE_COMMAND_FUNCTION(EndIf){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "endif\n";
+	std::cout << "(" << this->channel_no << ") " << "endif\n";
 #endif
 	this->ifred_execute_bit = true;
 	return true;
@@ -683,7 +687,7 @@ DEFINE_COMMAND_FUNCTION(EndIf){
 
 DEFINE_COMMAND_FUNCTION(End){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "end\n";
+	std::cout << "(" << this->channel_no << ") " << "end\n";
 #endif
 	if (this->call_stack.size()){
 		this->program_counter = this->call_stack.back();
@@ -716,9 +720,9 @@ bool AudioProgram::Channel::disable_channel_output(){
 }
 
 bool AudioProgram::Channel::disable_channel_output_sub(){
-	if (this->program->channels[4] && this->program->channels[4]->is_cry()){
+	if (this->program->is_cry_playing()){
 		if (this->channel_no == 4 && this->go_back_one_command_if_cry())
-			return false;
+			return true;
 		this->program->renderer->set_NR50(this->program->saved_volume);
 		this->program->saved_volume = 0;
 	}
@@ -726,7 +730,7 @@ bool AudioProgram::Channel::disable_channel_output_sub(){
 }
 
 bool AudioProgram::Channel::go_back_one_command_if_cry(){
-	if (!this->program->is_cry())
+	if (!this->program->is_cry_playing())
 		return false;
 	this->program_counter--;
 	return true;
@@ -763,7 +767,7 @@ void AudioProgram::Channel::note_pitch(std::uint32_t note_parameter){
 	int frequency = calculate_frequency(note_parameter, this->octave);
 	if (this->do_pitch_bend)
 		frequency = this->init_pitch_bend_variables(frequency);
-	if (this->channel_no < 4 && this->program->channels[4 + this->channel_no])
+	if (this->channel_no < 4 && this->program->channel_is_busy(4 + this->channel_no))
 		return;
 	this->program->set_register(RegisterId::VolumeEnvelope, this->channel_no, ((this->volume << 4) & 0xF0)|(this->fade & 0x0F));
 	this->apply_duty_and_sound_length();
@@ -814,7 +818,7 @@ void AudioProgram::Channel::apply_duty_and_sound_length(){
 void AudioProgram::Channel::enable_channel_output(){
 	auto nr51 = this->program->renderer->get_NR51();
 	byte_t value;
-	if (this->channel_no == 7 || this->channel_no < 4 && !this->program->channels[4 + this->channel_no]){
+	if (this->channel_no == 7 || this->channel_no < 4 && !this->program->channel_is_busy(4 + this->channel_no)){
 		value = nr51 & disable_channel_masks[this->channel_no % 4];
 		value |= this->program->stereo_panning & enable_channel_masks[this->channel_no % 4];
 	}else
@@ -824,11 +828,11 @@ void AudioProgram::Channel::enable_channel_output(){
 
 void AudioProgram::Channel::set_sfx_tempo(){
 	int tempo;
-	if (this->program->is_cry()){
+	if (this->program->is_cry_playing()){
 		tempo = this->program->tempo_modifier + 0x80;
-		int d = tempo >= 256;
-		tempo &= 0xFF;
-		tempo = tempo | (tempo << 8);
+		//int d = tempo >= 256;
+		//tempo &= 0xFF;
+		//tempo = tempo | (tempo << 8);
 	}else{
 		tempo = 0x100;
 	}
@@ -878,7 +882,7 @@ void AudioProgram::Channel::apply_wave_pattern_and_frequency(int frequency){
 		this->program->renderer->set_NR30(0x80);
 	}
 	assert(frequency < 0x10000 && frequency >= 0);
-	if (this->program->is_cry()){
+	if (this->program->is_cry_playing()){
 		frequency += this->program->frequency_modifier;
 		frequency &= 0xFFFF;
 	}
@@ -886,10 +890,6 @@ void AudioProgram::Channel::apply_wave_pattern_and_frequency(int frequency){
 	byte_t lo = (byte_t)(frequency & 0xFF);
 	this->program->set_register(RegisterId::FrequencyLow, this->channel_no, lo);
 	this->program->set_register(RegisterId::FrequencyHigh, this->channel_no, (hi | BITMAP(10000000)) & BITMAP(11000111));
-}
-
-bool AudioProgram::is_cry(){
-	return this->channels[4] && this->channels[4]->is_cry();
 }
 
 bool AudioProgram::Channel::is_cry(){
@@ -943,7 +943,7 @@ void AudioProgram::play_sound(AudioResourceId id){
 		throw std::runtime_error(stream.str());
 	}
 	auto &resource = this->resources[offset];
-	this->current_resource = &this->resources[offset];
+	auto &current_resource = this->resources[offset];
 	if (resource.type == AudioResourceType::Music){
 		//play music
 		this->disable_channel_output_when_sfx_ends = false;
@@ -961,34 +961,34 @@ void AudioProgram::play_sound(AudioResourceId id){
 		this->renderer->set_NR30(0x80);
 		this->renderer->set_NR50(0x77);
 
-		for (size_t i = 0; i < this->current_resource->channel_count; i++){
-			auto &channel = this->current_resource->channels[i];
+		for (size_t i = 0; i < current_resource.channel_count; i++){
+			auto &channel = current_resource.channels[i];
 			auto &c = this->channels[channel.channel];
-			c.reset(new Channel(*this, channel.channel, id, channel.entry_point, this->current_resource->bank));
+			c.reset(new Channel(*this, channel.channel, id, channel.entry_point, current_resource.bank));
 		}
 	}else{
 		//play SFX
-		for (size_t i = 0; i < this->current_resource->channel_count; i++){
-			auto &channel = this->current_resource->channels[i];
+		for (size_t i = 0; i < current_resource.channel_count; i++){
+			auto &channel = current_resource.channels[i];
 			auto &c = this->channels[channel.channel];
 			if (c){
 				bool skip_check = false;
 				if (channel.channel == 7){
-					if (this->current_resource->type == AudioResourceType::NoiseInstrument)
+					if (current_resource.type == AudioResourceType::NoiseInstrument)
 						return;
 					if (this->resources[(int)c->get_sound_id()].type == AudioResourceType::NoiseInstrument)
 						skip_check = true;
 				}
 				if (!skip_check && id > c->get_sound_id())
 					return;
-				c->reset(id, channel.entry_point, this->current_resource->bank);
+				c->reset(id, channel.entry_point, current_resource.bank);
 			}else
-				c.reset(new Channel(*this, channel.channel, id, channel.entry_point, this->current_resource->bank));
+				c.reset(new Channel(*this, channel.channel, id, channel.entry_point, current_resource.bank));
 			if (channel.channel == 4)
 				this->renderer->set_NR10(8);
 		}
 	}
-	if (this->current_resource->type == AudioResourceType::Cry && this->channels[6]){
+	if (current_resource.type == AudioResourceType::Cry && this->channels[6]){
 		//Overwrite the program counter of channel 6 to make it terminate immediately on the next
 		//update, or just destroy the object if that's somehow not possible.
 		for (int pc = 0; ; pc++){
@@ -1116,7 +1116,7 @@ AudioProgram::register_function AudioProgram::get_register_pointer(RegisterId id
 }
 
 void AudioProgram::clear_channel(int channel){
-	this->channels[euclidean_modulo(channel, (int)array_length(this->channels))].reset();
+	this->channels[euclidean_modulo(channel, array_length(this->channels))].reset();
 }
 
 std::vector<std::string> AudioProgram::get_resource_strings(){
@@ -1136,10 +1136,17 @@ std::unique_lock<std::mutex> AudioProgram::acquire_lock(){
 }
 
 bool AudioProgram::is_sfx_playing(){
-	bool any = false;
-	for (int i = 4; i < array_length(this->channels) && !any; i++)
-		any = !!this->channels[i];
-	return any;
+	for (int i = 4; i < array_length(this->channels); i++)
+		if (this->channels[i])
+			return true;
+	return false;
+}
+
+bool AudioProgram::is_cry_playing(){
+	for (int i = 4; i < array_length(this->channels); i++)
+		if (this->channels[i] && this->channels[i]->is_cry())
+			return true;
+	return false;
 }
 
 void AudioProgram::wait_for_sfx_to_end(){
@@ -1149,6 +1156,13 @@ void AudioProgram::wait_for_sfx_to_end(){
 			return;
 	}
 	this->sfx_finish_event.reset_and_wait();
+}
+
+bool AudioProgram::channel_is_busy(int index){
+	index = euclidean_modulo(index, array_length(this->channels));
+	if (this->is_cry_playing() && index >= 4)
+		return true;
+	return !!this->channels[index];
 }
 
 }
