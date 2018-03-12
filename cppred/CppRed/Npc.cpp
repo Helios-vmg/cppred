@@ -31,15 +31,7 @@ void Npc::coroutine_entry_point(){
 		auto distance = abs(delta.x) + abs(delta.y);
 		if (distance < this->wandering_radius){
 			auto &rand = this->game->get_engine().get_prng();
-			{
-				auto requested_wait = rand.generate_double() * (128.0 / 60.0);
-				auto rt0 = real_time.get();
-				auto vt0 = clock.get();
-				this->coroutine->wait(requested_wait);
-				auto rt1 = real_time.get();
-				auto vt1 = clock.get();
-				std::cout << this->name << " requested a " << requested_wait << " wait, but waited " << vt1 - vt0 << " vs, " << rt1 - rt0 << " rts\n";
-			}
+			this->coroutine->wait(rand.generate_double() * (128.0 / 60.0));
 			auto pick = geometric_distribution(rand, 3);
 			auto direction = (FacingDirection)rand(4);
 			
