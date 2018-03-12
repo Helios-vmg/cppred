@@ -66,15 +66,15 @@ public:
 	}
 };
 
-#define USE_DEQUE
-#ifdef USE_DEQUE
+//#define QueuedPublishingResource_USE_DEQUE
+#ifdef QueuedPublishingResource_USE_DEQUE
 #include <deque>
 #endif
 
 template <typename T>
 class QueuedPublishingResource{
 	std::vector<std::unique_ptr<T>> allocated;
-#ifndef  USE_DEQUE
+#ifndef  QueuedPublishingResource_USE_DEQUE
 	moodycamel::ReaderWriterQueue<T *> return_queue, queue;
 #else
 	std::deque<T *> return_queue, queue;
@@ -85,7 +85,7 @@ class QueuedPublishingResource{
 
 	T *reuse_or_allocate(){
 		T *ret;
-#ifndef USE_DEQUE
+#ifndef QueuedPublishingResource_USE_DEQUE
 		if (this->return_queue.try_dequeue(ret))
 			return ret;
 #else
@@ -108,7 +108,7 @@ public:
 	QueuedPublishingResource(){
 		this->private_resource = this->allocate();
 	}
-#ifndef USE_DEQUE
+#ifndef QueuedPublishingResource_USE_DEQUE
 	QueuedPublishingResource(size_t max_capacity): return_queue(max_capacity), queue(max_capacity){
 #else
 	QueuedPublishingResource(size_t max_capacity){
@@ -116,7 +116,7 @@ public:
 		this->private_resource = this->allocate();
 	}
 	void publish(){
-#ifndef USE_DEQUE
+#ifndef QueuedPublishingResource_USE_DEQUE
 		if (!this->queue.try_enqueue(this->private_resource))
 			return;
 #else
@@ -132,7 +132,7 @@ public:
 	}
 	T *get_public_resource(){
 		T *ret = nullptr;
-#ifndef USE_DEQUE
+#ifndef QueuedPublishingResource_USE_DEQUE
 		this->queue.try_dequeue(ret);
 #else
 		LOCK_MUTEX(this->queue_mutex);
@@ -144,7 +144,7 @@ public:
 		return ret;
 	}
 	void return_resource(T *r){
-#ifndef USE_DEQUE
+#ifndef QueuedPublishingResource_USE_DEQUE
 		this->return_queue.enqueue(r);
 #else
 		LOCK_MUTEX(this->return_queue_mutex);
@@ -154,7 +154,7 @@ public:
 #endif
 	}
 	void clear_public_resource(){
-#ifndef USE_DEQUE
+#ifndef QueuedPublishingResource_USE_DEQUE
 		T *p;
 		while (this->queue.try_dequeue(p))
 			this->return_queue.enqueue(p);
