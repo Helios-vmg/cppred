@@ -17,6 +17,7 @@ class World : public ScreenOwner{
 	std::vector<actor_ptr<Actor>> actors;
 	Point camera_position;
 	Point pixel_offset;
+	std::pair<TilesetData *, int> visible_border_block = {nullptr, -1};
 
 	bool is_passable(const WorldCoordinates &);
 	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
@@ -25,7 +26,7 @@ class World : public ScreenOwner{
 	bool check_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, pairs_t pairs);
 	bool can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	bool can_move_to_water(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
-	std::pair<TilesetData *, int> compute_virtual_block(const WorldCoordinates &position);
+	std::pair<TilesetData *, int> compute_virtual_block(const WorldCoordinates &position, bool &border_visible);
 	void set_camera_position();
 	std::unique_ptr<ScreenOwner> update();
 	void render(Renderer &);
@@ -42,7 +43,7 @@ public:
 	std::unique_ptr<ScreenOwner> run() override;
 	WorldCoordinates remap_coordinates(const WorldCoordinates &position_parameter);
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
-	void entered_map(Map old_map, Map new_map);
+	void entered_map(Map old_map, Map new_map, bool warped);
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	bool facing_edge_of_map(const WorldCoordinates &, FacingDirection) const;
 	void pause() override;

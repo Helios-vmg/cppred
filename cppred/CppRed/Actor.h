@@ -39,7 +39,7 @@ protected:
 	void run_walking_animation(const Point &delta, FacingDirection);
 	bool move(FacingDirection);
 	bool move(const Point &delta, FacingDirection);
-	virtual void entered_new_map(Map old_map, Map new_map){}
+	virtual void entered_new_map(Map old_map, Map new_map, bool warped){}
 	virtual double movement_duration() const{
 		return Renderer::tile_size * 2;
 	}

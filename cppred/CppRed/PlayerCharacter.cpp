@@ -31,7 +31,7 @@ void PlayerCharacter::teleport(const WorldCoordinates &destination){
 	this->position = destination;
 	auto &map_instance = this->game->get_world().get_map_instance(destination.map);
 	if (old_position.map != destination.map)
-		this->entered_new_map(old_position.map, destination.map);
+		this->entered_new_map(old_position.map, destination.map, true);
 	else
 		map_instance.set_cell_occupation(old_position.position, false);
 	map_instance.set_cell_occupation(destination.position, true);
@@ -159,8 +159,8 @@ bool PlayerCharacter::handle_movement(const InputState &input){
 	return this->move({-1, 0}, FacingDirection::Left);
 }
 
-void PlayerCharacter::entered_new_map(Map old_map, Map new_map){
-	this->game->entered_map(old_map, new_map);
+void PlayerCharacter::entered_new_map(Map old_map, Map new_map, bool warped){
+	this->game->entered_map(old_map, new_map, warped);
 }
 
 bool PlayerCharacter::facing_edge_of_map(const World &world) const{

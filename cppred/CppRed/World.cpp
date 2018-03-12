@@ -117,12 +117,16 @@ std::pair<const MapData *, Point> compute_map_connections(const WorldCoordinates
 	return {nullptr, position.position};
 }
 
-std::pair<TilesetData *, int> World::compute_virtual_block(const WorldCoordinates &position){
+std::pair<TilesetData *, int> World::compute_virtual_block(const WorldCoordinates &position, bool &border_visible){
 	auto transformed = this->remap_coordinates(position);
-	auto &map_data = this->map_store.get_map_data(transformed.map);
-	if (point_in_map(transformed.position, map_data))
-		return {map_data.tileset.get(), map_data.get_block_at_map_position(transformed.position)};
-	return {map_data.tileset.get(), map_data.border_block};
+	auto &map_data = this->map_store.get_map_data(position.map);
+	auto &transformed_map_data = this->map_store.get_map_data(transformed.map);
+	if (point_in_map(transformed.position, transformed_map_data))
+		return {transformed_map_data.tileset.get(), transformed_map_data.get_block_at_map_position(transformed.position)};
+	border_visible = true;
+	if (this->visible_border_block.second < 0)
+		this->visible_border_block = {map_data.tileset.get(), map_data.border_block};
+	return this->visible_border_block;
 }
 
 WorldCoordinates World::remap_coordinates(const WorldCoordinates &position_parameter){
@@ -207,7 +211,9 @@ bool World::check_tile_pair_collisions(const WorldCoordinates &pos0, const World
 	return true;
 }
 
-void World::entered_map(Map old_map, Map new_map){
+void World::entered_map(Map old_map, Map new_map, bool warped){
+	if (warped)
+		this->visible_border_block = {nullptr, -1};
 	this->map_store.release_map_instance(old_map);
 	auto &instance = this->map_store.get_map_instance(new_map, *this->game);
 	this->actors.clear();
@@ -297,13 +303,14 @@ void World::render(Renderer &renderer){
 		auto &map_data = this->map_store.get_map_data(current_map);
 		auto pos = this->player_character->get_map_position();
 		const int k = 2;
+		bool border_visible = false;
 		for (int y = -k; y < Renderer::logical_screen_tile_height + k; y++){
 			for (int x = -k; x < Renderer::logical_screen_tile_width + k; x++){
 				auto &tile = bg.tiles[(x + k) + (y + k) * Tilemap::w];
 				int x2 = (x + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset.x + pos.x;
 				int y2 = (y + k) / 2 - (k / 2) - PlayerCharacter::screen_block_offset.y + pos.y;
 				Point map_position(x2, y2);
-				auto computed_block = this->compute_virtual_block({current_map, map_position});
+				auto computed_block = this->compute_virtual_block({current_map, map_position}, border_visible);
 				auto &blockset = computed_block.first->blockset->data;
 				auto tileset = computed_block.first->tiles;
 				auto block = computed_block.second;
@@ -314,6 +321,8 @@ void World::render(Renderer &renderer){
 				tile.palette = null_palette;
 			}
 		}
+		if (!border_visible)
+			this->visible_border_block = {nullptr, -1};
 	}
 }
 

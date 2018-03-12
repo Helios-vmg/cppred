@@ -533,8 +533,8 @@ void Game::game_loop(){
 	}
 }
 
-void Game::entered_map(Map old_map, Map new_map){
-	this->world->entered_map(old_map, new_map);
+void Game::entered_map(Map old_map, Map new_map, bool warped){
+	this->world->entered_map(old_map, new_map, warped);
 }
 
 void Game::teleport_player(const WorldCoordinates &wc){

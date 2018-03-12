@@ -125,7 +125,7 @@ public:
 	}
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	void game_loop();
-	void entered_map(Map old_map, Map new_map);
+	void entered_map(Map old_map, Map new_map, bool warped);
 	void teleport_player(const WorldCoordinates &);
 	World &get_world(){
 		return *this->world;

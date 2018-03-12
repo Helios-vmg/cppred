@@ -22,7 +22,7 @@ private:
 
 	void coroutine_entry_point() override;
 	bool handle_movement(const InputState &);
-	void entered_new_map(Map old_map, Map new_map) override;
+	void entered_new_map(Map old_map, Map new_map, bool warped) override;
 	void initialize_sprites(const GraphicsAsset &graphics, Renderer &) override;
 	bool run_warp_logic_no_collision();
 	bool run_warp_logic_collision();

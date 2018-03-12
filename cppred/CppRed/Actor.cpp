@@ -128,7 +128,7 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 	map0.set_cell_occupation(pos0.position, false);
 	this->position = pos1;
 	if (pos0.map != pos1.map)
-		this->entered_new_map(pos0.map, pos1.map);
+		this->entered_new_map(pos0.map, pos1.map, false);
 	return true;
 }
 
