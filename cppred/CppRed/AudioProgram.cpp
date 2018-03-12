@@ -1164,7 +1164,14 @@ void AudioProgram::wait_for_sfx_to_end(){
 		if (!this->is_sfx_playing())
 			return;
 	}
-	this->sfx_finish_event.reset_and_wait();
+	auto coroutine = Coroutine::get_current_coroutine_ptr();
+	if (!coroutine)
+		this->sfx_finish_event.reset_and_wait();
+	else{
+		this->sfx_finish_event.reset();
+		while (!this->sfx_finish_event.state())
+			coroutine->yield();
+	}
 }
 
 bool AudioProgram::channel_is_busy(int index){

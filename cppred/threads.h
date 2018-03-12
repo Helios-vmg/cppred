@@ -12,10 +12,13 @@ class Event{
 public:
 	void signal();
 	void reset_and_wait();
+	//Returns false if the wait period expired.
 	bool reset_and_wait_for(unsigned ms);
 	void wait();
+	//Returns false if the wait period expired.
 	bool wait_for(unsigned ms);
 	void reset();
+	bool state();
 };
 
 inline bool join_thread(std::unique_ptr<std::thread> &t){

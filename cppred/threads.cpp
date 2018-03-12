@@ -7,6 +7,11 @@ void Event::signal(){
 	this->cv.notify_one();
 }
 
+bool Event::state(){
+	LOCK_MUTEX(this->mutex);
+	return this->signalled;
+}
+
 void Event::reset(){
 	std::unique_lock<std::mutex> lock(this->mutex);
 	this->signalled = false;
@@ -32,22 +37,42 @@ void Event::reset_and_wait(){
 }
 
 bool Event::reset_and_wait_for(unsigned ms){
-	{
+	std::cv_status result;
+	HighResolutionClock clock;
+	auto target = clock.get() + ms * 0.001;
+	bool first = true;
+	do{
 		std::unique_lock<std::mutex> lock(this->mutex);
-		this->signalled = false;
-	}
-	return this->wait_for(ms);
+		if (first){
+			if (this->signalled)
+				this->signalled = false;
+			first = false;
+		}else{
+			if (this->signalled){
+				this->signalled = false;
+				return true;
+			}
+		}
+		result = this->cv.wait_for(lock, std::chrono::milliseconds((unsigned)((target - clock.get()) * 1000)));
+		if (result == std::cv_status::timeout)
+			return false;
+	}while (clock.get() < target);
+	return false;
 }
 
 bool Event::wait_for(unsigned ms){
 	std::cv_status result;
-	{
+	HighResolutionClock clock;
+	auto target = clock.get() + ms * 0.001;
+	do{
 		std::unique_lock<std::mutex> lock(this->mutex);
 		if (this->signalled){
 			this->signalled = false;
 			return true;
 		}
-		result = this->cv.wait_for(lock, std::chrono::milliseconds(ms));
-	}
-	return result == std::cv_status::no_timeout;
+		result = this->cv.wait_for(lock, std::chrono::milliseconds((unsigned)((target - clock.get()) * 1000)));
+		if (result == std::cv_status::timeout)
+			return false;
+	}while (clock.get() < target);
+	return false;
 }
