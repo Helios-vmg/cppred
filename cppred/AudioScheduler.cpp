@@ -33,8 +33,8 @@ void AudioScheduler::start(){
 void AudioScheduler::processor(){
 	try{
 		this->renderer->start();
-#ifdef CPU_USAGE
 		HighResolutionClock clock;
+#ifdef CPU_USAGE
 		double last = clock.get();
 		double time_processing = 0;
 #endif
