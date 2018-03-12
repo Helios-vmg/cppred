@@ -144,6 +144,10 @@ WorldCoordinates World::remap_coordinates(const WorldCoordinates &position_param
 	}
 }
 
+MapInstance *World::try_get_map_instance(Map map){
+	return this->map_store.try_get_map_instance(map, *this->game);
+}
+
 MapInstance &World::get_map_instance(Map map){
 	return this->map_store.get_map_instance(map, *this->game);
 }

@@ -120,12 +120,13 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 	if (!this->can_move_to(pos0, pos1, direction))
 		return false;
 	this->about_to_move();
-	auto &map0 = world.get_map_instance(pos0.map);
 	auto &map1 = world.get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
 	map1.set_cell_occupation(pos1.position, true);
 	this->run_walking_animation(delta, direction);
-	map0.set_cell_occupation(pos0.position, false);
+	auto map0 = world.try_get_map_instance(pos0.map);
+	if (map0)
+		map0->set_cell_occupation(pos0.position, false);
 	this->position = pos1;
 	if (pos0.map != pos1.map)
 		this->entered_new_map(pos0.map, pos1.map, false);

@@ -38,6 +38,7 @@ public:
 	void teleport_player(const MapWarp &);
 	void teleport_player(const WorldCoordinates &);
 	MapInstance &get_map_instance(Map);
+	MapInstance *try_get_map_instance(Map);
 	const MapInstance &get_map_instance(Map) const;
 	bool get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &);
 	std::unique_ptr<ScreenOwner> run() override;

@@ -198,6 +198,7 @@ public:
 	MapStore();
 	const MapData &get_map_data(Map map) const;
 	MapInstance &get_map_instance(Map map, CppRed::Game &);
+	MapInstance *try_get_map_instance(Map map, CppRed::Game &);
 	const MapInstance &get_map_instance(Map map, CppRed::Game &) const;
 	const MapData &get_map_by_name(const std::string &) const;
 	void release_map_instance(Map);

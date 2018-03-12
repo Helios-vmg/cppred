@@ -315,6 +315,13 @@ const MapData &MapStore::get_map_data(Map map) const{
 	return *this->maps[(int)map - 1];
 }
 
+MapInstance *MapStore::try_get_map_instance(Map map, CppRed::Game &game){
+	auto index = (int)map - 1;
+	if (index >= this->map_instances.size() || !this->map_instances[index])
+		return nullptr;
+	return this->map_instances[index].get();
+}
+
 MapInstance &MapStore::get_map_instance(Map map, CppRed::Game &game){
 	auto index = (int)map - 1;
 	if (index >= this->map_instances.size())
