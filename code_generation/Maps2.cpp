@@ -18,6 +18,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 		"music",			  // 10
 		"border_block",		  // 11
 		"special_warp_check", // 12
+		"special_warp_tiles", // 13
 	};
 	const int id_offset = 7;
 
@@ -68,7 +69,7 @@ Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, c
 	this->border_block = to_unsigned(columns[11]);
 	if (columns[12].size())
 		this->special_warp_check = to_unsigned(columns[12]);
-	this->special_warp_tiles = to_int_vector(columns[10], true);
+	this->special_warp_tiles = to_int_vector(columns[13], true);
 }
 
 std::shared_ptr<Map2> Maps2::get(const std::string &name){
