@@ -26,13 +26,34 @@ void AudioScheduler::start(){
 	this->thread = std::thread([this](){ this->processor(); });
 }
 
+#ifdef CPPRED_TESTING
+#define CPU_USAGE
+#endif
+
 void AudioScheduler::processor(){
 	try{
 		this->renderer->start();
+#ifdef CPU_USAGE
+		HighResolutionClock clock;
+		double last = clock.get();
+		double time_processing = 0;
+#endif
 		while (this->continue_running){
+#ifdef CPU_USAGE
+			auto t0 = clock.get();
+#endif
 			auto now = this->engine->get_clock();
 			this->program_interface->update(now);
 			this->renderer->update(now);
+#ifdef CPU_USAGE
+			auto t1 = clock.get();
+			time_processing += t1 - t0;
+			if (t1 >= last + 1){
+				std::cout << "AudioScheduler::processor() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
+				last = t1;
+				time_processing = 0;
+			}
+#endif
 			//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
 			//actual wait can last up to a few ms.
 			this->timer_event.wait();
