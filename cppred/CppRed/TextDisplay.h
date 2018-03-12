@@ -11,6 +11,7 @@ class TextDisplay : public ScreenOwner{
 public:
 	TextDisplay(Game &, TextResourceId);
 	std::unique_ptr<ScreenOwner> run() override;
+	void pause() override{}
 };
 
 }

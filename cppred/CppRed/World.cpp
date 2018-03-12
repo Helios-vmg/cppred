@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "PlayerCharacter.h"
 #include <sstream>
+#include <iostream>
 
 namespace CppRed{
 
@@ -272,8 +273,9 @@ std::unique_ptr<ScreenOwner> World::run(){
 
 void World::create_main_characters(const std::string &player_name, const std::string &rival_name){
 	auto &engine = this->game->get_engine();
-	this->player_character = create_actor<PlayerCharacter>(*this->game, player_name, engine.get_renderer());
-	this->rival = create_actor<Trainer>(*this->game, rival_name, engine.get_renderer(), BlueSprite);
+	auto &co = Coroutine::get_current_coroutine();
+	this->player_character = create_actor<PlayerCharacter>(*this->game, co, player_name, engine.get_renderer());
+	this->rival = create_actor<Trainer>(*this->game, co, rival_name, engine.get_renderer(), BlueSprite);
 }
 
 bool World::facing_edge_of_map(const WorldCoordinates &pos, FacingDirection dir) const{
@@ -313,6 +315,11 @@ void World::render(Renderer &renderer){
 			}
 		}
 	}
+}
+
+void World::pause(){
+	for (auto &actor : this->actors)
+		actor->pause();
 }
 
 }

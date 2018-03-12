@@ -92,14 +92,15 @@ static bool animate_big_star(CppRed::Game &game, shooting_star_graphics &graphic
 	auto &star = *graphics.star;
 	auto x0 = star.get_x();
 	auto y0 = star.get_y();
-	auto t0 = engine.get_clock();
+	auto &c= Coroutine::get_current_coroutine().get_clock();
+	auto t0 = c.get();
 	bool ret = false;
 	while (true){
 		if (game.check_for_user_interruption()){
 			ret = true;
 			break;
 		}
-		auto t1 = engine.get_clock();
+		auto t1 = c.get();
 		auto offset = cast_round((t1 - t0) * pixels_per_second);
 		if (y0 + offset > Renderer::logical_screen_height)
 			break;
@@ -127,9 +128,10 @@ static bool animate_falling_stars(CppRed::Game &game, shooting_star_graphics &gr
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	const double falling_rate = 20;
-	auto t0 = engine.get_clock();
+	auto &c= Coroutine::get_current_coroutine().get_clock();
+	auto t0 = c.get();
 	while (true){
-		auto t1 = engine.get_clock();
+		auto t1 = c.get();
 		if (t1 - t0 >= 2.4)
 			break;
 		for (int i = 0; i < star_waves; i++){
@@ -180,11 +182,12 @@ template <double Parabola(double)>
 void hop_sprite(CppRed::Game &game, Sprite &sprite, AudioResourceId sfx, Point &position, int sign, double x_multiplier){
 	auto &engine = game.get_engine();
 	game.get_audio_interface().play_sound(sfx);
-	auto t0 = engine.get_clock();
+	auto &c = Coroutine::get_current_coroutine().get_clock();
+	auto t0 = c.get();
 	const double duration = 25.0;
 	double scaled;
 	do{
-		auto t1 = engine.get_clock();
+		auto t1 = c.get();
 		scaled = (t1 - t0) * 60;
 		if (scaled > duration)
 			scaled = duration;
@@ -199,12 +202,13 @@ template <bool MoveSprite>
 bool move_gengar(CppRed::Game &game, Sprite &nidorino, Point &position, int length, int sign = 1){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	auto t0 = engine.get_clock();
+	auto &c = Coroutine::get_current_coroutine().get_clock();
+	auto t0 = c.get();
 	const double speed = 60;
 	int step;
 	auto initial_offset = renderer.get_bg_global_offset();
 	do{
-		auto t1 = engine.get_clock();
+		auto t1 = c.get();
 		step = cast_round((t1 - t0) * speed);
 		if (step > length)
 			step = length;
@@ -316,12 +320,13 @@ static BattleSceneSprites battle_scene(CppRed::Game &game){
 	//Duck Nidorino.
 	nidorino->set_visible(false);
 	nidorino2->set_visible(true);
+	auto &c= Coroutine::get_current_coroutine().get_clock();
 	{
-		auto t0 = engine.get_clock();
+		auto t0 = c.get();
 		const double duration = 20.0;
 		double scaled;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			scaled = (t1 - t0) * 60;
 			if (scaled > duration)
 				scaled = duration;
@@ -340,12 +345,12 @@ static BattleSceneSprites battle_scene(CppRed::Game &game){
 	nidorino2->set_visible(false);
 	nidorino3->set_visible(true);
 	{
-		auto t0 = engine.get_clock();
+		auto t0 = c.get();
 		double scaled;
 		auto first_y = nidorino_position.y;
 		auto min_y = first_y - 25;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			scaled = (t1 - t0) * 60;
 			auto temp = nidorino_parabola4(scaled);
 			Point delta = { cast_round(temp), cast_round(temp * 0.5) };

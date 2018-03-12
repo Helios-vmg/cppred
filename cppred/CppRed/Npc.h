@@ -15,7 +15,7 @@ protected:
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	void update_sprites() override;
 public:
-	Npc(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
+	Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
 	void set_wandering(int radius);
 };
 

@@ -13,6 +13,7 @@ const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_di
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
 
 Engine::Engine():
+		clock(this->base_clock),
 		prng(get_seed()){
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
@@ -63,18 +64,25 @@ void Engine::run(){
 		auto &interface = *interfacep;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(two_way_mixer), std::move(interfacep)));
 		this->audio_scheduler->start();
-		this->coroutine.reset(new Coroutine("Main coroutine", [this, version, &interface](Coroutine &){ this->coroutine_entry_point(version, interface); }));
+		this->coroutine.reset(new Coroutine(
+			"Main coroutine",
+			this->clock,
+			[this, version, &interface](Coroutine &){ this->coroutine_entry_point(version, interface); })
+		);
 
 		//Main loop.
-		while ((continue_running &= this->handle_events()) && this->update_console(version, interface)){
-			{
-				LOCK_MUTEX(this->exception_thrown_mutex);
-				if (this->exception_thrown)
-					throw std::runtime_error(*this->exception_thrown);
-			}
+		while (true){
+			this->clock.step();
+			continue_running &= this->handle_events();
+			if (!continue_running)
+				break;
+			if (!this->update_console(version, interface))
+				break;
+			this->check_exceptions();
 
 			if (!this->debug_mode){
 				//Resume game code.
+				this->coroutine->get_clock().step();
 				continue_running &= this->coroutine->resume();
 			}
 
@@ -86,6 +94,12 @@ void Engine::run(){
 		this->coroutine.reset();
 		this->audio_scheduler.reset();
 	}
+}
+
+void Engine::check_exceptions(){
+	LOCK_MUTEX(this->exception_thrown_mutex);
+	if (this->exception_thrown)
+		throw std::runtime_error(*this->exception_thrown);
 }
 
 bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgramInterface &program){
@@ -124,10 +138,6 @@ void Engine::yield(){
 
 void Engine::wait(double s){
 	this->coroutine->wait(s);
-}
-
-double Engine::get_clock(){
-	return this->clock.get();
 }
 
 template <bool DOWN>

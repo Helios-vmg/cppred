@@ -31,9 +31,45 @@ std::uint64_t get_timer_count(){
 #endif
 
 HighResolutionClock::HighResolutionClock(){
+	this->reference_time = get_timer_count();
 	this->resolution = 1.0 / get_timer_resolution();
 }
 
 double HighResolutionClock::get(){
-	return get_timer_count() * this->resolution;
+	return (get_timer_count() - this->reference_time) * this->resolution;
+}
+
+void SteppingClock::step(){
+	if (this->reference_time < 0){
+		this->reference_time = this->parent_clock->get();
+		this->current_time = 0;
+	}else
+		this->current_time = this->parent_clock->get() - this->reference_time;
+}
+
+void PausableClock::step(){
+	if (this->reference_time < 0){
+		this->reference_time = this->parent_clock->get();
+		this->current_time = this->accumulated_time;
+		this->paused = false;
+	}else{
+		if (this->paused)
+			throw std::runtime_error("PausableClock used incorrectly. step() called while in the paused state.");
+		this->current_time = this->accumulated_time + this->parent_clock->get() - this->reference_time;
+	}
+}
+
+void PausableClock::pause(){
+	if (this->paused)
+		return;
+	assert(this->reference_time >= 0);
+	this->accumulated_time += this->parent_clock->get() - this->reference_time;
+	this->paused = true;
+}
+
+void PausableClock::resume(){
+	if (!this->paused)
+		return;
+	this->reference_time = -1;
+	this->step();
 }

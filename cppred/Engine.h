@@ -27,7 +27,8 @@ class AudioProgramInterface;
 }
 
 class Engine{
-	HighResolutionClock clock;
+	HighResolutionClock base_clock;
+	SteppingClock clock;
 	SDL_Window *window = nullptr;
 	std::unique_ptr<AudioDevice> audio_device;
 	std::unique_ptr<VideoDevice> video_device;
@@ -46,6 +47,7 @@ class Engine{
 	void coroutine_entry_point(PokemonVersion, CppRed::AudioProgramInterface &);
 	bool handle_events();
 	bool update_console(PokemonVersion &version, CppRed::AudioProgramInterface &program);
+	void check_exceptions();
 public:
 	Engine();
 	~Engine();
@@ -66,7 +68,9 @@ public:
 	void wait_exactly_one_frame(){
 		this->yield();
 	}
-	double get_clock();
+	SteppingClock &get_stepping_clock(){
+		return this->clock;
+	}
 	void set_on_yield(std::function<void()> &&);
 	DEFINE_GETTER(input_state)
 

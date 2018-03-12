@@ -47,7 +47,7 @@ protected:
 	virtual void update_sprites(){}
 	virtual void about_to_move(){}
 public:
-	Actor(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
+	Actor(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
 	virtual ~Actor();
 	virtual void init();
 	virtual void uninit();
@@ -68,6 +68,9 @@ public:
 	}
 	void set_new_screen_owner(std::unique_ptr<ScreenOwner> &&);
 	std::unique_ptr<ScreenOwner> get_new_screen_owner();
+	void pause(){
+		this->coroutine->get_clock().pause();
+	}
 	DEFINE_GETTER_SETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)
 	DEFINE_GETTER(name)

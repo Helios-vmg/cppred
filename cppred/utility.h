@@ -243,7 +243,7 @@ public:
 private:
 	thread_local static std::vector<Coroutine *> coroutine_stack;
 	std::string name;
-	HighResolutionClock clock;
+	PausableClock clock;
 	bool active = false;
 	std::thread::id resume_thread_id;
 	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
@@ -255,6 +255,7 @@ private:
 	bool first_run = true;
 	double wait_remainder = 0;
 public:
+	Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point);
 	Coroutine(const std::string &name, entry_point_t &&entry_point);
 	bool resume();
 	void yield();
@@ -273,6 +274,10 @@ public:
 			throw std::runtime_error("No coroutine is running!");
 		return *p;
 	}
+	PausableClock &get_clock(){
+		return this->clock;
+	}
+	DEFINE_GETTER(name)
 };
 
 class BufferReader{

@@ -14,6 +14,7 @@ protected:
 public:
 	virtual ~ScreenOwner(){}
 	virtual std::unique_ptr<ScreenOwner> run() = 0;
+	virtual void pause() = 0;
 };
 
 }

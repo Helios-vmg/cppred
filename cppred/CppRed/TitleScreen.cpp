@@ -53,7 +53,8 @@ static void bounce_logo(CppRed::Game &game){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	auto t0 = engine.get_clock();
+	auto &c = Coroutine::get_current_coroutine().get_clock();
+	auto t0 = c.get();
 	const double delta_speed = 0.5;
 	const double base = 1 / (delta_speed * delta_speed);
 	const double limit = EasingCurve::limit_of_curve(base);
@@ -61,7 +62,7 @@ static void bounce_logo(CppRed::Game &game){
 	double x;
 	bool played = false;
 	do{
-		auto t1 = engine.get_clock();
+		auto t1 = c.get();
 		x = (t1 - t0) * 3;
 		if (x > limit)
 			x = limit;
@@ -81,11 +82,12 @@ static void scroll_version(CppRed::Game &game){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	auto t0 = engine.get_clock();
+	auto &c = Coroutine::get_current_coroutine().get_clock();
+	auto t0 = c.get();
 	const double duration = 26.0 / 60.0;
 	double x;
 	do{
-		auto t1 = engine.get_clock();
+		auto t1 = c.get();
 		x = (t1 - t0) / duration;
 		if (x > 1)
 			x = 1;
@@ -115,12 +117,13 @@ static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N],
 	current_pokemon = (current_pokemon + engine.get_prng()() % (N - 1) + 1) % N;
 
 	//Scroll out.
+	auto &c = Coroutine::get_current_coroutine().get_clock();
 	{
-		auto t0 = engine.get_clock();
+		auto t0 = c.get();
 		const double duration = 0.3;
 		double x = 0;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			x = t1 - t0;
 			if (x > duration)
 				x = duration;
@@ -135,11 +138,11 @@ static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N],
 
 	if (pokemon_by_species_id[(int)pokemons[previous_pokemon]]->starter_index >= 0){
 		auto y = ball.get_y();
-		auto t0 = engine.get_clock();
+		auto t0 = c.get();
 		const double duration = 1.0/6.0;
 		double x = 0;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			x = t1 - t0;
 			if (x > duration)
 				x = duration;
@@ -151,11 +154,11 @@ static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N],
 
 	//Scroll in.
 	{
-		auto t0 = engine.get_clock();
+		auto t0 = c.get();
 		const double duration = 0.3;
 		double x = 0;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			x = t1 - t0;
 			if (x > duration)
 				x = duration;

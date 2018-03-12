@@ -2,11 +2,12 @@
 #include "Game.h"
 #include "../Maps.h"
 #include "World.h"
+#include <iostream>
 
 namespace CppRed{
 
-Npc::Npc(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &instance):
-		Actor(game, name, renderer, sprite){
+Npc::Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &instance):
+		Actor(game, parent_coroutine, name, renderer, sprite){
 	this->object_instance = &instance;
 }
 
@@ -22,12 +23,23 @@ static int geometric_distribution(XorShift128 &rand, std::uint32_t n){
 
 void Npc::coroutine_entry_point(){
 	this->standing_sprites[(int)FacingDirection::Down]->set_visible(true);
+	HighResolutionClock real_time;
+	auto &clock = this->coroutine->get_clock();
 	while (!this->quit_coroutine){
+		clock.step();
 		auto delta = this->position.position - this->wandering_center;
 		auto distance = abs(delta.x) + abs(delta.y);
 		if (distance < this->wandering_radius){
 			auto &rand = this->game->get_engine().get_prng();
-			this->coroutine->wait(rand.generate_double() * (128.0 / 60.0));
+			{
+				auto requested_wait = rand.generate_double() * (128.0 / 60.0);
+				auto rt0 = real_time.get();
+				auto vt0 = clock.get();
+				this->coroutine->wait(requested_wait);
+				auto rt1 = real_time.get();
+				auto vt1 = clock.get();
+				std::cout << this->name << " requested a " << requested_wait << " wait, but waited " << vt1 - vt0 << " vs, " << rt1 - rt0 << " rts\n";
+			}
 			auto pick = geometric_distribution(rand, 3);
 			auto direction = (FacingDirection)rand(4);
 			

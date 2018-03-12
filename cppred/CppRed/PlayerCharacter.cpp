@@ -14,8 +14,8 @@ const PlayerCharacter::warp_check_f PlayerCharacter::warp_check_functions[2] = {
 	&PlayerCharacter::is_in_front_of_warp_tile,
 };
 
-PlayerCharacter::PlayerCharacter(Game &game, const std::string &name, Renderer &renderer):
-		Trainer(game, name, renderer, RedSprite){
+PlayerCharacter::PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer):
+		Trainer(game, parent_coroutine, name, renderer, RedSprite){
 }
 
 void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer){
@@ -48,6 +48,7 @@ bool PlayerCharacter::try_moving(const InputState &input){
 
 void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
+		this->coroutine->get_clock().step();
 		auto &engine = this->game->get_engine();
 		auto input = engine.get_input_state();
 		if (input.any_direction()){

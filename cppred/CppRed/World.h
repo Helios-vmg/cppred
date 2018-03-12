@@ -45,6 +45,7 @@ public:
 	void entered_map(Map old_map, Map new_map);
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	bool facing_edge_of_map(const WorldCoordinates &, FacingDirection) const;
+	void pause() override;
 
 	DEFINE_GETTER(camera_position)
 	DEFINE_GETTER(pixel_offset)

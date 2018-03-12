@@ -160,7 +160,11 @@ std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t siz
 }
 
 Coroutine::Coroutine(const std::string &name, entry_point_t &&entry_point):
+	Coroutine(name, get_current_coroutine().get_clock(), std::move(entry_point)){}
+
+Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point):
 		name(name),
+		clock(base_clock),
 		entry_point(std::move(entry_point)){
 	this->coroutine_stack.push_back(this);
 	this->coroutine.reset(new coroutine_t([this](yielder_t &y){
@@ -197,6 +201,7 @@ bool Coroutine::resume(){
 	this->active = true;
 	this->coroutine_stack.push_back(this);
 	//std::cout << this->name << " RESUMES\n";
+	this->clock.resume();
 	auto ret = !!(*this->coroutine)();
 	//std::cout << this->name << " PAUSES\n";
 	this->coroutine_stack.pop_back();
@@ -214,6 +219,7 @@ void Coroutine::wait(double s){
 	auto target = this->clock.get() + s + this->wait_remainder;
 	while (true){
 		this->yield();
+		this->clock.step();
 		auto now = this->clock.get();
 		if (now >= target){
 			this->wait_remainder = target - now;

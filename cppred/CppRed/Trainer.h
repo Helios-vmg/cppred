@@ -17,7 +17,7 @@ protected:
 	std::vector<InventorySpace> inventory;
 	virtual void coroutine_entry_point() override{}
 public:
-	Trainer(Game &game, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
+	Trainer(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
 	virtual ~Trainer(){}
 };
 

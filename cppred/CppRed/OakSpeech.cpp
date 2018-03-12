@@ -26,10 +26,11 @@ static void scroll_from_the_right(CppRed::Game &game){
 	auto &renderer = engine.get_renderer();
 	const auto t = Renderer::tile_size;
 	{
-		auto t0 = engine.get_clock();
+		auto &c = Coroutine::get_current_coroutine().get_clock();
+		auto t0 = c.get();
 		double y;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			y = (t1 - t0) * 480 - 120;
 			if (y > 0)
 				y = 0;
@@ -44,11 +45,12 @@ static void scroll_portrait(CppRed::Game &game, std::vector<Point> &red_pic, boo
 	auto &renderer = engine.get_renderer();
 	const auto t = Renderer::tile_size;
 	{
-		auto t0 = engine.get_clock();
+		auto &c = Coroutine::get_current_coroutine().get_clock();
+		auto t0 = c.get();
 		double y;
 		double multiplier = !direction ? -20 : 20;
 		do{
-			auto t1 = engine.get_clock();
+			auto t1 = c.get();
 			y = (t1 - t0) * multiplier;
 			if (!direction){
 				if (y < -6)

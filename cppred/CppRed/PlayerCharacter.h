@@ -31,7 +31,7 @@ private:
 	bool try_moving(const InputState &input);
 	void about_to_move() override;
 public:
-	PlayerCharacter(Game &game, const std::string &name, Renderer &);
+	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	void teleport(const WorldCoordinates &);
 };
 

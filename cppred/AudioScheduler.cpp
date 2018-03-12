@@ -42,7 +42,7 @@ void AudioScheduler::processor(){
 #ifdef CPU_USAGE
 			auto t0 = clock.get();
 #endif
-			auto now = this->engine->get_clock();
+			auto now = clock.get();
 			this->program_interface->update(now);
 			this->renderer->update(now);
 #ifdef CPU_USAGE

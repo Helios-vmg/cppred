@@ -72,7 +72,8 @@ bool Game::check_for_user_interruption_internal(bool autorepeat, double timeout,
 	auto coroutine = Coroutine::get_current_coroutine_ptr();
 	if (!coroutine)
 		throw std::runtime_error("Internal error: check_for_user_interruption_internal() must be called while a coroutine is running!");
-	timeout += this->engine->get_clock();
+	auto &c = coroutine->get_clock();
+	timeout += c.get();
 	do{
 		coroutine->yield();
 		auto input = autorepeat ? this->joypad_auto_repeat() : this->joypad_only_newly_pressed();
@@ -88,7 +89,7 @@ bool Game::check_for_user_interruption_internal(bool autorepeat, double timeout,
 				*input_state = input;
 			return true;
 		}
-	}while (this->engine->get_clock() < timeout);
+	}while (c.get() < timeout);
 	return false;
 }
 
@@ -114,14 +115,15 @@ InputState Game::joypad_auto_repeat(){
 	auto held = this->joypad_held;
 
 	auto pressed = this->joypad_pressed;
+	auto &clock = Coroutine::get_current_coroutine().get_clock();
 	if (pressed.get_value()){
-		this->jls_timeout = this->engine->get_clock() + 0.5;
+		this->jls_timeout = clock.get() + 0.5;
 		return held;
 	}
-	if (this->engine->get_clock() < this->jls_timeout)
+	if (clock.get() < this->jls_timeout)
 		return InputState();
 	if (held.get_value())
-		this->jls_timeout = this->engine->get_clock() + 5.0/60.0;
+		this->jls_timeout = clock.get() + 5.0/60.0;
 	else
 		this->jls_timeout = std::numeric_limits<double>::max();
 	
@@ -509,19 +511,25 @@ void Game::create_main_characters(const std::string &player_name, const std::str
 
 void Game::game_loop(){
 	std::vector<std::unique_ptr<ScreenOwner>> owners_stack;
+	ScreenOwner *last_owner = nullptr;
 	while (true){
 		ScreenOwner *current_owner;
 		if (owners_stack.size())
 			current_owner = owners_stack.back().get();
 		else
 			current_owner = this->world.get();
+		if (last_owner)
+			last_owner->pause();
 		auto new_owner = current_owner->run();
 		if (!new_owner){
 			if (!owners_stack.size())
 				return;
 			owners_stack.pop_back();
-		}else
+			last_owner = nullptr;
+		}else{
+			last_owner = current_owner;
 			owners_stack.emplace_back(std::move(new_owner));
+		}
 	}
 }
 
