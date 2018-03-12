@@ -48,20 +48,14 @@ void XorShift128::generate_block(void *buffer, size_t size){
 	}
 }
 
+const double double_precision = pow(2.0, -53.0);
+
 double XorShift128::generate_double(){
-	double ret = 0;
-	double addend = 0.5;
-	auto n = (*this)();
-	for (int i = 32; i--;){
-		ret += addend;
-		addend *= 0.5;
-	}
-	n = (*this)();
-	for (int i = 53 - 32; i--;){
-		ret += addend;
-		addend *= 0.5;
-	}
-	return ret;
+	std::uint64_t temp = (*this)();
+	temp <<= 32;
+	temp |= (*this)();
+	temp &= 0x1FFFFFFFFFFFFF;
+	return (double)temp * double_precision;
 }
 
 xorshift128_state get_seed(){
