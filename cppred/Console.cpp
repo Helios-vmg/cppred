@@ -332,7 +332,7 @@ void Console::cry_test(){
 		cries.push_back(stream.str());
 	}
 	int item = 0;
-	audio_interface.play_sound(AudioResourceId::Music_TitleScreen);
+	audio_interface.play_sound(AudioResourceId::Music_Routes1);
 	while (true){
 		item = this->handle_menu(cries, item);
 		audio_interface.play_cry(pokemon_by_pokedex_id[item]->species_id);
