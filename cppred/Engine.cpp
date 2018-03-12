@@ -49,9 +49,18 @@ static const char *to_string(PokemonVersion version){
 #undef interface
 #endif
 
+#if defined CPPRED_TESTING
+#define CPU_USAGE
+#endif
+
 void Engine::run(){
 	PokemonVersion version = PokemonVersion::Red;
 	bool continue_running = true;
+#ifdef CPU_USAGE
+		HighResolutionClock clock;
+		double last = clock.get();
+		double time_processing = 0;
+#endif
 	while (continue_running){
 		this->video_device->set_window_title(to_string(version));
 		this->debug_mode = false;
@@ -72,6 +81,9 @@ void Engine::run(){
 
 		//Main loop.
 		while (true){
+#ifdef CPU_USAGE
+			auto t0 = clock.get();
+#endif
 			this->clock.step();
 			continue_running &= this->handle_events();
 			if (!continue_running)
@@ -88,6 +100,15 @@ void Engine::run(){
 
 			this->renderer->render();
 			this->console->render();
+#ifdef CPU_USAGE
+			auto t1 = clock.get();
+			time_processing += t1 - t0;
+			if (t1 >= last + 1){
+				std::cout << "Engine::run() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
+				last = t1;
+				time_processing = 0;
+			}
+#endif
 			this->video_device->present();
 		}
 
