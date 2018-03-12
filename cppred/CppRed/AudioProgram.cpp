@@ -191,9 +191,10 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 	instruments_bank_3,
 };
 
-AudioProgram::AudioProgram(AudioRenderer &renderer, PokemonVersion version): renderer(&renderer), version(version){
+AudioProgram::AudioProgram(GbAudioRenderer &renderer, PokemonVersion version, bool mode): mode(mode), renderer(&renderer), version(version){
 	this->load_commands();
 	this->load_resources();
+	this->play_sound(AudioResourceId::Stop);
 }
 
 void AudioProgram::load_commands(){
@@ -240,19 +241,22 @@ void AudioProgram::load_resources(){
 const double AudioProgram::update_threshold = 4389.0 / 262144.0;
 
 void AudioProgram::update(double now){
-	LOCK_MUTEX(this->mutex);
-	auto delta = now - this->last_update;
-	if (this->last_update < 0){
-		this->last_update = now;
-		return;
+	{
+		LOCK_MUTEX(this->mutex);
+		auto delta = now - this->last_update;
+		if (this->last_update < 0){
+			this->last_update = now;
+			return;
+		}
+		if (delta < update_threshold)
+			return;
+		int n = (int)(delta * (1.0 / update_threshold));
+
+		for (int i = n; i--;)
+			this->perform_update();
+		this->last_update = now - (delta - n * update_threshold);
 	}
-	if (delta < update_threshold)
-		return;
-	int n = (int)(delta * (1.0 / update_threshold));
-	
-	for (int i = n; i--;)
-		this->perform_update();
-	this->last_update = now - (delta - n * update_threshold);
+	this->renderer->update(now);
 }
 
 void AudioProgram::update_channel(int i){
@@ -261,8 +265,10 @@ void AudioProgram::update_channel(int i){
 		return;
 	if (!c->update()){
 		c.reset();
-		if (i >= 4 && !this->is_sfx_playing())
+		if (!this->mode && i >= 4 && !this->is_sfx_playing()){
+			this->renderer->set_active(false);
 			this->sfx_finish_event.signal();
+		}
 	}
 }
 
@@ -291,12 +297,12 @@ void AudioProgram::perform_update(){
 
 void AudioProgram::pause_music(){
 	LOCK_MUTEX(this->mutex);
-	this->pause_music_no_lock();
+	//this->pause_music_no_lock();
 }
 
-void AudioProgram::pause_music_no_lock(){
-	this->pause_music_state = PauseMusicState::PauseRequested;
-}
+//void AudioProgram::pause_music_no_lock(){
+//	this->pause_music_state = PauseMusicState::PauseRequested;
+//}
 
 void AudioProgram::unpause_music(){
 	LOCK_MUTEX(this->mutex);
@@ -730,6 +736,7 @@ bool AudioProgram::Channel::disable_channel_output_sub(){
 }
 
 bool AudioProgram::Channel::go_back_one_command_if_cry(){
+	return false;
 	if (!this->program->is_cry_playing())
 		return false;
 	this->program_counter--;
@@ -1009,6 +1016,8 @@ void AudioProgram::play_sound(AudioResourceId id){
 		//Set full volume.
 		this->renderer->set_NR50(0x77);
 	}
+	if (resource.type == AudioResourceType::Cry)
+		this->renderer->set_active(true);
 }
 
 AudioProgram::Channel::Channel(AudioProgram &program, int channel_no, AudioResourceId resource_id, int entry_point, int bank){
@@ -1061,7 +1070,7 @@ void AudioProgram::Channel::reset(AudioResourceId resource_id, int entry_point, 
 }
 
 #define DEFINE_REGISTER_FUNCTION(reg, ch, dst) \
-static byte_t register_function_##reg##_##ch(AudioRenderer &renderer, int i){ \
+static byte_t register_function_##reg##_##ch(GbAudioRenderer &renderer, int i){ \
 	if (i < 0) \
 		return renderer.get_NR##dst(); \
 	renderer.set_NR##dst(i); \
@@ -1163,6 +1172,39 @@ bool AudioProgram::channel_is_busy(int index){
 	if (this->is_cry_playing() && index >= 4)
 		return true;
 	return !!this->channels[index];
+}
+
+
+AudioProgramInterface::AudioProgramInterface(GbAudioRenderer &music_renderer, GbAudioRenderer &sfx_renderer, PokemonVersion version):
+		music(music_renderer, version, true),
+		sfx(sfx_renderer, version, false){
+}
+
+void AudioProgramInterface::play_sound(AudioResourceId id, bool obtain_lock){
+	if (id == AudioResourceId::Stop){
+		this->music.play_sound(id);
+		this->sfx.play_sound(id);
+		return;
+	}
+	auto &resource = this->music.resources[(int)id];
+	auto &program = this->music.resources[(int)id].type == AudioResourceType::Music ? this->music : this->sfx;
+	std::unique_lock<std::mutex> lock;
+	if (obtain_lock)
+		lock = program.acquire_lock();
+	program.play_sound(id);
+}
+
+void AudioProgramInterface::wait_for_sfx_to_end(){
+	this->sfx.wait_for_sfx_to_end();
+}
+
+void AudioProgramInterface::update(double now){
+	this->music.update(now);
+	this->sfx.update(now);
+}
+
+AudioProgramInterface::double_lock AudioProgramInterface::acquire_lock(){
+	return {this->music.acquire_lock(), this->sfx.acquire_lock()};
 }
 
 }

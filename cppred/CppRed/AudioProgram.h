@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-class AudioRenderer;
+class GbAudioRenderer;
 enum class AudioResourceId;
 
 namespace CppRed{
@@ -31,12 +31,15 @@ struct AudioResource{
 };
 
 class AudioProgram{
+	friend class AudioProgramInterface;
+
 	static const double update_threshold;
 	double last_update = -1;
 	std::vector<AudioCommand> commands;
 	std::vector<AudioResource> resources;
 
-	AudioRenderer *renderer;
+	GbAudioRenderer *renderer;
+	bool mode;
 	PokemonVersion version;
 	AudioResourceId sound_id;
 	enum class PauseMusicState{
@@ -173,7 +176,7 @@ class AudioProgram{
 		FrequencyLow = 3,
 		FrequencyHigh = 4,
 	};
-	typedef byte_t (*register_function)(AudioRenderer &, int);
+	typedef byte_t (*register_function)(GbAudioRenderer &, int);
 	register_function get_register_pointer(RegisterId, int channel_no);
 	void set_register(RegisterId reg, int channel_no, byte_t value){
 		this->get_register_pointer(reg, channel_no)(*this->renderer, value);
@@ -184,14 +187,14 @@ class AudioProgram{
 	void perform_update();
 	void update_channel(int);
 	void compute_fade_out();
+	bool is_music_playing();
 	bool is_sfx_playing();
 	bool channel_is_busy(int);
 public:
-	AudioProgram(AudioRenderer &renderer, PokemonVersion);
+	AudioProgram(GbAudioRenderer &renderer, PokemonVersion, bool for_music);
 	void update(double now);
 	void play_sound(AudioResourceId);
 	void pause_music();
-	void pause_music_no_lock();
 	void unpause_music();
 	void clear_channel(int channel);
 	std::vector<std::string> get_resource_strings();
@@ -209,6 +212,27 @@ public:
 	}
 	void set_tempo_modifier(int value){
 		this->tempo_modifier = value;
+	}
+};
+
+class AudioProgramInterface{
+	AudioProgram music;
+	AudioProgram sfx;
+public:
+	AudioProgramInterface(GbAudioRenderer &music_renderer, GbAudioRenderer &sfx_renderer, PokemonVersion version);
+	void play_sound(AudioResourceId, bool lock = true);
+	void wait_for_sfx_to_end();
+	void update(double now);
+	typedef std::pair<std::unique_lock<std::mutex>, std::unique_lock<std::mutex>> double_lock;
+	double_lock acquire_lock();
+	void set_frequency_modifier(int value){
+		this->sfx.set_frequency_modifier(value);
+	}
+	void set_tempo_modifier(int value){
+		this->sfx.set_tempo_modifier(value);
+	}
+	std::vector<std::string> get_resource_strings(){
+		return this->music.get_resource_strings();
 	}
 };
 

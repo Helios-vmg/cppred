@@ -1,9 +1,9 @@
 #pragma once
 #include "AudioRenderer.h"
 
-#define OUTPUT_AUDIO_TO_FILE
+//#define OUTPUT_AUDIO_TO_FILE
 
-class HeliosRenderer : public AudioRenderer{
+class HeliosRenderer : public GbAudioRenderer{
 	unsigned current_frame_position = 0;
 	std::uint64_t frame_no = 0;
 	std::uint64_t audio_turned_on_at = 0;
@@ -55,7 +55,7 @@ class HeliosRenderer : public AudioRenderer{
 	void volume_event();
 	void sweep_event();
 public:
-	HeliosRenderer(AudioDevice &);
+	HeliosRenderer(AbstractAudioDevice &);
 	~HeliosRenderer();
 	void update(double now) override;
 
@@ -107,4 +107,5 @@ public:
 
 	AudioFrame *get_current_frame() override;
 	void return_used_frame(AudioFrame *frame) override;
+	void set_active(bool active) override;
 };

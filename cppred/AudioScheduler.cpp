@@ -4,9 +4,11 @@
 #include "CppRed/AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 
-AudioScheduler::AudioScheduler(Engine &engine, std::unique_ptr<AudioRenderer> &&renderer, std::unique_ptr<CppRed::AudioProgram> &&program): engine(&engine){
-	this->renderer = std::move(renderer);
-	this->program = std::move(program);
+AudioScheduler::AudioScheduler(
+			Engine &engine,
+			std::unique_ptr<AudioRenderer> &&renderer,
+			std::unique_ptr<CppRed::AudioProgramInterface> &&program_interface
+		): engine(&engine), renderer(std::move(renderer)), program_interface(std::move(program_interface)){
 	this->continue_running = false;
 	this->timer_id = SDL_AddTimer(1, timer_callback, this);
 }
@@ -26,11 +28,10 @@ void AudioScheduler::start(){
 
 void AudioScheduler::processor(){
 	try{
-		this->renderer->set_NR52(0xFF);
-		this->renderer->set_NR50(0x77);
+		this->renderer->start();
 		while (this->continue_running){
 			auto now = this->engine->get_clock();
-			this->program->update(now);
+			this->program_interface->update(now);
 			this->renderer->update(now);
 			//Delay for ~1 ms. Experimentation shows that, at least on Windows, the
 			//actual wait can last up to a few ms.

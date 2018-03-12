@@ -23,7 +23,7 @@ class AudioDevice;
 class AudioScheduler;
 
 namespace CppRed{
-class AudioProgram;
+class AudioProgramInterface;
 }
 
 class Engine{
@@ -43,9 +43,9 @@ class Engine{
 
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(PokemonVersion, CppRed::AudioProgram &);
+	void coroutine_entry_point(PokemonVersion, CppRed::AudioProgramInterface &);
 	bool handle_events();
-	bool update_console(PokemonVersion &version, CppRed::AudioProgram &program);
+	bool update_console(PokemonVersion &version, CppRed::AudioProgramInterface &program);
 public:
 	Engine();
 	~Engine();

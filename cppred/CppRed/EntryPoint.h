@@ -3,10 +3,10 @@
 enum class PokemonVersion;
 class Engine;
 namespace CppRed{
-class AudioProgram;
+class AudioProgramInterface;
 namespace Scripts{
 
-void entry_point(Engine &, PokemonVersion, CppRed::AudioProgram &);
+void entry_point(Engine &, PokemonVersion, CppRed::AudioProgramInterface &);
 
 }
 }

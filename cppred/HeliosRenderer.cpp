@@ -23,8 +23,8 @@ basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_a
 #endif
 }
 
-HeliosRenderer::HeliosRenderer(AudioDevice &dev):
-		AudioRenderer(dev),
+HeliosRenderer::HeliosRenderer(AbstractAudioDevice &dev):
+		GbAudioRenderer(dev),
 #ifdef USE_STD_FUNCTION
 		audio_sample_clock(gb_cpu_frequency_power, sampling_frequency, [this](std::uint64_t n){ this->sample_callback(n); }),
 		frame_sequencer_clock(gb_cpu_frequency_power, 512, [this](std::uint64_t n){ this->frame_sequencer_callback(n); })
@@ -59,6 +59,7 @@ HeliosRenderer::HeliosRenderer(AudioDevice &dev):
 			buffer.reset();
 	}
 #endif
+	this->initialize_new_frame();
 }
 
 HeliosRenderer::~HeliosRenderer(){
@@ -98,7 +99,9 @@ void HeliosRenderer::frame_sequencer_callback(void *This, std::uint64_t clock){
 }
 
 void HeliosRenderer::sample_callback(std::uint64_t sample_no){
-	StereoSampleFinal *buffer = this->publishing_frames.get_private_resource()->buffer;
+	auto frame = this->publishing_frames.get_private_resource();
+	auto buffer = frame->buffer;
+	frame->active |= this->active;
 	this->last_sample = this->compute_sample();
 	this->write_sample(buffer);
 }
@@ -172,6 +175,7 @@ void HeliosRenderer::write_sample(StereoSampleFinal *&buffer){
 void HeliosRenderer::initialize_new_frame(){
 	auto frame = this->publishing_frames.get_private_resource();
 	frame->frame_no = this->frame_no++;
+	frame->active = this->active;
 	auto &buffer = frame->buffer;
 	memset(buffer, 0, sizeof(buffer));
 }
@@ -437,4 +441,9 @@ AudioFrame *HeliosRenderer::get_current_frame(){
 
 void HeliosRenderer::return_used_frame(AudioFrame *frame){
 	this->publishing_frames.return_resource(frame);
+}
+
+void HeliosRenderer::set_active(bool active){
+	AudioRenderer::set_active(active);
+	this->publishing_frames.get_private_resource()->active |= active;
 }

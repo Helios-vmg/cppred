@@ -3,6 +3,7 @@
 #include "CppRed/AudioProgram.h"
 #include "AudioScheduler.h"
 #include "AudioDevice.h"
+#include "AudioRenderer.h"
 #include "HeliosRenderer.h"
 #include "Console.h"
 #include <stdexcept>
@@ -43,6 +44,10 @@ static const char *to_string(PokemonVersion version){
 	}
 }
 
+#ifdef interface
+#undef interface
+#endif
+
 void Engine::run(){
 	PokemonVersion version = PokemonVersion::Red;
 	bool continue_running = true;
@@ -52,15 +57,16 @@ void Engine::run(){
 		this->renderer.reset(new Renderer(*this->video_device));
 		if (!this->console)
 			this->console.reset(new Console(*this));
-		auto audio_renderer = std::make_unique<HeliosRenderer>(*this->audio_device);
-		auto programp = std::make_unique<CppRed::AudioProgram>(*audio_renderer, version);
-		auto &program = *programp;
-		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(audio_renderer), std::move(programp)));
+		auto two_way_mixer = std::make_unique<TwoWayMixer>(*this->audio_device);
+		two_way_mixer->set_renderers(std::make_unique<HeliosRenderer>(*two_way_mixer), std::make_unique<HeliosRenderer>(*two_way_mixer));
+		auto interfacep = std::make_unique<CppRed::AudioProgramInterface>(two_way_mixer->get_low_priority_renderer(), two_way_mixer->get_high_priority_renderer(), version);
+		auto &interface = *interfacep;
+		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(two_way_mixer), std::move(interfacep)));
 		this->audio_scheduler->start();
-		this->coroutine.reset(new Coroutine("Engine coroutine", [this, version, &program](Coroutine &){ this->coroutine_entry_point(version, program); }));
+		this->coroutine.reset(new Coroutine("Main coroutine", [this, version, &interface](Coroutine &){ this->coroutine_entry_point(version, interface); }));
 
 		//Main loop.
-		while ((continue_running &= this->handle_events()) && this->update_console(version, program)){
+		while ((continue_running &= this->handle_events()) && this->update_console(version, interface)){
 			{
 				LOCK_MUTEX(this->exception_thrown_mutex);
 				if (this->exception_thrown)
@@ -82,7 +88,7 @@ void Engine::run(){
 	}
 }
 
-bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgram &program){
+bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgramInterface &program){
 	while (true){
 		auto console_request = this->console->update();
 		if (!console_request)
@@ -107,7 +113,7 @@ bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgram &progr
 }
 
 
-void Engine::coroutine_entry_point(PokemonVersion version, CppRed::AudioProgram &program){
+void Engine::coroutine_entry_point(PokemonVersion version, CppRed::AudioProgramInterface &program){
 	this->yield();
 	CppRed::Scripts::entry_point(*this, version, program);
 }

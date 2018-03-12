@@ -17,6 +17,9 @@
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 
+//#define CONCAT_HELPER(x) x
+//#define CONCAT(x, y) CONCAT_HELPER(x)##CONCAT_HELPER(y)
+//#define LOCK_MUTEX(x) std::lock_guard<decltype(x)> CONCAT(lg_,__COUNTER__)(x)
 #define LOCK_MUTEX(x) std::lock_guard<decltype(x)> lg_##__COUNTER__(x)
 
 #define DEFINE_GETTER(x) \

@@ -30,7 +30,7 @@ const FadePaletteData fade_palettes[8] = {
 	{ BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
 };
 
-Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program):
+Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program):
 		engine(&engine),
 		version(version),
 		audio_interface(program){

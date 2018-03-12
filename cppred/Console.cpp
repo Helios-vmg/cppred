@@ -201,7 +201,7 @@ void Console::yield(){
 	(*this->yielder)(nullptr);
 }
 
-CppRed::AudioProgram &Console::get_audio_program(){
+CppRed::AudioProgramInterface &Console::get_audio_program(){
 	ConsoleCommunicationChannel ccc;
 	ccc.request_id = ConsoleRequestId::GetAudioProgram;
 	(*this->yielder)(&ccc);

@@ -12,6 +12,8 @@
 namespace CppRed{
 namespace Scripts{
 
+//#undef CPPRED_TESTING
+
 static MainMenuResult initial_sequence(Game &game){
 #ifndef CPPRED_TESTING
 	auto &engine = game.get_engine();
@@ -31,7 +33,7 @@ static MainMenuResult initial_sequence(Game &game){
 #endif
 }
 
-void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program){
+void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program){
 	Game game(engine, version, program);
 #ifndef CPPRED_TESTING
 	if (initial_sequence(game) == MainMenuResult::ContinueGame){

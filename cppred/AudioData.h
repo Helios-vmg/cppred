@@ -74,5 +74,6 @@ basic_StereoSample<std::int16_t> convert(const basic_StereoSample<intermediate_a
 struct AudioFrame{
 	static const unsigned length = 1024;
 	std::uint64_t frame_no;
+	bool active;
 	StereoSampleFinal buffer[length];
 };

@@ -68,7 +68,7 @@ class Game{
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 	void render();
 public:
-	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgram &program);
+	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program);
 	Game(Game &&) = delete;
 	Game(const Game &) = delete;
 	void operator=(Game &&) = delete;

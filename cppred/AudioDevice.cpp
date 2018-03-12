@@ -1,5 +1,6 @@
 #include "AudioDevice.h"
 #include "AudioData.h"
+#include "AudioRenderer.h"
 #include "utility.h"
 
 bool operator==(const SDL_AudioSpec &a, const SDL_AudioSpec &b){
@@ -35,28 +36,27 @@ AudioDevice::~AudioDevice(){
 	}
 }
 
-void SDLCALL AudioDevice::audio_callback(void *userdata, Uint8 *stream, int len){
-	auto This = (AudioDevice *)userdata;
-	if (!This->renderer){
+void AudioDevice::audio_callback(Uint8 *stream, int len){
+	if (!this->renderer){
 		memset(stream, 0, len);
 		return;
 	}
-	if (This->spillover_buffer_size){
+	if (this->spillover_buffer_size){
 		const auto s = sizeof(StereoSampleFinal);
-		const auto size2 = (int)(This->spillover_buffer_size * s);
+		const auto size2 = (int)(this->spillover_buffer_size * s);
 		if (len >= size2){
-			memcpy(stream, This->spillover_buffer, size2);
+			memcpy(stream, this->spillover_buffer, size2);
 			stream += size2;
 			len -= size2;
-			This->spillover_buffer_size = 0;
+			this->spillover_buffer_size = 0;
 		}else{
-			memcpy(stream, This->spillover_buffer, len);
+			memcpy(stream, this->spillover_buffer, len);
 
 			const auto m = (len + (s - 1)) / s * s;
 			assert(m <= size2);
 			if (m < size2){
-				memmove(This->spillover_buffer, (byte_t *)This->spillover_buffer + m, size2 - m);
-				This->spillover_buffer_size = (size2 - m) / s;
+				memmove(this->spillover_buffer, (byte_t *)this->spillover_buffer + m, size2 - m);
+				this->spillover_buffer_size = (size2 - m) / s;
 			}
 
 			stream += len;
@@ -65,7 +65,7 @@ void SDLCALL AudioDevice::audio_callback(void *userdata, Uint8 *stream, int len)
 	}
 
 	if (len)
-		This->renderer->write_data_to_device(stream, len, This->spillover_buffer, This->spillover_buffer_size);
+		this->renderer->write_data_to_device(stream, len, this->spillover_buffer, this->spillover_buffer_size);
 }
 
 class AudioLock{

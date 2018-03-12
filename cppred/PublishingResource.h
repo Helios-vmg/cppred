@@ -66,18 +66,38 @@ public:
 	}
 };
 
+#define USE_DEQUE
+#ifdef USE_DEQUE
+#include <deque>
+#endif
+
 template <typename T>
 class QueuedPublishingResource{
 	std::vector<std::unique_ptr<T>> allocated;
-	moodycamel::ReaderWriterQueue<T *> return_queue;
+#ifndef  USE_DEQUE
+	moodycamel::ReaderWriterQueue<T *> return_queue, queue;
+#else
+	std::deque<T *> return_queue, queue;
+	std::mutex return_queue_mutex, queue_mutex;
+#endif
 	//Invariant: private_resource is valid at all times.
 	T *private_resource;
-	moodycamel::ReaderWriterQueue<T *> queue;
 
 	T *reuse_or_allocate(){
 		T *ret;
+#ifndef USE_DEQUE
 		if (this->return_queue.try_dequeue(ret))
 			return ret;
+#else
+		{
+			LOCK_MUTEX(this->return_queue_mutex);
+			if (this->return_queue.size()){
+				ret = this->return_queue.front();
+				this->return_queue.pop_front();
+				return ret;
+			}
+		}
+#endif
 		return this->allocate();
 	}
 	T *allocate(){
@@ -88,12 +108,23 @@ public:
 	QueuedPublishingResource(){
 		this->private_resource = this->allocate();
 	}
+#ifndef USE_DEQUE
 	QueuedPublishingResource(size_t max_capacity): return_queue(max_capacity), queue(max_capacity){
+#else
+	QueuedPublishingResource(size_t max_capacity){
+#endif
 		this->private_resource = this->allocate();
 	}
 	void publish(){
+#ifndef USE_DEQUE
 		if (!this->queue.try_enqueue(this->private_resource))
 			return;
+#else
+		{
+			LOCK_MUTEX(this->queue_mutex);
+			this->queue.push_back(this->private_resource);
+		}
+#endif
 		this->private_resource = this->reuse_or_allocate();
 	}
 	T *get_private_resource(){
@@ -101,15 +132,39 @@ public:
 	}
 	T *get_public_resource(){
 		T *ret = nullptr;
+#ifndef USE_DEQUE
 		this->queue.try_dequeue(ret);
+#else
+		LOCK_MUTEX(this->queue_mutex);
+		if (this->queue.size()){
+			ret = this->queue.front();
+			this->queue.pop_front();
+		}
+#endif
 		return ret;
 	}
 	void return_resource(T *r){
+#ifndef USE_DEQUE
 		this->return_queue.enqueue(r);
+#else
+		LOCK_MUTEX(this->return_queue_mutex);
+		auto it = std::find(this->return_queue.begin(), this->return_queue.end(), r);
+		assert(it == this->return_queue.end());
+		this->return_queue.push_back(r);
+#endif
 	}
 	void clear_public_resource(){
+#ifndef USE_DEQUE
 		T *p;
 		while (this->queue.try_dequeue(p))
 			this->return_queue.enqueue(p);
+#else
+		LOCK_MUTEX(this->queue_mutex);
+		LOCK_MUTEX(this->return_queue_mutex);
+		while (this->queue.size()){
+			this->return_queue.push_back(this->queue.front());
+			this->queue.pop_front();
+		}
+#endif
 	}
 };
