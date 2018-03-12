@@ -24,7 +24,7 @@ legacy_id,id,name,tileset,width,height,map_data,script,objects,random_encounters
 127,23,CeladonMartRoof,Lobby,10,4,CeladonMartRoofMapData,CeladonMartRoofScript,CeladonMartRoofObject,,,Music_Pokecenter,51,,
 134,24,CeladonPokecenter,Pokecenter,7,4,CeladonPokecenterMapData,CeladonPokecenterScript,CeladonPokecenterObject,,,Music_Pokecenter,0,,
 138,25,CeladonPrizeRoom,Lobby,5,4,CeladonPrizeRoomMapData,CeladonPrizeRoomScript,CeladonPrizeRoomObject,,,Music_Celadon,13,,
-4,26,CeruleanCity,Overworld,20,18,CeruleanCityMapData,CeruleanCityScript,CeruleanCityObject,,FishingGroup3,Music_Cities2,105,,
+4,26,CeruleanCity,Overworld,20,18,CeruleanCityMapData,CeruleanCityScript,CeruleanCityObject,,FishingGroup3,Music_Cities2,105,,23 27 88
 66,27,CeruleanGym,Gym,5,7,CeruleanGymMapData,CeruleanGymScript,CeruleanGymObject,,FishingGroup3,Music_Gym,13,,
 64,28,CeruleanHouse1,House,4,4,BluesHouseMapData,CeruleanHouse1Script,CeruleanHouse1Object,,,Music_Cities2,13,,
 231,29,CeruleanHouse2,Ship,4,4,CeruleanHouse2MapData,CeruleanHouse2Script,CeruleanHouse2Object,,,Music_Cities1,1,,
