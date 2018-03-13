@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Engine.h"
 
-thread_local std::vector<Coroutine *> Coroutine::coroutine_stack;
+thread_local Coroutine *Coroutine::coroutine_stack = nullptr;
 
 std::uint32_t XorShift128::gen(){
 	auto x = this->state[3];
@@ -160,7 +160,7 @@ Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_p
 		name(name),
 		clock(base_clock),
 		entry_point(std::move(entry_point)){
-	this->coroutine_stack.push_back(this);
+	this->push();
 	this->coroutine.reset(new coroutine_t([this](yielder_t &y){
 		this->resume_thread_id = std::this_thread::get_id();
 		this->yielder = &y;
@@ -170,11 +170,21 @@ Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_p
 		}
 		this->entry_point(*this);
 	}));
-	this->coroutine_stack.pop_back();
+	this->pop();
+}
+
+
+void Coroutine::push(){
+	this->next_coroutine = Coroutine::coroutine_stack;
+	Coroutine::coroutine_stack = this;
+}
+
+void Coroutine::pop(){
+	Coroutine::coroutine_stack = this->next_coroutine;
 }
 
 void Coroutine::yield(){
-	if (!this->coroutine_stack.size() || this->coroutine_stack.back() != this)
+	if (Coroutine::coroutine_stack != this)
 		throw std::runtime_error("Coroutine::yield() was used incorrectly!");
 	if (std::this_thread::get_id() != this->resume_thread_id)
 		throw std::runtime_error("Coroutine::yield() must be called from the thread that resumed the coroutine!");
@@ -193,20 +203,14 @@ bool Coroutine::resume(){
 	if (this->active)
 		throw std::runtime_error("Attempting to resume a running coroutine!");
 	this->active = true;
-	this->coroutine_stack.push_back(this);
+	this->push();
 	//std::cout << this->name << " RESUMES\n";
 	this->clock.resume();
 	auto ret = !!(*this->coroutine)();
 	//std::cout << this->name << " PAUSES\n";
-	this->coroutine_stack.pop_back();
+	this->pop();
 	this->active = false;
 	return ret;
-}
-
-Coroutine *Coroutine::get_current_coroutine_ptr(){
-	if (!Coroutine::coroutine_stack.size())
-		return nullptr;
-	return Coroutine::coroutine_stack.back();
 }
 
 void Coroutine::wait(double s){

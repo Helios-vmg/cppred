@@ -241,7 +241,8 @@ public:
 	typedef std::function<void(Coroutine &)> entry_point_t;
 	typedef std::function<void()> on_yield_t;
 private:
-	thread_local static std::vector<Coroutine *> coroutine_stack;
+	thread_local static Coroutine *coroutine_stack;
+	Coroutine *next_coroutine;
 	std::string name;
 	PausableClock clock;
 	bool active = false;
@@ -254,6 +255,9 @@ private:
 	yielder_t *yielder = nullptr;
 	bool first_run = true;
 	double wait_remainder = 0;
+
+	void push();
+	void pop();
 public:
 	Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point);
 	Coroutine(const std::string &name, entry_point_t &&entry_point);
@@ -267,7 +271,9 @@ public:
 	void clear_on_yield(){
 		this->on_yield = on_yield_t();
 	}
-	static Coroutine *get_current_coroutine_ptr();
+	static Coroutine *get_current_coroutine_ptr(){
+		return Coroutine::coroutine_stack;
+	}
 	static Coroutine &get_current_coroutine(){
 		auto p = get_current_coroutine_ptr();
 		if (!p)
