@@ -18,6 +18,7 @@ class World : public ScreenOwner{
 	Point camera_position;
 	Point pixel_offset;
 	std::pair<TilesetData *, int> visible_border_block = {nullptr, -1};
+	MapInstance *current_map = nullptr;
 
 	bool is_passable(const WorldCoordinates &);
 	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
@@ -51,6 +52,7 @@ public:
 	PlayerCharacter &get_pc(){
 		return *this->player_character;
 	}
+	Actor &get_actor(const char *);
 
 	DEFINE_GETTER(camera_position)
 	DEFINE_GETTER(pixel_offset)

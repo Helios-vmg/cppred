@@ -38,16 +38,6 @@ public:
 
 class Game;
 
-class ScriptStore{
-public:
-	typedef void (*script_f)(Game &game, const std::string &parameter);
-private:
-	std::map<std::string, script_f> scripts;
-public:
-	ScriptStore();
-	void execute(const std::string &script_name, Game &game, const std::string &parameter);
-};
-
 enum class NameEntryType{
 	Player,
 	Rival,
@@ -144,7 +134,7 @@ public:
 	World &get_world(){
 		return *this->world;
 	}
-	void execute(const std::string &script_name, Actor &caller, const std::string &parameter = std::string());
+	void execute(const char *script_name, Actor &caller, const char *parameter = nullptr);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

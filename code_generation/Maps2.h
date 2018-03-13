@@ -27,7 +27,8 @@ class Map2{
 	unsigned width, height;
 	std::string map_data_name;
 	std::shared_ptr<std::vector<byte_t>> map_data;
-	std::string script;
+	std::string on_frame;
+	std::string on_load;
 	std::string objects;
 	std::string random_encounters;
 	std::string fishing_encounters;
@@ -60,7 +61,7 @@ public:
 		return this->height;
 	}
 	const std::string &get_script() const{
-		return this->script;
+		return this->on_frame;
 	}
 	const std::string &get_objects() const{
 		return this->objects;

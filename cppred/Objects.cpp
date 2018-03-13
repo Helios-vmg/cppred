@@ -43,7 +43,7 @@ HiddenObject::HiddenObject(BufferReader &buffer): MapObject(buffer){
 }
 
 void HiddenObject::activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee){
-	game.execute(this->script, activator, this->script_parameter);
+	game.execute(this->script.c_str(), activator, this->script_parameter.c_str());
 }
 
 MapWarp::MapWarp(BufferReader &buffer, const MapStore &map_store): MapObject(buffer){
@@ -139,7 +139,7 @@ void DialogingMapObject::activate(CppRed::Game &game, CppRed::Actor &activator, 
 	if (text.simple_text)
 		game.run_dialog_from_world(text.text, activator);
 	else
-		game.execute(text.script, activator);
+		game.execute(text.script.c_str(), activator);
 }
 
 void ObjectWithSprite::activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee){

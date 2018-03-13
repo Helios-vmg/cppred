@@ -74,7 +74,8 @@ public:
 		return this->clock;
 	}
 	void set_on_yield(std::function<void()> &&);
-	void execute_script(const std::string &script_name, CppRed::Game &game, CppRed::Actor &caller, const std::string &parameter = std::string()) const;
+	void execute_script(const CppRed::Scripts::script_parameters &parameter) const;
+	ScriptStore::script_f get_script(const char *script_name) const;
 	DEFINE_GETTER(input_state)
 
 	void go_to_debug();

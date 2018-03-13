@@ -10,7 +10,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 		"width",			  //  2
 		"height",			  //  3
 		"map_data",			  //  4
-		"script",			  //  5
+		"on_frame",			  //  5
 		"objects",			  //  6
 		"id",				  //  7
 		"random_encounters",  //  8
@@ -19,6 +19,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 		"border_block",		  // 11
 		"special_warp_check", // 12
 		"special_warp_tiles", // 13
+		"on_load",			  // 14
 	};
 	const int id_offset = 7;
 
@@ -61,7 +62,7 @@ Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, c
 	this->map_data = it->second;
 	if (this->map_data->size() != this->width * this->height)
 		throw std::runtime_error("Error: Map \"" + this->name + "\" has invalid size.");
-	this->script = columns[5];
+	this->on_frame = columns[5];
 	this->objects = columns[6];
 	this->random_encounters = columns[8];
 	this->fishing_encounters = columns[9];
@@ -70,6 +71,7 @@ Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, c
 	if (columns[12].size())
 		this->special_warp_check = to_unsigned(columns[12]);
 	this->special_warp_tiles = to_int_vector(columns[13], true);
+	this->on_load = columns[14];
 }
 
 std::shared_ptr<Map2> Maps2::get(const std::string &name){
@@ -181,6 +183,8 @@ void Map2::serialize(std::vector<byte_t> &dst){
 	write_varint(dst, warp_tiles->size());
 	for (auto tile : *warp_tiles)
 		write_varint(dst, tile);
+	write_ascii_string(dst, this->on_frame);
+	write_ascii_string(dst, this->on_load);
 	//TODO: Serialize other members.
 }
 

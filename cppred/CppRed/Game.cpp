@@ -6,6 +6,7 @@
 #include "Data.h"
 #include "World.h"
 #include "TextDisplay.h"
+#include "Scripts/Scripts.h"
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 #include <sstream>
@@ -555,8 +556,13 @@ void Game::teleport_player(const WorldCoordinates &wc){
 	this->world->teleport_player(wc);
 }
 
-void Game::execute(const std::string &script_name, Actor &caller, const std::string &parameter){
-	this->engine->execute_script(script_name, *this, caller, parameter);
+void Game::execute(const char *script_name, Actor &caller, const char *parameter){
+	Scripts::script_parameters params;
+	params.script_name = script_name;
+	params.game = this;
+	params.caller = &caller;
+	params.parameter = parameter;
+	this->engine->execute_script(params);
 }
 
 }

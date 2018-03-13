@@ -220,6 +220,7 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 		this->visible_border_block = {nullptr, -1};
 	this->map_store.release_map_instance(old_map);
 	auto &instance = this->map_store.get_map_instance(new_map, *this->game);
+	this->current_map = &instance;
 	this->actors.clear();
 	auto &map_data = this->map_store.get_map_data(new_map);
 	auto &engine = this->game->get_engine();
@@ -233,6 +234,7 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 			this->actors.emplace_back(std::move(actor));
 		}
 	}
+	instance.loaded(*this->game);
 }
 
 bool World::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &location){
@@ -250,6 +252,7 @@ bool World::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoo
 }
 
 std::unique_ptr<ScreenOwner> World::update(){
+	this->current_map->update(*this->game);
 	this->player_character->update();
 	auto ret = this->player_character->get_new_screen_owner();
 	if (ret)
@@ -334,6 +337,13 @@ void World::render(Renderer &renderer){
 void World::pause(){
 	for (auto &actor : this->actors)
 		actor->pause();
+}
+
+Actor &World::get_actor(const char *name){
+	for (auto &actor : this->actors)
+		if (actor->get_name() == name)
+			return *actor;
+	throw std::runtime_error((std::string)"Actor not found: " + name);
 }
 
 }

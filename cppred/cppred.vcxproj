@@ -89,6 +89,7 @@
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
     <ClCompile Include="CppRed\Scripts\Events.cpp" />
+    <ClCompile Include="CppRed\Scripts\PalletTown.cpp" />
     <ClCompile Include="CppRed\scripts\RedsHouse.cpp" />
     <ClCompile Include="CppRed\TextDisplay.cpp" />
     <ClCompile Include="CppRed\Trainer.cpp" />

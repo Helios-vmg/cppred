@@ -10,16 +10,25 @@ ScriptStore::ScriptStore(){
 	ADD_SCRIPT(PrintRedSNESText);
 	ADD_SCRIPT(RedsHouse1FText1);
 	ADD_SCRIPT(RedsHouse1FText2);
+	ADD_SCRIPT(PalletTownScript);
+	ADD_SCRIPT(PalletTown_onload);
 	//Add scripts.
 
 	std::sort(this->scripts.begin(), this->scripts.end(), [](const auto &a, const auto &b){ return a.first < b.first; });
 }
 
-void ScriptStore::execute(const std::string &script_name, CppRed::Game &game, CppRed::Actor &caller, const std::string &parameter) const{
-	auto it = find_first_true(this->scripts.begin(), this->scripts.end(), [script_name](const auto &x){ return script_name <= x.first; });
-	if (it == this->scripts.end() || it->first != script_name){
-		std::cout << "Script not found. " << script_name << "(" << parameter << ")" << std::endl;
+void ScriptStore::execute(const CppRed::Scripts::script_parameters &parameter) const{
+	auto f = this->get_script(parameter.script_name);
+	if (!f){
+		std::cout << "Script not found. " << parameter.script_name << "(" << (parameter.parameter ? parameter.parameter : "null") << ")" << std::endl;
 		return;
 	}
-	it->second(game, caller, parameter);
+	f(parameter);
+}
+
+ScriptStore::script_f ScriptStore::get_script(const char *name) const{
+	auto it = find_first_true(this->scripts.begin(), this->scripts.end(), [name](const auto &x){ return name <= x.first; });
+	if (it == this->scripts.end() || it->first != name)
+		return nullptr;
+	return it->second;
 }

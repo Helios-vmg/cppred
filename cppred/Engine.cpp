@@ -27,7 +27,7 @@ Engine::~Engine(){
 }
 
 void Engine::initialize_video(){
-	this->video_device = Renderer::initialize_device(4);
+	this->video_device = Renderer::initialize_device(screen_scale);
 }
 
 void Engine::initialize_audio(){
@@ -249,6 +249,10 @@ void Engine::throw_exception(const std::exception &e){
 	this->exception_thrown = std::make_unique<std::string>(e.what());
 }
 
-void Engine::execute_script(const std::string &script_name, CppRed::Game &game, CppRed::Actor &caller, const std::string &parameter) const{
-	this->script_store.execute(script_name, game, caller, parameter);
+void Engine::execute_script(const CppRed::Scripts::script_parameters &parameter) const{
+	this->script_store.execute(parameter);
+}
+
+ScriptStore::script_f Engine::get_script(const char *script_name) const{
+	return this->script_store.get_script(script_name);
 }

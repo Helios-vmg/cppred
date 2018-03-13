@@ -322,5 +322,8 @@
     <ClCompile Include="CppRed\Scripts\Events.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="CppRed\Scripts\PalletTown.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

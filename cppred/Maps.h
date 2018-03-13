@@ -6,6 +6,7 @@
 #include "../CodeGeneration/output/maps.h"
 #include "../CodeGeneration/output/items.h"
 #include "../common/TilesetType.h"
+#include "ScriptStore.h"
 #include "TrainerData.h"
 #include "utility.h"
 #include <vector>
@@ -111,13 +112,15 @@ struct MapData{
 	int width, height;
 	std::shared_ptr<TilesetData> tileset;
 	std::shared_ptr<BinaryMapData> map_data;
-	std::string script_name;
+	std::string on_load;
+	std::string on_frame;
 	MapConnection map_connections[4];
 	int border_block;
 	std::shared_ptr<std::vector<std::unique_ptr<MapObject>>> objects;
 	std::vector<MapTextEntry> map_text;
 	int warp_check;
 	int warp_tiles[8];
+	std::string map_script;
 
 	MapData(
 		Map map_id,
@@ -163,6 +166,8 @@ class MapInstance{
 	//Odd bits: cell has a warp.
 	std::vector<bool> occupation_bitmap;
 	std::vector<MapObjectInstance> objects;
+	ScriptStore::script_f on_load = nullptr;
+	ScriptStore::script_f on_frame = nullptr;
 
 	void check_map_location(const Point &) const;
 	int get_block_number(const Point &) const;
@@ -177,6 +182,8 @@ public:
 	auto get_objects(){
 		return make_range(this->objects);
 	}
+	void update(CppRed::Game &game);
+	void loaded(CppRed::Game &game);
 };
 
 class MapStore{

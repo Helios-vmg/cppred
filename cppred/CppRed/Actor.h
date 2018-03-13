@@ -26,6 +26,7 @@ protected:
 	bool quit_coroutine = false;
 	MapObjectInstance *object_instance = nullptr;
 	std::unique_ptr<ScreenOwner> screen_owner;
+	bool visible = true;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -78,6 +79,7 @@ public:
 	bool is_moving() const{
 		return this->moving;
 	}
+	void set_visible(bool visible);
 };
 
 template <typename T> 

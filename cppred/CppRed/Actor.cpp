@@ -96,12 +96,6 @@ void Actor::update(){
 }
 
 bool Actor::move(FacingDirection direction){
-	static const Point deltas[] = {
-		{ 0, -1},
-		{ 1,  0},
-		{ 0,  1},
-		{-1,  0},
-	};
 	return this->move(direction_to_vector(direction), direction);
 }
 
@@ -161,7 +155,17 @@ std::unique_ptr<ScreenOwner> Actor::get_new_screen_owner(){
 void Actor::set_facing_direction(FacingDirection direction){
 	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
 	this->facing_direction = direction;
-	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
+	this->standing_sprites[(int)this->facing_direction]->set_visible(this->visible);
+}
+
+void Actor::set_visible(bool visible){
+	if (visible == this->visible)
+		return;
+	this->visible = visible;
+	this->standing_sprites[(int)this->facing_direction]->set_visible(visible);
+	this->game->get_world()
+		.get_map_instance(this->position.map)
+		.set_cell_occupation(this->position.position, visible);
 }
 
 }

@@ -2,6 +2,8 @@
 #include "CppRed/Data.h"
 #include "CppRed/Pokemon.h"
 #include "CppRed/Actor.h"
+#include "CppRed/Game.h"
+#include "CppRed/Scripts/Scripts.h"
 #include "RendererStructs.h"
 #include "utility.h"
 #include "Objects.h"
@@ -252,6 +254,8 @@ MapData::MapData(
 		for (; i < array_length(this->warp_tiles); i++)
 			this->warp_tiles[i] = -1;
 	}
+	this->on_frame = buffer.read_string();
+	this->on_load = buffer.read_string();
 }
 
 int MapData::get_block_at_map_position(const Point &point) const{
@@ -355,6 +359,10 @@ MapInstance::MapInstance(Map map, MapStore &store, CppRed::Game &game): map(map)
 			this->occupation_bitmap[this->get_block_number(p) * 2 + 1] = it != end;
 		}
 	}
+	if (this->data->on_load.size())
+		this->on_load = game.get_engine().get_script(this->data->on_load.c_str());
+	if (this->data->on_frame.size())
+		this->on_frame = game.get_engine().get_script(this->data->on_frame.c_str());
 }
 
 void MapInstance::check_map_location(const Point &p) const{
@@ -401,4 +409,26 @@ void MapStore::release_map_instance(Map map){
 	if (index < 0 || index >= this->map_instances.size())
 		return;
 	this->map_instances[index].reset();
+}
+
+void MapInstance::update(CppRed::Game &game){
+	if (!this->on_frame)
+		return;
+	CppRed::Scripts::script_parameters params;
+	params.script_name = nullptr;
+	params.caller = nullptr;
+	params.game = &game;
+	params.parameter = nullptr;
+	this->on_frame(params);
+}
+
+void MapInstance::loaded(CppRed::Game &game){
+	if (!this->on_load)
+		return;
+	CppRed::Scripts::script_parameters params;
+	params.script_name = nullptr;
+	params.caller = nullptr;
+	params.game = &game;
+	params.parameter = nullptr;
+	this->on_load(params);
 }

@@ -9,19 +9,19 @@ namespace CppRed{
 namespace Scripts{
 
 DECLARE_SCRIPT(PrintRedSNESText){
-	game.run_dialog_from_world(TextResourceId::RedBedroomSNESText, caller);
+	parameters.game->run_dialog_from_world(TextResourceId::RedBedroomSNESText, *parameters.caller);
 }
 
 DECLARE_SCRIPT(RedsHouse1FText1){
-	if (game.get_variable_store().get_number_default(event_received_starter)){
+	if (parameters.game->get_variable_store().get_number_default(event_received_starter)){
 		throw std::runtime_error("Not implemented.");
 	}else
-		game.run_dialog_from_world(TextResourceId::MomWakeUpText, caller);
+		parameters.game->run_dialog_from_world(TextResourceId::MomWakeUpText, *parameters.caller);
 }
 
 DECLARE_SCRIPT(RedsHouse1FText2){
-	auto id = caller.get_facing_direction() == FacingDirection::Up ? TextResourceId::StandByMeText : TextResourceId::TVWrongSideText;
-	game.run_dialog_from_world(id, caller);
+	auto id = parameters.caller->get_facing_direction() == FacingDirection::Up ? TextResourceId::StandByMeText : TextResourceId::TVWrongSideText;
+	parameters.game->run_dialog_from_world(id, *parameters.caller);
 }
 
 }
