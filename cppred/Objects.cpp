@@ -42,6 +42,10 @@ HiddenObject::HiddenObject(BufferReader &buffer): MapObject(buffer){
 	this->script_parameter = buffer.read_string();
 }
 
+void HiddenObject::activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee){
+	game.execute(this->script, activator, this->script_parameter);
+}
+
 MapWarp::MapWarp(BufferReader &buffer, const MapStore &map_store): MapObject(buffer){
 	this->index = buffer.read_varint();
 	auto temp = buffer.read_string();
@@ -127,15 +131,23 @@ CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, 
 	return ret;
 }
 
-void DialogingMapObject::activate(CppRed::Game &game, CppRed::Actor &activator){
+void DialogingMapObject::activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee){
 	auto index = get_text_index();
 	if (index < 0 || index >= this->map_data->map_text.size())
 		return;
 	const auto &text = this->map_data->map_text[index];
-	if (text.simple_text){
-		std::unique_ptr<CppRed::ScreenOwner> p(new CppRed::TextDisplay(game, text.text));
-		activator.set_new_screen_owner(std::move(p));
-	}else{
-		//TODO: Run script.
-	}
+	if (text.simple_text)
+		game.run_dialog_from_world(text.text, activator);
+	else
+		game.execute(text.script, activator);
+}
+
+void ObjectWithSprite::activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee){
+	assert(activatee);
+	if (activatee->is_moving())
+		return;
+	auto old = activatee->get_facing_direction();
+	activatee->set_facing_direction(invert_direction(activator.get_facing_direction()));
+	DialogingMapObject::activate(game, activator, activatee);
+	activatee->set_facing_direction(old);
 }

@@ -51,6 +51,7 @@
     <ClInclude Include="CppRed\Npc.h" />
     <ClInclude Include="CppRed\PlayerCharacter.h" />
     <ClInclude Include="CppRed\ScreenOwner.h" />
+    <ClInclude Include="CppRed\scripts\Scripts.h" />
     <ClInclude Include="CppRed\TextDisplay.h" />
     <ClInclude Include="CppRed\World.h" />
     <ClInclude Include="Engine.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="CppRed/EntryPoint.h" />
     <ClInclude Include="RendererStructs.h" />
+    <ClInclude Include="ScriptStore.h" />
     <ClInclude Include="SoundGenerators.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StaticSet.h" />
@@ -86,6 +88,8 @@
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
+    <ClCompile Include="CppRed\Scripts\Events.cpp" />
+    <ClCompile Include="CppRed\scripts\RedsHouse.cpp" />
     <ClCompile Include="CppRed\TextDisplay.cpp" />
     <ClCompile Include="CppRed\Trainer.cpp" />
     <ClCompile Include="CppRed\World.cpp" />
@@ -114,6 +118,7 @@
     <ClCompile Include="Objects.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="CppRed/EntryPoint.cpp" />
+    <ClCompile Include="ScriptStore.cpp" />
     <ClCompile Include="SoundGenerators.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="threads.cpp" />

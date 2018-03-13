@@ -43,7 +43,7 @@ public:
 	virtual bool npcs_can_walk_over() const{
 		return true;
 	}
-	virtual void activate(CppRed::Game &, CppRed::Actor &activator){}
+	virtual void activate(CppRed::Game &, CppRed::Actor &activator, CppRed::Actor *activatee){}
 	virtual MapObjectType get_type() const = 0;
 	DEFINE_GETTER(position)
 	DEFINE_GETTER(name)
@@ -57,7 +57,7 @@ protected:
 public:
 	virtual ~DialogingMapObject(){}
 	virtual int get_text_index() const = 0;
-	void activate(CppRed::Game &game, CppRed::Actor &activator) override;
+	void activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee) override;
 };
 
 class EventDisp : public MapObject{
@@ -117,6 +117,7 @@ public:
 	MapObjectType get_type() const override{
 		return MapObjectType::Hidden;
 	}
+	void activate(CppRed::Game &, CppRed::Actor &activator, CppRed::Actor *activatee) override;
 };
 
 struct WarpDestination{
@@ -182,6 +183,7 @@ public:
 	int get_text_index() const override{
 		return this->text_index;
 	}
+	void activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee) override;
 };
 
 inline ObjectWithSprite::~ObjectWithSprite(){}

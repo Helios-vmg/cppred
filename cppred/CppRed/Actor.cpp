@@ -114,12 +114,11 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 	auto pos0 = this->position;
 	auto &world = this->game->get_world();
 	auto pos1 = world.remap_coordinates(pos0 + delta);
-	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
-	this->facing_direction = direction;
-	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
+	this->set_facing_direction(direction);
 	if (!this->can_move_to(pos0, pos1, direction))
 		return false;
 	this->about_to_move();
+	this->moving = true;
 	auto &map1 = world.get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
 	map1.set_cell_occupation(pos1.position, true);
@@ -130,6 +129,7 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 	this->position = pos1;
 	if (pos0.map != pos1.map)
 		this->entered_new_map(pos0.map, pos1.map, false);
+	this->moving = false;
 	return true;
 }
 
@@ -156,6 +156,12 @@ void Actor::set_new_screen_owner(std::unique_ptr<ScreenOwner> &&owner){
 
 std::unique_ptr<ScreenOwner> Actor::get_new_screen_owner(){
 	return std::move(this->screen_owner);
+}
+
+void Actor::set_facing_direction(FacingDirection direction){
+	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
+	this->facing_direction = direction;
+	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
 }
 
 }

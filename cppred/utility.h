@@ -340,3 +340,4 @@ enum class FacingDirection{
 };
 
 Point direction_to_vector(FacingDirection);
+FacingDirection invert_direction(FacingDirection);

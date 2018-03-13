@@ -48,6 +48,9 @@ public:
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	bool facing_edge_of_map(const WorldCoordinates &, FacingDirection) const;
 	void pause() override;
+	PlayerCharacter &get_pc(){
+		return *this->player_character;
+	}
 
 	DEFINE_GETTER(camera_position)
 	DEFINE_GETTER(pixel_offset)

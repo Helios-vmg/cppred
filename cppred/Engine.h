@@ -3,6 +3,7 @@
 #include "InputState.h"
 #include "Renderer.h"
 #include "HighResolutionClock.h"
+#include "ScriptStore.h"
 #include <SDL.h>
 #include <boost/coroutine2/all.hpp>
 #include <thread>
@@ -41,6 +42,7 @@ class Engine{
 	bool debug_mode = false;
 	std::mutex exception_thrown_mutex;
 	std::unique_ptr<std::string> exception_thrown;
+	ScriptStore script_store;
 
 	void initialize_video();
 	void initialize_audio();
@@ -72,6 +74,7 @@ public:
 		return this->clock;
 	}
 	void set_on_yield(std::function<void()> &&);
+	void execute_script(const std::string &script_name, CppRed::Game &game, CppRed::Actor &caller, const std::string &parameter = std::string()) const;
 	DEFINE_GETTER(input_state)
 
 	void go_to_debug();

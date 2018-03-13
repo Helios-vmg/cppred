@@ -253,3 +253,7 @@ Point direction_to_vector(FacingDirection direction){
 	};
 	return deltas[(int)direction];
 }
+
+FacingDirection invert_direction(FacingDirection dir){
+	return (FacingDirection)(((int)dir + 2) % 4);
+}

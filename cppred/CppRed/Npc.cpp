@@ -22,7 +22,7 @@ static int geometric_distribution(XorShift128 &rand, std::uint32_t n){
 }
 
 void Npc::coroutine_entry_point(){
-	this->standing_sprites[(int)FacingDirection::Down]->set_visible(true);
+	this->standing_sprites[(int)this->facing_direction]->set_visible(true);
 	HighResolutionClock real_time;
 	auto &clock = this->coroutine->get_clock();
 	while (!this->quit_coroutine){
@@ -35,9 +35,7 @@ void Npc::coroutine_entry_point(){
 			auto pick = geometric_distribution(rand, 3);
 			auto direction = (FacingDirection)rand(4);
 			
-			this->standing_sprites[(int)this->facing_direction]->set_visible(false);
-			this->facing_direction = direction;
-			this->standing_sprites[(int)this->facing_direction]->set_visible(true);
+			this->set_facing_direction(direction);
 			
 			for (int i = pick; i--;){
 				delta = this->position.position + direction_to_vector(direction) - this->wandering_center;
@@ -46,9 +44,7 @@ void Npc::coroutine_entry_point(){
 					do
 						direction = (FacingDirection)rand(4);
 					while (direction != this->facing_direction);
-					this->standing_sprites[(int)this->facing_direction]->set_visible(false);
-					this->facing_direction = direction;
-					this->standing_sprites[(int)this->facing_direction]->set_visible(true);
+					this->set_facing_direction(direction);
 					break;
 				}
 				this->move(direction);

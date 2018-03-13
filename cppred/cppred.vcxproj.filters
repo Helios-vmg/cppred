@@ -200,6 +200,12 @@
     <ClInclude Include="CppRed\TextDisplay.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptStore.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed\scripts\Scripts.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -227,9 +233,6 @@
       <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed/Intro.cpp">
-      <Filter>CppRed\Scripts\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRed/TitleScreen.cpp">
       <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed/Data.cpp">
@@ -305,6 +308,18 @@
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed\TextDisplay.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptStore.cpp">
+      <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\scripts\RedsHouse.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed/TitleScreen.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\Scripts\Events.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

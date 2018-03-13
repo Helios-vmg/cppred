@@ -71,9 +71,13 @@ public:
 	void pause(){
 		this->coroutine->get_clock().pause();
 	}
-	DEFINE_GETTER_SETTER(facing_direction)
+	void set_facing_direction(FacingDirection direction);
+	DEFINE_GETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)
 	DEFINE_GETTER(name)
+	bool is_moving() const{
+		return this->moving;
+	}
 };
 
 template <typename T> 

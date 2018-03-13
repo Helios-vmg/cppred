@@ -27,7 +27,7 @@ void AudioScheduler::start(){
 }
 
 #ifdef CPPRED_TESTING
-#define CPU_USAGE
+//#define CPU_USAGE
 #endif
 
 void AudioScheduler::processor(){

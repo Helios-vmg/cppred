@@ -5,6 +5,7 @@
 #include "Maps.h"
 #include "Data.h"
 #include "World.h"
+#include "TextDisplay.h"
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 #include <sstream>
@@ -263,6 +264,12 @@ void Game::run_dialog(TextResourceId resource, bool wait_at_end){
 	this->run_dialog(resource, TileRegion::Background, wait_at_end);
 }
 
+void Game::run_dialog_from_world(TextResourceId id, Actor &activator){
+	std::unique_ptr<ScreenOwner> p(new TextDisplay(*this, id));
+	activator.set_new_screen_owner(std::move(p));
+	Coroutine::get_current_coroutine().yield();
+}
+
 TextState Game::get_default_dialog_state(){
 	TextState ret;
 	ret.region = TileRegion::Background;
@@ -320,6 +327,13 @@ int VariableStore::get_number(const std::string &key){
 	auto it = this->number_variables.find(key);
 	if (it == this->number_variables.end())
 		throw std::runtime_error("Variable not found: " + key);
+	return *it->second;
+}
+
+int VariableStore::get_number_default(const std::string &key){
+	auto it = this->number_variables.find(key);
+	if (it == this->number_variables.end())
+		return 0;
 	return *it->second;
 }
 
@@ -539,6 +553,10 @@ void Game::entered_map(Map old_map, Map new_map, bool warped){
 
 void Game::teleport_player(const WorldCoordinates &wc){
 	this->world->teleport_player(wc);
+}
+
+void Game::execute(const std::string &script_name, Actor &caller, const std::string &parameter){
+	this->engine->execute_script(script_name, *this, caller, parameter);
 }
 
 }

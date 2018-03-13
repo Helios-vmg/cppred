@@ -50,7 +50,7 @@ static const char *to_string(PokemonVersion version){
 #endif
 
 #if defined CPPRED_TESTING
-#define CPU_USAGE
+//#define CPU_USAGE
 #endif
 
 void Engine::run(){
@@ -247,4 +247,8 @@ void Engine::go_to_debug(){
 void Engine::throw_exception(const std::exception &e){
 	LOCK_MUTEX(this->exception_thrown_mutex);
 	this->exception_thrown = std::make_unique<std::string>(e.what());
+}
+
+void Engine::execute_script(const std::string &script_name, CppRed::Game &game, CppRed::Actor &caller, const std::string &parameter) const{
+	this->script_store.execute(script_name, game, caller, parameter);
 }

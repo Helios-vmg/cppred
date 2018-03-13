@@ -31,8 +31,21 @@ public:
 	const std::string *try_get_string(const std::string &key);
 	const std::string &get_string(const std::string &key);
 	int get_number(const std::string &key);
+	int get_number_default(const std::string &key);
 	void delete_string(const std::string &key);
 	void delete_number(const std::string &key);
+};
+
+class Game;
+
+class ScriptStore{
+public:
+	typedef void (*script_f)(Game &game, const std::string &parameter);
+private:
+	std::map<std::string, script_f> scripts;
+public:
+	ScriptStore();
+	void execute(const std::string &script_name, Game &game, const std::string &parameter);
 };
 
 enum class NameEntryType{
@@ -109,6 +122,7 @@ public:
 	void put_string(const Point &position, TileRegion region, const char *string);
 	void run_dialog(TextResourceId, bool wait_at_end = false);
 	void run_dialog(TextResourceId, TileRegion, bool wait_at_end = false);
+	void run_dialog_from_world(TextResourceId, Actor &activator);
 	void reset_dialog_state();
 	static TextState get_default_dialog_state();
 	void text_print_delay();
@@ -130,6 +144,7 @@ public:
 	World &get_world(){
 		return *this->world;
 	}
+	void execute(const std::string &script_name, Actor &caller, const std::string &parameter = std::string());
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

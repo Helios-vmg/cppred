@@ -393,7 +393,7 @@ MapObjectInstance::MapObjectInstance(MapObject &object, CppRed::Game &game): gam
 
 void MapObjectInstance::activate(CppRed::Actor &activator){
 	std::cout << activator.get_name() << " activated " << this->full_object->get_name() << std::endl;
-	this->full_object->activate(*this->game, activator);
+	this->full_object->activate(*this->game, activator, this->actor);
 }
 
 void MapStore::release_map_instance(Map map){

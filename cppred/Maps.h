@@ -147,6 +147,12 @@ public:
 	}
 	void activate(CppRed::Actor &activator);
 	DEFINE_GETTER_SETTER(position)
+	void set_actor(CppRed::Actor &actor){
+		this->actor = &actor;
+	}
+	CppRed::Actor &get_actor() const{
+		return *this->actor;
+	}
 };
 
 class MapInstance{

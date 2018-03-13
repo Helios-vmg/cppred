@@ -229,6 +229,7 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 			auto actor = object_instance.get_object().create_actor(*this->game, renderer, new_map, object_instance);
 			if (!actor)
 				continue;
+			object_instance.set_actor(*actor);
 			this->actors.emplace_back(std::move(actor));
 		}
 	}
