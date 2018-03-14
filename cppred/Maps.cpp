@@ -378,7 +378,8 @@ void MapInstance::check_map_location(const Point &p) const{
 }
 
 void MapInstance::pause(){
-	this->coroutine->get_clock().pause();
+	if (this->coroutine)
+		this->coroutine->get_clock().pause();
 }
 
 int MapInstance::get_block_number(const Point &p) const{
@@ -450,7 +451,9 @@ void MapInstance::coroutine_entry_point(){
 	}
 	if (!this->on_frame)
 		return;
+	auto &c = this->coroutine->get_clock();
 	while (true){
+		c.step();
 		params.script_name = nullptr;
 		params.caller = nullptr;
 		params.game = this->current_game;
