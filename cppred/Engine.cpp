@@ -1,6 +1,8 @@
 #include "Engine.h"
 #include "CppRed/AudioProgram.h"
 #include "CppRed/Game.h"
+#include "CppRed/PlayerCharacter.h"
+#include "CppRed/World.h"
 #include "AudioScheduler.h"
 #include "AudioDevice.h"
 #include "AudioRenderer.h"
@@ -197,6 +199,27 @@ bool Engine::handle_events(){
 		switch (event.type){
 			case SDL_QUIT:
 				return false;
+			case SDL_MOUSEBUTTONDOWN:
+				{
+					Point location(event.button.x, event.button.y);
+					location.x = location.x / (this->screen_scale * Renderer::tile_size * 2);
+					location.y = location.y / (this->screen_scale * Renderer::tile_size * 2);
+					location -= CppRed::PlayerCharacter::screen_block_offset;
+					auto &world = this->game->get_world();
+					auto &pc = world.get_pc();
+					location += pc.get_map_position();
+					MapObjectInstance *objects[8];
+					world.get_objects_at_location(objects, {pc.get_current_map(), location});
+					std::stringstream stream;
+					stream << "Clicked at " << location << '\n';
+					for (auto object : objects){
+						if (!object)
+							break;
+						stream << "Found a " << object->get_object().get_type_string() << " named " << object->get_object().get_name() << '\n';
+					}
+					Logger() << stream.str();
+					break;
+				}
 			case SDL_KEYDOWN:
 				if (!event.key.repeat){
 					switch (event.key.keysym.sym){

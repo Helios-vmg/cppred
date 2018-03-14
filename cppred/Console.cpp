@@ -148,9 +148,9 @@ void Console::render(){
 	if (!this->visible && !this->log_enabled)
 		return;
 
+	this->device->render_copy(this->background);
 	if (this->visible){
 		this->draw_console_menu();
-		this->device->render_copy(this->background);
 		this->device->render_copy(this->text_layer);
 	}else{
 		this->draw_console_log();
