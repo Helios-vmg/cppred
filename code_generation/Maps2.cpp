@@ -3,7 +3,7 @@
 #include "../common/csv_parser.h"
 #include "TextStore.h"
 
-Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2 &tilesets){
+Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2 &tilesets, const std::map<std::string, unsigned> &audio_map){
 	static const std::vector<std::string> order = {
 		"name",				  //  0
 		"tileset",			  //  1
@@ -31,7 +31,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 		if (!columns[id_offset].size())
 			continue;
 
-		this->maps.emplace_back(new Map2(columns, tilesets, maps_data));
+		this->maps.emplace_back(new Map2(columns, tilesets, maps_data, audio_map));
 		auto back = this->maps.back();
 		this->map[back->get_name()] = back;
 	}
@@ -50,23 +50,30 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 	}
 }
 
-Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data){
+Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data, const std::map<std::string, unsigned> &audio_map){
 	this->name = columns[0];
 	this->tileset = tilesets.get(columns[1]);
 	this->width = to_unsigned(columns[2]) * 2;
 	this->height = to_unsigned(columns[3]) * 2;
 	this->map_data_name = columns[4];
-	auto it = maps_data.find(this->map_data_name);
-	if (it == maps_data.end())
-		throw std::runtime_error("Error: Map \"" + this->name + "\" references unknown map data \"" + columns[4] + "\"");
-	this->map_data = it->second;
+	{
+		auto it = maps_data.find(this->map_data_name);
+		if (it == maps_data.end())
+			throw std::runtime_error("Error: Map \"" + this->name + "\" references unknown map data \"" + columns[4] + "\"");
+		this->map_data = it->second;
+	}
 	if (this->map_data->size() != this->width * this->height)
 		throw std::runtime_error("Error: Map \"" + this->name + "\" has invalid size.");
 	this->on_frame = columns[5];
 	this->objects = columns[6];
 	this->random_encounters = columns[8];
 	this->fishing_encounters = columns[9];
-	this->music = columns[10];
+	{
+		auto it = audio_map.find(columns[10]);
+		if (it == audio_map.end())
+			throw std::runtime_error("Error: Map \"" + this->name + "\" references unknown audio \"" + columns[10] + "\"");
+		this->music = it->second;
+	}
 	this->border_block = to_unsigned(columns[11]);
 	if (columns[12].size())
 		this->special_warp_check = to_unsigned(columns[12]);
@@ -185,6 +192,7 @@ void Map2::serialize(std::vector<byte_t> &dst){
 		write_varint(dst, tile);
 	write_ascii_string(dst, this->on_frame);
 	write_ascii_string(dst, this->on_load);
+	write_varint(dst, this->music);
 	//TODO: Serialize other members.
 }
 

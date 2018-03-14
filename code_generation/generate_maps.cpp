@@ -21,6 +21,7 @@ static const char * const collision_file = "input/collision.csv";
 static const char * const map_connections_file = "input/map_connections.csv";
 static const char * const map_text_file = "input/map_text.csv";
 static const char * const text_file = "input/text.txt";
+static const char * const audio_csv_file = "output/audio.csv";
 static const std::vector<std::string> input_files = {
 	maps_file,
 	tilesets_file,
@@ -144,6 +145,18 @@ static std::map<std::string, std::vector<MapTextEntry>> read_string_map(const ch
 	return ret;
 }
 
+static std::map<std::string, unsigned> load_audio_map(){
+	static const std::vector<std::string> order = { "name", "id", };
+	std::map<std::string, unsigned> ret;
+	CsvParser csv(audio_csv_file);
+	auto rows = csv.row_count();
+	for (auto i = rows; i--;){
+		auto columns = csv.get_ordered_row(i, order);
+		ret[columns[0]] = to_unsigned(columns[1]);
+	}
+	return ret;
+}
+
 static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &gs, TextStore &text_store){
 	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
@@ -160,7 +173,7 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	auto map_text = read_string_map(map_text_file);
 	
 	Tilesets2 tilesets2(tilesets_file, blocksets, collision, gs);
-	Maps2 maps2(maps_file, map_data, tilesets2);
+	Maps2 maps2(maps_file, map_data, tilesets2, load_audio_map());
 	maps2.load_map_connections(map_connections_file);
 	maps2.load_map_text(map_text, text_store);
 

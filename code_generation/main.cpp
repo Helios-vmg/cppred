@@ -57,12 +57,12 @@ int main(){
 		std::unique_ptr<PokemonData> pokemon_data;
 		TextStore ts(text_file, pokemon_data);
 		generate_graphics(hashes, gs);
+		generate_audio(hashes);
 		generate_maps(hashes, gs, ts);
 		generate_pokemon_data(hashes, pokemon_data);
 		generate_text(hashes, ts);
 		generate_moves(hashes);
 		generate_items(hashes);
-		generate_audio(hashes);
 		generate_map_objects(hashes, pokemon_data);
 		generate_trainer_parties(hashes, pokemon_data);
 		save_hashes(hashes);

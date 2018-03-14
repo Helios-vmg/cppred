@@ -691,13 +691,14 @@ public:
 	}
 };
 
-static void write_header_and_source(const char *header_path, const char *source_path, const std::vector<AudioHeader> &headers, const AudioData &data){
+static void write_header_and_source(const char *header_path, const char *source_path, const char *csv_path, const std::vector<AudioHeader> &headers, const AudioData &data){
 	std::vector<std::uint8_t> sequences, serialized_headers;
 	data.serialize_sequences(sequences);
 	data.serialize_headers(serialized_headers);
 
 	{
 		std::ofstream header(header_path);
+		std::ofstream csv(csv_path);
 		header << "#pragma once\n"
 			<< generated_file_warning <<
 			"\n"
@@ -707,9 +708,15 @@ static void write_header_and_source(const char *header_path, const char *source_
 			"static const size_t audio_header_data_size = " << serialized_headers.size() << ";\n"
 			"enum class AudioResourceId{\n"
 			"    None = 0,\n";
+		csv <<
+			"name,id\n"
+			"None,0\n";
 		size_t i = 1;
-		for (auto &h : headers)
+		for (auto &h : headers){
+			csv << h.get_name() << "," << i << std::endl;
 			header << "    " << h.get_name() << " = " << i++ << ",\n";
+		}
+		csv << "Stop," << i << std::endl;
 		header << "    Stop = " << i++ << ",\n"
 			"};\n";
 	}
@@ -737,7 +744,7 @@ static void generate_audio_internal(known_hashes_t &known_hashes){
 	std::ofstream log_file("output/audio_generation.log");
 	AudioData data(log_file);
 
-	write_header_and_source("output/audio.h", "output/audio.inl", data.get_headers(), data);
+	write_header_and_source("output/audio.h", "output/audio.inl", "output/audio.csv", data.get_headers(), data);
 
 	known_hashes[hash_key] = current_hash;
 }

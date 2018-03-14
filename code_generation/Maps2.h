@@ -32,14 +32,14 @@ class Map2{
 	std::string objects;
 	std::string random_encounters;
 	std::string fishing_encounters;
-	std::string music;
+	unsigned music;
 	unsigned border_block;
 	MapConnection map_connections[4];
 	std::vector<MapTextEntry2> map_text;
 	int special_warp_check = 0;
 	std::vector<int> special_warp_tiles;
 public:
-	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data);
+	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data, const std::map<std::string, unsigned> &audio_map);
 	DELETE_COPY_CONSTRUCTORS(Map2);
 	const std::string &get_name() const{
 		return this->name;
@@ -72,9 +72,6 @@ public:
 	const std::string &get_fishing_encounters() const{
 		return this->fishing_encounters;
 	}
-	const std::string &get_music() const{
-		return this->music;
-	}
 	unsigned get_border_block() const{
 		return this->border_block;
 	}
@@ -87,7 +84,7 @@ class Maps2{
 	std::vector<std::shared_ptr<Map2>> maps;
 	std::map<std::string, std::shared_ptr<Map2>> map;
 public:
-	Maps2(const char *maps_path, const data_map_t &reordered_map_data, const Tilesets2 &tilesets);
+	Maps2(const char *maps_path, const data_map_t &reordered_map_data, const Tilesets2 &tilesets, const std::map<std::string, unsigned> &audio_map);
 	DELETE_COPY_CONSTRUCTORS(Maps2);
 	std::shared_ptr<Map2> get(const std::string &name);
 	const decltype(maps) &get_maps() const{
