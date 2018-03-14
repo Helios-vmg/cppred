@@ -58,8 +58,11 @@ void PausableClock::step(){
 		this->current_time = this->accumulated_time;
 		this->paused = false;
 	}else{
-		if (this->paused)
-			throw std::runtime_error("PausableClock used incorrectly. step() called while in the paused state.");
+		if (this->paused){
+			this->resume();
+			return;
+			//throw std::runtime_error("PausableClock used incorrectly. step() called while in the paused state.");
+		}
 		this->current_time = this->accumulated_time + this->parent_clock->get() - this->reference_time;
 	}
 }
@@ -75,7 +78,7 @@ void PausableClock::pause(){
 void PausableClock::resume(){
 	if (!this->paused)
 		return;
-	//std::cout << "PausableClock::resume()\n";
+	//Logger() << "PausableClock::resume()\n";
 	this->reference_time = -1;
 	this->step();
 }
