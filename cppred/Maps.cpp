@@ -421,6 +421,7 @@ void MapStore::release_map_instance(Map map){
 
 void MapInstance::resume_coroutine(CppRed::Game &game){
 	this->current_game = &game;
+	this->coroutine->get_clock().step();
 	this->coroutine->resume();
 	this->current_game = nullptr;
 }
@@ -451,9 +452,7 @@ void MapInstance::coroutine_entry_point(){
 	}
 	if (!this->on_frame)
 		return;
-	auto &c = this->coroutine->get_clock();
 	while (true){
-		c.step();
 		params.script_name = nullptr;
 		params.caller = nullptr;
 		params.game = this->current_game;

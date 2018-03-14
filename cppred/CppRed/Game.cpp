@@ -263,6 +263,7 @@ void Game::run_dialog(TextResourceId resource, TileRegion region, bool wait_at_e
 			auto &renderer = this->engine->get_renderer();
 			renderer.set_window_region_start((dialog_state.box_corner - Point(1, 1)) * Renderer::tile_size);
 			renderer.set_window_region_size((dialog_state.box_size + Point(2, 2)) * Renderer::tile_size);
+			renderer.set_enable_window(true);
 		}
 		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, region);
 		this->dialog_box_visible = true;

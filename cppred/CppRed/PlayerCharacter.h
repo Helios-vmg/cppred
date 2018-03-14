@@ -19,6 +19,7 @@ private:
 	typedef bool (PlayerCharacter::*warp_check_f)(const World &) const;
 	static const warp_check_f warp_check_functions[2];
 	const MapWarp *saved_warp = nullptr;
+	bool ignore_input = false;
 
 	void coroutine_entry_point() override;
 	bool handle_movement(const InputState &);
@@ -33,6 +34,7 @@ private:
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	void teleport(const WorldCoordinates &);
+	DEFINE_GETTER_SETTER(ignore_input)
 };
 
 }

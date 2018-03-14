@@ -91,8 +91,10 @@ void Actor::set_visible_sprite(){
 }
 
 void Actor::update(){
-	if (this->coroutine)
+	if (this->coroutine){
+		this->coroutine->get_clock().step();
 		this->coroutine->resume();
+	}
 	this->update_sprites();
 }
 
@@ -140,7 +142,6 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 	while ((t = c.get() - t0) < frames / 60){
 		this->pixel_offset = delta * (movement_per_frame * (t * 60));
 		coroutine.yield();
-		c.step();
 	}
 	this->pixel_offset = Point();
 }

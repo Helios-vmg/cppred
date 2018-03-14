@@ -47,8 +47,11 @@ bool PlayerCharacter::try_moving(const InputState &input){
 
 void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
-		this->coroutine->get_clock().step();
 		auto &engine = this->game->get_engine();
+		if (this->ignore_input){
+			this->coroutine->yield();
+			continue;
+		}
 		auto input = engine.get_input_state();
 		if (input.any_direction()){
 			if (!this->try_moving(input))

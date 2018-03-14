@@ -71,9 +71,9 @@ DECLARE_SCRIPT(PalletTownScript1){
 	vs.set_number(wcf0d, 0);
 	auto &world = game.get_world();
 	auto &player = world.get_pc();
+	player.set_ignore_input(true);
 	game.get_engine().set_gamepad_disabled(true);
 	auto &renderer = game.get_engine().get_renderer();
-	renderer.set_enable_window(true);
 	game.run_dialog(TextResourceId::OakAppearsText, TileRegion::Window);
 	{
 		auto exclamation_mark = renderer.create_sprite(2, 2);
@@ -83,7 +83,6 @@ DECLARE_SCRIPT(PalletTownScript1){
 			tile.has_priority = true;
 		}
 		exclamation_mark->set_position((PlayerCharacter::screen_block_offset + Point(0, -1)) * Renderer::tile_size * 2 + Point(0, -Renderer::tile_size / 2));
-		exclamation_mark->set_visible(true);
 		exclamation_mark->set_visible(true);
 		Coroutine::get_current_coroutine().wait(1);
 		renderer.set_enable_window(false);
@@ -96,6 +95,8 @@ DECLARE_SCRIPT(PalletTownScript1){
 		oak.move(!(i % 2) ? FacingDirection::Up : FacingDirection::Right);
 	game.get_engine().set_gamepad_disabled(false);
 	game.run_dialog(TextResourceId::OakWalksUpText, TileRegion::Window, true);
+	renderer.set_enable_window(false);
+	player.set_ignore_input(false);
 	vs.set_number(PalletTownScriptIndex, -1);
 }
 

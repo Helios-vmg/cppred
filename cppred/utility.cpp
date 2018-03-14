@@ -217,7 +217,6 @@ void Coroutine::wait(double s){
 	auto target = this->clock.get() + s + this->wait_remainder;
 	while (true){
 		this->yield();
-		this->clock.step();
 		auto now = this->clock.get();
 		if (now >= target){
 			this->wait_remainder = target - now;
