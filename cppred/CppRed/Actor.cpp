@@ -91,7 +91,8 @@ void Actor::set_visible_sprite(){
 }
 
 void Actor::update(){
-	this->coroutine->resume();
+	if (this->coroutine)
+		this->coroutine->resume();
 	this->update_sprites();
 }
 

@@ -33,6 +33,7 @@ class World : public ScreenOwner{
 	void render(Renderer &);
 public:
 	World(Game &game);
+	~World();
 	MapStore &get_map_store(){
 		return this->map_store;
 	}

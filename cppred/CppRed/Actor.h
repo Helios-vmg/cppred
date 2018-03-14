@@ -78,6 +78,9 @@ public:
 	}
 	void set_visible(bool visible);
 	virtual bool move(FacingDirection);
+	void stop(){
+		this->coroutine.reset();
+	}
 };
 
 template <typename T> 

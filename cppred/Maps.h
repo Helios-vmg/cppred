@@ -192,6 +192,7 @@ public:
 	void update(CppRed::Game &game);
 	void loaded(CppRed::Game &game);
 	void pause();
+	void stop();
 };
 
 class MapStore{
@@ -223,5 +224,5 @@ public:
 	const MapInstance &get_map_instance(Map map, CppRed::Game &) const;
 	const MapData &get_map_by_name(const std::string &) const;
 	void release_map_instance(Map);
-	void pause_instances();
+	void stop();
 };

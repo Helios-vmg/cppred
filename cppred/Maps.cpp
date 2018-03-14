@@ -462,3 +462,13 @@ void MapInstance::coroutine_entry_point(){
 		this->coroutine->yield();
 	}
 }
+
+void MapInstance::stop(){
+	this->coroutine.reset();
+}
+
+void MapStore::stop(){
+	for (auto &instance : this->map_instances)
+		if (instance)
+			instance->stop();
+}

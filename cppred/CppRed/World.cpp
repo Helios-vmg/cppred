@@ -8,7 +8,14 @@
 namespace CppRed{
 
 World::World(Game &game): ScreenOwner(game){
-	
+}
+
+World::~World(){
+	for (auto &actor : this->actors)
+		actor->stop();
+	this->map_store.stop();
+	this->player_character->stop();
+	this->rival->stop();
 }
 
 void World::teleport_player(const WorldCoordinates &destination){
