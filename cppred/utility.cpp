@@ -158,7 +158,7 @@ Coroutine::Coroutine(const std::string &name, entry_point_t &&entry_point):
 
 Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point):
 		name(name),
-		clock(base_clock),
+		clock(base_clock, name + " clock"),
 		entry_point(std::move(entry_point)){
 	this->push();
 	this->coroutine.reset(new coroutine_t([this](yielder_t &y){

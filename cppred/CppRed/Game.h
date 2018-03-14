@@ -53,6 +53,7 @@ enum class GameState{
 
 class Game{
 	Engine *engine;
+	std::unique_ptr<Coroutine> coroutine;
 	PokemonVersion version;
 	TextStore text_store;
 	InputState joypad_held;
@@ -77,6 +78,7 @@ public:
 	void operator=(Game &&) = delete;
 	void operator=(const Game &) = delete;
 	~Game();
+	void update();
 	void clear_screen();
 	Engine &get_engine(){
 		return *this->engine;
@@ -135,6 +137,9 @@ public:
 		return *this->world;
 	}
 	void execute(const char *script_name, Actor &caller, const char *parameter = nullptr);
+	Coroutine &get_coroutine(){
+		return *this->coroutine;
+	}
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

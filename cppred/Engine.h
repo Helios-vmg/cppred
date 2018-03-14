@@ -25,17 +25,24 @@ class AudioScheduler;
 
 namespace CppRed{
 class AudioProgramInterface;
+class Game;
 }
 
+#define Engine_USE_FIXED_CLOCK
+
 class Engine{
+#ifndef Engine_USE_FIXED_CLOCK
 	HighResolutionClock base_clock;
 	SteppingClock clock;
+#else
+	FixedClock clock;
+#endif
 	SDL_Window *window = nullptr;
 	std::unique_ptr<AudioDevice> audio_device;
 	std::unique_ptr<VideoDevice> video_device;
 	std::unique_ptr<Renderer> renderer;
+	std::unique_ptr<CppRed::Game> game;
 	XorShift128 prng;
-	std::unique_ptr<Coroutine> coroutine;
 	InputState input_state;
 	std::unique_ptr<AudioScheduler> audio_scheduler;
 	std::unique_ptr<Console> console;
@@ -43,10 +50,10 @@ class Engine{
 	std::mutex exception_thrown_mutex;
 	std::unique_ptr<std::string> exception_thrown;
 	ScriptStore script_store;
+	bool gamepad_disabled = false;
 
 	void initialize_video();
 	void initialize_audio();
-	void coroutine_entry_point(PokemonVersion, CppRed::AudioProgramInterface &);
 	bool handle_events();
 	bool update_console(PokemonVersion &version, CppRed::AudioProgramInterface &program);
 	void check_exceptions();
@@ -62,21 +69,14 @@ public:
 	Renderer &get_renderer(){
 		return *this->renderer;
 	}
-	void yield();
-	void wait(double seconds);
-	//Note: Doesn't actually wait a specific number of frames. It multiplies
-	//the argument by a time constant and waits that much time instead.
-	//void wait_frames(int frames);
-	void wait_exactly_one_frame(){
-		this->yield();
-	}
 	SteppingClock &get_stepping_clock(){
 		return this->clock;
 	}
-	void set_on_yield(std::function<void()> &&);
 	void execute_script(const CppRed::Scripts::script_parameters &parameter) const;
 	ScriptStore::script_f get_script(const char *script_name) const;
-	DEFINE_GETTER(input_state)
+	InputState get_input_state() const{
+		return this->gamepad_disabled ? InputState() : this->input_state;
+	}
 
 	void go_to_debug();
 	void restart();

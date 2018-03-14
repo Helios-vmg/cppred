@@ -35,7 +35,7 @@ static void scroll_from_the_right(CppRed::Game &game){
 			if (y > 0)
 				y = 0;
 			renderer.set_y_bg_offset(4 * t, (4 + 7) * t, { cast_round(y), 0 });
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		}while (y < 0);
 	}
 }
@@ -60,7 +60,7 @@ static void scroll_portrait(CppRed::Game &game, std::vector<Point> &red_pic, boo
 					y = 6;
 			}
 			renderer.set_y_bg_offset(4 * t, (4 + 7) * t, { cast_round(y * t), 0 });
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		}while (!direction ? (y > -6) : (y < 6));
 	}
 	renderer.set_y_bg_offset(4 * t, (4 + 7) * t, Point{0, 0});
@@ -114,7 +114,7 @@ static void oak_introduction(CppRed::Game &game){
 	game.get_audio_interface().play_sound(AudioResourceId::Stop);
 	game.get_audio_interface().play_sound(AudioResourceId::Music_Routes2);
 	renderer.clear_screen();
-	engine.wait(1);
+	game.get_coroutine().wait(1);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ProfOakPic);
 	fade_in(game);
 
@@ -175,9 +175,9 @@ static void red_closing(CppRed::Game &game){
 	game.get_audio_interface().play_sound(AudioResourceId::SFX_Shrink);
 	Coroutine::get_current_coroutine().wait_frames(4);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic1);
-	engine.wait(0.5);
+	game.get_coroutine().wait(0.5);
 	auto to_erase = renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic2);
-	engine.wait(0.5);
+	game.get_coroutine().wait(0.5);
 	renderer.mass_set_tiles(to_erase, Tile());
 	auto red = renderer.create_sprite(2, 2);
 	red->set_visible(true);
@@ -185,7 +185,7 @@ static void red_closing(CppRed::Game &game){
 	for (int i = 0; i < 4; i++)
 		red->get_tile(i % 2, i / 2).tile_no = RedSprite.first_tile + i;
 	red->set_position({ 8 * Renderer::tile_size, Renderer::tile_size * (7 * 2 + 1) / 2 });
-	engine.wait(0.5);
+	game.get_coroutine().wait(0.5);
 	game.fade_out_to_white();
 }
 

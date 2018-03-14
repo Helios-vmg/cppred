@@ -168,4 +168,8 @@ void Actor::set_visible(bool visible){
 		.set_cell_occupation(this->position.position, visible);
 }
 
+void Actor::pause(){
+	this->coroutine->get_clock().pause();
+}
+
 }

@@ -6,6 +6,7 @@
 #include "Data.h"
 #include "World.h"
 #include "TextDisplay.h"
+#include "EntryPoint.h"
 #include "Scripts/Scripts.h"
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
@@ -37,12 +38,18 @@ Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface
 		version(version),
 		audio_interface(program){
 	this->world.reset(new World(*this));
-	this->engine->set_on_yield([this](){ this->update_joypad_state(); });
+	this->coroutine.reset(new Coroutine("Game coroutine", this->engine->get_stepping_clock(), [this](Coroutine &){ Scripts::entry_point(*this); }));
+	this->coroutine->set_on_yield([this](){ this->update_joypad_state(); });
 	this->reset_dialog_state();
 }
 
 Game::~Game(){
 	std::cout << "Exiting.\n";
+}
+
+void Game::update(){
+	this->coroutine->get_clock().step();
+	this->coroutine->resume();
 }
 
 void Game::clear_screen(){
@@ -225,7 +232,7 @@ int Game::handle_standard_menu_with_title(
 		tilemap[index].tile_no = black_arrow;
 		int addend = 0;
 		do{
-			this->engine->wait_exactly_one_frame();
+			this->coroutine->yield();
 			auto state = this->joypad_auto_repeat();
 			if (!ignore_b && state.get_b()){
 				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
@@ -446,7 +453,7 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 		}
 
 		while (true){
-			this->engine->wait_exactly_one_frame();
+			this->coroutine->yield();
 			auto input = this->joypad_only_newly_pressed();
 			if (input.get_up()){
 				cursor_position.y = (cursor_position.y + grid_h) % (grid_h + 1);

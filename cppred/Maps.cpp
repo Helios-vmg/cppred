@@ -256,6 +256,7 @@ MapData::MapData(
 	}
 	this->on_frame = buffer.read_string();
 	this->on_load = buffer.read_string();
+	this->music = (AudioResourceId)buffer.read_varint();
 }
 
 int MapData::get_block_at_map_position(const Point &point) const{

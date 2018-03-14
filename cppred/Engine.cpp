@@ -1,6 +1,6 @@
 #include "Engine.h"
-#include "CppRed/EntryPoint.h"
 #include "CppRed/AudioProgram.h"
+#include "CppRed/Game.h"
 #include "AudioScheduler.h"
 #include "AudioDevice.h"
 #include "AudioRenderer.h"
@@ -13,7 +13,9 @@ const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_di
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
 
 Engine::Engine():
+#ifndef Engine_USE_FIXED_CLOCK
 		clock(this->base_clock),
+#endif
 		prng(get_seed()){
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
@@ -73,11 +75,7 @@ void Engine::run(){
 		auto &interface = *interfacep;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(two_way_mixer), std::move(interfacep)));
 		this->audio_scheduler->start();
-		this->coroutine.reset(new Coroutine(
-			"Main coroutine",
-			this->clock,
-			[this, version, &interface](Coroutine &){ this->coroutine_entry_point(version, interface); })
-		);
+		this->game.reset(new CppRed::Game(*this, version, interface));
 
 		//Main loop.
 		while (true){
@@ -92,11 +90,8 @@ void Engine::run(){
 				break;
 			this->check_exceptions();
 
-			if (!this->debug_mode){
-				//Resume game code.
-				this->coroutine->get_clock().step();
-				continue_running &= this->coroutine->resume();
-			}
+			if (!this->debug_mode)
+				this->game->update();
 
 			this->renderer->render();
 			this->console->render();
@@ -112,7 +107,7 @@ void Engine::run(){
 			this->video_device->present();
 		}
 
-		this->coroutine.reset();
+		this->game.reset();
 		this->audio_scheduler.reset();
 	}
 }
@@ -147,19 +142,6 @@ bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgramInterfa
 	return true;
 }
 
-
-void Engine::coroutine_entry_point(PokemonVersion version, CppRed::AudioProgramInterface &program){
-	this->yield();
-	CppRed::Scripts::entry_point(*this, version, program);
-}
-
-void Engine::yield(){
-	this->coroutine->yield();
-}
-
-void Engine::wait(double s){
-	this->coroutine->wait(s);
-}
 
 template <bool DOWN>
 static void handle_event(InputState &state, SDL_Event &event, bool &flag){
@@ -234,10 +216,6 @@ bool Engine::handle_events(){
 		//Do soft reset
 	}
 	return true;
-}
-
-void Engine::set_on_yield(std::function<void()> &&callback){
-	this->coroutine->set_on_yield(std::move(callback));
 }
 
 void Engine::go_to_debug(){

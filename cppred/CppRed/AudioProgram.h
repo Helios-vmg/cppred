@@ -150,9 +150,6 @@ class AudioProgram{
 	public:
 		Channel(CppRed::AudioProgram &program, int channel_no, AudioResourceId resource_id, int entry_point, int bank);
 		bool update();
-		//int get_sound_id() const{
-		//	return this->sound_id;
-		//}
 		bool is_cry();
 		void reset(AudioResourceId resource_id, int entry_point, int bank);
 		AudioResourceId get_sound_id() const{
@@ -190,10 +187,11 @@ class AudioProgram{
 	bool is_music_playing();
 	bool is_sfx_playing();
 	bool channel_is_busy(int);
+	void play_sound_internal(AudioResourceId);
 public:
 	AudioProgram(GbAudioRenderer &renderer, PokemonVersion, bool for_music);
-	void update(double now);
 	void play_sound(AudioResourceId);
+	void update(double now);
 	void pause_music();
 	void unpause_music();
 	void clear_channel(int channel);

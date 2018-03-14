@@ -194,7 +194,7 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 AudioProgram::AudioProgram(GbAudioRenderer &renderer, PokemonVersion version, bool mode): mode(mode), renderer(&renderer), version(version){
 	this->load_commands();
 	this->load_resources();
-	this->play_sound(AudioResourceId::Stop);
+	this->play_sound_internal(AudioResourceId::Stop);
 }
 
 void AudioProgram::load_commands(){
@@ -551,7 +551,7 @@ DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 			throw std::runtime_error(stream.str());
 		}
 		auto pitch = command.pitch - 1;
-		this->program->play_sound(noises[pitch]);
+		this->program->play_sound_internal(noises[pitch]);
 	}
 	this->note_length(command.length, command.pitch);
 	return false;
@@ -904,9 +904,15 @@ bool AudioProgram::Channel::is_cry(){
 }
 
 void AudioProgram::play_sound(AudioResourceId id){
-	if (id == AudioResourceId::None)
+	if (this->sound_id == id)
 		return;
 	this->sound_id = id;
+	this->play_sound_internal(id);
+}
+
+void AudioProgram::play_sound_internal(AudioResourceId id){
+	if (id == AudioResourceId::None)
+		return;
 	if (id == AudioResourceId::Stop){
 		//Turn on sound hardware.
 		this->renderer->set_NR52(0x80);

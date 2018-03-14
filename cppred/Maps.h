@@ -5,6 +5,7 @@
 #include "Objects.h"
 #include "../CodeGeneration/output/maps.h"
 #include "../CodeGeneration/output/items.h"
+#include "../CodeGeneration/output/audio.h"
 #include "../common/TilesetType.h"
 #include "ScriptStore.h"
 #include "TrainerData.h"
@@ -121,6 +122,7 @@ struct MapData{
 	int warp_check;
 	int warp_tiles[8];
 	std::string map_script;
+	AudioResourceId music;
 
 	MapData(
 		Map map_id,

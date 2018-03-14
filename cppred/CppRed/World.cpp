@@ -234,6 +234,7 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 			this->actors.emplace_back(std::move(actor));
 		}
 	}
+	game->get_audio_interface().play_sound(map_data.music == AudioResourceId::None ? AudioResourceId::Stop : map_data.music);
 	instance.loaded(*this->game);
 }
 

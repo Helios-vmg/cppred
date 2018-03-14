@@ -1,5 +1,6 @@
 #include "HighResolutionClock.h"
 #include "utility.h"
+#include <iostream>
 
 #if (defined _WIN32 || defined _WIN64)
 #define WIN32_LEAN_AND_MEAN
@@ -47,6 +48,10 @@ void SteppingClock::step(){
 		this->current_time = this->parent_clock->get() - this->reference_time;
 }
 
+void FixedClock::step(){
+	this->current_time = this->clock++ * (1.0 / 60.0);
+}
+
 void PausableClock::step(){
 	if (this->reference_time < 0){
 		this->reference_time = this->parent_clock->get();
@@ -70,6 +75,7 @@ void PausableClock::pause(){
 void PausableClock::resume(){
 	if (!this->paused)
 		return;
+	//std::cout << "PausableClock::resume()\n";
 	this->reference_time = -1;
 	this->step();
 }

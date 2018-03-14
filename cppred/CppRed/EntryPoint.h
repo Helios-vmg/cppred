@@ -1,12 +1,10 @@
 #pragma once
 
-enum class PokemonVersion;
-class Engine;
 namespace CppRed{
-class AudioProgramInterface;
+class Game;
 namespace Scripts{
 
-void entry_point(Engine &, PokemonVersion, CppRed::AudioProgramInterface &);
+void entry_point(Game &);
 
 }
 }

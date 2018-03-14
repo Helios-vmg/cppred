@@ -69,9 +69,7 @@ public:
 	}
 	void set_new_screen_owner(std::unique_ptr<ScreenOwner> &&);
 	std::unique_ptr<ScreenOwner> get_new_screen_owner();
-	void pause(){
-		this->coroutine->get_clock().pause();
-	}
+	void pause();
 	void set_facing_direction(FacingDirection direction);
 	DEFINE_GETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)

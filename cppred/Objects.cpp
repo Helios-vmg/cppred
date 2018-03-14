@@ -101,7 +101,7 @@ PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::str
 }
 
 CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
-	auto ret = CppRed::create_actor2<CppRed::Npc>(game, Coroutine::get_current_coroutine(), this->name, renderer, *this->sprite, instance);
+	auto ret = CppRed::create_actor2<CppRed::Npc>(game, game.get_coroutine(), this->name, renderer, *this->sprite, instance);
 	auto temp = (CppRed::Npc *)ret.get();
 	temp->set_current_map(map);
 	temp->set_map_position(this->position);

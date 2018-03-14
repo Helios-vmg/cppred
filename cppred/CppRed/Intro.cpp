@@ -9,11 +9,12 @@
 #include "../CodeGeneration/output/audio.h"
 #include <iostream>
 
-static void display_copyright(Engine &engine){
+static void display_copyright(CppRed::Game &game){
+	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	renderer.draw_image_to_tilemap({ 2, 7 }, CopyrightScreen);
 	renderer.set_palette(PaletteRegion::Background, default_palette);
-	engine.wait(3);
+	game.get_coroutine().wait(3);
 }
 
 template <unsigned N>
@@ -193,7 +194,7 @@ void hop_sprite(CppRed::Game &game, Sprite &sprite, AudioResourceId sfx, Point &
 			scaled = duration;
 		Point delta = { sign * cast_round(scaled * x_multiplier), cast_round(Parabola(scaled)) };
 		sprite.set_position(position + delta);
-		engine.wait_exactly_one_frame();
+		game.get_coroutine().yield();
 	}while (scaled < duration);
 	position = sprite.get_position();
 }
@@ -332,7 +333,7 @@ static BattleSceneSprites battle_scene(CppRed::Game &game){
 				scaled = duration;
 			Point delta = { 0, cast_round(scaled * 1.0 / 5.0) };
 			nidorino2->set_position(nidorino_position + delta);
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		} while (scaled < duration);
 		nidorino_position = nidorino2->get_position();
 	}
@@ -358,7 +359,7 @@ static BattleSceneSprites battle_scene(CppRed::Game &game){
 			nidorino3->set_position(nidorino_position + delta);
 			if (nidorino3->get_y() < min_y)
 				nidorino3->set_y(min_y);
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		}while (nidorino3->get_y() > min_y);
 		nidorino_position = nidorino3->get_position();
 	}
@@ -374,9 +375,9 @@ void intro(Game &game){
 	auto &renderer = engine.get_renderer();
 	engine.get_renderer().set_enable_bg(true);
 	engine.get_renderer().set_enable_sprites(true);
-	display_copyright(engine);
+	display_copyright(game);
 	
-	clear_screen(game.get_engine());
+	game.clear_screen();
 	draw_black_bars<4>(engine);
 	Coroutine::get_current_coroutine().wait_frames(64);
 
@@ -390,7 +391,7 @@ void intro(Game &game){
 		game.fade_out_to_white();
 	}
 	renderer.clear_screen();
-	engine.wait_exactly_one_frame();
+	game.get_coroutine().yield();
 }
 
 }

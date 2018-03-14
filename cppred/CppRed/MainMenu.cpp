@@ -68,7 +68,7 @@ static void show_options(CppRed::Game &game){
 		}
 
 		while (true){
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 			auto input = game.joypad_auto_repeat();
 			if (input.get_left()){
 				if (!horizontal_cursor_positions[vertical_cursor_position])

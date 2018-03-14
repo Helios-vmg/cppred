@@ -10,6 +10,7 @@
 #include "Maps.h"
 #include "World.h"
 #include "PlayerCharacter.h"
+#include "../utility.h"
 
 namespace CppRed{
 namespace Scripts{
@@ -35,8 +36,7 @@ static MainMenuResult initial_sequence(Game &game){
 #endif
 }
 
-void entry_point(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program){
-	Game game(engine, version, program);
+void entry_point(Game &game){
 #ifndef CPPRED_TESTING
 	if (initial_sequence(game) == MainMenuResult::ContinueGame){
 #else

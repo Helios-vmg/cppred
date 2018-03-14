@@ -74,7 +74,7 @@ static void bounce_logo(CppRed::Game &game){
 		}
 		renderer.set_window_origin({0, -cast_round(64 * EasingCurve::f(x, base))});
 
-		engine.wait_exactly_one_frame();
+		game.get_coroutine().yield();
 	}while (x < limit);
 }
 
@@ -93,7 +93,7 @@ static void scroll_version(CppRed::Game &game){
 			x = 1;
 		auto y = -(1 - x) * (Renderer::logical_screen_tile_width - 7) * Renderer::tile_size;
 		renderer.set_y_bg_offset(64, 64 + 8, { cast_round(y) , 0 });
-		engine.wait_exactly_one_frame();
+		game.get_coroutine().yield();
 	}while (x < 1);
 }
 
@@ -129,7 +129,7 @@ static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N],
 				x = duration;
 			auto offset = cast_round(pokemon_easing_curve(x));
 			renderer.set_y_bg_offset(80, 80 + 7 * Renderer::tile_size, {offset, 0});
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		}while (x < duration);
 	}
 
@@ -148,7 +148,7 @@ static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N],
 				x = duration;
 			auto position = cast_round(pokeball_trajectory(x));
 			ball.set_y(y - position);
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		}while (x < duration);
 	}
 
@@ -164,7 +164,7 @@ static void pick_new_pokemon(CppRed::Game &game, const SpeciesId (&pokemons)[N],
 				x = duration;
 			auto offset = cast_round(-pokemon_easing_curve(duration - x));
 			renderer.set_y_bg_offset(80, 80 + 7 * Renderer::tile_size, {offset, 0});
-			engine.wait_exactly_one_frame();
+			game.get_coroutine().yield();
 		}while (x < duration);
 	}
 }
