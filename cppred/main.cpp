@@ -1,17 +1,19 @@
 #include "Engine.h"
 #include <SDL_main.h>
 #include <stdexcept>
-#include <iostream>
+#include <fstream>
 
 int main(int argc, char **argv){
 	try{
 		Engine engine;
 		engine.run();
 	}catch (std::exception &e){
-		std::cerr << e.what() << std::endl;
+		std::ofstream file("error.txt");
+		file << e.what() << std::endl;
 		return -1;
 	}catch (...){
-		std::cerr << "Unknown exception.\n";
+		std::ofstream file("error.txt");
+		file << "Unknown exception.\n";
 		return -1;
 	}
 	return 0;
