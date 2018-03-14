@@ -46,9 +46,6 @@ protected:
 	void run_walking_animation(const Point &delta, FacingDirection);
 	bool move(const Point &delta, FacingDirection);
 	virtual void entered_new_map(Map old_map, Map new_map, bool warped){}
-	virtual double movement_duration() const{
-		return Renderer::tile_size * 2;
-	}
 	virtual bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	virtual void update_sprites(){}
 	virtual void about_to_move(){}
@@ -86,6 +83,9 @@ public:
 	virtual bool move(FacingDirection);
 	void stop(){
 		this->coroutine.reset();
+	}
+	virtual double movement_duration() const{
+		return Renderer::tile_size * 2;
 	}
 	std::vector<PathStep> find_path(const Point &destination);
 	void follow_path(const std::vector<PathStep> &);

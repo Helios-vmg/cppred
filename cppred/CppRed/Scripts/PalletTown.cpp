@@ -5,6 +5,7 @@
 #include "../../../CodeGeneration/output/text.h"
 #include "../../../CodeGeneration/output/audio.h"
 #include "Events.h"
+#include <CppRed/Npc.h>
 
 namespace CppRed{
 namespace Scripts{
@@ -75,6 +76,7 @@ DECLARE_SCRIPT(PalletTownScript1){
 	game.get_engine().set_gamepad_disabled(true);
 	auto &renderer = game.get_engine().get_renderer();
 	game.run_dialog(TextResourceId::OakAppearsText, TileRegion::Window);
+	auto &coroutine = Coroutine::get_current_coroutine();
 	{
 		auto exclamation_mark = renderer.create_sprite(2, 2);
 		int i = 0;
@@ -84,7 +86,7 @@ DECLARE_SCRIPT(PalletTownScript1){
 		}
 		exclamation_mark->set_position((PlayerCharacter::screen_block_offset + Point(0, -1)) * Renderer::tile_size * 2 + Point(0, -Renderer::tile_size / 2));
 		exclamation_mark->set_visible(true);
-		Coroutine::get_current_coroutine().wait(1);
+		coroutine.wait(1);
 		renderer.set_enable_window(false);
 		game.reset_dialog_state();
 	}
@@ -99,9 +101,29 @@ DECLARE_SCRIPT(PalletTownScript1){
 	renderer.set_enable_window(false);
 	player.set_ignore_input(false);
 	{
+		auto old = oak.movement_duration();
+		static_cast<CppRed::Npc &>(oak).set_special_movement_duration(player.movement_duration());
 		Point destination(12, 11);
-		auto path = oak.find_path(destination);
-		oak.follow_path(path);
+		world.get_map_instance(oak.get_current_map()).set_cell_occupation(oak.get_map_position(), false);
+		auto path1 = oak.find_path(destination);
+		auto path2 = player.find_path(destination);
+		bool done1 = false, done2 = false;
+		Coroutine player_co("player temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
+			player.follow_path(path2);
+			done2 = true;
+		});
+		Coroutine oak_co("player temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
+			oak.follow_path(path1);
+			done1 = true;
+		});
+		while (!done1 || !done2){
+			player_co.get_clock().step();
+			player_co.resume();
+			oak_co.get_clock().step();
+			oak_co.resume();
+			coroutine.yield();
+		}
+		static_cast<CppRed::Npc &>(oak).set_special_movement_duration(old);
 	}
 	vs.set_number(PalletTownScriptIndex, -1);
 }
