@@ -84,7 +84,7 @@ void Renderer::do_software_rendering(){
 	
 #ifdef MEASURE_RENDERING_TIMES
 	auto t1 = clock.get();
-	std::cout << "Rendering time: " << (t1 - t0) * 1000 << " ms\n";
+	Logger() << "Rendering time: " << (t1 - t0) * 1000 << " ms\n";
 #endif
 }
 

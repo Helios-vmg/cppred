@@ -6,6 +6,7 @@
 #include "../CodeGeneration/output/audio.h"
 #include <set>
 #include <sstream>
+#include <Console.h>
 
 const byte_t command_parameter_counts[] = {
 	1, //tempo
@@ -384,7 +385,7 @@ bool AudioProgram::Channel::continue_execution(){
 DEFINE_COMMAND_FUNCTION(Tempo){
 	TempoAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "tempo " << command.tempo << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "tempo " << command.tempo << '\n';
 #endif
 	int offset;
 	if (this->channel_no < 4){
@@ -405,7 +406,7 @@ DEFINE_COMMAND_FUNCTION(Tempo){
 DEFINE_COMMAND_FUNCTION(Volume){
 	VolumeAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "volume " << command.vol1 << " " << command.vol2 << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "volume " << command.vol1 << " " << command.vol2 << '\n';
 #endif
 	this->program->renderer->set_NR50((byte_t)((command.vol1 & 0x0F) | ((command.vol2 & 0x0F) << 4)));
 	return true;
@@ -414,7 +415,7 @@ DEFINE_COMMAND_FUNCTION(Volume){
 DEFINE_COMMAND_FUNCTION(Duty){
 	DutyAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "duty " << command.duty << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "duty " << command.duty << '\n';
 #endif
 	this->duty = command.duty;
 	return true;
@@ -423,7 +424,7 @@ DEFINE_COMMAND_FUNCTION(Duty){
 DEFINE_COMMAND_FUNCTION(DutyCycle){
 	DutyCycleAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "duty_cycle " << command.duty << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "duty_cycle " << command.duty << '\n';
 #endif
 	this->duty_cycle = command.duty;
 	this->duty = command.duty & 0xC0;
@@ -434,7 +435,7 @@ DEFINE_COMMAND_FUNCTION(DutyCycle){
 DEFINE_COMMAND_FUNCTION(Vibrato){
 	VibratoAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "vibrato " << command.delay << " " << command.rate << " " << command.depth << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "vibrato " << command.delay << " " << command.rate << " " << command.depth << '\n';
 #endif
 	this->vibrato_delay_counter_reload_value = this->vibrato_delay_counter = command.delay;
 	this->vibrato_extent = command.rate / 2;
@@ -445,7 +446,7 @@ DEFINE_COMMAND_FUNCTION(Vibrato){
 
 DEFINE_COMMAND_FUNCTION(TogglePerfectPitch){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "toggle_perfect_pitch\n";
+	Logger() << "(" << this->channel_no << ") " << "toggle_perfect_pitch\n";
 #endif
 	this->perfect_pitch = !this->perfect_pitch;
 	return true;
@@ -454,7 +455,7 @@ DEFINE_COMMAND_FUNCTION(TogglePerfectPitch){
 DEFINE_COMMAND_FUNCTION(NoteType){
 	NoteTypeAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "note_type " << command.speed << " " << command.volume << " " << command.fade << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "note_type " << command.speed << " " << command.volume << " " << command.fade << '\n';
 #endif
 	this->note_speed = command.speed;
 
@@ -476,7 +477,7 @@ DEFINE_COMMAND_FUNCTION(NoteType){
 DEFINE_COMMAND_FUNCTION(Rest){
 	RestAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "rest " << command.length << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "rest " << command.length << '\n';
 #endif
 	this->set_delay_counters(command.length);
 	if (this->channel_no < 4 && this->program->channel_is_busy(4 + this->channel_no))
@@ -494,7 +495,7 @@ DEFINE_COMMAND_FUNCTION(Rest){
 DEFINE_COMMAND_FUNCTION(Octave){
 	OctaveAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "octave " << command.octave << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "octave " << command.octave << '\n';
 #endif
 	this->octave = command.octave;
 	return true;
@@ -503,7 +504,7 @@ DEFINE_COMMAND_FUNCTION(Octave){
 DEFINE_COMMAND_FUNCTION(Note){
 	NoteAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "note " << command.pitch << " " << command.length << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "note " << command.pitch << " " << command.length << '\n';
 #endif
 	this->note_length(command.length, command.pitch);
 	return false;
@@ -512,7 +513,7 @@ DEFINE_COMMAND_FUNCTION(Note){
 DEFINE_COMMAND_FUNCTION(DSpeed){
 	DSpeedAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "dspeed " << command.speed << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "dspeed " << command.speed << '\n';
 #endif
 	this->note_speed = command.speed;
 	return true;
@@ -521,7 +522,7 @@ DEFINE_COMMAND_FUNCTION(DSpeed){
 DEFINE_COMMAND_FUNCTION(NoiseInstrument){
 	NoiseInstrumentAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "noise_instrument " << command.pitch << " " << command.length << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "noise_instrument " << command.pitch << " " << command.length << '\n';
 #endif
 	if (!this->program->stop_when_sfx_ends){
 		static const AudioResourceId noises[] = {
@@ -564,7 +565,7 @@ DEFINE_COMMAND_FUNCTION(UnknownSfx10){
 	UnknownSfx10AudioCommand command(command_);
 #else
 	UnknownSfx10AudioCommand command(command_);
-	std::cout << "(" << this->channel_no << ") " << "unknown_sfx_10 " << command.nr10 << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "unknown_sfx_10 " << command.nr10 << '\n';
 	if (this->channel_no < 4 || this->do_execute_music)
 		return true;
 #endif
@@ -587,7 +588,7 @@ bool AudioProgram::Channel::unknown20(const AudioCommand &command_, bool &dont_s
 	UnknownSfx20AudioCommand command(command_);
 #else
 	UnknownSfx20AudioCommand command(command_);
-	std::cout << "(" << this->channel_no << ") " << (noise ? "unknown_noise_20 " : "unknown_sfx_20 ") << command.length << " " << command.envelope << " " << command.frequency << std::endl;
+	Logger() << "(" << this->channel_no << ") " << (noise ? "unknown_noise_20 " : "unknown_sfx_20 ") << command.length << " " << command.envelope << " " << command.frequency << '\n';
 	if (this->channel_no < 3 || this->do_execute_music)
 		return true;
 #endif
@@ -602,7 +603,7 @@ bool AudioProgram::Channel::unknown20(const AudioCommand &command_, bool &dont_s
 
 DEFINE_COMMAND_FUNCTION(ExecuteMusic){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "execute_music\n";
+	Logger() << "(" << this->channel_no << ") " << "execute_music\n";
 #endif
 	this->do_execute_music = true;
 	return true;
@@ -611,7 +612,7 @@ DEFINE_COMMAND_FUNCTION(ExecuteMusic){
 DEFINE_COMMAND_FUNCTION(PitchBend){
 	PitchBendAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "pitch_bend " << command.length << " " << command.frequency << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "pitch_bend " << command.length << " " << command.frequency << '\n';
 #endif
 	this->pitch_bend_length = command.length;
 	this->pitch_bend_target_frequency = command.frequency;
@@ -622,7 +623,7 @@ DEFINE_COMMAND_FUNCTION(PitchBend){
 DEFINE_COMMAND_FUNCTION(StereoPanning){
 	StereoPanningAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "stereo_panning " << command.value << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "stereo_panning " << command.value << '\n';
 #endif
 	this->program->stereo_panning = command.value;
 	return true;
@@ -631,7 +632,7 @@ DEFINE_COMMAND_FUNCTION(StereoPanning){
 DEFINE_COMMAND_FUNCTION(Loop){
 	LoopAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "loop " << command.times << " " << command.dst << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "loop " << command.times << " " << command.dst << '\n';
 #endif
 	if (!command.times){
 		this->program_counter = command.dst;
@@ -649,10 +650,10 @@ DEFINE_COMMAND_FUNCTION(Loop){
 DEFINE_COMMAND_FUNCTION(Call){
 	CallAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "call " << command.dst << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "call " << command.dst << '\n';
 #endif
 	if (this->call_stack.size())
-		std::cout << "Assumption in audio program might have been invalidated.\n";
+		Logger() << "Assumption in audio program might have been invalidated.\n";
 	this->call_stack.push_back(this->program_counter);
 	this->program_counter = command.dst;
 	return true;
@@ -661,7 +662,7 @@ DEFINE_COMMAND_FUNCTION(Call){
 DEFINE_COMMAND_FUNCTION(Goto){
 	GotoAudioCommand command(command_);
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "goto " << command.dst << std::endl;
+	Logger() << "(" << this->channel_no << ") " << "goto " << command.dst << '\n';
 #endif
 	this->program_counter = command.dst;
 	return true;
@@ -669,7 +670,7 @@ DEFINE_COMMAND_FUNCTION(Goto){
 
 DEFINE_COMMAND_FUNCTION(IfRed){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "ifred\n";
+	Logger() << "(" << this->channel_no << ") " << "ifred\n";
 #endif
 	this->ifred_execute_bit = this->program->version == PokemonVersion::Red;
 	return true;
@@ -677,7 +678,7 @@ DEFINE_COMMAND_FUNCTION(IfRed){
 
 DEFINE_COMMAND_FUNCTION(Else){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "else\n";
+	Logger() << "(" << this->channel_no << ") " << "else\n";
 #endif
 	this->ifred_execute_bit = !ifred_execute_bit;
 	return true;
@@ -685,7 +686,7 @@ DEFINE_COMMAND_FUNCTION(Else){
 
 DEFINE_COMMAND_FUNCTION(EndIf){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "endif\n";
+	Logger() << "(" << this->channel_no << ") " << "endif\n";
 #endif
 	this->ifred_execute_bit = true;
 	return true;
@@ -693,7 +694,7 @@ DEFINE_COMMAND_FUNCTION(EndIf){
 
 DEFINE_COMMAND_FUNCTION(End){
 #ifdef LOG_COMMAND_EXECUTION
-	std::cout << "(" << this->channel_no << ") " << "end\n";
+	Logger() << "(" << this->channel_no << ") " << "end\n";
 #endif
 	if (this->call_stack.size()){
 		this->program_counter = this->call_stack.back();

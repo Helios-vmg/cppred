@@ -12,6 +12,7 @@
 #include <sstream>
 #include <cassert>
 #include <iostream>
+#include "Console.h"
 
 Blockset::Blockset(const byte_t *buffer, size_t &offset, size_t size){
 	this->name = read_string(buffer, offset, size);
@@ -408,7 +409,7 @@ MapObjectInstance::MapObjectInstance(MapObject &object, CppRed::Game &game): gam
 }
 
 void MapObjectInstance::activate(CppRed::Actor &activator){
-	std::cout << activator.get_name() << " activated " << this->full_object->get_name() << std::endl;
+	Logger() << activator.get_name() << " activated " << this->full_object->get_name() << '\n';
 	this->full_object->activate(*this->game, activator, this->actor);
 }
 

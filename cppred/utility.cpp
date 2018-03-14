@@ -204,10 +204,10 @@ bool Coroutine::resume(){
 		throw std::runtime_error("Attempting to resume a running coroutine!");
 	this->active = true;
 	this->push();
-	//std::cout << this->name << " RESUMES\n";
+	//Logger() << this->name << " RESUMES\n";
 	this->clock.resume();
 	auto ret = !!(*this->coroutine)();
-	//std::cout << this->name << " PAUSES\n";
+	//Logger() << this->name << " PAUSES\n";
 	this->pop();
 	this->active = false;
 	return ret;

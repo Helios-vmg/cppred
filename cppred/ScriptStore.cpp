@@ -2,7 +2,7 @@
 #include "CppRed/Scripts/Scripts.h"
 #include "utility.h"
 #include <algorithm>
-#include <iostream>
+#include "Console.h"
 
 #define ADD_SCRIPT(name) this->scripts.emplace_back(#name, CppRed::Scripts::name)
 
@@ -20,7 +20,7 @@ ScriptStore::ScriptStore(){
 void ScriptStore::execute(const CppRed::Scripts::script_parameters &parameter) const{
 	auto f = this->get_script(parameter.script_name);
 	if (!f){
-		std::cout << "Script not found. " << parameter.script_name << "(" << (parameter.parameter ? parameter.parameter : "null") << ")" << std::endl;
+		Logger() << "Script not found. " << parameter.script_name << "(" << (parameter.parameter ? parameter.parameter : "null") << ")\n";
 		return;
 	}
 	f(parameter);

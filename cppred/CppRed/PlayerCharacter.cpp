@@ -135,17 +135,6 @@ bool PlayerCharacter::run_warp_logic_no_collision(){
 	}
 	if (!warp)
 		return false;
-	//bool at_event_disp = false;
-	//for (auto instance : instances){
-	//	if (!instance)
-	//		break;
-	//	if (instance->get_object().get_type() == MapObjectType::EventDisp){
-	//		at_event_disp = true;
-	//		break;
-	//	}
-	//}
-	//if (at_event_disp)
-	//	std::cout << "At event disp! (" << warp->get_name() << ")\n";
 	this->saved_warp = warp;
 	return true;
 }

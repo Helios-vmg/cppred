@@ -49,7 +49,7 @@ void AudioScheduler::processor(){
 			auto t1 = clock.get();
 			time_processing += t1 - t0;
 			if (t1 >= last + 1){
-				std::cout << "AudioScheduler::processor() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
+				Logger() << "AudioScheduler::processor() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
 				last = t1;
 				time_processing = 0;
 			}

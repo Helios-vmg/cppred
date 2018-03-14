@@ -8,7 +8,8 @@
 #include "TextDisplay.h"
 #include "EntryPoint.h"
 #include "Scripts/Scripts.h"
-#include "../CodeGeneration/output/audio.h"
+#include "../../CodeGeneration/output/audio.h"
+#include "../Console.h"
 #include <iostream>
 #include <sstream>
 
@@ -44,7 +45,6 @@ Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface
 }
 
 Game::~Game(){
-	std::cout << "Exiting.\n";
 }
 
 void Game::update(){
@@ -522,13 +522,13 @@ std::string Game::get_name_from_user(NameEntryType type, int max_length){
 	if (type == NameEntryType::Pokemon)
 		throw std::runtime_error("CppRedEngine::get_name_from_user(): Invalid usage. type must not be NameEntryType::Pokemon.");
 	auto ret = this->get_name_from_user(type, SpeciesId::None, max_length);
-	std::cout << "Selected name: " << ret << std::endl;
+	Logger() << "Selected name: " << ret << '\n';
 	return ret;
 }
 
 std::string Game::get_name_from_user(SpeciesId species, int max_length){
 	auto ret = this->get_name_from_user(NameEntryType::Pokemon, SpeciesId::None, max_length);
-	std::cout << "Selected name: " << ret << std::endl;
+	Logger() << "Selected name: " << ret << '\n';
 	return ret;
 }
 

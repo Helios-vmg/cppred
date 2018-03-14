@@ -8,6 +8,7 @@
 #include "Console.h"
 #include <stdexcept>
 #include <cassert>
+#include <sstream>
 
 const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_display_period;
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
@@ -67,8 +68,10 @@ void Engine::run(){
 		this->video_device->set_window_title(to_string(version));
 		this->debug_mode = false;
 		this->renderer.reset(new Renderer(*this->video_device));
-		if (!this->console)
+		if (!this->console){
 			this->console.reset(new Console(*this));
+			global_console = this->console.get();
+		}
 		auto two_way_mixer = std::make_unique<TwoWayMixer>(*this->audio_device);
 		two_way_mixer->set_renderers(std::make_unique<HeliosRenderer>(*two_way_mixer), std::make_unique<HeliosRenderer>(*two_way_mixer));
 		auto interfacep = std::make_unique<CppRed::AudioProgramInterface>(two_way_mixer->get_low_priority_renderer(), two_way_mixer->get_high_priority_renderer(), version);
@@ -99,7 +102,9 @@ void Engine::run(){
 			auto t1 = clock.get();
 			time_processing += t1 - t0;
 			if (t1 >= last + 1){
-				std::cout << "Engine::run() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
+				std::stringstream temp;
+				temp << "Engine::run() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
+				this->console->log_string(temp.str());
 				last = t1;
 				time_processing = 0;
 			}
