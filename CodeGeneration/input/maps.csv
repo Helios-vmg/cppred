@@ -4,7 +4,7 @@ legacy_id,id,name,tileset,width,height,map_data,on_load,on_frame,objects,random_
 89,3,BillsHouse,Interior,4,4,BillsHouseMapData,,BillsHouseScript,BillsHouseObject,,,Music_Cities2,23,,
 40,4,BluesHouse,House,4,4,BluesHouseMapData,,BluesHouseScript,BluesHouseObject,,,Music_PalletTown,13,,
 247,5,Bruno,Gym,5,6,BrunoMapData,,BrunoScript,BrunoObject,,,Music_Dungeon1,13,,
-7,6,CeladonCity,Overworld,25,18,CeladonCityMapData,,CeladonCityScript,CeladonCityObject,,FishingGroup5,Music_Celadon,105,,
+7,6,CeladonCity,Overworld,25,18,CeladonCityMapData,,CeladonCityScript,CeladonCityObject,,FishingGroup5,Music_Celadon,105,,18 27 88
 139,7,CeladonDiner,Lobby,5,4,CeladonDinerMapData,,CeladonDinerScript,CeladonDinerObject,,,Music_Celadon,13,,
 136,8,CeladonGameCorner,Lobby,10,9,CeladonGameCornerMapData,,CeladonGameCornerScript,CeladonGameCornerObject,,,Music_GameCorner,13,,
 135,9,CeladonGym,Gym,5,9,CeladonGymMapData,,CeladonGymScript,CeladonGymObject,,,Music_Gym,13,,
@@ -127,7 +127,7 @@ legacy_id,id,name,tileset,width,height,map_data,on_load,on_frame,objects,random_
 191,126,Route18Gate,Gate,4,5,Route11GateMapData,,Route18GateScript,Route18GateObject,,,Music_Cities1,14,,
 192,127,Route18GateUpstairs,Gate,4,4,Route11GateUpstairsMapData,,Route18GateUpstairsScript,Route18GateUpstairsObject,,,Music_Cities1,14,,
 31,128,Route19,Overworld,10,27,Route19MapData,,Route19Script,Route19Object,WaterMons,FishingGroup8,Music_Routes3,33,,
-14,129,Route2,Overworld,10,36,Route2MapData,,Route2Script,Route2Object,Route2Mons,,Music_Routes1,105,,
+14,129,Route2,Overworld,10,36,Route2MapData,,Route2Script,Route2Object,Route2Mons,,Music_Routes1,105,,18 27 88
 32,130,Route20,Overworld,50,9,Route20MapData,,Route20Script,Route20Object,WaterMons,FishingGroup8,Music_Routes3,33,,
 33,131,Route21,Overworld,10,45,Route21MapData,,Route21Script,Route21Object,Route21Mons,FishingGroup8,Music_Routes3,33,,
 34,132,Route22,Overworld,20,9,Route22MapData,,Route22Script,Route22Object,Route22Mons,FishingGroup2,Music_Routes3,29,,
