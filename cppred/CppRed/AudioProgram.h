@@ -39,7 +39,7 @@ class AudioProgram{
 	std::vector<AudioResource> resources;
 
 	GbAudioRenderer *renderer;
-	bool mode;
+	bool for_music;
 	PokemonVersion version;
 	AudioResourceId sound_id;
 	enum class PauseMusicState{

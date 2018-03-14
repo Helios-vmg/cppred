@@ -191,7 +191,7 @@ static const instrument_data_t * const * const instruments_by_bank[] = {
 	instruments_bank_3,
 };
 
-AudioProgram::AudioProgram(GbAudioRenderer &renderer, PokemonVersion version, bool mode): mode(mode), renderer(&renderer), version(version){
+AudioProgram::AudioProgram(GbAudioRenderer &renderer, PokemonVersion version, bool mode): for_music(mode), renderer(&renderer), version(version){
 	this->load_commands();
 	this->load_resources();
 	this->play_sound_internal(AudioResourceId::Stop);
@@ -265,7 +265,7 @@ void AudioProgram::update_channel(int i){
 		return;
 	if (!c->update()){
 		c.reset();
-		if (!this->mode && i >= 4 && !this->is_sfx_playing()){
+		if (!this->for_music && i >= 4 && !this->is_sfx_playing()){
 			this->renderer->set_active(false);
 			this->sfx_finish_event.signal();
 		}
@@ -904,7 +904,7 @@ bool AudioProgram::Channel::is_cry(){
 }
 
 void AudioProgram::play_sound(AudioResourceId id){
-	if (this->sound_id == id)
+	if (this->for_music && this->sound_id == id)
 		return;
 	this->sound_id = id;
 	this->play_sound_internal(id);
