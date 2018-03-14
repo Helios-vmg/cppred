@@ -9,6 +9,11 @@ namespace CppRed{
 class Game;
 class ScreenOwner;
 
+struct PathStep{
+	FacingDirection movement_direction;
+	Point after_state;
+};
+
 class Actor{
 protected:
 	Game *game;
@@ -27,6 +32,7 @@ protected:
 	MapObjectInstance *object_instance = nullptr;
 	std::unique_ptr<ScreenOwner> screen_owner;
 	bool visible = true;
+	bool ignore_occupancy = false;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -81,6 +87,8 @@ public:
 	void stop(){
 		this->coroutine.reset();
 	}
+	std::vector<PathStep> find_path(const Point &destination);
+	void follow_path(const std::vector<PathStep> &);
 };
 
 template <typename T> 

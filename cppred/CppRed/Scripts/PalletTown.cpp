@@ -95,8 +95,14 @@ DECLARE_SCRIPT(PalletTownScript1){
 		oak.move(!(i % 2) ? FacingDirection::Up : FacingDirection::Right);
 	game.get_engine().set_gamepad_disabled(false);
 	game.run_dialog(TextResourceId::OakWalksUpText, TileRegion::Window, true);
+	game.reset_dialog_state();
 	renderer.set_enable_window(false);
 	player.set_ignore_input(false);
+	{
+		Point destination(12, 11);
+		auto path = oak.find_path(destination);
+		oak.follow_path(path);
+	}
 	vs.set_number(PalletTownScriptIndex, -1);
 }
 

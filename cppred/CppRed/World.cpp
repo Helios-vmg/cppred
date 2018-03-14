@@ -173,17 +173,17 @@ bool World::is_passable(const WorldCoordinates &point){
 	return it != v.end() && *it == tile;
 }
 
-bool World::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
+bool World::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction, bool ignore_occupancy){
 	//TODO: Implement full movement check logic.
-	return this->can_move_to_land(current_position, next_position, direction);
+	return this->can_move_to_land(current_position, next_position, direction, ignore_occupancy);
 }
 
-bool World::can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
+bool World::can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction, bool ignore_occupancy){
 	//TODO: Implement full movement check logic.
 	auto &map_data = this->map_store.get_map_data(next_position.map);
 	if (!point_in_map(next_position.position, map_data))
 		return false;
-	if (this->map_store.get_map_instance(next_position.map, *this->game).get_cell_occupation(next_position.position))
+	if (!ignore_occupancy && this->map_store.get_map_instance(next_position.map, *this->game).get_cell_occupation(next_position.position))
 		return false;
 	if (!this->check_jumping_and_tile_pair_collisions(current_position, next_position, direction, &TilesetData::impassability_pairs))
 		return false;

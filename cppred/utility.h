@@ -197,6 +197,13 @@ struct Point{
 	bool operator!=(const Point &other) const{
 		return !(*this == other);
 	}
+	bool operator<(const Point &other) const{
+		if (this->y < other.y)
+			return true;
+		if (this->y > other.y)
+			return false;
+		return this->x < other.x;
+	}
 };
 
 inline std::ostream &operator<<(std::ostream &stream, const Point &p){

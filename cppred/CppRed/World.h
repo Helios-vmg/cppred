@@ -25,8 +25,8 @@ class World : public ScreenOwner{
 	bool check_jumping_and_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection, pairs_t pairs);
 	bool check_jumping(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
 	bool check_tile_pair_collisions(const WorldCoordinates &current_position, const WorldCoordinates &next_position, pairs_t pairs);
-	bool can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
-	bool can_move_to_water(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
+	bool can_move_to_land(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction, bool ignore_occupancy);
+	bool can_move_to_water(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction, bool ignore_occupancy);
 	std::pair<TilesetData *, int> compute_virtual_block(const WorldCoordinates &position, bool &border_visible);
 	void set_camera_position();
 	std::unique_ptr<ScreenOwner> update();
@@ -45,7 +45,7 @@ public:
 	bool get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &);
 	std::unique_ptr<ScreenOwner> run() override;
 	WorldCoordinates remap_coordinates(const WorldCoordinates &position_parameter);
-	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection);
+	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection, bool ignore_occupancy = false);
 	void entered_map(Map old_map, Map new_map, bool warped);
 	void create_main_characters(const std::string &player_name, const std::string &rival_name);
 	bool facing_edge_of_map(const WorldCoordinates &, FacingDirection) const;

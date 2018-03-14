@@ -2,7 +2,9 @@
 #include "Maps.h"
 #include "Game.h"
 #include "World.h"
-#include <iostream>
+#include <set>
+#include <deque>
+#include <utility>
 
 static void initialize_sprite(std::shared_ptr<Sprite> &sprite, Renderer &renderer, const GraphicsAsset &graphics, int first_tile, bool flip_x = false){
 	sprite = renderer.create_sprite(2, 2);
@@ -104,7 +106,7 @@ bool Actor::move(FacingDirection direction){
 
 bool Actor::can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction){
 	auto &world = this->game->get_world();
-	return world.can_move_to(current_position, next_position, direction);
+	return world.can_move_to(current_position, next_position, direction, this->ignore_occupancy);
 }
 
 bool Actor::move(const Point &delta, FacingDirection direction){
@@ -173,6 +175,44 @@ void Actor::set_visible(bool visible){
 
 void Actor::pause(){
 	this->coroutine->get_clock().pause();
+}
+
+std::vector<PathStep> Actor::find_path(const Point &destination){
+	std::set<Point> seen;
+	std::deque<std::pair<Point, std::vector<PathStep>>> queue;
+	queue.emplace_back(this->position.position, std::vector<PathStep>());
+	seen.insert(this->position.position);
+	while (queue.size()){
+		auto point = std::move(queue.front());
+		queue.pop_front();
+		for (int i = 0; i < 4; i++){
+			auto dir = (FacingDirection)i;
+			auto delta = direction_to_vector(dir);
+			auto new_position = point.first + delta;
+			if (seen.find(new_position) != seen.end())
+				continue;
+			if (!this->can_move_to({this->position.map, point.first}, {this->position.map, new_position}, dir))
+				continue;
+			seen.insert(new_position);
+			auto copy = point.second;
+			copy.push_back({dir, new_position});
+			if (new_position == destination)
+				return copy;
+			queue.emplace_back(new_position, std::move(copy));
+		}
+	}
+	throw std::runtime_error("Could not find path.");
+}
+
+void Actor::follow_path(const std::vector<PathStep> &steps){
+	this->ignore_occupancy = true;
+	auto &world = this->game->get_world();
+	auto map = world.try_get_map_instance(this->position.map);
+	for (auto &step : steps)
+		map->set_cell_occupation(step.after_state, true);
+	for (auto &step : steps)
+		this->move(step.movement_direction);
+	this->ignore_occupancy = false;
 }
 
 }
