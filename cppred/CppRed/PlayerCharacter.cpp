@@ -38,12 +38,11 @@ void PlayerCharacter::teleport(const WorldCoordinates &destination){
 }
 
 bool PlayerCharacter::try_moving(const InputState &input){
-	while (true){
-		if (this->handle_movement(input))
-			return true;
-		if (!this->run_warp_logic_collision())
-			return false;
-	}
+	if (this->handle_movement(input))
+		return true;
+	if (!this->run_warp_logic_collision())
+		return false;
+	return this->handle_movement(input);
 }
 
 void PlayerCharacter::coroutine_entry_point(){
