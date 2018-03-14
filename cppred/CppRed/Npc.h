@@ -17,6 +17,7 @@ protected:
 public:
 	Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
 	void set_wandering(int radius);
+	bool move(FacingDirection) override;
 };
 
 }

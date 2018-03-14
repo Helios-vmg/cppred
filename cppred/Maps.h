@@ -16,6 +16,7 @@
 
 namespace CppRed{
 class Actor;
+class Game;
 }
 
 class MapStore;
@@ -170,9 +171,13 @@ class MapInstance{
 	std::vector<MapObjectInstance> objects;
 	ScriptStore::script_f on_load = nullptr;
 	ScriptStore::script_f on_frame = nullptr;
+	std::unique_ptr<Coroutine> coroutine;
+	CppRed::Game *current_game = nullptr;
 
 	void check_map_location(const Point &) const;
 	int get_block_number(const Point &) const;
+	void coroutine_entry_point();
+	void resume_coroutine(CppRed::Game &game);
 public:
 	MapInstance(Map, MapStore &, CppRed::Game &);
 	void set_cell_occupation(const Point &, bool);
@@ -186,6 +191,7 @@ public:
 	}
 	void update(CppRed::Game &game);
 	void loaded(CppRed::Game &game);
+	void pause();
 };
 
 class MapStore{
@@ -217,4 +223,5 @@ public:
 	const MapInstance &get_map_instance(Map map, CppRed::Game &) const;
 	const MapData &get_map_by_name(const std::string &) const;
 	void release_map_instance(Map);
+	void pause_instances();
 };

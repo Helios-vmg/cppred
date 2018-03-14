@@ -258,6 +258,12 @@ int Game::handle_standard_menu(TileRegion region, const Point &position, const s
 
 void Game::run_dialog(TextResourceId resource, TileRegion region, bool wait_at_end){
 	if (!this->dialog_box_visible){
+		if (region == TileRegion::Window){
+			auto dialog_state = Game::get_default_dialog_state();
+			auto &renderer = this->engine->get_renderer();
+			renderer.set_window_region_start((dialog_state.box_corner - Point(1, 1)) * Renderer::tile_size);
+			renderer.set_window_region_size((dialog_state.box_size + Point(2, 2)) * Renderer::tile_size);
+		}
 		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, region);
 		this->dialog_box_visible = true;
 	}
@@ -272,8 +278,8 @@ void Game::run_dialog(TextResourceId resource, bool wait_at_end){
 	this->run_dialog(resource, TileRegion::Background, wait_at_end);
 }
 
-void Game::run_dialog_from_world(TextResourceId id, Actor &activator){
-	std::unique_ptr<ScreenOwner> p(new TextDisplay(*this, id));
+void Game::run_dialog_from_world(TextResourceId id, Actor &activator, bool hide_window_at_end){
+	std::unique_ptr<ScreenOwner> p(new TextDisplay(*this, id, hide_window_at_end));
 	activator.set_new_screen_owner(std::move(p));
 	Coroutine::get_current_coroutine().yield();
 }

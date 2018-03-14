@@ -338,6 +338,8 @@ void World::render(Renderer &renderer){
 void World::pause(){
 	for (auto &actor : this->actors)
 		actor->pause();
+	if (this->current_map)
+		this->current_map->pause();
 }
 
 Actor &World::get_actor(const char *name){

@@ -48,11 +48,16 @@ void Npc::coroutine_entry_point(){
 					break;
 				}
 				this->move(direction);
-				this->object_instance->set_position(this->position.position);
 			}
 		}
 		this->coroutine->yield();
 	}
+}
+
+bool Npc::move(FacingDirection direction){
+	auto ret = Actor::move(direction);
+	this->object_instance->set_position(this->position.position);
+	return ret;
 }
 
 void Npc::update_sprites(){

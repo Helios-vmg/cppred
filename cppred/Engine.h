@@ -77,6 +77,7 @@ public:
 	InputState get_input_state() const{
 		return this->gamepad_disabled ? InputState() : this->input_state;
 	}
+	DEFINE_GETTER_SETTER(gamepad_disabled)
 
 	void go_to_debug();
 	void restart();

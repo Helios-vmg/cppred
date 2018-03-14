@@ -114,7 +114,7 @@ public:
 	void put_string(const Point &position, TileRegion region, const char *string);
 	void run_dialog(TextResourceId, bool wait_at_end = false);
 	void run_dialog(TextResourceId, TileRegion, bool wait_at_end = false);
-	void run_dialog_from_world(TextResourceId, Actor &activator);
+	void run_dialog_from_world(TextResourceId, Actor &activator, bool hide_window_at_end = true);
 	void reset_dialog_state();
 	static TextState get_default_dialog_state();
 	void text_print_delay();

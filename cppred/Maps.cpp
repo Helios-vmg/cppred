@@ -364,6 +364,8 @@ MapInstance::MapInstance(Map map, MapStore &store, CppRed::Game &game): map(map)
 		this->on_load = game.get_engine().get_script(this->data->on_load.c_str());
 	if (this->data->on_frame.size())
 		this->on_frame = game.get_engine().get_script(this->data->on_frame.c_str());
+	if (this->on_frame || this->on_load)
+		this->coroutine.reset(new Coroutine(this->data->name + " coroutine", game.get_coroutine().get_clock(), [this](Coroutine &){ this->coroutine_entry_point(); }));
 }
 
 void MapInstance::check_map_location(const Point &p) const{
@@ -373,6 +375,10 @@ void MapInstance::check_map_location(const Point &p) const{
 		stream << "Invalid map coordinates: " << p.x << ", " << p.y << ". Name: \"" << map_data.name << "\" with dimensions: " << this->data->width << "x" << this->data->height;
 		throw std::runtime_error(stream.str());
 	}
+}
+
+void MapInstance::pause(){
+	this->coroutine->get_clock().pause();
 }
 
 int MapInstance::get_block_number(const Point &p) const{
@@ -412,24 +418,44 @@ void MapStore::release_map_instance(Map map){
 	this->map_instances[index].reset();
 }
 
+void MapInstance::resume_coroutine(CppRed::Game &game){
+	this->current_game = &game;
+	this->coroutine->resume();
+	this->current_game = nullptr;
+}
+
 void MapInstance::update(CppRed::Game &game){
 	if (!this->on_frame)
 		return;
-	CppRed::Scripts::script_parameters params;
-	params.script_name = nullptr;
-	params.caller = nullptr;
-	params.game = &game;
-	params.parameter = nullptr;
-	this->on_frame(params);
+	this->resume_coroutine(game);
 }
 
 void MapInstance::loaded(CppRed::Game &game){
-	if (!this->on_load)
-		return;
+	if (this->on_load){
+		this->resume_coroutine(game);
+		if (!this->on_frame)
+			this->coroutine.reset();
+	}
+}
+
+void MapInstance::coroutine_entry_point(){
 	CppRed::Scripts::script_parameters params;
-	params.script_name = nullptr;
-	params.caller = nullptr;
-	params.game = &game;
-	params.parameter = nullptr;
-	this->on_load(params);
+	if (this->on_load){
+		params.script_name = nullptr;
+		params.caller = nullptr;
+		params.game = this->current_game;
+		params.parameter = nullptr;
+		this->on_load(params);
+		this->coroutine->yield();
+	}
+	if (!this->on_frame)
+		return;
+	while (true){
+		params.script_name = nullptr;
+		params.caller = nullptr;
+		params.game = this->current_game;
+		params.parameter = nullptr;
+		this->on_frame(params);
+		this->coroutine->yield();
+	}
 }

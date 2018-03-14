@@ -38,7 +38,6 @@ protected:
 	virtual void initialize_sprites(const GraphicsAsset &graphics, Renderer &);
 	virtual void coroutine_entry_point();
 	void run_walking_animation(const Point &delta, FacingDirection);
-	bool move(FacingDirection);
 	bool move(const Point &delta, FacingDirection);
 	virtual void entered_new_map(Map old_map, Map new_map, bool warped){}
 	virtual double movement_duration() const{
@@ -78,6 +77,7 @@ public:
 		return this->moving;
 	}
 	void set_visible(bool visible);
+	virtual bool move(FacingDirection);
 };
 
 template <typename T> 

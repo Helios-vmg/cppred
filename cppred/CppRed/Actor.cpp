@@ -130,14 +130,15 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 void Actor::run_walking_animation(const Point &delta, FacingDirection direction){
 	//TODO
 	auto &E = this->game->get_engine();
-	auto &c = this->coroutine->get_clock();
+	auto &coroutine = Coroutine::get_current_coroutine();
+	auto &c = coroutine.get_clock();
 	auto t0 = c.get();
 	double t;
 	const double frames = this->movement_duration();
 	const double movement_per_frame = Renderer::tile_size * 2 / frames;
 	while ((t = c.get() - t0) < frames / 60){
 		this->pixel_offset = delta * (movement_per_frame * (t * 60));
-		this->coroutine->yield();
+		coroutine.yield();
 		c.step();
 	}
 	this->pixel_offset = Point();
