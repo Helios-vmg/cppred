@@ -101,6 +101,17 @@ void Actor::update(){
 }
 
 bool Actor::move(FacingDirection direction){
+	auto coroutine = Coroutine::get_current_coroutine_ptr();
+	if (coroutine == this->coroutine.get())
+		return this->move_internal(direction);
+	this->saved_move = (int)direction;
+	do
+		coroutine->yield();
+	while (this->saved_move >= 0);
+	return this->saved_move + 2 == 1;
+}
+
+bool Actor::move_internal(FacingDirection direction){
 	return this->move(direction_to_vector(direction), direction);
 }
 
@@ -213,6 +224,16 @@ void Actor::follow_path(const std::vector<PathStep> &steps){
 	for (auto &step : steps)
 		this->move(step.movement_direction);
 	this->ignore_occupancy = false;
+}
+
+bool Actor::run_saved_move(){
+	if (this->saved_move < 0)
+		return true;
+	bool success = this->move_internal((FacingDirection)this->saved_move);
+	this->saved_move = (int)success - 2;
+	if (!success)
+		this->coroutine->yield();
+	return false;
 }
 
 }

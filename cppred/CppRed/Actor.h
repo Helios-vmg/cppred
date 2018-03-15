@@ -33,6 +33,7 @@ protected:
 	std::unique_ptr<ScreenOwner> screen_owner;
 	bool visible = true;
 	bool ignore_occupancy = false;
+	int saved_move = -1;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -49,6 +50,8 @@ protected:
 	virtual bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	virtual void update_sprites(){}
 	virtual void about_to_move(){}
+	virtual bool move_internal(FacingDirection);
+	bool run_saved_move();
 public:
 	Actor(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
 	virtual ~Actor();
@@ -75,12 +78,13 @@ public:
 	void set_facing_direction(FacingDirection direction);
 	DEFINE_GETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)
+	DEFINE_GETTER_SETTER(ignore_occupancy)
 	DEFINE_GETTER(name)
 	bool is_moving() const{
 		return this->moving;
 	}
 	void set_visible(bool visible);
-	virtual bool move(FacingDirection);
+	bool move(FacingDirection);
 	void stop(){
 		this->coroutine.reset();
 	}

@@ -37,16 +37,10 @@ void PlayerCharacter::teleport(const WorldCoordinates &destination){
 	map_instance.set_cell_occupation(destination.position, true);
 }
 
-bool PlayerCharacter::try_moving(const InputState &input){
-	if (this->handle_movement(input))
-		return true;
-	if (!this->run_warp_logic_collision())
-		return false;
-	return this->handle_movement(input);
-}
-
 void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
+		if (!this->run_saved_move())
+			continue;
 		auto &engine = this->game->get_engine();
 		if (this->ignore_input){
 			this->coroutine->yield();
@@ -54,12 +48,8 @@ void PlayerCharacter::coroutine_entry_point(){
 		}
 		auto input = engine.get_input_state();
 		if (input.any_direction()){
-			if (!this->try_moving(input))
+			if (!this->move_internal(this->input_to_direction(input)))
 				this->coroutine->yield();
-			else if (this->saved_warp){
-				this->game->get_world().teleport_player(*this->saved_warp);
-				this->saved_warp = nullptr;
-			}
 			continue;
 		}else{
 			input = this->game->joypad_only_newly_pressed();
@@ -82,6 +72,19 @@ void PlayerCharacter::coroutine_entry_point(){
 	}
 }
 
+bool PlayerCharacter::move_internal(FacingDirection direction){
+	if (Trainer::move_internal(direction)){
+		if (this->saved_post_warp){
+			this->game->get_world().teleport_player(*this->saved_post_warp);
+			this->saved_post_warp = nullptr;
+		}
+		return true;
+	}
+	if (!this->run_warp_logic_collision())
+		return false;
+	return Trainer::move_internal(direction);
+}
+
 bool PlayerCharacter::run_warp_logic_collision(){
 	auto &world = this->game->get_world();
 
@@ -102,9 +105,11 @@ bool PlayerCharacter::run_warp_logic_collision(){
 		if (o.get_type() != MapObjectType::Warp)
 			continue;
 		warp = static_cast<const MapWarp *>(&o);
+		break;
 	}
 	if (!warp)
 		return false;
+	//auto c = Coroutine::get_current_coroutine_ptr();
 	world.teleport_player(*warp);
 	return true;
 }
@@ -132,22 +137,23 @@ bool PlayerCharacter::run_warp_logic_no_collision(){
 				continue;
 		}
 		warp = static_cast<const MapWarp *>(&o);
+		break;
 	}
 	if (!warp)
 		return false;
-	this->saved_warp = warp;
+	this->saved_post_warp = warp;
 	return true;
 }
 
-bool PlayerCharacter::handle_movement(const InputState &input){
+FacingDirection PlayerCharacter::input_to_direction(const InputState &input){
 	if (input.get_up())
-		return this->move({0, -1}, FacingDirection::Up);
+		return FacingDirection::Up;
 	if (input.get_right())
-		return this->move({1, 0}, FacingDirection::Right);
+		return FacingDirection::Right;
 	if (input.get_down())
-		return this->move({0, 1}, FacingDirection::Down);
+		return FacingDirection::Down;
 	assert(input.get_left());
-	return this->move({-1, 0}, FacingDirection::Left);
+	return FacingDirection::Left;
 }
 
 void PlayerCharacter::entered_new_map(Map old_map, Map new_map, bool warped){

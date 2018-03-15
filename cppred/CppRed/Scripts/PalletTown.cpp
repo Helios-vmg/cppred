@@ -15,12 +15,7 @@ static const char * const wcf0d = "wcf0d";
 using script_f = ScriptStore::script_f;
 
 DECLARE_SCRIPT(PalletTownScript0);
-DECLARE_SCRIPT(PalletTownScript1);
-DECLARE_SCRIPT(PalletTownScript2);
-DECLARE_SCRIPT(PalletTownScript3);
-DECLARE_SCRIPT(PalletTownScript4);
 DECLARE_SCRIPT(PalletTownScript5);
-DECLARE_SCRIPT(PalletTownScript6);
 
 DECLARE_SCRIPT(PalletTown_onload){
 	auto &game = *parameters.game;
@@ -37,12 +32,11 @@ DECLARE_SCRIPT(PalletTownScript){
 	auto index = vs.get_number_default(PalletTownScriptIndex);
 	static const script_f scripts[] = {
 		PalletTownScript0,
-		PalletTownScript1,
-		PalletTownScript2,
-		PalletTownScript3,
-		PalletTownScript4,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
 		PalletTownScript5,
-		PalletTownScript6,
 	};
 	if (index >= 0 && index < array_length(scripts))
 		scripts[index](parameters);
@@ -63,15 +57,9 @@ DECLARE_SCRIPT(PalletTownScript0){
 	ai.play_sound(AudioResourceId::Music_MeetProfOak);
 	vs.set_number(event_oak_appeared_in_pallet, 1);
 	vs.set_number(PalletTownScriptIndex, 1);
-	PalletTownScript1(parameters);
-}
 
-DECLARE_SCRIPT(PalletTownScript1){
-	auto &game = *parameters.game;
-	auto &vs = game.get_variable_store();
 	vs.set_number(wcf0d, 0);
 	auto &world = game.get_world();
-	auto &player = world.get_pc();
 	player.set_ignore_input(true);
 	game.get_engine().set_gamepad_disabled(true);
 	auto &renderer = game.get_engine().get_renderer();
@@ -95,52 +83,62 @@ DECLARE_SCRIPT(PalletTownScript1){
 	oak.set_facing_direction(FacingDirection::Up);
 	for (int i = 0; i < 5; i++)
 		oak.move(!(i % 2) ? FacingDirection::Up : FacingDirection::Right);
+	if (player.get_map_position().x > 10){
+		oak.move(FacingDirection::Up);
+		oak.set_facing_direction(FacingDirection::Left);
+	}
 	game.get_engine().set_gamepad_disabled(false);
 	game.run_dialog(TextResourceId::OakWalksUpText, TileRegion::Window, true);
 	game.reset_dialog_state();
 	renderer.set_enable_window(false);
-	player.set_ignore_input(false);
 	{
 		auto old = oak.movement_duration();
-		static_cast<CppRed::Npc &>(oak).set_special_movement_duration(player.movement_duration());
-		Point destination(12, 11);
+		static_cast<Npc &>(oak).set_special_movement_duration(player.movement_duration());
+		const Point oak_destination(12, 11);
+		const Point player_destination = oak_destination + Point(0, 1);
 		world.get_map_instance(oak.get_current_map()).set_cell_occupation(oak.get_map_position(), false);
-		auto path1 = oak.find_path(destination);
-		auto path2 = player.find_path(destination);
-		bool done1 = false, done2 = false;
+		auto oak_path = oak.find_path(oak_destination);
+		auto player_path = player.find_path(player_destination);
+		bool oak_done = false,
+			player_done = false;
 		Coroutine player_co("player temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
-			player.follow_path(path2);
-			done2 = true;
+			player.follow_path(player_path);
+			player_done = true;
 		});
-		Coroutine oak_co("player temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
-			oak.follow_path(path1);
-			done1 = true;
+		Coroutine oak_co("oak temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
+			oak.follow_path(oak_path);
+			oak_done = true;
 		});
-		while (!done1 || !done2){
+		while (!oak_done || !player_done){
 			player_co.get_clock().step();
 			player_co.resume();
 			oak_co.get_clock().step();
 			oak_co.resume();
 			coroutine.yield();
 		}
-		static_cast<CppRed::Npc &>(oak).set_special_movement_duration(old);
+		static_cast<Npc &>(oak).set_special_movement_duration(old);
 	}
-	vs.set_number(PalletTownScriptIndex, -1);
-}
+	oak.set_visible(false);
+	player.set_ignore_occupancy(true);
+	player.move(FacingDirection::Up);
+	player.set_ignore_occupancy(false);
+	player.set_ignore_input(false);
 
-DECLARE_SCRIPT(PalletTownScript2){
-}
-
-DECLARE_SCRIPT(PalletTownScript3){
-}
-
-DECLARE_SCRIPT(PalletTownScript4){
+	vs.set_number(PalletTownScriptIndex, 5);
+	PalletTownScript5(parameters);
 }
 
 DECLARE_SCRIPT(PalletTownScript5){
-}
-
-DECLARE_SCRIPT(PalletTownScript6){
+	auto &game = *parameters.game;
+	auto &vs = game.get_variable_store();
+	if (vs.get_number_default(event_daisy_walking) || vs.get_number_default(event_got_town_map) && vs.get_number_default(event_entered_blues_house)){
+		if (!vs.get_number_default(event_got_pokeballs_from_oak))
+			return;
+		vs.set_number(event_pallet_after_getting_pokeballs_2, 1);
+	}else{
+		vs.set_number(event_daisy_walking, 1);
+		/**/
+	}
 }
 
 }

@@ -12,10 +12,10 @@ protected:
 	void coroutine_entry_point() override;
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
 	void update_sprites() override;
+	bool move_internal(FacingDirection) override;
 public:
 	Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
 	void set_wandering(int radius);
-	bool move(FacingDirection) override;
 	double movement_duration() const override{
 		return this->special_movement_duration;
 	}

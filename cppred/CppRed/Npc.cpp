@@ -26,6 +26,8 @@ void Npc::coroutine_entry_point(){
 	HighResolutionClock real_time;
 	auto &clock = this->coroutine->get_clock();
 	while (!this->quit_coroutine){
+		if (!this->run_saved_move())
+			continue;
 		auto delta = this->position.position - this->wandering_center;
 		auto distance = abs(delta.x) + abs(delta.y);
 		if (distance < this->wandering_radius){
@@ -53,8 +55,8 @@ void Npc::coroutine_entry_point(){
 	}
 }
 
-bool Npc::move(FacingDirection direction){
-	auto ret = Actor::move(direction);
+bool Npc::move_internal(FacingDirection direction){
+	auto ret = Actor::move_internal(direction);
 	this->object_instance->set_position(this->position.position);
 	return ret;
 }
