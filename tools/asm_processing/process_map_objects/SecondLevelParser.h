@@ -42,7 +42,7 @@ public:
 	Sign(unsigned f, unsigned s, unsigned t):
 		y(f),
 		x(s),
-		text_index(t){}
+		text_index(t - 1){}
 };
 
 class SpritedMapObject : public MapObject{

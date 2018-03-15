@@ -75,8 +75,8 @@ SpritedMapObject::SpritedMapObject(const FirstLevelParser::MapObject &mo){
 	if (direction)
 		this->direction = direction->get_identifier();
 	else
-		this->range = elements[4]->get_value();
-	this->text_id = elements[5]->get_value();
+		this->range = elements[4]->get_value() + 5;
+	this->text_id = elements[5]->get_value() - 1;
 }
 
 SpritedMapObject::~SpritedMapObject(){}
@@ -103,8 +103,11 @@ nlohmann::json Parser::serialize(){
 	ret["name"] = this->label;
 	ret["border_block"] = this->border_block;
 	nlohmann::json::array_t objects;
-	for (auto &o : this->objects)
+	for (auto &o : this->objects){
 		objects.push_back(o->serialize());
+		if (this->label == "CeladonMartElevatorObject" && objects.back()["type"] == "warp" && objects.back()["destination"] == "CeladonMart1")
+			objects.back()["destination"] = "var:CeladonMartElevatorObjectCurrentFloor";
+	}
 	ret["objects"] = objects;
 	return ret;
 }
@@ -170,8 +173,8 @@ static std::string transform_sprite_string(const std::string &s){
 		return s;
 
 	std::string ret = SNAKE_CASE_to_CamelCase(s.substr(n));
-	if (ret == "GameboyKidSpriteCopy")
-		ret = "GameboyKidSprite";
+	if (ret == "GameboyKidCopy")
+		ret = "GameboyKid";
 	ret += "Sprite";
 	return ret;
 }
@@ -185,7 +188,7 @@ nlohmann::json SpritedMapObject::internal_serialize() const{
 	bool move = this->movement == "WALK";
 	ret["move"] = move;
 	if (!move){
-		ret["range"] = 0;
+		ret["range"] = 5;
 		ret["direction"] = SNAKE_CASE_to_CamelCase(this->direction);
 	}else{
 		assume(this->range >= 0 && !this->direction.size());

@@ -2,6 +2,7 @@
 #include "utility.h"
 #include <fstream>
 #include <sstream>
+#include <cassert>
 
 namespace FirstLevelParser{
 
@@ -124,7 +125,10 @@ std::shared_ptr<EventDisp> Parser::expect_event_disp(input_t &input){
 	assume(expect_identifier(input) == "EVENT_DISP");
 	skip_whitespace(input);
 	auto ret = std::make_unique<EventDisp>();
-	for (auto &p : expect_non_empty_number_list(input))
+	auto temp = expect_non_empty_number_list(input);
+	assume(temp.size() == 3);
+	std::swap(temp[1], temp[2]);
+	for (auto &p : temp)
 		ret->add_element(std::move(p));
 	return ret;
 }

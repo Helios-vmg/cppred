@@ -249,6 +249,7 @@ extern const std::map<std::string, std::string> map_map = {
 	{ "LORELEIS_ROOM", "Lorelei", },
 	{ "BRUNOS_ROOM", "Bruno", },
 	{ "AGATHAS_ROOM", "Agatha", },
+	{ "CeladonMart1", "var:CeladonMartElevatorObjectCurrentFloor", },
 };
 
 extern const std::map<std::string, std::string> map_objects_map = {

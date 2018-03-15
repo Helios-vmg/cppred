@@ -55,36 +55,64 @@ void serialize_json(const char *path, const nlohmann::json &json){
 	file << json.dump(true);
 }
 
+#define USE_TEMP
+
 void serialize_csv(const char *path, const nlohmann::json &json){
 	std::ofstream file(path);
-	file << "id,name,object_name,type,x,y,param1,param2,param3,param4,param5,param6,param7\n";
+#ifdef USE_TEMP
+	std::stringstream temp;
+	std::ostream &stream = temp;
+#else
+	std::ostream &stream = file;
+#endif
+	stream << "id,name,type,x,y,param1,param2,param3,param4,param5,param6,param7\n";
 	
 	int i = 1;
 	for (auto &array : json["map_objects"]){
 		for (auto &object : array["objects"]){
 			auto type = object["type"];
-			file << i << "," << array["name"] << ",," << type << "," << object["x"] << "," << object["y"];
+			stream << i << "," << array["name"] << "," << type << "," << object["x"] << "," << object["y"];
+			int count;
 			if (type == "event_disp"){
+				count = 0;
 			}else if (type == "sign"){
-				file << "," << object["text_index"];
+				count = 1;
+				stream << "," << object["text_index"];
 			}else if (type == "hidden"){
-				file << "," << object["param"] << "," << object["script"];
+				count = 2;
+				stream << "," << object["param"] << "," << object["script"];
 			}else if (type == "warp"){
-				file << "," << object["warp_index"] << "," << object["destination"] << "," << object["destination_warp_index"];
+				count = 3;
+				stream << "," << object["warp_index"] << "," << object["destination"] << "," << object["destination_warp_index"];
 			}else if (type == "npc"){
-				file << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"];
+				count = 5;
+				stream << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"];
 			}else if (type == "item"){
-				file << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"] << "," << object["item_id"];
+				count = 6;
+				stream << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"] << "," << object["item_id"];
 			}else if (type == "pokemon"){
-				file << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"] << "," << object["species"] << "," << object["level"];
+				count = 7;
+				stream << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"] << "," << object["species"] << "," << object["level"];
 			}else if (type == "trainer"){
-				file << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"] << "," << object["trainer_class"] << "," << object["trainer_number"];
+				count = 7;
+				stream << "," << object["sprite"] << "," << object["direction"] << "," << object["move"] << "," << object["range"] << "," << object["text_id"] << "," << object["trainer_class"] << "," << object["trainer_number"];
 			}else
 				assume(false);
-			file << std::endl;
+			for (int j = count; j < 7; j++)
+				stream << ',';
+			stream << std::endl;
 			i++;
 		}
 	}
+
+#ifdef USE_TEMP
+	auto s = temp.str();
+	for (auto c : s){
+		if (c == '"')
+			continue;
+		file << c;
+	}
+#endif
 }
 
 int main(){
