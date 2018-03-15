@@ -3,6 +3,7 @@
 #include "PokemonData.h"
 
 static const char * const input_file = "input/map_objects.csv";
+static const char * const names_input_file = "input/map_object_names.csv";
 static const char * const hash_key = "generate_map_objects";
 static const char * const date_string = __DATE__ __TIME__;
 
@@ -19,23 +20,23 @@ static const std::map<std::string, std::string> types_map = {
 
 struct MapObject;
 
-std::string event_disp_f(const MapObject &);
-std::string hidden_f(const MapObject &);
-std::string item_f(const MapObject &);
-std::string npc_f(const MapObject &);
-std::string pokemon_f(const MapObject &);
-std::string sign_f(const MapObject &);
-std::string trainer_f(const MapObject &);
-std::string warp_f(const MapObject &);
+static std::string event_disp_f(const MapObject &);
+static std::string hidden_f(const MapObject &);
+static std::string item_f(const MapObject &);
+static std::string npc_f(const MapObject &);
+static std::string pokemon_f(const MapObject &);
+static std::string sign_f(const MapObject &);
+static std::string trainer_f(const MapObject &);
+static std::string warp_f(const MapObject &);
 
-void event_disp_f(std::vector<byte_t> &dst, const MapObject &);
-void hidden_f    (std::vector<byte_t> &dst, const MapObject &);
-void item_f      (std::vector<byte_t> &dst, const MapObject &);
-void npc_f       (std::vector<byte_t> &dst, const MapObject &);
-void pokemon_f   (std::vector<byte_t> &dst, const MapObject &);
-void sign_f      (std::vector<byte_t> &dst, const MapObject &);
-void trainer_f   (std::vector<byte_t> &dst, const MapObject &);
-void warp_f      (std::vector<byte_t> &dst, const MapObject &);
+static void event_disp_f(std::vector<byte_t> &dst, const MapObject &);
+static void hidden_f    (std::vector<byte_t> &dst, const MapObject &);
+static void item_f      (std::vector<byte_t> &dst, const MapObject &);
+static void npc_f       (std::vector<byte_t> &dst, const MapObject &);
+static void pokemon_f   (std::vector<byte_t> &dst, const MapObject &);
+static void sign_f      (std::vector<byte_t> &dst, const MapObject &);
+static void trainer_f   (std::vector<byte_t> &dst, const MapObject &);
+static void warp_f      (std::vector<byte_t> &dst, const MapObject &);
 
 static const std::map<std::string, std::string (*)(const MapObject &)> generators_map = {
 	{ "event_disp", event_disp_f, },
@@ -68,14 +69,18 @@ struct MapObject{
 	std::string params[7];
 	PokemonData *pokemon_data;
 
-	MapObject(const std::vector<std::string> &row, PokemonData &pokemon_data): pokemon_data(&pokemon_data){
+	MapObject(const std::vector<std::string> &row, PokemonData &pokemon_data, const std::map<unsigned, std::string> &name_map): pokemon_data(&pokemon_data){
 		this->id = to_unsigned(row[0]);
-		this->name = row[2];
-		this->type = row[3];
-		this->x = to_unsigned(row[4]);
-		this->y = to_unsigned(row[5]);
+		{
+			auto it = name_map.find(this->id);
+			if (it != name_map.end())
+				this->name = it->second;;
+		}
+		this->type = row[2];
+		this->x = to_unsigned(row[3]);
+		this->y = to_unsigned(row[4]);
 		for (size_t i = 0; i < array_length(this->params); i++)
-			this->params[i] = row[i + 6];
+			this->params[i] = row[i + 5];
 
 		if (!this->name.size()){
 			this->name = this->type + '_' + this->hash();
@@ -125,15 +130,15 @@ struct MapObject{
 
 //------------------------------------------------------------------------------
 
-std::string event_disp_f(const MapObject &mo){
+static std::string event_disp_f(const MapObject &mo){
 	return "";
 }
 
-std::string hidden_f(const MapObject &mo){
+static std::string hidden_f(const MapObject &mo){
 	return ", \"" + mo.params[1] + "\", \"" + mo.params[0] + "\"";
 }
 
-std::string npc_f(const MapObject &mo){
+static std::string npc_f(const MapObject &mo){
 	std::stringstream stream;
 	stream << ", " << mo.params[0] << ", ObjectWithSprite::FacingDirection::";
 	if (!mo.params[1].size())
@@ -144,26 +149,26 @@ std::string npc_f(const MapObject &mo){
 	return stream.str();
 }
 
-std::string item_f(const MapObject &mo){
+static std::string item_f(const MapObject &mo){
 	auto item = mo.params[5];
 	if (!item.size())
 		item = "None";
 	return npc_f(mo) + ", ItemId::" + item;
 }
 
-std::string pokemon_f(const MapObject &mo){
+static std::string pokemon_f(const MapObject &mo){
 	return npc_f(mo) + ", SpeciesId::" + mo.params[5] + ", " + mo.params[6];
 }
 
-std::string sign_f(const MapObject &mo){
+static std::string sign_f(const MapObject &mo){
 	return ", " + mo.params[0];
 }
 
-std::string trainer_f(const MapObject &mo){
+static std::string trainer_f(const MapObject &mo){
 	return npc_f(mo) + ", GET_TRAINER(Trainer::" + mo.params[5] + ", " + mo.params[6] + ")";
 }
 
-std::string warp_f(const MapObject &mo){
+static std::string warp_f(const MapObject &mo){
 	std::string ret = ", ";
 	ret += mo.params[0];
 	ret += ", WarpDestination(";
@@ -182,14 +187,14 @@ std::string warp_f(const MapObject &mo){
 
 //------------------------------------------------------------------------------
 
-void event_disp_f(std::vector<byte_t> &dst, const MapObject &mo){}
+static void event_disp_f(std::vector<byte_t> &dst, const MapObject &mo){}
 
-void hidden_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void hidden_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_ascii_string(dst, mo.params[1]);
 	write_ascii_string(dst, mo.params[0]);
 }
 
-void npc_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void npc_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_ascii_string(dst, mo.params[0]);
 	std::string s = "Undefined";
 	if (mo.params[1].size())
@@ -200,7 +205,7 @@ void npc_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_varint(dst, to_unsigned(mo.params[4]));
 }
 
-void item_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void item_f(std::vector<byte_t> &dst, const MapObject &mo){
 	npc_f(dst, mo);
 	auto item = mo.params[5];
 	if (!item.size())
@@ -208,23 +213,23 @@ void item_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_ascii_string(dst, item);
 }
 
-void pokemon_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void pokemon_f(std::vector<byte_t> &dst, const MapObject &mo){
 	npc_f(dst, mo);
 	write_varint(dst, mo.pokemon_data->get_species_id(mo.params[5]));
 	write_varint(dst, to_unsigned(mo.params[6]));
 }
 
-void sign_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void sign_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_varint(dst, to_unsigned(mo.params[0]));
 }
 
-void trainer_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void trainer_f(std::vector<byte_t> &dst, const MapObject &mo){
 	npc_f(dst, mo);
 	write_ascii_string(dst, mo.params[5]);
 	write_varint(dst, to_unsigned(mo.params[6]) - 1);
 }
 
-void warp_f(std::vector<byte_t> &dst, const MapObject &mo){
+static void warp_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_varint(dst, to_unsigned(mo.params[0]));
 	write_ascii_string(dst, mo.params[1]);
 	write_varint(dst, to_unsigned(mo.params[2]));
@@ -232,8 +237,22 @@ void warp_f(std::vector<byte_t> &dst, const MapObject &mo){
 
 //------------------------------------------------------------------------------
 
+static std::map<unsigned, std::string> load_name_map(){
+	static const std::vector<std::string> order = {"id", "name"};
+	CsvParser csv(names_input_file);
+	auto rows = csv.row_count();
+	std::map<unsigned, std::string> ret;
+	for (auto i = rows; i--;){
+		auto columns = csv.get_ordered_row(i, order);
+		ret[to_unsigned(columns[0])] = columns[1];
+	}
+	return ret;
+}
+
+//------------------------------------------------------------------------------
+
 static void generate_map_objects_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
-	auto current_hash = hash_file(input_file, date_string);
+	auto current_hash = hash_files({input_file, names_input_file}, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating map objects.\n";
 		return;
@@ -246,7 +265,6 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 	static const std::vector<std::string> order = {
 		"id",
 		"name",
-		"object_name",
 		"type",
 		"x",
 		"y",
@@ -262,9 +280,10 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 	CsvParser csv(input_file);
 	std::map<std::string, std::vector<MapObject>> map_sets;
 	size_t rows = csv.row_count();
+	auto name_map = load_name_map();
 	for (size_t i = 0; i < rows; i++){
 		auto row = csv.get_ordered_row(i, order);
-		map_sets[row[1]].emplace_back(row, *pokemon_data);
+		map_sets[row[1]].emplace_back(row, *pokemon_data, name_map);
 	}
 
 	std::ofstream header("output/map_objects.h");
