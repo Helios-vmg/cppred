@@ -54,10 +54,14 @@ protected:
 	std::string direction;
 	int range = -1;
 	unsigned text_id;
+	unsigned legacy_sprite_id;
 	virtual nlohmann::json internal_serialize() const override;
 public:
 	SpritedMapObject(const FirstLevelParser::MapObject &);
 	virtual ~SpritedMapObject() = 0;
+	void set_legacy_sprite_id(unsigned id){
+		this->legacy_sprite_id = id;
+	}
 };
 
 class Npc : public SpritedMapObject{

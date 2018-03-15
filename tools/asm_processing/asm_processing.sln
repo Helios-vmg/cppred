@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "process_trainer_parties", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "process_warp_tiles", "process_warp_tiles\process_warp_tiles.csproj", "{347A98F1-B205-4B65-9295-C8362C1016F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "process_hidden_objects", "process_hidden_objects\process_hidden_objects.csproj", "{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,14 @@ Global
 		{347A98F1-B205-4B65-9295-C8362C1016F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{347A98F1-B205-4B65-9295-C8362C1016F9}.Release|UniqueConfig.ActiveCfg = Release|Any CPU
 		{347A98F1-B205-4B65-9295-C8362C1016F9}.Release|UniqueConfig.Build.0 = Release|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Debug|UniqueConfig.ActiveCfg = Debug|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Debug|UniqueConfig.Build.0 = Debug|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Release|UniqueConfig.ActiveCfg = Release|Any CPU
+		{C96B06DB-4BE1-453A-9CED-F20CC631D5F2}.Release|UniqueConfig.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

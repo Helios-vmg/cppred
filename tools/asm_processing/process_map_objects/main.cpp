@@ -65,13 +65,21 @@ void serialize_csv(const char *path, const nlohmann::json &json){
 #else
 	std::ostream &stream = file;
 #endif
-	stream << "id,name,type,x,y,param1,param2,param3,param4,param5,param6,param7\n";
+	stream << "id,name,legacy_sprite_id,type,x,y,param1,param2,param3,param4,param5,param6,param7\n";
 	
 	int i = 1;
 	for (auto &array : json["map_objects"]){
 		for (auto &object : array["objects"]){
 			auto type = object["type"];
-			stream << i << "," << array["name"] << "," << type << "," << object["x"] << "," << object["y"];
+			stream << i << "," << array["name"] << ",";
+			{
+				auto it = object.find("legacy_sprite_id");
+				if (it != object.end()){
+					auto temp2 = it->get<int>();
+					stream << temp2;
+				}
+			}
+			stream << "," << type << "," << object["x"] << "," << object["y"];
 			int count;
 			if (type == "event_disp"){
 				count = 0;

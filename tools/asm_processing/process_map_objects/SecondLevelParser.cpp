@@ -53,6 +53,7 @@ Parser::Parser(const FirstLevelParser::Parser &parser){
 			default:
 				assume(false);
 		}
+		dynamic_cast<SpritedMapObject &>(*this->objects.back()).set_legacy_sprite_id(i);
 	}
 
 	for (size_t i = index; i < objects.size(); i++){
@@ -196,6 +197,7 @@ nlohmann::json SpritedMapObject::internal_serialize() const{
 		ret["direction"] = "";
 	}
 	ret["text_id"] = this->text_id;
+	ret["legacy_sprite_id"] = this->legacy_sprite_id;
 	return ret;
 }
 
