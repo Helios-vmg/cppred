@@ -166,6 +166,7 @@ protected:
 	bool wandering;
 	int range;
 	int text_index;
+	int legacy_id;
 
 public:
 	ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map);
@@ -184,6 +185,9 @@ public:
 		return this->text_index;
 	}
 	void activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee) override;
+	int get_legacy_id() const{
+		return this->legacy_id;
+	}
 };
 
 inline ObjectWithSprite::~ObjectWithSprite(){}

@@ -193,6 +193,9 @@ void Map2::serialize(std::vector<byte_t> &dst){
 	write_ascii_string(dst, this->on_frame);
 	write_ascii_string(dst, this->on_load);
 	write_varint(dst, this->music);
+	write_varint(dst, this->invisible_sprites.size());
+	for (auto id : this->invisible_sprites)
+		write_varint(dst, id);
 	//TODO: Serialize other members.
 }
 
@@ -267,4 +270,20 @@ void Map2::set_map_text(const std::vector<MapTextEntry> &map_text, TextStore &te
 		else
 			this->map_text.emplace_back(text.script);
 	}
+}
+
+void Maps2::load_invisible_sprites(const std::map<std::string, std::set<unsigned>> &map){
+	for (auto &kv : map){
+		auto it = this->map.find(kv.first);
+		if (it == this->map.end())
+			throw std::runtime_error("Sprite visibility file references unknown map " + kv.first);
+		it->second->load_invisible_sprites(kv.second);
+	}
+}
+
+void Map2::load_invisible_sprites(const std::set<unsigned> &set){
+	if (set.size() > 16)
+		throw std::runtime_error("Sprite visibility file sets too many sprites as invisible for map " + this->name + ". Max: 16.");
+	for (auto id : set)
+		this->invisible_sprites.push_back(id);
 }

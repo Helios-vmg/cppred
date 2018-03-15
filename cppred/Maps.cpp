@@ -247,8 +247,8 @@ MapData::MapData(
 		this->map_text.push_back(entry);
 	}
 	this->warp_check = (int)buffer.read_varint() - 1;
-	auto warp_tile_count = buffer.read_varint();
 	{
+		auto warp_tile_count = buffer.read_varint();
 		unsigned i = 0;
 		for (; i < warp_tile_count; i++)
 			this->warp_tiles[i] = buffer.read_varint();
@@ -258,6 +258,14 @@ MapData::MapData(
 	this->on_frame = buffer.read_string();
 	this->on_load = buffer.read_string();
 	this->music = (AudioResourceId)buffer.read_varint();
+	{
+		auto invisible_sprites = buffer.read_varint();
+		unsigned i = 0;
+		for (; i < invisible_sprites; i++)
+			this->invisible_sprites[i] = buffer.read_varint();
+		for (; i < array_length(this->invisible_sprites); i++)
+			this->invisible_sprites[i] = -1;
+	}
 }
 
 int MapData::get_block_at_map_position(const Point &point) const{

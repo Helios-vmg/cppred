@@ -68,6 +68,7 @@ struct MapObject{
 	unsigned x, y;
 	std::string params[7];
 	PokemonData *pokemon_data;
+	int legacy_sprite_id = -1;
 
 	MapObject(const std::vector<std::string> &row, PokemonData &pokemon_data, const std::map<unsigned, std::string> &name_map): pokemon_data(&pokemon_data){
 		this->id = to_unsigned(row[0]);
@@ -81,6 +82,8 @@ struct MapObject{
 		this->y = to_unsigned(row[4]);
 		for (size_t i = 0; i < array_length(this->params); i++)
 			this->params[i] = row[i + 5];
+		if (row[12].size())
+			this->legacy_sprite_id = (int)to_unsigned(row[12]);
 
 		if (!this->name.size()){
 			this->name = this->type + '_' + this->hash();
@@ -195,6 +198,8 @@ static void hidden_f(std::vector<byte_t> &dst, const MapObject &mo){
 }
 
 static void npc_f(std::vector<byte_t> &dst, const MapObject &mo){
+	assert(mo.legacy_sprite_id >= 0);
+	write_varint(dst, mo.legacy_sprite_id);
 	write_ascii_string(dst, mo.params[0]);
 	std::string s = "Undefined";
 	if (mo.params[1].size())
@@ -263,18 +268,19 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 		pokemon_data.reset(new PokemonData);
 
 	static const std::vector<std::string> order = {
-		"id",
-		"name",
-		"type",
-		"x",
-		"y",
-		"param1",
-		"param2",
-		"param3",
-		"param4",
-		"param5",
-		"param6",
-		"param7",
+		"id",				//  0
+		"name",				//  1
+		"type",				//  2
+		"x",				//  3
+		"y",				//  4
+		"param1",			//  5
+		"param2",			//  6
+		"param3",			//  7
+		"param4",			//  8
+		"param5",			//  9
+		"param6",			// 10
+		"param7",			// 11
+		"legacy_sprite_id",	// 12
 	};
 
 	CsvParser csv(input_file);

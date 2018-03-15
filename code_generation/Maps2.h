@@ -38,6 +38,7 @@ class Map2{
 	std::vector<MapTextEntry2> map_text;
 	int special_warp_check = 0;
 	std::vector<int> special_warp_tiles;
+	std::vector<int> invisible_sprites;
 public:
 	Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data, const std::map<std::string, unsigned> &audio_map);
 	DELETE_COPY_CONSTRUCTORS(Map2);
@@ -78,6 +79,7 @@ public:
 	void serialize(std::vector<byte_t> &);
 	void set_map_connection(int direction, const MapConnection &);
 	void set_map_text(const std::vector<MapTextEntry> &map_text, TextStore &);
+	void load_invisible_sprites(const std::set<unsigned> &);
 };
 
 class Maps2{
@@ -92,4 +94,5 @@ public:
 	}
 	void load_map_connections(const char *map_connections_path);
 	void load_map_text(const std::map<std::string, std::vector<MapTextEntry>> &, TextStore &);
+	void load_invisible_sprites(const std::map<std::string, std::set<unsigned>> &);
 };

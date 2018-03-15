@@ -70,6 +70,7 @@ MapObjectFacingDirection to_MapObjectFacingDirection(const std::string &s){
 }
 
 ObjectWithSprite::ObjectWithSprite(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map): DialogingMapObject(buffer){
+	this->legacy_id = buffer.read_varint();
 	this->sprite = find_in_constant_map(graphics_map, buffer.read_string());
 	this->facing_direction = to_MapObjectFacingDirection(buffer.read_string());
 	this->wandering = !!buffer.read_varint();

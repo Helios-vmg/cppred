@@ -124,6 +124,7 @@ struct MapData{
 	int warp_tiles[8];
 	std::string map_script;
 	AudioResourceId music;
+	short invisible_sprites[16];
 
 	MapData(
 		Map map_id,

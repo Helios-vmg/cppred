@@ -22,6 +22,7 @@ static const char * const map_connections_file = "input/map_connections.csv";
 static const char * const map_text_file = "input/map_text.csv";
 static const char * const text_file = "input/text.txt";
 static const char * const audio_csv_file = "output/audio.csv";
+static const char * const map_sprites_visibility_file = "input/map_sprites_visibility.csv";
 static const std::vector<std::string> input_files = {
 	maps_file,
 	tilesets_file,
@@ -31,6 +32,8 @@ static const std::vector<std::string> input_files = {
 	map_connections_file,
 	map_text_file,
 	text_file,
+	audio_csv_file,
+	map_sprites_visibility_file,
 };
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
@@ -157,6 +160,23 @@ static std::map<std::string, unsigned> load_audio_map(){
 	return ret;
 }
 
+static std::map<std::string, std::set<unsigned>> load_invisible_sprites_map(){
+	static const std::vector<std::string> order = { "map", "legacy_sprite_id", "initial_visibility_state", };
+	CsvParser csv(map_sprites_visibility_file);
+	auto rows = csv.row_count();
+	std::map<std::string, std::set<unsigned>> ret;
+	for (auto i = rows; i--;){
+		auto columns = csv.get_ordered_row(i, order);
+		auto state = to_bool(columns[2]);
+		if (state)
+			continue;
+		auto map = columns[0];
+		auto sprite_id = to_unsigned(columns[1]);
+		ret[map].insert(sprite_id);
+	}
+	return ret;
+}
+
 static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &gs, TextStore &text_store){
 	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
@@ -176,6 +196,7 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	Maps2 maps2(maps_file, map_data, tilesets2, load_audio_map());
 	maps2.load_map_connections(map_connections_file);
 	maps2.load_map_text(map_text, text_store);
+	maps2.load_invisible_sprites(load_invisible_sprites_map());
 
 	//Do consistency check.
 	for (auto &map : maps2.get_maps())
