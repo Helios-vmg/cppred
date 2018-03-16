@@ -149,9 +149,6 @@ public:
 	const MapObject &get_object() const{
 		return *this->full_object;
 	}
-	bool requires_actor() const{
-		return this->full_object->requires_actor();
-	}
 	void activate(CppRed::Actor &activator);
 	DEFINE_GETTER_SETTER(position)
 	void set_actor(CppRed::Actor &actor){

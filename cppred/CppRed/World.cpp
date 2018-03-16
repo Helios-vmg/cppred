@@ -233,10 +233,17 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 	auto &engine = this->game->get_engine();
 	auto &renderer = engine.get_renderer();
 	for (MapObjectInstance &object_instance : instance.get_objects()){
-		if (object_instance.requires_actor()){
-			auto actor = object_instance.get_object().create_actor(*this->game, renderer, new_map, object_instance);
+		auto &object = object_instance.get_object();
+		if (object.requires_actor()){
+			auto actor = object.create_actor(*this->game, renderer, new_map, object_instance);
 			if (!actor)
 				continue;
+			if (object.get_legacy_id() >= 0){
+				auto &array = map_data.invisible_sprites;
+				auto it = std::find(array, array + array_length(array), (short)object.get_legacy_id());
+				if (it != array + array_length(array))
+					actor->set_visible(false);
+			}
 			object_instance.set_actor(*actor);
 			this->actors.emplace_back(std::move(actor));
 		}

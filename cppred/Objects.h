@@ -45,6 +45,9 @@ public:
 	}
 	virtual void activate(CppRed::Game &, CppRed::Actor &activator, CppRed::Actor *activatee){}
 	virtual MapObjectType get_type() const = 0;
+	virtual int get_legacy_id() const{
+		return -1;
+	}
 	DEFINE_GETTER(position)
 	DEFINE_GETTER(name)
 	DEFINE_GETTER_SETTER(map_data)
@@ -185,7 +188,7 @@ public:
 		return this->text_index;
 	}
 	void activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee) override;
-	int get_legacy_id() const{
+	int get_legacy_id() const override{
 		return this->legacy_id;
 	}
 };

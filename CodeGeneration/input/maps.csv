@@ -79,7 +79,7 @@ legacy_id,id,name,tileset,width,height,map_data,on_load,on_frame,objects,random_
 54,78,Museum2F,Gate,7,4,Museum2FMapData,,Museum2FScript,Museum2FObject,,,Music_Cities1,14,,
 230,79,NameRater,House,4,4,BluesHouseMapData,,NameRaterScript,NameRaterObject,,,Music_Cities2,13,,
 41,80,OaksLab,Gym,5,6,OaksLabMapData,,OaksLabScript,OaksLabObject,,,Music_OaksLab,13,,
-1,81,PalletTown,Overworld,10,9,PalletTownMapData,PalletTown_onload,PalletTownScript,PalletTownObject,,FishingGroup1,Music_PalletTown,114,,
+1,81,PalletTown,Overworld,10,9,PalletTownMapData,,PalletTownScript,PalletTownObject,,FishingGroup1,Music_PalletTown,114,,
 3,82,PewterCity,Overworld,20,18,PewterCityMapData,,PewterCityScript,PewterCityObject,,,Music_Cities1,78,,
 55,83,PewterGym,Gym,5,7,PewterGymMapData,,PewterGymScript,PewterGymObject,,,Music_Gym,13,,
 56,84,PewterHouse1,House,4,4,BluesHouseMapData,,PewterHouse1Script,PewterHouse1Object,,,Music_Cities1,13,,
