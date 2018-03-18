@@ -10,19 +10,10 @@
 namespace CppRed{
 namespace Scripts{
 
-static const char * const PalletTownScriptIndex = "PalletTownScriptIndex";
-static const char * const wcf0d = "wcf0d";
 using script_f = ScriptStore::script_f;
 
 DECLARE_SCRIPT(PalletTownScript0);
 DECLARE_SCRIPT(PalletTownScript5);
-
-DECLARE_SCRIPT(PalletTown_onload){
-	auto &game = *parameters.game;
-	auto &vs = game.get_variable_store();
-	auto &oak = game.get_world().get_actor("PalletOak");
-	oak.set_visible(false);
-}
 
 DECLARE_SCRIPT(PalletTownScript){
 	auto &game = *parameters.game;
