@@ -201,22 +201,26 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 	auto &c = coroutine.get_clock();
 	auto t0 = c.get();
 	double t;
+	double last_t = 0;
+	double t2 = 0;
 	const double frames = this->movement_duration();
 	const double movement_per_frame = Renderer::tile_size * 2 / frames;
 	const double duration = frames / 60;
-	const double half_duration = duration / 2;
-	while ((t = c.get() - t0) < half_duration){
-		this->pixel_offset = delta * (movement_per_frame * (t * 60));
-		coroutine.yield();
-	}
-	this->walking_animation_state = (this->walking_animation_state + 1) % 4;
-	this->set_visible_sprite();
 	while ((t = c.get() - t0) < duration){
+		t2 += t - last_t;
+		if (t2 >= 8.0 / 60.0){
+			this->walking_animation_state = (this->walking_animation_state + 1) % 4;
+			this->set_visible_sprite();
+			t2 -= 8.0 / 60.0;
+		}
 		this->pixel_offset = delta * (movement_per_frame * (t * 60));
 		coroutine.yield();
+		last_t = t;
 	}
-	this->walking_animation_state = (this->walking_animation_state + 1) % 4;
-	this->set_visible_sprite();
+	if (this->walking_animation_state % 2){
+		this->walking_animation_state = (this->walking_animation_state + 1) % 4;
+		this->set_visible_sprite();
+	}
 	this->pixel_offset = Point();
 }
 
