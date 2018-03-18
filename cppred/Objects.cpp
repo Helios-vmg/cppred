@@ -167,12 +167,17 @@ void DialogingMapObject::activate(CppRed::Game &game, CppRed::Actor &activator, 
 
 void ObjectWithSprite::activate(CppRed::Game &game, CppRed::Actor &activator, CppRed::Actor *activatee){
 	assert(activatee);
-	if (activatee->is_moving())
+	if (activatee->is_moving() || !activatee->get_visible())
 		return;
-	auto old = activatee->get_facing_direction();
+	auto old_facing_direction = activatee->get_facing_direction();
 	activatee->set_facing_direction(invert_direction(activator.get_facing_direction()));
+	auto old_random = activatee->get_random_facing_direction();
+	activatee->set_random_facing_direction(false);
+	
 	DialogingMapObject::activate(game, activator, activatee);
-	activatee->set_facing_direction(old);
+	
+	activatee->set_random_facing_direction(old_random);
+	activatee->set_facing_direction(old_facing_direction);
 }
 
 CppRed::actor_ptr<CppRed::Actor> TrainerMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{

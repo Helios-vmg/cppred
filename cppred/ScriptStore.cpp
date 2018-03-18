@@ -14,6 +14,7 @@ ScriptStore::ScriptStore(){
 	ADD_SCRIPT(BluesHouseScript);
 	ADD_SCRIPT(BluesHouseText1);
 	ADD_SCRIPT(OaksLabScript);
+	ADD_SCRIPT(OaksLabText1);
 	//Add scripts.
 
 	std::sort(this->scripts.begin(), this->scripts.end(), [](const auto &a, const auto &b){ return a.first < b.first; });

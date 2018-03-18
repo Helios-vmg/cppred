@@ -23,6 +23,7 @@ DECLARE_SCRIPT(PalletTownScript);
 DECLARE_SCRIPT(BluesHouseScript);
 DECLARE_SCRIPT(BluesHouseText1);
 DECLARE_SCRIPT(OaksLabScript);
+DECLARE_SCRIPT(OaksLabText1);
 
 }
 }

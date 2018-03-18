@@ -273,6 +273,10 @@ void Game::run_dialog(TextResourceId resource, TileRegion region, bool wait_at_e
 	this->text_store.execute(*this, resource, this->text_state);
 	if (wait_at_end)
 		PromptCommand::wait_for_continue(*this, this->text_state, false);
+	if (this->reset_dialog_was_delayed){
+		this->reset_dialog_state();
+		this->reset_dialog_was_delayed = false;
+	}
 	this->joypad_pressed = InputState();
 }
 
@@ -299,6 +303,8 @@ TextState Game::get_default_dialog_state(){
 }
 
 void Game::reset_dialog_state(){
+	if (this->text_state.region == TileRegion::Window)
+		this->engine->get_renderer().set_enable_window(false);
 	this->text_state = this->get_default_dialog_state();
 	this->dialog_box_visible = false;
 }

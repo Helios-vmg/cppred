@@ -189,7 +189,7 @@ void PromptCommand::execute(Game &game, TextState &state){
 }
 
 void DoneCommand::execute(Game &game, TextState &){
-	game.reset_dialog_state();
+	game.delayed_reset_dialog();
 }
 
 void DexCommand::execute(Game &, TextState &){}

@@ -25,6 +25,9 @@ public:
 	void set_random_facing_direction(bool value) override{
 		this->randomize_facing_direction = value;
 	}
+	bool get_random_facing_direction() const override{
+		return this->randomize_facing_direction;
+	}
 };
 
 }

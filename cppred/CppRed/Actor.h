@@ -87,6 +87,7 @@ public:
 	DEFINE_GETTER_SETTER(ignore_occupancy)
 	DEFINE_GETTER(name)
 	DEFINE_GETTER_SETTER(object_id)
+	DEFINE_GETTER(visible)
 	bool is_moving() const{
 		return this->moving;
 	}
@@ -100,6 +101,9 @@ public:
 	}
 	std::vector<PathStep> find_path(const Point &destination);
 	void follow_path(const std::vector<PathStep> &);
+	virtual bool get_random_facing_direction() const{
+		return false;
+	}
 	virtual void set_random_facing_direction(bool value){}
 };
 

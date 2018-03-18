@@ -90,6 +90,7 @@ class Game{
 	VariableStore variable_store;
 	AudioInterface audio_interface;
 	std::unique_ptr<World> world;
+	bool reset_dialog_was_delayed = false;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
@@ -138,8 +139,14 @@ public:
 	void put_string(const Point &position, TileRegion region, const char *string);
 	void run_dialog(TextResourceId, bool wait_at_end = false);
 	void run_dialog(TextResourceId, TileRegion, bool wait_at_end = false);
+	void run_dialog_from_script(TextResourceId text, bool wait_at_end = true){
+		this->run_dialog(text, TileRegion::Window, wait_at_end);
+	}
 	void run_dialog_from_world(TextResourceId, Actor &activator, bool hide_window_at_end = true);
 	void reset_dialog_state();
+	void delayed_reset_dialog(){
+		this->reset_dialog_was_delayed = true;
+	}
 	static TextState get_default_dialog_state();
 	void text_print_delay();
 	VariableStore &get_variable_store(){

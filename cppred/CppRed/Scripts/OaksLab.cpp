@@ -98,24 +98,102 @@ DECLARE_SCRIPT(OaksLabScript00){
 	blue.set_random_facing_direction(false);
 	blue.set_facing_direction(FacingDirection::Up);
 
-	game.run_dialog(TextResourceId::OaksLabRivalWaitingText, TileRegion::Window, true);
-	game.run_dialog(TextResourceId::OaksLabChooseMonText, TileRegion::Window, true);
-	game.run_dialog(TextResourceId::OaksLabRivalInterjectionText, TileRegion::Window, true);
-	game.run_dialog(TextResourceId::OaksLabBePatientText, TileRegion::Window, true);
-	game.get_engine().get_renderer().set_enable_window(false);
+	game.run_dialog_from_script(TextResourceId::OaksLabRivalWaitingText);
+	game.reset_dialog_state();
+	Coroutine::get_current_coroutine().wait(0.63);
+	game.run_dialog_from_script(TextResourceId::OaksLabChooseMonText);
+	game.reset_dialog_state();
+	Coroutine::get_current_coroutine().wait(0.63);
+	game.run_dialog_from_script(TextResourceId::OaksLabRivalInterjectionText);
+	game.reset_dialog_state();
+	Coroutine::get_current_coroutine().wait(0.63);
+	game.run_dialog_from_script(TextResourceId::OaksLabBePatientText);
 	game.reset_dialog_state();
 
 	vs.set(EventId::event_oak_asked_to_choose_mon, true);
 
 	player.set_ignore_input(false);
+	blue.set_random_facing_direction(true);
 
 	vs.set(IntegerVariableId::OaksLabScriptIndex, 6);
 }
 
 DECLARE_SCRIPT(OaksLabScript06){
 	auto &game = *parameters.game;
+	auto &world = game.get_world();
+	auto &player = world.get_pc();
+	if (player.get_map_position().y < 6)
+		return;
+	auto &blue = dynamic_cast<NpcTrainer &>(world.get_actor(ActorId::BlueInOaksLab));
+	blue.set_random_facing_direction(false);
+	blue.set_facing_direction(FacingDirection::Down);
+	game.run_dialog_from_script(TextResourceId::OaksLabLeavingText);
+	game.reset_dialog_state();
+	player.move(FacingDirection::Up);
+	blue.set_random_facing_direction(true);
+	return;
+
+
 	auto &vs = game.get_variable_store();
 	vs.set(IntegerVariableId::OaksLabScriptIndex, -1);
+}
+
+DECLARE_SCRIPT(OaksLabText1){
+	auto &game = *parameters.game;
+	auto &vs = game.get_variable_store();
+	TextResourceId text;
+	if (!vs.get(EventId::event_followed_oak_into_lab_2))
+		text = TextResourceId::OaksLabGaryText1;
+	else if (vs.get(EventId::event_got_starter))
+		text = TextResourceId::OaksLabText41;
+	else
+		text = TextResourceId::OaksLabText40;
+	game.run_dialog_from_script(text);
+	game.reset_dialog_state();
+}
+
+DECLARE_SCRIPT(OaksLabText4){
+	auto &game = *parameters.game;
+	auto &vs = game.get_variable_store();
+	if (vs.get(EventId::event_pallet_after_getting_pokeballs) || vs.get(EventId::event_got_pokedex)){
+		game.run_dialog_from_script(TextResourceId::OaksLabText_1d31d);
+		//TODO: DisplayDexRating
+	}else{
+		auto &world = game.get_world();
+		auto &player = world.get_pc();
+		if (player.has_item_in_inventory(ItemId::PokeBall)){
+			//I don't think this will ever execute.
+			game.run_dialog_from_script(TextResourceId::OaksLabPleaseVisitText);
+		}else if (vs.get(EventId::event_beat_route22_rival_1st_battle)){
+			bool got = vs.get(EventId::event_got_pokeballs_from_oak);
+			if (got)
+				game.run_dialog_from_script(TextResourceId::OaksLabPleaseVisitText);
+			else{
+				vs.set(EventId::event_got_pokeballs_from_oak, true);
+				player.receive(ItemId::PokeBall, 5);
+				game.run_dialog_from_script(TextResourceId::OaksLabGivePokeballsText1);
+				game.get_audio_interface().play_sound(AudioResourceId::SFX_Get_Key_Item);
+				game.run_dialog_from_script(TextResourceId::OaksLabGivePokeballsText2);
+			}
+		}else if (vs.get(EventId::event_got_pokedex)){
+			game.run_dialog_from_script(TextResourceId::OaksLabAroundWorldText);
+		}else if (vs.get(EventId::event_battled_rival_in_oaks_lab)){
+			if (player.has_item_in_inventory(ItemId::OaksParcel)){
+				game.run_dialog_from_script(TextResourceId::OaksLabDeliverParcelText1);
+				game.get_audio_interface().play_sound(AudioResourceId::SFX_Get_Key_Item);
+				game.run_dialog_from_script(TextResourceId::OaksLabDeliverParcelText2);
+				player.remove_all(ItemId::OaksParcel);
+				vs.set(IntegerVariableId::OaksLabScriptIndex, 15);
+			}else
+				game.run_dialog_from_script(TextResourceId::OaksLabText_1d2fa);
+		}else{
+			if (vs.get(IntegerVariableId::event_received_starter))
+				game.run_dialog_from_script(TextResourceId::OaksLabText_1d2f5);
+			else
+				game.run_dialog_from_script(TextResourceId::OaksLabText_1d2f0);
+		}
+	}
+	game.reset_dialog_state();
 }
 
 }
