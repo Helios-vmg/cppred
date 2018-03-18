@@ -11,7 +11,8 @@ ScriptStore::ScriptStore(){
 	ADD_SCRIPT(RedsHouse1FText1);
 	ADD_SCRIPT(RedsHouse1FText2);
 	ADD_SCRIPT(PalletTownScript);
-	ADD_SCRIPT(PalletTown_onload);
+	ADD_SCRIPT(BluesHouseScript);
+	ADD_SCRIPT(BluesHouseText1);
 	//Add scripts.
 
 	std::sort(this->scripts.begin(), this->scripts.end(), [](const auto &a, const auto &b){ return a.first < b.first; });

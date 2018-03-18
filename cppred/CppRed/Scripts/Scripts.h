@@ -20,7 +20,8 @@ DECLARE_SCRIPT(PrintRedSNESText);
 DECLARE_SCRIPT(RedsHouse1FText1);
 DECLARE_SCRIPT(RedsHouse1FText2);
 DECLARE_SCRIPT(PalletTownScript);
-DECLARE_SCRIPT(PalletTown_onload);
+DECLARE_SCRIPT(BluesHouseScript);
+DECLARE_SCRIPT(BluesHouseText1);
 
 }
 }
