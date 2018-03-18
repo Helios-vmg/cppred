@@ -78,13 +78,13 @@ std::unique_ptr<TextResourceCommand> TextStore::parse_command(const std::vector<
 			ret.reset(new AutocontCommand);
 			break;
 		case TextResourceCommandType::Mem:
-			ret.reset(new MemCommand(buffer.read_string()));
+			ret.reset(new MemCommand((StringVariableId)buffer.read_varint()));
 			break;
 		case TextResourceCommandType::Num:
 			{
-				auto variable = buffer.read_string();
+				auto variable = (IntegerVariableId)buffer.read_varint();
 				auto digits = buffer.read_u32();
-				ret.reset(new NumCommand(std::move(variable), digits));
+				ret.reset(new NumCommand(variable, digits));
 			}
 			break;
 		case TextResourceCommandType::Cry:
@@ -196,13 +196,13 @@ void DexCommand::execute(Game &, TextState &){}
 void AutocontCommand::execute(Game &, TextState &){}
 
 void MemCommand::execute(Game &game, TextState &state){
-	auto value = game.get_variable_store().get_string(this->variable);
+	auto value = game.get_variable_store().get(this->variable);
 	progressively_write_text(value, game, state);
 }
 
 void NumCommand::execute(Game &game, TextState &state){
 	std::stringstream stream;
-	stream << game.get_variable_store().get_number(this->variable);
+	stream << game.get_variable_store().get(this->variable);
 	progressively_write_text(stream.str(), game, state);
 }
 

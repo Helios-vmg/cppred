@@ -6,6 +6,7 @@
 #include "CppRed/Game.h"
 #include "CppRed/World.h"
 #include "CppRed/TextDisplay.h"
+#include "../CodeGeneration/output/variables.h"
 
 MapObject::~MapObject(){}
 
@@ -50,7 +51,7 @@ MapWarp::MapWarp(BufferReader &buffer, const MapStore &map_store): MapObject(buf
 	this->index = buffer.read_varint();
 	auto temp = buffer.read_string();
 	if (temp.size() >= 4 && temp[0] == 'v' && temp[1] == 'a' && temp[2] == 'r' && temp[3] == ':')
-		this->destination = WarpDestination(temp.substr(4));
+		this->destination = WarpDestination((CppRed::IntegerVariableId)buffer.read_varint());
 	else
 		this->destination = WarpDestination(map_store.get_map_by_name(temp));
 	this->destination_warp_index = buffer.read_varint();

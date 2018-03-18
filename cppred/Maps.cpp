@@ -4,6 +4,7 @@
 #include "CppRed/Actor.h"
 #include "CppRed/Game.h"
 #include "CppRed/Scripts/Scripts.h"
+#include "../CodeGeneration/output/variables.h"
 #include "RendererStructs.h"
 #include "utility.h"
 #include "Objects.h"
@@ -206,14 +207,15 @@ MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_ma
 }
 
 MapData::MapData(
-	Map map_id,
-	BufferReader &buffer,
-	const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
-	const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
-	std::vector<TemporaryMapConnection> &tmcs,
-	std::vector<std::pair<MapData *, std::string>> &map_objects){
+		Map map_id,
+		BufferReader &buffer,
+		const std::map<std::string, std::shared_ptr<TilesetData>> &tilesets,
+		const std::map<std::string, std::shared_ptr<BinaryMapData>> &map_data,
+		std::vector<TemporaryMapConnection> &tmcs,
+		std::vector<std::pair<MapData *, std::string>> &map_objects){
 
 	this->map_id = map_id;
+	this->legacy_id = buffer.read_varint();
 	this->name = buffer.read_string();
 	this->tileset = find_in_constant_map(tilesets, buffer.read_string());
 	this->width = buffer.read_varint();
@@ -262,9 +264,9 @@ MapData::MapData(
 		auto invisible_sprites = buffer.read_varint();
 		unsigned i = 0;
 		for (; i < invisible_sprites; i++)
-			this->invisible_sprites[i] = buffer.read_varint();
-		for (; i < array_length(this->invisible_sprites); i++)
-			this->invisible_sprites[i] = -1;
+			this->sprite_visibility_flags[i] = (CppRed::VisibilityFlagId)buffer.read_varint();
+		for (; i < array_length(this->sprite_visibility_flags); i++)
+			this->sprite_visibility_flags[i] = CppRed::VisibilityFlagId::None;
 	}
 }
 
@@ -280,10 +282,24 @@ const MapData &MapStore::get_map_by_name(const std::string &map_name) const{
 	typedef decltype(this->maps_by_name)::value_type T;
 	auto begin = this->maps_by_name.begin();
 	auto end = this->maps_by_name.end();
-	auto it = find_first_true(begin, end, [&map_name](const T &a){ return map_name <= a.first; });
-	if (it == end || it->first != map_name)
+	auto it = find_first_true(begin, end, [&map_name](const T &a){ return map_name <= a->name; });
+	if (it == end || (*it)->name != map_name)
 		throw std::runtime_error("Map not found: " + map_name);
-	return *it->second;
+	return **it;
+}
+
+const MapData *MapStore::try_get_map_by_legacy_id(unsigned id) const{
+	typedef decltype(this->maps_by_legacy_id)::value_type T;
+	auto begin = this->maps_by_legacy_id.begin();
+	auto end = this->maps_by_legacy_id.end();
+	auto it = find_first_true(begin, end, [id](const T &a){ return id <= a->legacy_id; });
+	if (it == end || (*it)->legacy_id != id)
+		return nullptr;
+	return *it;
+}
+
+const MapData &MapStore::get_map_by_legacy_id(unsigned id) const{
+	return *this->try_get_map_by_legacy_id(id);
 }
 
 void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data, const graphics_map_t &graphics_map){
@@ -293,9 +309,12 @@ void MapStore::load_maps(const tilesets_t &tilesets, const map_data_t &map_data,
 	BufferReader buffer(map_definitions, map_definitions_size);
 	while (!buffer.empty()){
 		this->maps.emplace_back(new MapData((Map)++id, buffer, tilesets, map_data, tmcs, object_names));
-		this->maps_by_name.emplace_back(this->maps.back()->name, this->maps.back().get());
+		auto p = this->maps.back().get();
+		this->maps_by_name.push_back(p);
+		this->maps_by_legacy_id.push_back(p);
 	}
-	std::sort(this->maps_by_name.begin(), this->maps_by_name.end());
+	std::sort(this->maps_by_name.begin(), this->maps_by_name.end(), [](MapData *a, MapData *b){ return a->name < b->name; });
+	std::sort(this->maps_by_legacy_id.begin(), this->maps_by_legacy_id.end(), [](MapData *a, MapData *b){ return a->legacy_id < b->legacy_id; });
 
 	for (auto &tmc : tmcs){
 		auto &mc = tmc.source->map_connections[tmc.direction];

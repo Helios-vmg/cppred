@@ -4,7 +4,7 @@
 #include "../PlayerCharacter.h"
 #include "../../../CodeGeneration/output/text.h"
 #include "../../../CodeGeneration/output/audio.h"
-#include "Events.h"
+#include "../../../CodeGeneration/output/variables.h"
 #include <CppRed/Npc.h>
 
 namespace CppRed{
@@ -27,9 +27,9 @@ DECLARE_SCRIPT(PalletTown_onload){
 DECLARE_SCRIPT(PalletTownScript){
 	auto &game = *parameters.game;
 	auto &vs = game.get_variable_store();
-	if (vs.get_number_default(event_got_pokeballs_from_oak))
-		vs.set_number(event_pallet_after_getting_pokeballs, 1);
-	auto index = vs.get_number_default(PalletTownScriptIndex);
+	if (vs.get(EventId::event_got_pokeballs_from_oak))
+		vs.set(EventId::event_pallet_after_getting_pokeballs, true);
+	auto index = vs.get(IntegerVariableId::PalletTownScriptIndex);
 	static const script_f scripts[] = {
 		PalletTownScript0,
 		nullptr,
@@ -45,7 +45,7 @@ DECLARE_SCRIPT(PalletTownScript){
 DECLARE_SCRIPT(PalletTownScript0){
 	auto &game = *parameters.game;
 	auto &vs = game.get_variable_store();
-	if (vs.get_number_default(event_followed_oak_into_lab))
+	if (vs.get(EventId::event_followed_oak_into_lab))
 		return;
 	auto &player = game.get_world().get_pc();
 	auto position = player.get_map_position();
@@ -55,10 +55,10 @@ DECLARE_SCRIPT(PalletTownScript0){
 	auto &ai = game.get_audio_interface();
 	ai.play_sound(AudioResourceId::Stop);
 	ai.play_sound(AudioResourceId::Music_MeetProfOak);
-	vs.set_number(event_oak_appeared_in_pallet, 1);
-	vs.set_number(PalletTownScriptIndex, 1);
+	vs.set(EventId::event_oak_appeared_in_pallet, true);
+	vs.set(IntegerVariableId::PalletTownScriptIndex, 1);
 
-	vs.set_number(wcf0d, 0);
+	vs.set(IntegerVariableId::wcf0d, 0);
 	auto &world = game.get_world();
 	player.set_ignore_input(true);
 	game.get_engine().set_gamepad_disabled(true);
@@ -124,19 +124,19 @@ DECLARE_SCRIPT(PalletTownScript0){
 	player.set_ignore_occupancy(false);
 	player.set_ignore_input(false);
 
-	vs.set_number(PalletTownScriptIndex, 5);
+	vs.set(IntegerVariableId::PalletTownScriptIndex, 5);
 	PalletTownScript5(parameters);
 }
 
 DECLARE_SCRIPT(PalletTownScript5){
 	auto &game = *parameters.game;
 	auto &vs = game.get_variable_store();
-	if (vs.get_number_default(event_daisy_walking) || vs.get_number_default(event_got_town_map) && vs.get_number_default(event_entered_blues_house)){
-		if (!vs.get_number_default(event_got_pokeballs_from_oak))
+	if (vs.get(EventId::event_daisy_walking) || vs.get(EventId::event_got_town_map) && vs.get(EventId::event_entered_blues_house)){
+		if (!vs.get(EventId::event_got_pokeballs_from_oak))
 			return;
-		vs.set_number(event_pallet_after_getting_pokeballs_2, 1);
+		vs.set(EventId::event_pallet_after_getting_pokeballs_2, true);
 	}else{
-		vs.set_number(event_daisy_walking, 1);
+		vs.set(EventId::event_daisy_walking, true);
 		/**/
 	}
 }

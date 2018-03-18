@@ -136,6 +136,7 @@
     <ClInclude Include="code_generators.h" />
     <ClInclude Include="FreeImageInitializer.h" />
     <ClInclude Include="generate_audio.h" />
+    <ClInclude Include="generate_variables.h" />
     <ClInclude Include="generate_graphics.h" />
     <ClInclude Include="generate_items.h" />
     <ClInclude Include="generate_maps.h" />
@@ -155,11 +156,13 @@
     <ClInclude Include="Tilesets.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="utility.h" />
+    <ClInclude Include="Variables.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\base64.cpp" />
     <ClCompile Include="..\common\sha1.cpp" />
     <ClCompile Include="FreeImageInitializer.cpp" />
+    <ClCompile Include="generate_variables.cpp" />
     <ClCompile Include="generate_graphics.cpp" />
     <ClCompile Include="generate_items.cpp" />
     <ClCompile Include="generate_maps.cpp" />
@@ -180,6 +183,7 @@
     <ClCompile Include="Tilesets2.cpp" />
     <ClCompile Include="Tilesets.cpp" />
     <ClCompile Include="utility.cpp" />
+    <ClCompile Include="Variables.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

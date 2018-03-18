@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "PokemonData.h"
+#include "Variables.h"
 #include "../common/csv_parser.h"
 #include "utility.h"
 
@@ -19,7 +20,12 @@ static void write_u32(std::vector<byte_t> &dst, std::uint32_t n){
 	}
 }
 
-static void process_command(std::vector<byte_t> &dst, const std::string &command, CommandType &last_command, PokemonData &pokemon_data){
+class NonLethalException : public std::runtime_error{
+public:
+	NonLethalException(const std::string &s): std::runtime_error(s){}
+};
+
+static void process_command(std::vector<byte_t> &dst, const std::string &command, CommandType &last_command, PokemonData &pokemon_data, Variables &variables){
 	if (command == "cont"){
 		last_command = CommandType::Cont;
 		dst.push_back((byte_t)last_command);
@@ -65,9 +71,15 @@ static void process_command(std::vector<byte_t> &dst, const std::string &command
 		auto variable_name = command.substr(4);
 		last_command = CommandType::Mem;
 		dst.push_back((byte_t)last_command);
-		for (auto c : variable_name)
-			dst.push_back(c);
-		dst.push_back(0);
+		Variable variable;
+		try{
+			variable = variables.get(variable_name);
+		}catch (std::exception &e){
+			throw NonLethalException(e.what());
+		}
+		if (!variable.is_string)
+			throw std::runtime_error("Variable " + variable_name + " is not a string.");
+		write_varint(dst, variable.id);
 		return;
 	}
 	if (first_four == "num,"){
@@ -81,9 +93,15 @@ static void process_command(std::vector<byte_t> &dst, const std::string &command
 		auto digits = to_unsigned(command.substr(second_comma));
 		last_command = CommandType::Num;
 		dst.push_back((byte_t)last_command);
-		for (auto c : variable_name)
-			dst.push_back(c);
-		dst.push_back(0);
+		Variable variable;
+		try{
+			variable = variables.get(variable_name);
+		}catch (std::exception &e){
+			throw NonLethalException(e.what());
+		}
+		if (variable.is_string)
+			throw NonLethalException("Variable " + variable_name + " is not an integer.");
+		write_varint(dst, variable.id);
 		write_u32(dst, digits);
 		return;
 	}
@@ -95,7 +113,7 @@ static void process_command(std::vector<byte_t> &dst, const std::string &command
 		try{
 			species_id = pokemon_data.get_species_id(species);
 		}catch (std::exception &e){
-			throw std::runtime_error("Error parsing \"" + command + "\". " + e.what());
+			throw NonLethalException("Error parsing \"" + command + "\". " + e.what());
 		}
 		write_varint(dst, species_id);
 		return;
@@ -109,7 +127,9 @@ static void set_text_command(std::vector<byte_t> &dst, CommandType &last_command
 	last_command = CommandType::Text;
 }
 
-static std::vector<byte_t> parse_text_format(std::ifstream &input, std::map<std::string, int> &section_names, PokemonData &pokemon_data){
+static std::vector<byte_t> parse_text_format(std::ifstream &input, std::map<std::string, int> &section_names, PokemonData &pokemon_data, Variables &variables){
+	bool throw_at_end = false;
+
 	std::vector<byte_t> ret;
 	bool in_section = false;
 	CommandType last_command = CommandType::None;
@@ -145,10 +165,15 @@ static std::vector<byte_t> parse_text_format(std::ifstream &input, std::map<std:
 				unsigned char uc = c;
 				if (in_command){
 					if (c == '>'){
-						process_command(ret, accum, last_command, pokemon_data);
+						try{
+							process_command(ret, accum, last_command, pokemon_data, variables);
+						}catch (NonLethalException &e){
+							std::cerr << "Error on line " << line_no << " (section " << current_label << "). " << e.what() << std::endl;
+							throw_at_end = true;
+						}
 						accum.clear();
 						in_command = false;
-					} else
+					}else
 						accum.push_back(c);
 					continue;
 				}
@@ -195,6 +220,9 @@ static std::vector<byte_t> parse_text_format(std::ifstream &input, std::map<std:
 			throw std::runtime_error(stream.str());
 		}
 	}
+
+	if (throw_at_end)
+		throw std::runtime_error("Some errors encountered during parsing. Aborting.");
 	return ret;
 }
 
@@ -207,7 +235,7 @@ void TextStore::load_data(){
 	std::ifstream input(this->path, std::ios::binary);
 	if (!input)
 		throw std::runtime_error(this->path + " not found!");
-	this->binary_data = parse_text_format(input, this->sections, *this->pokemon_data);
+	this->binary_data = parse_text_format(input, this->sections, *this->pokemon_data, this->variables);
 	for (auto &kv : sections)
 		this->text_by_id.push_back(kv);
 	std::sort(this->text_by_id.begin(), this->text_by_id.end(), [](const auto &a, const auto &b){ return a.second < b.second; });

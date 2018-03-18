@@ -9,6 +9,7 @@
 #include "EntryPoint.h"
 #include "Scripts/Scripts.h"
 #include "../../CodeGeneration/output/audio.h"
+#include "../../CodeGeneration/output/variables.h"
 #include "../Console.h"
 #include <iostream>
 #include <sstream>
@@ -306,64 +307,43 @@ void Game::text_print_delay(){
 	Coroutine::get_current_coroutine().wait_frames((int)this->options.text_speed);
 }
 
-void VariableStore::set_string(const std::string &key, std::string *value){
-	this->string_variables[key] = value;
+void VariableStore::set(StringVariableId id, const std::string &val){
+	set_vector<0>(this->strings, id, val);
 }
 
-void VariableStore::set_string(const std::string &key, const std::string &value){
-	this->strings.push_back(value);
-	this->set_string(key, &this->strings.back());
+void VariableStore::set(IntegerVariableId id, int val){
+	set_vector<0>(this->integers, id, val);
 }
 
-void VariableStore::set_number(const std::string &key, int *value){
-	this->number_variables[key] = value;
+void VariableStore::set(EventId id, bool val){
+	set_vector<1>(this->events, id, val);
 }
 
-void VariableStore::set_number(const std::string &key, int value){
-	this->numbers.push_back(value);
-	this->set_number(key, &this->numbers.back());
+void VariableStore::set(VisibilityFlagId id, bool val){
+	set_vector<1>(this->vibility_flags, id, val);
 }
 
-const std::string *VariableStore::try_get_string(const std::string &key){
-	auto it = this->string_variables.find(key);
-	if (it == this->string_variables.end())
-		return nullptr;
-	return it->second;
+const std::string &VariableStore::get(StringVariableId id){
+	return get_vector<0>(this->strings, id);
 }
 
-const std::string &VariableStore::get_string(const std::string &key){
-	auto ret = this->try_get_string(key);
-	if (!ret)
-		throw std::runtime_error("Variable not found: " + key);
-	return *ret;
+int VariableStore::get(IntegerVariableId id){
+	return get_vector<0>(this->integers, id);
 }
 
-int VariableStore::get_number(const std::string &key){
-	auto it = this->number_variables.find(key);
-	if (it == this->number_variables.end())
-		throw std::runtime_error("Variable not found: " + key);
-	return *it->second;
+bool VariableStore::get(EventId id){
+	return get_vector<1>(this->events, id);
 }
 
-int VariableStore::get_number_default(const std::string &key){
-	auto it = this->number_variables.find(key);
-	if (it == this->number_variables.end())
-		return 0;
-	return *it->second;
+bool VariableStore::get(VisibilityFlagId id){
+	return get_vector<1>(this->vibility_flags, id);
 }
 
-void VariableStore::delete_string(const std::string &key){
-	auto it = this->string_variables.find(key);
-	if (it == this->string_variables.end())
-		return;
-	this->string_variables.erase(it);
-}
-
-void VariableStore::delete_number(const std::string &key){
-	auto it = this->number_variables.find(key);
-	if (it == this->number_variables.end())
-		return;
-	this->number_variables.erase(it);
+void VariableStore::load_initial_visibility_flags(){
+	this->vibility_flags.resize(default_sprite_vibisilities_size * 8);
+	for (size_t i = 0; i < default_sprite_vibisilities_size; i++)
+		for (int j = 0; j < 8; j++)
+			this->vibility_flags[i * 8 + j] = !!(default_sprite_vibisilities[i] & (1 << j));
 }
 
 std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int max_length_){
@@ -534,8 +514,8 @@ std::string Game::get_name_from_user(SpeciesId species, int max_length){
 
 void Game::create_main_characters(const std::string &player_name, const std::string &rival_name){
 	this->world->create_main_characters(player_name, rival_name);
-	this->variable_store.set_string("player_name", player_name);
-	this->variable_store.set_string("rival_name", rival_name);
+	this->variable_store.set(StringVariableId::player_name, player_name);
+	this->variable_store.set(StringVariableId::rival_name, rival_name);
 }
 
 void Game::game_loop(){

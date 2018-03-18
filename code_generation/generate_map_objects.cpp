@@ -1,8 +1,9 @@
 #include "generate_map_objects.h"
 #include "../common/sha1.h"
 #include "PokemonData.h"
+#include "Variables.h"
 
-static const char * const input_file = "input/map_objects.csv";
+static const char * const events_file = "input/map_objects.csv";
 static const char * const names_input_file = "input/map_object_names.csv";
 static const char * const hash_key = "generate_map_objects";
 static const char * const date_string = __DATE__ __TIME__;
@@ -69,8 +70,11 @@ struct MapObject{
 	std::string params[7];
 	PokemonData *pokemon_data;
 	int legacy_sprite_id = -1;
+	Variables &variables;
 
-	MapObject(const std::vector<std::string> &row, PokemonData &pokemon_data, const std::map<unsigned, std::string> &name_map): pokemon_data(&pokemon_data){
+	MapObject(const std::vector<std::string> &row, PokemonData &pokemon_data, const std::map<unsigned, std::string> &name_map, Variables &variables):
+			pokemon_data(&pokemon_data),
+			variables(variables){
 		this->id = to_unsigned(row[0]);
 		{
 			auto it = name_map.find(this->id);
@@ -236,7 +240,21 @@ static void trainer_f(std::vector<byte_t> &dst, const MapObject &mo){
 
 static void warp_f(std::vector<byte_t> &dst, const MapObject &mo){
 	write_varint(dst, to_unsigned(mo.params[0]));
-	write_ascii_string(dst, mo.params[1]);
+	if (mo.params[1].substr(0, 4) == "var:"){
+		write_ascii_string(dst, mo.params[1]);
+		try{
+			auto name = mo.params[1].substr(4);
+			auto variable = mo.variables.get(name);
+			if (variable.is_string)
+				throw std::runtime_error("Variable " + name + " is not a number.");
+			write_varint(dst, variable.id);
+		}catch (std::exception &e){
+			std::stringstream stream;
+			stream << "Error while processing warp with ID " << mo.id << ": " << e.what();
+			throw std::runtime_error(stream.str());
+		}
+	}else
+		write_ascii_string(dst, mo.params[1]);
 	write_varint(dst, to_unsigned(mo.params[2]));
 }
 
@@ -256,8 +274,8 @@ static std::map<unsigned, std::string> load_name_map(){
 
 //------------------------------------------------------------------------------
 
-static void generate_map_objects_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
-	auto current_hash = hash_files({input_file, names_input_file}, date_string);
+static void generate_map_objects_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data, Variables &variables){
+	auto current_hash = hash_files({events_file, names_input_file}, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating map objects.\n";
 		return;
@@ -283,13 +301,13 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 		"legacy_sprite_id",	// 12
 	};
 
-	CsvParser csv(input_file);
+	CsvParser csv(events_file);
 	std::map<std::string, std::vector<MapObject>> map_sets;
 	size_t rows = csv.row_count();
 	auto name_map = load_name_map();
 	for (size_t i = 0; i < rows; i++){
 		auto row = csv.get_ordered_row(i, order);
-		map_sets[row[1]].emplace_back(row, *pokemon_data, name_map);
+		map_sets[row[1]].emplace_back(row, *pokemon_data, name_map, variables);
 	}
 
 	std::ofstream header("output/map_objects.h");
@@ -317,9 +335,9 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 	known_hashes[hash_key] = current_hash;
 }
 
-void generate_map_objects(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
+void generate_map_objects(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data, Variables &variables){
 	try{
-		generate_map_objects_internal(known_hashes, pokemon_data);
+		generate_map_objects_internal(known_hashes, pokemon_data, variables);
 	}catch (std::exception &e){
 		throw std::runtime_error((std::string)"generate_map_objects(): " + e.what());
 	}

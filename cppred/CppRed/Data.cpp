@@ -22,3 +22,4 @@ const BaseTrainerParty *get_trainer(const BaseTrainerParty * const (&array)[N]){
 #include "../CodeGeneration/output/map_objects.inl"
 #include "../CodeGeneration/output/maps.inl"
 #include "../CodeGeneration/output/items.inl"
+#include "../CodeGeneration/output/variables.inl"

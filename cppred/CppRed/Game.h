@@ -17,23 +17,47 @@ namespace CppRed{
 class Trainer;
 class PlayerCharacter;
 class World;
+enum class EventId;
+enum class VisibilityFlagId;
+enum class IntegerVariableId;
+enum class StringVariableId;
 
 class VariableStore{
-	std::unordered_map<std::string, std::string *> string_variables;
-	std::unordered_map<std::string, int *> number_variables;
-	std::deque<std::string> strings;
-	std::deque<int> numbers;
+	std::vector<std::string> strings;
+	std::vector<int> integers;
+	std::vector<bool> events;
+	std::vector<bool> vibility_flags;
+	template <int Offset, typename T1, typename T2>
+	static void set_vector(std::vector<T1> &v, T2 s, const T1 &value){
+		size_t k = (size_t)s - Offset;
+		if (v.size() < k + 1)
+			v.resize(k + 1);
+		v[k] = value;
+	}
+	template <int Offset, typename T1, typename T2>
+	static const T1 &get_vector(std::vector<T1> &v, T2 s){
+		size_t k = (size_t)s - Offset;
+		if (v.size() < k + 1)
+			v.resize(k + 1);
+		return v[k];
+	}
+	template <int Offset, typename T2>
+	static bool get_vector(std::vector<bool> &v, T2 s){
+		size_t k = (size_t)s - Offset;
+		if (v.size() < k + 1)
+			v.resize(k + 1);
+		return v[k];
+	}
 public:
-	void set_string(const std::string &key, std::string *value);
-	void set_string(const std::string &key, const std::string &value);
-	void set_number(const std::string &key, int *value);
-	void set_number(const std::string &key, int value);
-	const std::string *try_get_string(const std::string &key);
-	const std::string &get_string(const std::string &key);
-	int get_number(const std::string &key);
-	int get_number_default(const std::string &key);
-	void delete_string(const std::string &key);
-	void delete_number(const std::string &key);
+	void set(StringVariableId, const std::string &);
+	void set(IntegerVariableId, int);
+	void set(EventId, bool);
+	void set(VisibilityFlagId, bool);
+	const std::string &get(StringVariableId);
+	int get(IntegerVariableId);
+	bool get(EventId);
+	bool get(VisibilityFlagId);
+	void load_initial_visibility_flags();
 };
 
 class Game;

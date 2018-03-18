@@ -160,19 +160,19 @@ static std::map<std::string, unsigned> load_audio_map(){
 	return ret;
 }
 
-static std::map<std::string, std::set<unsigned>> load_invisible_sprites_map(){
-	static const std::vector<std::string> order = { "map", "legacy_sprite_id", "initial_visibility_state", };
+static std::map<std::string, std::map<unsigned, unsigned>> load_sprite_visibility_flags_map(){
+	static const std::vector<std::string> order = { "map", "legacy_sprite_id", "id", };
 	CsvParser csv(map_sprites_visibility_file);
 	auto rows = csv.row_count();
-	std::map<std::string, std::set<unsigned>> ret;
+	std::map<std::string, std::map<unsigned, unsigned>> ret;
 	for (auto i = rows; i--;){
 		auto columns = csv.get_ordered_row(i, order);
-		auto state = to_bool(columns[2]);
-		if (state)
-			continue;
 		auto map = columns[0];
+		if (!map.size())
+			continue;
 		auto sprite_id = to_unsigned(columns[1]);
-		ret[map].insert(sprite_id);
+		auto flag_id = to_unsigned(columns[2]);
+		ret[map][sprite_id] = flag_id;
 	}
 	return ret;
 }
@@ -196,7 +196,7 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	Maps2 maps2(maps_file, map_data, tilesets2, load_audio_map());
 	maps2.load_map_connections(map_connections_file);
 	maps2.load_map_text(map_text, text_store);
-	maps2.load_invisible_sprites(load_invisible_sprites_map());
+	maps2.load_sprite_visibility_flags(load_sprite_visibility_flags_map());
 
 	//Do consistency check.
 	for (auto &map : maps2.get_maps())

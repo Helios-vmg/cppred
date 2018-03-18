@@ -7545,8 +7545,8 @@ PROF.OAK's AIDE.<done>
 .OaksLabText_441cc
 POKÈDEX comp-
 letion is:<para>
-<num,hDexRatingNumMonsSeen,3> POKÈMON seen
-<num,hDexRatingNumMonsOwned,3> POKÈMON owned<para>
+<num,wDexRatingNumMonsSeen,3> POKÈMON seen
+<num,wDexRatingNumMonsOwned,3> POKÈMON owned<para>
 PROF.OAK's
 Rating:<prompt><end>
 
@@ -8986,7 +8986,7 @@ we name it?<prompt><end>
 .NameRaterText_1dac7
 OK! This POKÈMON
 has been renamed<cont>
-<mem,wBuffer>!<para>
+<mem,name_rate_new_nickname>!<para>
 That's a better
 name than before!<done>
 

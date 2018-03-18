@@ -2,6 +2,7 @@
 #include "PlayerCharacter.h"
 #include "Game.h"
 #include "PlayerCharacter.h"
+#include "../CodeGeneration/output/variables.h"
 #include <sstream>
 #include <iostream>
 
@@ -30,11 +31,10 @@ void World::teleport_player(const MapWarp &warp){
 	if (destination.simple)
 		map = destination.destination_map;
 	else{
-		auto map_name = vs.try_get_string(destination.variable_name);
-		if (!map_name)
+		auto map_id = vs.get(destination.variable);
+		map = this->map_store.try_get_map_by_legacy_id(map_id);
+		if (!map)
 			map = &this->map_store.get_map_data(Map::PalletTown);
-		else
-			map = &this->map_store.get_map_by_name(*map_name);
 	}
 	for (auto &object : *map->objects){
 		auto casted = dynamic_cast<MapWarp *>(object.get());
@@ -43,7 +43,7 @@ void World::teleport_player(const MapWarp &warp){
 		if (casted->get_index() == index){
 			auto &map2 = this->map_store.get_map_data(this->player_character->get_current_map());
 			if (map2.tileset->type == TilesetType::Outdoor)
-				vs.set_string("LastOutdoorsMap", map2.name);
+				vs.set(IntegerVariableId::LastOutdoorsMap, map2.legacy_id);
 			this->teleport_player({map->map_id, casted->get_position()});
 			return;
 		}
@@ -232,17 +232,17 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 	auto &map_data = this->map_store.get_map_data(new_map);
 	auto &engine = this->game->get_engine();
 	auto &renderer = engine.get_renderer();
+	auto &array = map_data.sprite_visibility_flags;
 	for (MapObjectInstance &object_instance : instance.get_objects()){
 		auto &object = object_instance.get_object();
 		if (object.requires_actor()){
 			auto actor = object.create_actor(*this->game, renderer, new_map, object_instance);
 			if (!actor)
 				continue;
-			if (object.get_legacy_id() >= 0){
-				auto &array = map_data.invisible_sprites;
-				auto it = std::find(array, array + array_length(array), (short)object.get_legacy_id());
-				if (it != array + array_length(array))
-					actor->set_visible(false);
+			auto legacy = object.get_legacy_id();
+			if (legacy >= 0 && legacy < array_length(array) && array[legacy] != VisibilityFlagId::None){
+				auto visible = this->game->get_variable_store().get(array[legacy]);
+				actor->set_visible(visible);
 			}
 			object_instance.set_actor(*actor);
 			this->actors.emplace_back(std::move(actor));

@@ -8,8 +8,10 @@
 #include "generate_audio.h"
 #include "generate_map_objects.h"
 #include "generate_trainer_parties.h"
+#include "generate_variables.h"
 #include "PokemonData.h"
 #include "TextStore.h"
+#include "Variables.h"
 #include "../common/csv_parser.h"
 #include <iostream>
 #include <stdexcept>
@@ -55,7 +57,8 @@ int main(){
 		auto hashes = load_hashes();
 		GraphicsStore gs;
 		std::unique_ptr<PokemonData> pokemon_data;
-		TextStore ts(text_file, pokemon_data);
+		Variables variables;
+		TextStore ts(text_file, pokemon_data, variables);
 		generate_graphics(hashes, gs);
 		generate_audio(hashes);
 		generate_maps(hashes, gs, ts);
@@ -63,8 +66,9 @@ int main(){
 		generate_text(hashes, ts);
 		generate_moves(hashes);
 		generate_items(hashes);
-		generate_map_objects(hashes, pokemon_data);
+		generate_map_objects(hashes, pokemon_data, variables);
 		generate_trainer_parties(hashes, pokemon_data);
+		generate_variables(hashes, variables);
 		save_hashes(hashes);
 		auto t1 = clock();
 		std::cout << "Elapsed: " << (double)(t1 - t0) / CLOCKS_PER_SEC << " s.\n";

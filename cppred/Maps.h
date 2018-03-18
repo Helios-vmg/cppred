@@ -17,6 +17,7 @@
 namespace CppRed{
 class Actor;
 class Game;
+enum class VisibilityFlagId;
 }
 
 class MapStore;
@@ -110,6 +111,7 @@ struct MapTextEntry{
 
 struct MapData{
 	Map map_id;
+	unsigned legacy_id;
 	std::string name;
 	int width, height;
 	std::shared_ptr<TilesetData> tileset;
@@ -124,7 +126,7 @@ struct MapData{
 	int warp_tiles[8];
 	std::string map_script;
 	AudioResourceId music;
-	short invisible_sprites[16];
+	CppRed::VisibilityFlagId sprite_visibility_flags[32];
 
 	MapData(
 		Map map_id,
@@ -195,7 +197,8 @@ public:
 
 class MapStore{
 	std::vector<std::unique_ptr<MapData>> maps;
-	std::vector<std::pair<std::string, MapData *>> maps_by_name;
+	std::vector<MapData *> maps_by_name;
+	std::vector<MapData *> maps_by_legacy_id;
 	std::vector<std::unique_ptr<MapInstance>> map_instances;
 
 	typedef std::map<std::string, std::shared_ptr<Blockset>> blocksets_t;
@@ -221,6 +224,8 @@ public:
 	MapInstance *try_get_map_instance(Map map, CppRed::Game &);
 	const MapInstance &get_map_instance(Map map, CppRed::Game &) const;
 	const MapData &get_map_by_name(const std::string &) const;
+	const MapData &get_map_by_legacy_id(unsigned) const;
+	const MapData *try_get_map_by_legacy_id(unsigned) const;
 	void release_map_instance(Map);
 	void stop();
 };

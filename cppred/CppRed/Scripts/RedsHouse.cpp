@@ -3,7 +3,7 @@
 #include "../World.h"
 #include "../PlayerCharacter.h"
 #include "../../../CodeGeneration/output/text.h"
-#include "Events.h"
+#include "../../../CodeGeneration/output/variables.h"
 
 namespace CppRed{
 namespace Scripts{
@@ -13,7 +13,7 @@ DECLARE_SCRIPT(PrintRedSNESText){
 }
 
 DECLARE_SCRIPT(RedsHouse1FText1){
-	if (parameters.game->get_variable_store().get_number_default(event_received_starter)){
+	if (parameters.game->get_variable_store().get(IntegerVariableId::event_received_starter)){
 		throw std::runtime_error("Not implemented.");
 	}else
 		parameters.game->run_dialog_from_world(TextResourceId::MomWakeUpText, *parameters.caller);

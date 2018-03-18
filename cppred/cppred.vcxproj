@@ -51,7 +51,7 @@
     <ClInclude Include="CppRed\Npc.h" />
     <ClInclude Include="CppRed\PlayerCharacter.h" />
     <ClInclude Include="CppRed\ScreenOwner.h" />
-    <ClInclude Include="CppRed\scripts\Scripts.h" />
+    <ClInclude Include="CppRed\Scripts\Scripts.h" />
     <ClInclude Include="CppRed\TextDisplay.h" />
     <ClInclude Include="CppRed\World.h" />
     <ClInclude Include="Engine.h" />
@@ -88,7 +88,6 @@
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
-    <ClCompile Include="CppRed\Scripts\Events.cpp" />
     <ClCompile Include="CppRed\Scripts\PalletTown.cpp" />
     <ClCompile Include="CppRed\scripts\RedsHouse.cpp" />
     <ClCompile Include="CppRed\TextDisplay.cpp" />

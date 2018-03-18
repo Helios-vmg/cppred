@@ -10,6 +10,8 @@ namespace CppRed{
 class TextResource;
 class TextStore;
 class Game;
+enum class IntegerVariableId;
+enum class StringVariableId;
 
 enum class TextResourceCommandType{
 	End = 0,
@@ -98,18 +100,18 @@ public:
 };
 
 class MemCommand : public TextResourceCommand{
-	std::string variable;
+	StringVariableId variable;
 public:
-	MemCommand(std::string &&s): variable(std::move(s)){}
+	MemCommand(StringVariableId var): variable(var){}
 	void execute(Game &, TextState &) override;
 };
 
 class NumCommand : public TextResourceCommand{
-	std::string variable;
+	IntegerVariableId variable;
 	int digits;
 public:
-	NumCommand(std::string &&s, int digits):
-		variable(std::move(s)),
+	NumCommand(IntegerVariableId var, int digits):
+		variable(var),
 		digits(digits){}
 	void execute(Game &, TextState &) override;
 };

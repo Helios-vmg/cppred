@@ -46,6 +46,7 @@ void entry_point(Game &game){
 	}else{
 		auto names = oak_speech(game);
 		game.create_main_characters(names.player_name, names.rival_name);
+		game.get_variable_store().load_initial_visibility_flags();
 		game.get_world().get_pc().set_facing_direction(FacingDirection::Up);
 		game.teleport_player({Map::RedsHouse2F, Point(3, 6)});
 		game.game_loop();

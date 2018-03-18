@@ -13,14 +13,14 @@
 #include <iomanip>
 #include <algorithm>
 
-static const char * const input_file = "input/text.txt";
+static const char * const events_file = "input/text.txt";
 static const char * const hash_key = "generate_text";
 static const char * const date_string = __DATE__ __TIME__;
 
 typedef std::uint8_t byte_t;
 
 static void generate_text_internal(known_hashes_t &known_hashes, TextStore &text_store){
-	auto current_hash = hash_file(input_file, date_string);
+	auto current_hash = hash_file(events_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating text.\n";
 		return;

@@ -203,7 +203,7 @@
     <ClInclude Include="ScriptStore.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="CppRed\scripts\Scripts.h">
+    <ClInclude Include="CppRed\Scripts\Scripts.h">
       <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -318,9 +318,6 @@
     </ClCompile>
     <ClCompile Include="CppRed/TitleScreen.cpp">
       <Filter>CppRed\Scripts\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="CppRed\Scripts\Events.cpp">
-      <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed\Scripts\PalletTown.cpp">
       <Filter>CppRed\Game code\Sources</Filter>

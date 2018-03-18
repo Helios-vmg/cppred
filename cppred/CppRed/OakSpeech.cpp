@@ -1,6 +1,7 @@
 #include "OakSpeech.h"
 #include "Game.h"
 #include "../CodeGeneration/output/audio.h"
+#include "../CodeGeneration/output/variables.h"
 
 static void fade_in(CppRed::Game &game){
 	const Palette palettes[] = {
@@ -139,7 +140,7 @@ static std::string select_player_name(CppRed::Game &game){
 	game.run_dialog(TextResourceId::IntroducePlayerText);
 	scroll_portrait(game, red_pic, false, RedPicFront);
 	auto ret = select_x_name(game, false);
-	game.get_variable_store().set_string("temp_player_name", ret);
+	game.get_variable_store().set(CppRed::StringVariableId::temp_player_name, ret);
 	scroll_portrait(game, red_pic, true, RedPicFront);
 	game.run_dialog(TextResourceId::YourNameIsText);
 	game.fade_out_to_white();
@@ -156,7 +157,7 @@ static std::string select_rival_name(CppRed::Game &game){
 	game.run_dialog(TextResourceId::IntroduceRivalText);
 	scroll_portrait(game, blue_pic, false, Rival1Pic);
 	auto ret = select_x_name(game, true);
-	game.get_variable_store().set_string("temp_rival_name", ret);
+	game.get_variable_store().set(CppRed::StringVariableId::temp_rival_name, ret);
 	scroll_portrait(game, blue_pic, true, Rival1Pic);
 	game.run_dialog(TextResourceId::HisNameIsText);
 	game.fade_out_to_white();

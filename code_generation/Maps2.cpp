@@ -20,6 +20,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 		"special_warp_check", // 12
 		"special_warp_tiles", // 13
 		"on_load",			  // 14
+		"legacy_id",		  // 15
 	};
 	const int id_offset = 7;
 
@@ -51,6 +52,7 @@ Maps2::Maps2(const char *maps_path, const data_map_t &maps_data, const Tilesets2
 }
 
 Map2::Map2(const std::vector<std::string> &columns, const Tilesets2 &tilesets, const data_map_t &maps_data, const std::map<std::string, unsigned> &audio_map){
+	this->legacy_id = to_unsigned(columns[15]);
 	this->name = columns[0];
 	this->tileset = tilesets.get(columns[1]);
 	this->width = to_unsigned(columns[2]) * 2;
@@ -160,6 +162,7 @@ void Map2::render_to_file(const char *imagefile){
 }
 
 void Map2::serialize(std::vector<byte_t> &dst){
+	write_varint(dst, this->legacy_id);
 	write_ascii_string(dst, this->name);
 	write_ascii_string(dst, this->tileset->get_name());
 	write_varint(dst, this->width);
@@ -193,8 +196,8 @@ void Map2::serialize(std::vector<byte_t> &dst){
 	write_ascii_string(dst, this->on_frame);
 	write_ascii_string(dst, this->on_load);
 	write_varint(dst, this->music);
-	write_varint(dst, this->invisible_sprites.size());
-	for (auto id : this->invisible_sprites)
+	write_varint(dst, this->sprite_visibility_flags.size());
+	for (auto id : this->sprite_visibility_flags)
 		write_varint(dst, id);
 	//TODO: Serialize other members.
 }
@@ -272,18 +275,22 @@ void Map2::set_map_text(const std::vector<MapTextEntry> &map_text, TextStore &te
 	}
 }
 
-void Maps2::load_invisible_sprites(const std::map<std::string, std::set<unsigned>> &map){
+void Maps2::load_sprite_visibility_flags(const std::map<std::string, std::map<unsigned, unsigned>> &map){
 	for (auto &kv : map){
 		auto it = this->map.find(kv.first);
 		if (it == this->map.end())
 			throw std::runtime_error("Sprite visibility file references unknown map " + kv.first);
-		it->second->load_invisible_sprites(kv.second);
+		it->second->load_sprite_visibility_flags(kv.second);
 	}
 }
 
-void Map2::load_invisible_sprites(const std::set<unsigned> &set){
-	if (set.size() > 16)
-		throw std::runtime_error("Sprite visibility file sets too many sprites as invisible for map " + this->name + ". Max: 16.");
-	for (auto id : set)
-		this->invisible_sprites.push_back(id);
+void Map2::load_sprite_visibility_flags(const std::map<unsigned, unsigned> &set){
+	for (auto &kv : set){
+		if (this->sprite_visibility_flags.size() <= kv.first)
+			this->sprite_visibility_flags.resize(kv.first + 1);
+		this->sprite_visibility_flags[kv.first] = kv.second;
+	}
+	if (this->sprite_visibility_flags.size() > 32)
+		throw std::runtime_error("Sprite visibility file sets too many sprites as invisible for map " + this->name + ". Max: 32.");
+	
 }

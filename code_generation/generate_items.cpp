@@ -2,12 +2,12 @@
 #include <iostream>
 #include <algorithm>
 
-static const char * const input_file = "input/items.csv";
+static const char * const events_file = "input/items.csv";
 static const char * const hash_key = "generate_items";
 static const char * const date_string = __DATE__ __TIME__;
 
 static void generate_items_internal(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(input_file, date_string);
+	auto current_hash = hash_file(events_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating items.\n";
 		return;
@@ -30,7 +30,7 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 		"\n"
 		"extern const std::pair<const char *, ItemId> item_strings[] = {\n";
 
-	CsvParser csv(input_file);
+	CsvParser csv(events_file);
 	auto rows = csv.row_count();
 	for (size_t i = 0; i < rows; i++){
 		auto row = csv.get_ordered_row(i, data_order);

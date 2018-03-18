@@ -7,6 +7,7 @@
 namespace CppRed{
 class Actor;
 class Game;
+enum class IntegerVariableId;
 }
 struct MapData;
 class MapStore;
@@ -126,10 +127,10 @@ public:
 struct WarpDestination{
 	bool simple;
 	const MapData *destination_map = nullptr;
-	std::string variable_name;
+	CppRed::IntegerVariableId variable;
 	WarpDestination() = default;
 	WarpDestination(const MapData &destination_map): simple(true), destination_map(&destination_map){}
-	WarpDestination(const std::string &variable_name): simple(false), variable_name(variable_name){}
+	WarpDestination(CppRed::IntegerVariableId variable): simple(false), variable(variable){}
 };
 
 class MapWarp : public MapObject{

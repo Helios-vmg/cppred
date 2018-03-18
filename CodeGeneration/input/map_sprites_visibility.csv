@@ -226,4 +226,4 @@ id,map,legacy_sprite_id,initial_visibility_state,visibility_flag
 225,SilphCo11,2,true,hs_seafoam_islands_4_boulder_4
 226,SilphCo11,3,true,hs_seafoam_islands_5_boulder_1
 227,SilphCo11,4,true,hs_seafoam_islands_5_boulder_2
-228,UnusedMap,1,true,hs_articuno
+228,,1,true,hs_articuno
