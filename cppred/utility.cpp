@@ -160,6 +160,11 @@ Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_p
 		name(name),
 		clock(base_clock, name + " clock"),
 		entry_point(std::move(entry_point)){
+	this->init();
+}
+
+void Coroutine::init(){
+	this->first_run = true;
 	this->push();
 	this->coroutine.reset(new coroutine_t([this](yielder_t &y){
 		this->resume_thread_id = std::this_thread::get_id();
@@ -172,7 +177,6 @@ Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_p
 	}));
 	this->pop();
 }
-
 
 void Coroutine::push(){
 	this->next_coroutine = Coroutine::coroutine_stack;
@@ -210,6 +214,8 @@ bool Coroutine::resume(){
 	//Logger() << this->name << " PAUSES\n";
 	this->pop();
 	this->active = false;
+	if (!ret)
+		this->init();
 	return ret;
 }
 

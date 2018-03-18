@@ -58,24 +58,72 @@ void Actor::uninit(){
 	this->coroutine.reset();
 }
 
-void Actor::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer){
-	const int sprite_tiles = 4;
-	static const int offsets[] = { 1, 2, 0, 2 };
-	for (int i = 0; i < 4; i++){
-		initialize_sprite(this->standing_sprites[i], renderer, graphics, offsets[i] * sprite_tiles, i == 1);
-		this->walking_sprites[i * sprite_tiles + 0] = this->standing_sprites[i];
-		this->walking_sprites[i * sprite_tiles + 2] = this->standing_sprites[i];
-	}
-	initialize_sprite(this->walking_sprites[0 * 4 + 1], renderer, graphics, 4 * sprite_tiles);
-	initialize_sprite(this->walking_sprites[0 * 4 + 3], renderer, graphics, 4 * sprite_tiles, true);
-	initialize_sprite(this->walking_sprites[1 * 4 + 1], renderer, graphics, 5 * sprite_tiles, true);
-	this->walking_sprites[1 * 4 + 3] = this->walking_sprites[1 * 4 + 1];
-	initialize_sprite(this->walking_sprites[2 * 4 + 1], renderer, graphics, 3 * sprite_tiles);
-	initialize_sprite(this->walking_sprites[2 * 4 + 3], renderer, graphics, 3 * sprite_tiles, true);
-	initialize_sprite(this->walking_sprites[3 * 4 + 1], renderer, graphics, 5 * sprite_tiles);
-	this->walking_sprites[3 * 4 + 3] = this->walking_sprites[3 * 4 + 1];
+static bool is_full_sprite_sheet(const GraphicsAsset &graphics){
+	return graphics.width == 2 && graphics.height == 12;
 }
 
+static bool is_reduced_sprite_sheet(const GraphicsAsset &graphics){
+	return graphics.width == 2 && graphics.height == 6;
+}
+
+static bool is_single_sprite_sheet(const GraphicsAsset &graphics){
+	return graphics.width == 2 && graphics.height == 2;
+}
+
+void Actor::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer){
+	if (is_full_sprite_sheet(graphics))
+		this->initialize_full_sprite(graphics, renderer);
+	else if (is_reduced_sprite_sheet(graphics))
+		this->initialize_reduced_sprite(graphics, renderer);
+	else if (is_single_sprite_sheet(graphics))
+		this->initialize_single_sprite(graphics, renderer);
+	else
+		this->initialize_full_sprite(graphics, renderer);
+}
+
+static void initialize_standing_sprites(std::shared_ptr<Sprite> (&sprites)[4], const GraphicsAsset &graphics, Renderer &renderer){
+	const int sprite_tiles = 4;
+	static const int offsets[] = {1, 2, 0, 2};
+	for (int direction = 0; direction < sprite_tiles; direction++)
+		initialize_sprite(sprites[direction], renderer, graphics, offsets[direction] * sprite_tiles, direction == 1);
+}
+
+void Actor::initialize_full_sprite(const GraphicsAsset &graphics, Renderer &renderer){
+	const int sprite_tiles = 4;
+	initialize_standing_sprites(this->standing_sprites, graphics, renderer);
+	for (int direction = 0; direction < sprite_tiles; direction++){
+		this->walking_sprites[direction * sprite_tiles + 0] = this->standing_sprites[direction];
+		this->walking_sprites[direction * sprite_tiles + 2] = this->standing_sprites[direction];
+	}
+	initialize_sprite(this->walking_sprites[0 * sprite_tiles + 1], renderer, graphics, 4 * sprite_tiles);
+	initialize_sprite(this->walking_sprites[0 * sprite_tiles + 3], renderer, graphics, 4 * sprite_tiles, true);
+	initialize_sprite(this->walking_sprites[1 * sprite_tiles + 1], renderer, graphics, 5 * sprite_tiles, true);
+	this->walking_sprites[1 * sprite_tiles + 3] = this->walking_sprites[1 * sprite_tiles + 1];
+	initialize_sprite(this->walking_sprites[2 * sprite_tiles + 1], renderer, graphics, 3 * sprite_tiles);
+	initialize_sprite(this->walking_sprites[2 * sprite_tiles + 3], renderer, graphics, 3 * sprite_tiles, true);
+	initialize_sprite(this->walking_sprites[3 * sprite_tiles + 1], renderer, graphics, 5 * sprite_tiles);
+	this->walking_sprites[3 * sprite_tiles + 3] = this->walking_sprites[3 * sprite_tiles + 1];
+}
+
+void Actor::initialize_reduced_sprite(const GraphicsAsset &graphics, Renderer &renderer){
+	const int sprite_tiles = 4;
+	initialize_standing_sprites(this->standing_sprites, graphics, renderer);
+	for (int direction = 0; direction < sprite_tiles; direction++)
+		for (int j = 0; j < sprite_tiles; j++)
+			this->walking_sprites[direction * sprite_tiles + j] = this->standing_sprites[direction];
+}
+
+void Actor::initialize_single_sprite(const GraphicsAsset &graphics, Renderer &renderer){
+	const int sprite_tiles = 4;
+	initialize_sprite(this->standing_sprites[0], renderer, graphics, 0);
+	for (int direction = 0; direction < 4; direction++){
+		if (direction)
+			this->standing_sprites[direction] = this->standing_sprites[0];
+		for (int j = 0; j < 4; j++)
+			this->walking_sprites[direction * sprite_tiles + j] = this->standing_sprites[0];
+	}
+}
+	
 void Actor::coroutine_entry_point(){
 	while (!this->quit_coroutine)
 		this->coroutine->yield();

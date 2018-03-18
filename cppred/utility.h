@@ -263,11 +263,12 @@ private:
 	on_yield_t on_yield;
 	entry_point_t entry_point;
 	yielder_t *yielder = nullptr;
-	bool first_run = true;
+	bool first_run;
 	double wait_remainder = 0;
 
 	void push();
 	void pop();
+	void init();
 public:
 	Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point);
 	Coroutine(const std::string &name, entry_point_t &&entry_point);

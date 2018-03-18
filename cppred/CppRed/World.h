@@ -7,12 +7,13 @@
 namespace CppRed{
 
 class PlayerCharacter;
-class Trainer;
+class NpcTrainer;
 class Game;
 
 class World : public ScreenOwner{
 	actor_ptr<PlayerCharacter> player_character = null_actor_ptr<PlayerCharacter>();
-	actor_ptr<Trainer> rival = null_actor_ptr<Trainer>();
+	std::string rival_name;
+	//actor_ptr<NpcTrainer> rival = null_actor_ptr<NpcTrainer>();
 	MapStore map_store;
 	std::vector<actor_ptr<Actor>> actors;
 	Point camera_position;

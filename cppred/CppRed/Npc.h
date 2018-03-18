@@ -8,6 +8,7 @@ protected:
 	Point wandering_center;
 	int wandering_radius = -1;
 	double special_movement_duration = Renderer::tile_size * 4;
+	bool randomize_facing_direction = false;
 
 	void coroutine_entry_point() override;
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
@@ -20,6 +21,9 @@ public:
 	}
 	void set_special_movement_duration(double d){
 		this->special_movement_duration = d;
+	}
+	void set_random_facing_direction() override{
+		this->randomize_facing_direction = true;
 	}
 };
 

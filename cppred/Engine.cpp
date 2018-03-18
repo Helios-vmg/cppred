@@ -80,6 +80,7 @@ void Engine::run(){
 		auto &interface = *interfacep;
 		this->audio_scheduler.reset(new AudioScheduler(*this, std::move(two_way_mixer), std::move(interfacep)));
 		this->audio_scheduler->start();
+		this->gamepad_disabled = false;
 		this->game.reset(new CppRed::Game(*this, version, interface));
 
 		//Main loop.

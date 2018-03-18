@@ -15,11 +15,11 @@ const PlayerCharacter::warp_check_f PlayerCharacter::warp_check_functions[2] = {
 };
 
 PlayerCharacter::PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer):
-		Trainer(game, parent_coroutine, name, renderer, RedSprite){
+		Actor(game, parent_coroutine, name, renderer, RedSprite){
 }
 
 void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer){
-	Trainer::initialize_sprites(graphics, renderer);
+	Actor::initialize_sprites(graphics, renderer);
 	auto s = Renderer::tile_size;
 	Point position = screen_block_offset * (s * 2);
 	position.y -= s / 2;
@@ -75,7 +75,7 @@ void PlayerCharacter::coroutine_entry_point(){
 }
 
 bool PlayerCharacter::move_internal(FacingDirection direction){
-	if (Trainer::move_internal(direction)){
+	if (Actor::move_internal(direction)){
 		if (this->saved_post_warp){
 			auto warp = this->saved_post_warp;
 			this->saved_actions.push_back([this, warp](){
@@ -87,7 +87,7 @@ bool PlayerCharacter::move_internal(FacingDirection direction){
 	}
 	if (!this->run_warp_logic_collision())
 		return false;
-	return Trainer::move_internal(direction);
+	return Actor::move_internal(direction);
 }
 
 bool PlayerCharacter::run_warp_logic_collision(){

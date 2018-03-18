@@ -45,6 +45,9 @@ protected:
 			f(*this->walking_sprites[i]);
 	}
 	virtual void initialize_sprites(const GraphicsAsset &graphics, Renderer &);
+	void initialize_full_sprite(const GraphicsAsset &graphics, Renderer &);
+	void initialize_reduced_sprite(const GraphicsAsset &graphics, Renderer &);
+	void initialize_single_sprite(const GraphicsAsset &graphics, Renderer &);
 	virtual void coroutine_entry_point();
 	void run_walking_animation(const Point &delta, FacingDirection);
 	bool move(const Point &delta, FacingDirection);
@@ -95,6 +98,7 @@ public:
 	}
 	std::vector<PathStep> find_path(const Point &destination);
 	void follow_path(const std::vector<PathStep> &);
+	virtual void set_random_facing_direction(){}
 };
 
 class NonPlayerActor : public Actor{

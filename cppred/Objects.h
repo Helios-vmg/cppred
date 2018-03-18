@@ -7,6 +7,7 @@
 namespace CppRed{
 class Actor;
 class Game;
+class Npc;
 enum class IntegerVariableId;
 }
 struct MapData;
@@ -197,15 +198,17 @@ public:
 inline ObjectWithSprite::~ObjectWithSprite(){}
 
 class NpcMapObject : public ObjectWithSprite{
+protected:
+	void initialize_actor(CppRed::Npc &, Map, CppRed::Game &) const;
 public:
 	NpcMapObject(BufferReader &, const std::map<std::string, const GraphicsAsset *> &graphics_map);
 	NpcMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id):
 		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id){}
-	const char *get_type_string() const override{
+	virtual const char *get_type_string() const override{
 		return "npc";
 	}
-	CppRed::actor_ptr<CppRed::Actor> create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const override;
-	MapObjectType get_type() const override{
+	virtual CppRed::actor_ptr<CppRed::Actor> create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const override;
+	virtual MapObjectType get_type() const override{
 		return MapObjectType::Npc;
 	}
 };
@@ -230,7 +233,7 @@ public:
 	}
 };
 
-class TrainerMapObject : public ObjectWithSprite{
+class TrainerMapObject : public NpcMapObject{
 protected:
 	std::shared_ptr<BaseTrainerParty> party;
 
@@ -239,11 +242,12 @@ public:
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
 		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map);
 	TrainerMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const std::shared_ptr<BaseTrainerParty> &party):
-		ObjectWithSprite(name, position, sprite, facing_direction, wandering, range, text_id),
+		NpcMapObject(name, position, sprite, facing_direction, wandering, range, text_id),
 		party(party){}
 	const char *get_type_string() const override{
 		return "trainer";
 	}
+	CppRed::actor_ptr<CppRed::Actor> create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const override;
 	MapObjectType get_type() const override{
 		return MapObjectType::Trainer;
 	}

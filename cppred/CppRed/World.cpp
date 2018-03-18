@@ -16,7 +16,7 @@ World::~World(){
 		actor->stop();
 	this->map_store.stop();
 	this->player_character->stop();
-	this->rival->stop();
+	//this->rival->stop();
 }
 
 void World::teleport_player(const WorldCoordinates &destination){
@@ -304,7 +304,8 @@ void World::create_main_characters(const std::string &player_name, const std::st
 	auto &engine = this->game->get_engine();
 	auto &co = Coroutine::get_current_coroutine();
 	this->player_character = create_actor<PlayerCharacter>(*this->game, co, player_name, engine.get_renderer());
-	this->rival = create_actor<Trainer>(*this->game, co, rival_name, engine.get_renderer(), BlueSprite);
+	this->rival_name = rival_name;
+	//this->rival = create_actor<NpcTrainer>(*this->game, co, rival_name, engine.get_renderer(), BlueSprite);
 }
 
 bool World::facing_edge_of_map(const WorldCoordinates &pos, FacingDirection dir) const{

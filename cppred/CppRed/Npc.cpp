@@ -29,25 +29,28 @@ void Npc::coroutine_entry_point(){
 			continue;
 		auto delta = this->position.position - this->wandering_center;
 		auto distance = abs(delta.x) + abs(delta.y);
-		if (distance < this->wandering_radius){
+		bool can_move_further = distance < this->wandering_radius;
+		if (this->randomize_facing_direction || can_move_further){
 			auto &rand = this->game->get_engine().get_prng();
-			this->coroutine->wait(rand.generate_double() * (128.0 / 60.0));
-			auto pick = geometric_distribution(rand, 3);
+			this->coroutine->wait(rand.generate_double() * (128.0 / 60.0) + 1);
 			auto direction = (FacingDirection)rand(4);
 			
 			this->set_facing_direction(direction);
 			
-			for (int i = pick; i--;){
-				delta = this->position.position + direction_to_vector(direction) - this->wandering_center;
-				distance = abs(delta.x) + abs(delta.y);
-				if (distance >= this->wandering_radius){
-					do
-						direction = (FacingDirection)rand(4);
-					while (direction != this->facing_direction);
-					this->set_facing_direction(direction);
-					break;
+			if (can_move_further){
+				auto pick = geometric_distribution(rand, 3);
+				for (int i = pick; i--;){
+					delta = this->position.position + direction_to_vector(direction) - this->wandering_center;
+					distance = abs(delta.x) + abs(delta.y);
+					if (distance >= this->wandering_radius){
+						do
+							direction = (FacingDirection)rand(4);
+						while (direction != this->facing_direction);
+						this->set_facing_direction(direction);
+						break;
+					}
+					this->move(direction);
 				}
-				this->move(direction);
 			}
 		}
 		this->coroutine->yield();

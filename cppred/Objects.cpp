@@ -91,7 +91,7 @@ ItemMapObject::ItemMapObject(BufferReader &buffer,
 
 TrainerMapObject::TrainerMapObject(BufferReader &buffer,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): ObjectWithSprite(buffer, graphics_map){
+		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): NpcMapObject(buffer, graphics_map){
 	auto class_name = buffer.read_string();
 	auto party_index = (int)buffer.read_varint();
 	this->party = find_in_constant_map(parties_map, std::make_pair(class_name, party_index));
@@ -108,8 +108,10 @@ void init_actor(CppRed::Actor &actor, Map map, const Point &position, MapObjectF
 	actor.set_map_position(position);
 	switch (facing_direction){
 		case MapObjectFacingDirection::Undefined:
-		case MapObjectFacingDirection::None:
 		case MapObjectFacingDirection::BoulderMovementByte2:
+			break;
+		case MapObjectFacingDirection::None:
+			actor.set_random_facing_direction();
 			break;
 		case MapObjectFacingDirection::Up:
 			actor.set_facing_direction(FacingDirection::Up);
@@ -129,12 +131,16 @@ void init_actor(CppRed::Actor &actor, Map map, const Point &position, MapObjectF
 	game.get_world().get_map_store().get_map_instance(map, game).set_cell_occupation(position, true);
 }
 
+void NpcMapObject::initialize_actor(CppRed::Npc &npc, Map map, CppRed::Game &game) const{
+	init_actor(npc, map, this->position, this->facing_direction, game);
+	if (this->wandering)
+		npc.set_wandering(this->range);
+}
+
 CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
 	auto ret = CppRed::create_actor2<CppRed::Npc>(game, game.get_coroutine(), this->name, renderer, *this->sprite, instance);
 	auto npc = (CppRed::Npc *)ret.get();
-	init_actor(*npc, map, this->position, this->facing_direction, game);
-	if (this->wandering)
-		npc->set_wandering(this->range);
+	this->initialize_actor(*npc, map, game);
 	return ret;
 }
 
@@ -164,4 +170,11 @@ void ObjectWithSprite::activate(CppRed::Game &game, CppRed::Actor &activator, Cp
 	activatee->set_facing_direction(invert_direction(activator.get_facing_direction()));
 	DialogingMapObject::activate(game, activator, activatee);
 	activatee->set_facing_direction(old);
+}
+
+CppRed::actor_ptr<CppRed::Actor> TrainerMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
+	auto ret = CppRed::create_actor2<CppRed::NpcTrainer>(game, game.get_coroutine(), this->name, renderer, *this->sprite, instance);
+	auto npc = (CppRed::Npc *)ret.get();
+	this->initialize_actor(*npc, map, game);
+	return ret;
 }

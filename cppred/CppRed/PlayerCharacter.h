@@ -12,7 +12,7 @@ namespace CppRed{
 class Game;
 class World;
 
-class PlayerCharacter : public Trainer{
+class PlayerCharacter : public Actor, public Trainer{
 public:
 	static const Point screen_block_offset;
 private:
