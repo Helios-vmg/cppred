@@ -22,8 +22,8 @@ public:
 	void set_special_movement_duration(double d){
 		this->special_movement_duration = d;
 	}
-	void set_random_facing_direction() override{
-		this->randomize_facing_direction = true;
+	void set_random_facing_direction(bool value) override{
+		this->randomize_facing_direction = value;
 	}
 };
 

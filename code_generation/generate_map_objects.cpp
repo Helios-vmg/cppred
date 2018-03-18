@@ -64,6 +64,7 @@ static const std::map<std::string, void (*)(std::vector<byte_t> &, const MapObje
 struct MapObject{
 	unsigned id;
 	std::string name;
+	bool nice_name = false;
 	std::string display_name;
 	std::string type;
 	unsigned x, y;
@@ -78,8 +79,10 @@ struct MapObject{
 		this->id = to_unsigned(row[0]);
 		{
 			auto it = name_map.find(this->id);
-			if (it != name_map.end())
-				this->name = it->second;;
+			if (it != name_map.end()){
+				this->name = it->second;
+				this->nice_name = true;
+			}
 		}
 		this->type = row[2];
 		this->x = to_unsigned(row[3]);
@@ -128,6 +131,7 @@ struct MapObject{
 			throw std::runtime_error("Invalid map object type: " + this->type);
 
 		write_ascii_string(dst, this->type);
+		write_varint(dst, this->id);
 		write_ascii_string(dst, this->display_name);
 		write_varint(dst, this->x);
 		write_varint(dst, this->y);
@@ -310,27 +314,53 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 		map_sets[row[1]].emplace_back(row, *pokemon_data, name_map, variables);
 	}
 
-	std::ofstream header("output/map_objects.h");
-	std::ofstream source("output/map_objects.inl");
-	header <<
-		generated_file_warning << "\n"
-		"#pragma once\n"
-		"\n";
+	{
+		std::ofstream header("output/map_objects.h");
+		std::ofstream source("output/map_objects.inl");
+		header <<
+			generated_file_warning << "\n"
+			"#pragma once\n"
+			"\n";
 
-	source <<
-		generated_file_warning << "\n"
-		"\n";
+		source <<
+			generated_file_warning << "\n"
+			"\n";
 
-	std::vector<byte_t> map_objects_data;
+		std::vector<byte_t> map_objects_data;
 
-	for (auto &set : map_sets){
-		write_ascii_string(map_objects_data, set.first);
-		write_varint(map_objects_data, set.second.size());
-		for (auto &o : set.second)
-			o.serialize(map_objects_data);
+		for (auto &set : map_sets){
+			write_ascii_string(map_objects_data, set.first);
+			write_varint(map_objects_data, set.second.size());
+			for (auto &o : set.second)
+				o.serialize(map_objects_data);
+		}
+
+		write_buffer_to_header_and_source(header, source, map_objects_data, "map_objects_data");
 	}
+	{
+		std::ofstream header("output/actors.h");
+		header <<
+			generated_file_warning << "\n"
+			"#pragma once\n"
+			"\n"
+			"namespace CppRed{\n"
+			"enum class ActorId{\n";
 
-	write_buffer_to_header_and_source(header, source, map_objects_data, "map_objects_data");
+		std::vector<MapObject *> temp;
+		for (auto &kv : map_sets){
+			for (auto &obj : kv.second){
+				auto &t = obj.type;
+				bool is_actor = t == "item" || t == "npc" || t == "pokemon" || t == "trainer";
+				if (!is_actor || !obj.nice_name)
+					continue;
+				header << "    " << obj.name << " = " << obj.id << ",\n";
+			}
+		}
+
+		header <<
+			"};\n"
+			"}\n";
+	}
 
 	known_hashes[hash_key] = current_hash;
 }

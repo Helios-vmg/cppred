@@ -1006,7 +1006,7 @@ id,name,legacy_sprite_id,type,x,y,param1,param2,param3,param4,param5,param6,para
 1005,PalletTownObject,,sign,7,9,4,,,,,,
 1006,PalletTownObject,,sign,3,5,5,,,,,,
 1007,PalletTownObject,,sign,11,5,6,,,,,,
-1008,PalletTownObject,0,npc,8,5,OakSprite,None,false,5,0,,
+1008,PalletTownObject,0,npc,8,5,OakSprite,Up,false,5,0,,
 1009,PalletTownObject,1,npc,3,8,GirlSprite,,true,5,1,,
 1010,PalletTownObject,2,npc,11,14,Fisher2Sprite,,true,5,2,,
 1011,PalletTownObject,,event_disp,5,5,,,,,,,

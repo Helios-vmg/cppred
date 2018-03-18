@@ -87,3 +87,4 @@ wLinkEnemyTrainerName,string
 wNameOfPlayerMonToBeTraded,string
 wOaksAideRewardItemName,string
 wTrainerName,string
+OaksLabScriptIndex,int

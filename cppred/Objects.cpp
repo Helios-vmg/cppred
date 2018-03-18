@@ -28,6 +28,7 @@ CppRed::actor_ptr<CppRed::Actor> MapObject::create_actor(CppRed::Game &game, Ren
 }
 
 MapObject::MapObject(BufferReader &buffer){
+	this->id = buffer.read_varint();
 	this->name = buffer.read_string();
 	this->position.x = buffer.read_varint();
 	this->position.y = buffer.read_varint();
@@ -103,7 +104,8 @@ PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::str
 	this->level = (int)buffer.read_varint();
 }
 
-void init_actor(CppRed::Actor &actor, Map map, const Point &position, MapObjectFacingDirection facing_direction, CppRed::Game &game){
+void init_actor(CppRed::Actor &actor, int object_id, Map map, const Point &position, MapObjectFacingDirection facing_direction, CppRed::Game &game){
+	actor.set_object_id(object_id);
 	actor.set_current_map(map);
 	actor.set_map_position(position);
 	switch (facing_direction){
@@ -111,7 +113,7 @@ void init_actor(CppRed::Actor &actor, Map map, const Point &position, MapObjectF
 		case MapObjectFacingDirection::BoulderMovementByte2:
 			break;
 		case MapObjectFacingDirection::None:
-			actor.set_random_facing_direction();
+			actor.set_random_facing_direction(true);
 			break;
 		case MapObjectFacingDirection::Up:
 			actor.set_facing_direction(FacingDirection::Up);
@@ -132,7 +134,8 @@ void init_actor(CppRed::Actor &actor, Map map, const Point &position, MapObjectF
 }
 
 void NpcMapObject::initialize_actor(CppRed::Npc &npc, Map map, CppRed::Game &game) const{
-	init_actor(npc, map, this->position, this->facing_direction, game);
+
+	init_actor(npc, this->id, map, this->position, this->facing_direction, game);
 	if (this->wandering)
 		npc.set_wandering(this->range);
 }
@@ -147,7 +150,7 @@ CppRed::actor_ptr<CppRed::Actor> NpcMapObject::create_actor(CppRed::Game &game, 
 CppRed::actor_ptr<CppRed::Actor> ItemMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
 	auto ret = CppRed::create_actor2<CppRed::ItemActor>(game, game.get_coroutine(), this->name, renderer, *this->sprite, instance);
 	auto item = (CppRed::ItemActor *)ret.get();
-	init_actor(*item, map, this->position, this->facing_direction, game);
+	init_actor(*item, this->id, map, this->position, this->facing_direction, game);
 	return ret;
 }
 

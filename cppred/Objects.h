@@ -30,6 +30,7 @@ enum class MapObjectType{
 
 class MapObject{
 protected:
+	int id;
 	std::string name;
 	Point position = {-1, -1};
 	const MapData *map_data = nullptr;

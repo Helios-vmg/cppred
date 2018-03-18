@@ -5,6 +5,7 @@
 #include "../../../CodeGeneration/output/text.h"
 #include "../../../CodeGeneration/output/audio.h"
 #include "../../../CodeGeneration/output/variables.h"
+#include "../../../CodeGeneration/output/actors.h"
 #include <CppRed/Npc.h>
 
 namespace CppRed{
@@ -69,14 +70,15 @@ DECLARE_SCRIPT(PalletTownScript0){
 		renderer.set_enable_window(false);
 		game.reset_dialog_state();
 	}
-	auto &oak = world.get_actor("PalletOak");
+	auto &oak = world.get_actor(ActorId::PalletOak);
 	oak.set_visible(true);
 	oak.set_facing_direction(FacingDirection::Up);
 	for (int i = 0; i < 5; i++)
 		oak.move(!(i % 2) ? FacingDirection::Up : FacingDirection::Right);
 	if (player.get_map_position().x > 10){
 		oak.move(FacingDirection::Up);
-		oak.set_facing_direction(FacingDirection::Left);
+		oak.set_facing_direction(FacingDirection::Right);
+		player.set_facing_direction(FacingDirection::Left);
 	}
 	game.get_engine().set_gamepad_disabled(false);
 	game.run_dialog(TextResourceId::OakWalksUpText, TileRegion::Window, true);
@@ -111,9 +113,9 @@ DECLARE_SCRIPT(PalletTownScript0){
 	}
 	oak.set_visible(false);
 	player.set_ignore_occupancy(true);
+	world.set_automatic_music_transition(false);
 	player.move(FacingDirection::Up);
 	player.set_ignore_occupancy(false);
-	player.set_ignore_input(false);
 
 	vs.set(IntegerVariableId::PalletTownScriptIndex, 5);
 	PalletTownScript5(parameters);

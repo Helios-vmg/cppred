@@ -21,6 +21,7 @@ protected:
 	Game *game;
 	const GraphicsAsset *sprite;
 	Renderer *renderer;
+	int object_id;
 	std::string name;
 	WorldCoordinates position;
 	Point pixel_offset;
@@ -85,6 +86,7 @@ public:
 	DEFINE_GETTER_SETTER(pixel_offset)
 	DEFINE_GETTER_SETTER(ignore_occupancy)
 	DEFINE_GETTER(name)
+	DEFINE_GETTER_SETTER(object_id)
 	bool is_moving() const{
 		return this->moving;
 	}
@@ -98,7 +100,7 @@ public:
 	}
 	std::vector<PathStep> find_path(const Point &destination);
 	void follow_path(const std::vector<PathStep> &);
-	virtual void set_random_facing_direction(){}
+	virtual void set_random_facing_direction(bool value){}
 };
 
 class NonPlayerActor : public Actor{

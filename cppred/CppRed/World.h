@@ -9,6 +9,7 @@ namespace CppRed{
 class PlayerCharacter;
 class NpcTrainer;
 class Game;
+enum class ActorId;
 
 class World : public ScreenOwner{
 	actor_ptr<PlayerCharacter> player_character = null_actor_ptr<PlayerCharacter>();
@@ -20,6 +21,7 @@ class World : public ScreenOwner{
 	Point pixel_offset;
 	std::pair<TilesetData *, int> visible_border_block = {nullptr, -1};
 	MapInstance *current_map = nullptr;
+	bool automatic_music_transition = true;
 
 	bool is_passable(const WorldCoordinates &);
 	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
@@ -54,10 +56,13 @@ public:
 	PlayerCharacter &get_pc(){
 		return *this->player_character;
 	}
-	Actor &get_actor(const char *);
+	Actor &get_actor(ActorId);
+	void play_current_map_music();
+	void transition_to_current_map_music();
 
 	DEFINE_GETTER(camera_position)
 	DEFINE_GETTER(pixel_offset)
+	DEFINE_GETTER_SETTER(automatic_music_transition)
 };
 
 }

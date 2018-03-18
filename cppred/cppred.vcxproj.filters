@@ -322,13 +322,16 @@
     <ClCompile Include="CppRed/TitleScreen.cpp">
       <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="CppRed\Scripts\PalletTown.cpp">
-      <Filter>CppRed\Game code\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="CppRed\Scripts\BluesHouse.cpp">
       <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed\ItemActor.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\Scripts\OaksLab.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\Scripts\PalletTown.cpp">
       <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
   </ItemGroup>

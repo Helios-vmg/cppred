@@ -275,8 +275,8 @@ MapData::MapData(
 	}
 	this->warp_check = (int)buffer.read_varint() - 1;
 	{
-		auto warp_tile_count = buffer.read_varint();
-		unsigned i = 0;
+		auto warp_tile_count = (int)buffer.read_varint();
+		int i = 0;
 		for (; i < warp_tile_count; i++)
 			this->warp_tiles[i] = buffer.read_varint();
 		for (; i < array_length(this->warp_tiles); i++)
@@ -286,8 +286,8 @@ MapData::MapData(
 	this->on_load = buffer.read_string();
 	this->music = (AudioResourceId)buffer.read_varint();
 	{
-		auto invisible_sprites = buffer.read_varint();
-		unsigned i = 0;
+		auto invisible_sprites = (int)buffer.read_varint();
+		int i = 0;
 		for (; i < invisible_sprites; i++)
 			this->sprite_visibility_flags[i] = (CppRed::VisibilityFlagId)buffer.read_varint();
 		for (; i < array_length(this->sprite_visibility_flags); i++)
@@ -313,7 +313,7 @@ const MapData &MapStore::get_map_by_name(const std::string &map_name) const{
 	return **it;
 }
 
-const MapData *MapStore::try_get_map_by_legacy_id(unsigned id) const{
+const MapData *MapStore::try_get_map_by_legacy_id(int id) const{
 	typedef decltype(this->maps_by_legacy_id)::value_type T;
 	auto begin = this->maps_by_legacy_id.begin();
 	auto end = this->maps_by_legacy_id.end();
@@ -323,7 +323,7 @@ const MapData *MapStore::try_get_map_by_legacy_id(unsigned id) const{
 	return *it;
 }
 
-const MapData &MapStore::get_map_by_legacy_id(unsigned id) const{
+const MapData &MapStore::get_map_by_legacy_id(int id) const{
 	return *this->try_get_map_by_legacy_id(id);
 }
 

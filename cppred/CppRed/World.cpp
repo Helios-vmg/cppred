@@ -1,8 +1,10 @@
 #include "World.h"
 #include "PlayerCharacter.h"
 #include "Game.h"
+#include "../Objects.h"
 #include "PlayerCharacter.h"
 #include "../CodeGeneration/output/variables.h"
+#include "../CodeGeneration/output/actors.h"
 #include <sstream>
 #include <iostream>
 
@@ -248,8 +250,19 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 			this->actors.emplace_back(std::move(actor));
 		}
 	}
-	game->get_audio_interface().play_sound(map_data.music == AudioResourceId::None ? AudioResourceId::Stop : map_data.music);
+	if (this->automatic_music_transition)
+		this->transition_to_current_map_music();
 	instance.loaded(*this->game);
+}
+
+void World::play_current_map_music(){
+	auto &map_data = this->current_map->get_map_data();
+	this->game->get_audio_interface().play_sound(map_data.music == AudioResourceId::None ? AudioResourceId::Stop : map_data.music);
+}
+
+void World::transition_to_current_map_music(){
+	//TODO: implement fade-out.
+	this->play_current_map_music();
 }
 
 bool World::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &location){
@@ -357,11 +370,13 @@ void World::pause(){
 		this->current_map->pause();
 }
 
-Actor &World::get_actor(const char *name){
+Actor &World::get_actor(ActorId id){
 	for (auto &actor : this->actors)
-		if (actor->get_name() == name)
+		if (actor->get_object_id() == (int)id)
 			return *actor;
-	throw std::runtime_error((std::string)"Actor not found: " + name);
+	std::stringstream stream;
+	stream << "Actor not found: " << (int)id;
+	throw std::runtime_error(stream.str());
 }
 
 }

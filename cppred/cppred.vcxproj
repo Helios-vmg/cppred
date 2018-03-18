@@ -91,6 +91,7 @@
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
     <ClCompile Include="CppRed\Scripts\BluesHouse.cpp" />
+    <ClCompile Include="CppRed\Scripts\OaksLab.cpp" />
     <ClCompile Include="CppRed\Scripts\PalletTown.cpp" />
     <ClCompile Include="CppRed\scripts\RedsHouse.cpp" />
     <ClCompile Include="CppRed\TextDisplay.cpp" />

@@ -13,6 +13,7 @@ ScriptStore::ScriptStore(){
 	ADD_SCRIPT(PalletTownScript);
 	ADD_SCRIPT(BluesHouseScript);
 	ADD_SCRIPT(BluesHouseText1);
+	ADD_SCRIPT(OaksLabScript);
 	//Add scripts.
 
 	std::sort(this->scripts.begin(), this->scripts.end(), [](const auto &a, const auto &b){ return a.first < b.first; });

@@ -120,7 +120,7 @@ struct MapTextEntry{
 
 struct MapData{
 	Map map_id;
-	unsigned legacy_id;
+	int legacy_id;
 	std::string name;
 	int width, height;
 	std::shared_ptr<TilesetData> tileset;
@@ -204,6 +204,9 @@ public:
 	void pause();
 	void stop();
 	void last_chance_update(CppRed::Game &game);
+	const MapData &get_map_data() const{
+		return *this->data;
+	}
 };
 
 class MapStore{
@@ -235,8 +238,8 @@ public:
 	MapInstance *try_get_map_instance(Map map, CppRed::Game &);
 	const MapInstance &get_map_instance(Map map, CppRed::Game &) const;
 	const MapData &get_map_by_name(const std::string &) const;
-	const MapData &get_map_by_legacy_id(unsigned) const;
-	const MapData *try_get_map_by_legacy_id(unsigned) const;
+	const MapData &get_map_by_legacy_id(int) const;
+	const MapData *try_get_map_by_legacy_id(int) const;
 	void release_map_instance(Map, CppRed::Game &);
 	void stop();
 };
