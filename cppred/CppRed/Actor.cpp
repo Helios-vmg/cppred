@@ -73,7 +73,7 @@ void Actor::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer
 	initialize_sprite(this->walking_sprites[2 * 4 + 1], renderer, graphics, 3 * sprite_tiles);
 	initialize_sprite(this->walking_sprites[2 * 4 + 3], renderer, graphics, 3 * sprite_tiles, true);
 	initialize_sprite(this->walking_sprites[3 * 4 + 1], renderer, graphics, 5 * sprite_tiles);
-	this->walking_sprites[3 * 4 + 3] = this->walking_sprites[1 * 4 + 1];
+	this->walking_sprites[3 * 4 + 3] = this->walking_sprites[3 * 4 + 1];
 }
 
 void Actor::coroutine_entry_point(){
@@ -155,10 +155,20 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 	double t;
 	const double frames = this->movement_duration();
 	const double movement_per_frame = Renderer::tile_size * 2 / frames;
-	while ((t = c.get() - t0) < frames / 60){
+	const double duration = frames / 60;
+	const double half_duration = duration / 2;
+	while ((t = c.get() - t0) < half_duration){
 		this->pixel_offset = delta * (movement_per_frame * (t * 60));
 		coroutine.yield();
 	}
+	this->walking_animation_state = (this->walking_animation_state + 1) % 4;
+	this->set_visible_sprite();
+	while ((t = c.get() - t0) < duration){
+		this->pixel_offset = delta * (movement_per_frame * (t * 60));
+		coroutine.yield();
+	}
+	this->walking_animation_state = (this->walking_animation_state + 1) % 4;
+	this->set_visible_sprite();
 	this->pixel_offset = Point();
 }
 
