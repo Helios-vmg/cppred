@@ -131,14 +131,14 @@ DECLARE_SCRIPT(PalletTownScript0){
 DECLARE_SCRIPT(PalletTownScript5){
 	auto &game = *parameters.game;
 	auto &vs = game.get_variable_store();
-	if (vs.get(EventId::event_daisy_walking) || vs.get(EventId::event_got_town_map) && vs.get(EventId::event_entered_blues_house)){
-		if (!vs.get(EventId::event_got_pokeballs_from_oak))
-			return;
-		vs.set(EventId::event_pallet_after_getting_pokeballs_2, true);
-	}else{
+	if (!(vs.get(EventId::event_daisy_walking) || vs.get(EventId::event_got_town_map) && vs.get(EventId::event_entered_blues_house))){
 		vs.set(EventId::event_daisy_walking, true);
-		/**/
+		vs.set(VisibilityFlagId::hs_daisy_sitting, false);
+		vs.set(VisibilityFlagId::hs_daisy_walking, true);
 	}
+	if (!vs.get(EventId::event_got_pokeballs_from_oak))
+		return;
+	vs.set(EventId::event_pallet_after_getting_pokeballs_2, true);
 }
 
 }
