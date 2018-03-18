@@ -27,32 +27,64 @@ public:
 	typedef typename sprite_map_t::iterator sprite_iterator;
 
 private:
+	struct RendererContext{
+		Tilemap bg_tilemap;
+		Tilemap window_tilemap;
+		Palette bg_palette;
+		Palette sprite0_palette;
+		Palette sprite1_palette;
+		Point bg_offsets[logical_screen_height];
+		Point window_offsets[logical_screen_height];
+		Point bg_global_offset = { 0, 0 };
+		Point window_origin;
+		Point window_region_start;
+		Point window_region_size;
+		sprite_map_t sprites;
+		bool enable_bg = false;
+		bool enable_window = false;
+		bool enable_sprites = true;
+	};
+
 	VideoDevice *device;
 	Texture main_texture;
 	std::vector<TileData> tile_data;
-	Tilemap bg_tilemap;
-	Tilemap window_tilemap;
 	RGB final_palette[4];
-	Palette bg_palette;
-	Palette sprite0_palette;
-	Palette sprite1_palette;
-	Point bg_offsets[logical_screen_height];
-	Point window_offsets[logical_screen_height];
-	Point bg_global_offset = { 0, 0 };
-	Point window_origin;
-	Point window_region_start;
-	Point window_region_size;
-	sprite_map_t sprites;
-	std::vector<Sprite *> sprite_list;
 	std::uint64_t next_sprite_id = 0;
-	bool enable_bg = false;
-	bool enable_window = false;
-	bool enable_sprites = true;
 	struct RenderPoint{
 		int value;
 		const Palette *palette;
 	};
 	RenderPoint intermediate_render_surface[logical_screen_width * logical_screen_height];
+	std::vector<RendererContext> stack;
+	RendererContext *current_context;
+	std::vector<Sprite *> sprite_list;
+
+	RendererContext &context(){
+		return *this->current_context;
+	}
+	const RendererContext &context() const{
+		return *this->current_context;
+	}
+
+#define Renderer_DEFINE_ACCESSOR(name) \
+	decltype(RendererContext::name) &name(){ return this->context().name; } \
+	const decltype(RendererContext::name) &name() const{ return this->context().name; }
+
+	Renderer_DEFINE_ACCESSOR(bg_tilemap)
+	Renderer_DEFINE_ACCESSOR(window_tilemap)
+	Renderer_DEFINE_ACCESSOR(bg_palette)
+	Renderer_DEFINE_ACCESSOR(sprite0_palette)
+	Renderer_DEFINE_ACCESSOR(sprite1_palette)
+	Renderer_DEFINE_ACCESSOR(bg_offsets)
+	Renderer_DEFINE_ACCESSOR(window_offsets)
+	Renderer_DEFINE_ACCESSOR(bg_global_offset)
+	Renderer_DEFINE_ACCESSOR(window_origin)
+	Renderer_DEFINE_ACCESSOR(window_region_start)
+	Renderer_DEFINE_ACCESSOR(window_region_size)
+	Renderer_DEFINE_ACCESSOR(sprites)
+	Renderer_DEFINE_ACCESSOR(enable_bg)
+	Renderer_DEFINE_ACCESSOR(enable_window)
+	Renderer_DEFINE_ACCESSOR(enable_sprites)
 
 	void initialize_assets();
 	void initialize_data();
@@ -98,12 +130,59 @@ public:
 	//std::pair<sprite_iterator, sprite_iterator> iterate_sprites();
 	void release_sprite(std::uint64_t);
 	std::uint64_t get_id();
-	DEFINE_GETTER_SETTER(bg_global_offset)
-	DEFINE_GETTER_SETTER(window_origin)
-	DEFINE_GETTER_SETTER(window_region_start)
-	DEFINE_GETTER_SETTER(window_region_size)
+	const Point &get_bg_global_offset() const{
+		return this->bg_global_offset();
+	}
+	void set_bg_global_offset(const Point &p){
+		this->bg_global_offset() = p;
+	}
+	const Point &get_window_origin() const{
+		return this->window_origin();
+	}
+	void set_window_origin(const Point &p){
+		this->window_origin() = p;
+	}
+	const Point &get_window_region_start() const{
+		return this->window_region_start();
+	}
+	void set_window_region_start(const Point &p){
+		this->window_region_start() = p;
+	}
+	const Point &get_window_region_size() const{
+		return this->window_region_size();
+	}
+	void set_window_region_size(const Point &p){
+		this->window_region_size() = p;
+	}
+
 	void set_y_bg_offset(int y0, int y1, const Point &);
 	void set_y_window_offset(int y0, int y1, const Point &);
+	void push();
+	void pop();
+};
+
+class AutoRendererPusher{
+	Renderer *renderer;
+public:
+	AutoRendererPusher(Renderer &renderer): renderer(&renderer){
+		this->renderer->push();
+	}
+	AutoRendererPusher(const AutoRendererPusher &) = delete;
+	AutoRendererPusher(AutoRendererPusher &&other){
+		*this = std::move(other);
+	}
+	~AutoRendererPusher(){
+		if (this->renderer)
+			this->renderer->pop();
+	}
+	const AutoRendererPusher &operator=(const AutoRendererPusher &) = delete;
+	const AutoRendererPusher &operator=(AutoRendererPusher &&other){
+		if (this->renderer)
+			this->renderer->pop();
+		this->renderer = other.renderer;
+		other.renderer = nullptr;
+		return *this;
+	}
 };
 
 static const std::uint16_t white_arrow = (std::uint16_t)('A' + 128);
