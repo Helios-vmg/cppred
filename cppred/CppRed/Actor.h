@@ -77,7 +77,7 @@ public:
 	void set_new_screen_owner(std::unique_ptr<ScreenOwner> &&);
 	std::unique_ptr<ScreenOwner> get_new_screen_owner();
 	void pause();
-	void set_facing_direction(FacingDirection direction);
+	virtual void set_facing_direction(FacingDirection direction);
 	DEFINE_GETTER(facing_direction)
 	DEFINE_GETTER_SETTER(pixel_offset)
 	DEFINE_GETTER_SETTER(ignore_occupancy)
@@ -95,6 +95,14 @@ public:
 	}
 	std::vector<PathStep> find_path(const Point &destination);
 	void follow_path(const std::vector<PathStep> &);
+};
+
+class NonPlayerActor : public Actor{
+protected:
+	virtual void coroutine_entry_point() override;
+	virtual void update_sprites() override;
+public:
+	NonPlayerActor(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
 };
 
 template <typename T> 

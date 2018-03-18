@@ -31,6 +31,7 @@ private:
 	void about_to_move() override;
 	static FacingDirection input_to_direction(const InputState &input);
 	bool move_internal(FacingDirection) override;
+	void check_for_bookshelf_or_card_key_door();
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	void teleport(const WorldCoordinates &);

@@ -55,19 +55,21 @@ void PlayerCharacter::coroutine_entry_point(){
 			input = this->game->joypad_only_newly_pressed();
 			if (input.get_start()){
 				//handle menu
-				this->coroutine->yield();
 			}else if (input.get_a()){
 				MapObjectInstance *instances[8];
 				auto &world = this->game->get_world();
 				world.get_objects_at_location(instances, world.remap_coordinates(this->position + direction_to_vector(this->facing_direction)));
+				bool activated = false;
 				for (auto instance : instances){
 					if (!instance)
 						break;
 					instance->activate(*this);
+					activated = true;
 				}
-				this->coroutine->yield();
-			}else
-				this->coroutine->yield();
+				if (!activated)
+					this->check_for_bookshelf_or_card_key_door();
+			}
+			this->coroutine->yield();
 		}
 	}
 }
@@ -176,5 +178,17 @@ void PlayerCharacter::about_to_move(){
 	this->run_warp_logic_no_collision();
 }
 
+void PlayerCharacter::check_for_bookshelf_or_card_key_door(){
+	auto pos2 = this->position + direction_to_vector(this->facing_direction);
+	auto &map_data = this->game->get_world().get_map_store().get_map_data(pos2.map);
+	auto tile = map_data.get_partial_tile_at_actor_position(pos2.position);
+	auto info = map_data.tileset->get_bookcase_info(tile);
+	if (!info)
+		return;
+	if (info->is_script)
+		this->game->execute(info->script_name.c_str(), *this);
+	else
+		this->game->run_dialog_from_world(info->text_id, *this);
+}
 
 }

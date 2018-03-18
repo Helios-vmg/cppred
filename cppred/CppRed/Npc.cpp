@@ -7,8 +7,7 @@
 namespace CppRed{
 
 Npc::Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &instance):
-		Actor(game, parent_coroutine, name, renderer, sprite){
-	this->object_instance = &instance;
+		NonPlayerActor(game, parent_coroutine, name, renderer, sprite, instance){
 }
 
 static int geometric_distribution(XorShift128 &rand, std::uint32_t n){
@@ -59,15 +58,6 @@ bool Npc::move_internal(FacingDirection direction){
 	auto ret = Actor::move_internal(direction);
 	this->object_instance->set_position(this->position.position);
 	return ret;
-}
-
-void Npc::update_sprites(){
-	auto &world = this->game->get_world();
-	auto cam = world.get_camera_position();
-	auto po = world.get_pixel_offset();
-	auto position = (this->position.position - cam) * (Renderer::tile_size * 2) - po + this->pixel_offset;
-	position.y -= Renderer::tile_size / 2;
-	this->apply_to_all_sprites([&position](Sprite &sprite){ sprite.set_position(position); });
 }
 
 void Npc::set_wandering(int radius){

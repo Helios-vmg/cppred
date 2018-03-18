@@ -238,4 +238,29 @@ bool Actor::run_saved_actions(){
 	return false;
 }
 
+NonPlayerActor::NonPlayerActor(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &instance):
+		Actor(game, parent_coroutine, name, renderer, sprite){
+	this->object_instance = &instance;
+}
+
+void NonPlayerActor::coroutine_entry_point(){
+	this->standing_sprites[(int)this->facing_direction]->set_visible(this->visible);
+	HighResolutionClock real_time;
+	auto &clock = this->coroutine->get_clock();
+	while (!this->quit_coroutine){
+		if (!this->run_saved_actions())
+			continue;
+		this->coroutine->yield();
+	}
+}
+
+void NonPlayerActor::update_sprites(){
+	auto &world = this->game->get_world();
+	auto cam = world.get_camera_position();
+	auto po = world.get_pixel_offset();
+	auto position = (this->position.position - cam) * (Renderer::tile_size * 2) - po + this->pixel_offset;
+	position.y -= Renderer::tile_size / 2;
+	this->apply_to_all_sprites([&position](Sprite &sprite){ sprite.set_position(position); });
+}
+
 }

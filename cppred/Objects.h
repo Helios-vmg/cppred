@@ -224,6 +224,7 @@ public:
 	const char *get_type_string() const override{
 		return "item";
 	}
+	CppRed::actor_ptr<CppRed::Actor> create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const override;
 	MapObjectType get_type() const override{
 		return MapObjectType::Item;
 	}

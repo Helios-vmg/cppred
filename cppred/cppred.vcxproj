@@ -48,6 +48,7 @@
     <ClInclude Include="CppRed/TextResources.h" />
     <ClInclude Include="CppRed/TitleScreen.h" />
     <ClInclude Include="CppRed\Actor.h" />
+    <ClInclude Include="CppRed\ItemActor.h" />
     <ClInclude Include="CppRed\Npc.h" />
     <ClInclude Include="CppRed\PlayerCharacter.h" />
     <ClInclude Include="CppRed\ScreenOwner.h" />
@@ -85,9 +86,11 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="CppRed/AudioInterface.cpp" />
     <ClCompile Include="CppRed\Actor.cpp" />
+    <ClCompile Include="CppRed\ItemActor.cpp" />
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
+    <ClCompile Include="CppRed\Scripts\BluesHouse.cpp" />
     <ClCompile Include="CppRed\Scripts\PalletTown.cpp" />
     <ClCompile Include="CppRed\scripts\RedsHouse.cpp" />
     <ClCompile Include="CppRed\TextDisplay.cpp" />

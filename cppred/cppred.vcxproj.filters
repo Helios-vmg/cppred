@@ -206,6 +206,9 @@
     <ClInclude Include="CppRed\Scripts\Scripts.h">
       <Filter>CppRed\Scripts\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRed\ItemActor.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -321,6 +324,12 @@
     </ClCompile>
     <ClCompile Include="CppRed\Scripts\PalletTown.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\Scripts\BluesHouse.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\ItemActor.cpp">
+      <Filter>CppRed\Scripts\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
