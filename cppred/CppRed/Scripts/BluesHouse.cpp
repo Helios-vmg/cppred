@@ -18,8 +18,6 @@ DECLARE_SCRIPT(BluesHouseScript1);
 DECLARE_SCRIPT(BluesHouseScript){
 	auto &game = *parameters.game;
 	auto &vs = game.get_variable_store();
-	if (vs.get(EventId::event_got_pokeballs_from_oak))
-		vs.set(EventId::event_pallet_after_getting_pokeballs, true);
 	auto index = vs.get(IntegerVariableId::BluesHouseScriptIndex);
 	static const script_f scripts[] = {
 		BluesHouseScript0,
