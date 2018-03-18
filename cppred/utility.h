@@ -294,6 +294,7 @@ public:
 		return this->clock;
 	}
 	DEFINE_GETTER(name)
+	DEFINE_GETTER(active)
 };
 
 class BufferReader{

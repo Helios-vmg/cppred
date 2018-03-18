@@ -440,10 +440,12 @@ void MapObjectInstance::activate(CppRed::Actor &activator){
 	this->full_object->activate(*this->game, activator, this->actor);
 }
 
-void MapStore::release_map_instance(Map map){
+void MapStore::release_map_instance(Map map, CppRed::Game &game){
 	auto index = (int)map - 1;
-	if (index < 0 || index >= this->map_instances.size())
+	if (index < 0 || index >= this->map_instances.size() || !this->map_instances[index])
 		return;
+	
+	this->map_instances[index]->last_chance_update(game);
 	this->map_instances[index].reset();
 }
 
@@ -456,6 +458,12 @@ void MapInstance::resume_coroutine(CppRed::Game &game){
 
 void MapInstance::update(CppRed::Game &game){
 	if (!this->on_frame)
+		return;
+	this->resume_coroutine(game);
+}
+
+void MapInstance::last_chance_update(CppRed::Game &game){
+	if (!this->coroutine || !this->in_script_function)
 		return;
 	this->resume_coroutine(game);
 }
@@ -475,7 +483,9 @@ void MapInstance::coroutine_entry_point(){
 		params.caller = nullptr;
 		params.game = this->current_game;
 		params.parameter = nullptr;
+		this->in_script_function = true;
 		this->on_load(params);
+		this->in_script_function = false;
 		this->coroutine->yield();
 	}
 	if (!this->on_frame)
@@ -485,7 +495,9 @@ void MapInstance::coroutine_entry_point(){
 		params.caller = nullptr;
 		params.game = this->current_game;
 		params.parameter = nullptr;
+		this->in_script_function = true;
 		this->on_frame(params);
+		this->in_script_function = false;
 		this->coroutine->yield();
 	}
 }

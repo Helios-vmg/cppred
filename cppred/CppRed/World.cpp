@@ -225,7 +225,7 @@ bool World::check_tile_pair_collisions(const WorldCoordinates &pos0, const World
 void World::entered_map(Map old_map, Map new_map, bool warped){
 	if (warped)
 		this->visible_border_block = {nullptr, -1};
-	this->map_store.release_map_instance(old_map);
+	this->map_store.release_map_instance(old_map, *this->game);
 	auto &instance = this->map_store.get_map_instance(new_map, *this->game);
 	this->current_map = &instance;
 	this->actors.clear();

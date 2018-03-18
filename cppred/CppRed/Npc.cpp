@@ -26,7 +26,7 @@ void Npc::coroutine_entry_point(){
 	HighResolutionClock real_time;
 	auto &clock = this->coroutine->get_clock();
 	while (!this->quit_coroutine){
-		if (!this->run_saved_move())
+		if (!this->run_saved_actions())
 			continue;
 		auto delta = this->position.position - this->wandering_center;
 		auto distance = abs(delta.x) + abs(delta.y);

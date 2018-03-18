@@ -173,6 +173,7 @@ class MapInstance{
 	ScriptStore::script_f on_frame = nullptr;
 	std::unique_ptr<Coroutine> coroutine;
 	CppRed::Game *current_game = nullptr;
+	bool in_script_function = false;
 
 	void check_map_location(const Point &) const;
 	int get_block_number(const Point &) const;
@@ -193,6 +194,7 @@ public:
 	void loaded(CppRed::Game &game);
 	void pause();
 	void stop();
+	void last_chance_update(CppRed::Game &game);
 };
 
 class MapStore{
@@ -226,6 +228,6 @@ public:
 	const MapData &get_map_by_name(const std::string &) const;
 	const MapData &get_map_by_legacy_id(unsigned) const;
 	const MapData *try_get_map_by_legacy_id(unsigned) const;
-	void release_map_instance(Map);
+	void release_map_instance(Map, CppRed::Game &);
 	void stop();
 };

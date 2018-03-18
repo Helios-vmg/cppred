@@ -39,7 +39,7 @@ void PlayerCharacter::teleport(const WorldCoordinates &destination){
 
 void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
-		if (!this->run_saved_move())
+		if (!this->run_saved_actions())
 			continue;
 		auto &engine = this->game->get_engine();
 		if (this->ignore_input){
@@ -75,7 +75,10 @@ void PlayerCharacter::coroutine_entry_point(){
 bool PlayerCharacter::move_internal(FacingDirection direction){
 	if (Trainer::move_internal(direction)){
 		if (this->saved_post_warp){
-			this->game->get_world().teleport_player(*this->saved_post_warp);
+			auto warp = this->saved_post_warp;
+			this->saved_actions.push_back([this, warp](){
+				this->game->get_world().teleport_player(*warp);
+			});
 			this->saved_post_warp = nullptr;
 		}
 		return true;

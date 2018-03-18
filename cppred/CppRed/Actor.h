@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderer.h"
 #include "../utility.h"
+#include <deque>
+#include <functional>
 
 class MapObjectInstance;
 
@@ -33,7 +35,7 @@ protected:
 	std::unique_ptr<ScreenOwner> screen_owner;
 	bool visible = true;
 	bool ignore_occupancy = false;
-	int saved_move = -1;
+	std::deque<std::function<void()>> saved_actions;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -51,7 +53,7 @@ protected:
 	virtual void update_sprites(){}
 	virtual void about_to_move(){}
 	virtual bool move_internal(FacingDirection);
-	bool run_saved_move();
+	bool run_saved_actions();
 public:
 	Actor(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite);
 	virtual ~Actor();
