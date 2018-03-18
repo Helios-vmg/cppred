@@ -47,6 +47,13 @@ enum class MapObjectFacingDirection{
 	BoulderMovementByte2,
 };
 
+struct BookcaseTile{
+	int tile_no = -1;
+	std::string script_name;
+	TextResourceId text_id;
+	bool is_script;
+};
+
 struct TilesetData{
 	TilesetId id;
 	std::string name;
@@ -58,6 +65,7 @@ struct TilesetData{
 	TilesetType type;
 	std::pair<short, short> impassability_pairs[16];
 	std::pair<short, short> impassability_pairs_water[16];
+	BookcaseTile bookcase_tiles[8];
 
 	TilesetData(
 		const byte_t *,
@@ -67,6 +75,7 @@ struct TilesetData{
 		const std::map<std::string, std::shared_ptr<Collision>> &,
 		const std::map<std::string, const GraphicsAsset *> &
 	);
+	const BookcaseTile *get_bookcase_info(int tile);
 };
 
 struct BinaryMapData{

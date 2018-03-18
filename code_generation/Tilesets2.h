@@ -1,10 +1,24 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <set>
 #include "utility.h"
 #include "Graphics.h"
 #include "../common/TilesetType.h"
 #include "ReorderedBlockset.h"
+
+class TextStore;
+
+struct BookcaseTile{
+	unsigned tile_no;
+	bool is_script;
+	std::string name;
+	unsigned text_id;
+
+	bool operator<(const BookcaseTile &other) const{
+		return this->tile_no < other.tile_no;
+	}
+};
 
 class Tileset2{
 	static int next_id;
@@ -22,8 +36,14 @@ class Tileset2{
 	std::vector<std::pair<int, int>> impassability_pairs_water;
 	int warp_check;
 	std::vector<int> warp_tiles;
+	std::set<BookcaseTile> bookcase_tiles;
 public:
-	Tileset2(const std::vector<std::string> &columns, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs);
+	Tileset2(
+		const std::vector<std::string> &columns,
+		const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset,
+		const data_map_t &collision,
+		GraphicsStore &gs,
+		const std::set<BookcaseTile> &bookcase_tiles);
 	DELETE_COPY_CONSTRUCTORS(Tileset2);
 	const std::string &get_name() const{
 		return this->name;
@@ -68,7 +88,13 @@ class Tilesets2{
 	std::vector<std::shared_ptr<Tileset2>> tilesets;
 	std::map<std::string, std::shared_ptr<Tileset2>> map;
 public:
-	Tilesets2(const char *path, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs);
+	Tilesets2(
+		const char *tilesets_path,
+		const char *bookcases_path,
+		const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset,
+		const data_map_t &collision,
+		GraphicsStore &gs,
+		TextStore &text_store);
 	std::shared_ptr<Tileset2> get(const std::string &name) const;
 	const std::vector<std::shared_ptr<Tileset2>> &get_tilesets() const{
 		return this->tilesets;

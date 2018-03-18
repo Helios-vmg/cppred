@@ -23,6 +23,7 @@ static const char * const map_text_file = "input/map_text.csv";
 static const char * const text_file = "input/text.txt";
 static const char * const audio_csv_file = "output/audio.csv";
 static const char * const map_sprites_visibility_file = "input/map_sprites_visibility.csv";
+static const char * const bookcases_file = "input/bookcases.csv";
 static const std::vector<std::string> input_files = {
 	maps_file,
 	tilesets_file,
@@ -34,6 +35,7 @@ static const std::vector<std::string> input_files = {
 	text_file,
 	audio_csv_file,
 	map_sprites_visibility_file,
+	bookcases_file,
 };
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
@@ -192,7 +194,7 @@ static void generate_maps_internal(known_hashes_t &known_hashes, GraphicsStore &
 	auto map_data = read_data_csv(map_data2_file);
 	auto map_text = read_string_map(map_text_file);
 	
-	Tilesets2 tilesets2(tilesets_file, blocksets, collision, gs);
+	Tilesets2 tilesets2(tilesets_file, bookcases_file, blocksets, collision, gs, text_store);
 	Maps2 maps2(maps_file, map_data, tilesets2, load_audio_map());
 	maps2.load_map_connections(map_connections_file);
 	maps2.load_map_text(map_text, text_store);

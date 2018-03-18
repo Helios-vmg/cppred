@@ -1,0 +1,15 @@
+tileset,tile,name,is_script
+Gate,34,BookOrSculptureText,true
+Gym,29,BookOrSculptureText,true
+House,30,BookOrSculptureText,true
+House,61,TownMapText,true
+Lab,40,BookOrSculptureText,true
+Lobby,22,ElevatorText,false
+Lobby,80,PokemonStuffText,false
+Lobby,82,PokemonStuffText,false
+Mansion,50,BookOrSculptureText,true
+Plateau,48,IndigoPlateauStatues,true
+Pokecenter,84,PokemonStuffText,false
+Pokecenter,85,PokemonStuffText,false
+RedsHouse,50,BookOrSculptureText,true
+Ship,54,BookOrSculptureText,true

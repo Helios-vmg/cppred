@@ -1,11 +1,43 @@
 #include "Tilesets2.h"
+#include "TextStore.h"
 #include "../common/csv_parser.h"
 #include "utility.h"
 #include <sstream>
 
 int Tileset2::next_id = 1;
 
-Tilesets2::Tilesets2(const char *path, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset, const data_map_t &collision, GraphicsStore &gs){
+std::map<std::string, std::set<BookcaseTile>> load_bookcases(const char *path, TextStore &text_store){
+	static const std::vector<std::string> order = {
+		"tileset",
+		"tile",
+		"name",
+		"is_script",
+	};
+	CsvParser csv(path);
+	auto rows = csv.row_count();
+	std::map<std::string, std::set<BookcaseTile>> ret;
+	for (auto i = rows; i--;){
+		auto columns = csv.get_ordered_row(i, order);
+		BookcaseTile bt;
+		bt.tile_no = to_unsigned(columns[1]);
+		bt.is_script = to_bool(columns[3]);
+		if (bt.is_script)
+			bt.name = columns[2];
+		else
+			bt.text_id = text_store.get_text_id_by_name(columns[2]);
+		ret[columns[0]].insert(bt);
+	}
+	return ret;
+}
+
+Tilesets2::Tilesets2(
+		const char *path,
+		const char *bookcases_path,
+		const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blockset,
+		const data_map_t &collision,
+		GraphicsStore &gs,
+		TextStore &text_store){
+
 	static const std::vector<std::string> order = {
 		"name",
 		"blockset",
@@ -23,9 +55,11 @@ Tilesets2::Tilesets2(const char *path, const std::map<std::string, std::shared_p
 	CsvParser csv(path);
 	auto rows = csv.row_count();
 
+	auto bookcases = load_bookcases(bookcases_path, text_store);
+
 	for (size_t i = 0; i < rows; i++){
 		auto columns = csv.get_ordered_row(i, order);
-		this->tilesets.emplace_back(new Tileset2(columns, blockset, collision, gs));
+		this->tilesets.emplace_back(new Tileset2(columns, blockset, collision, gs, bookcases[columns[0]]));
 		auto back = this->tilesets.back();
 		this->map[back->get_name()] = back;
 	}
@@ -62,7 +96,13 @@ std::vector<std::pair<int, int>> read_pairs(const std::string &s, const std::str
 	return ret;
 }
 
-Tileset2::Tileset2(const std::vector<std::string> &columns, const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blocksets, const data_map_t &collision, GraphicsStore &gs){
+Tileset2::Tileset2(
+		const std::vector<std::string> &columns,
+		const std::map<std::string, std::shared_ptr<std::vector<byte_t>>> &blocksets,
+		const data_map_t &collision,
+		GraphicsStore &gs,
+		const std::set<BookcaseTile> &bookcase_tiles){
+
 	this->name = columns[0];
 	this->blockset_name = columns[1];
 	this->blockset = get(blocksets, this->blockset_name);
@@ -78,6 +118,7 @@ Tileset2::Tileset2(const std::vector<std::string> &columns, const std::map<std::
 	this->impassability_pairs_water = read_pairs(columns[8], this->name, "impassability_pairs_water");
 	this->warp_check = to_unsigned(columns[9]);
 	this->warp_tiles = to_int_vector(columns[10], true);
+	this->bookcase_tiles = bookcase_tiles;
 }
 
 std::shared_ptr<Tileset2> Tilesets2::get(const std::string &name) const{
@@ -129,4 +170,15 @@ void Tileset2::serialize(std::vector<byte_t> &dst){
 	write_ascii_string(dst, type);
 	write_pair_list(dst, this->impassability_pairs, this->name, "impassability pairs");
 	write_pair_list(dst, this->impassability_pairs_water, this->name, "water impassability pairs");
+	if (this->bookcase_tiles.size() > 8)
+		throw std::runtime_error("Error: Tileset " + this->name + " has too many bookcases. Max: 8.");
+	write_varint(dst, (std::uint32_t)this->bookcase_tiles.size());
+	for (auto &bt : this->bookcase_tiles){
+		write_varint(dst, bt.tile_no);
+		write_varint(dst, bt.is_script);
+		if (bt.is_script)
+			write_ascii_string(dst, bt.name);
+		else
+			write_varint(dst, bt.text_id);
+	}
 }

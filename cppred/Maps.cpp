@@ -57,12 +57,14 @@ TilesetData::TilesetData(
 	this->blockset = find_in_constant_map(blocksets, read_string(buffer, offset, size));
 	this->tiles = find_in_constant_map(graphics_map, read_string(buffer, offset, size));
 	this->collision = find_in_constant_map(collisions, read_string(buffer, offset, size));
-	auto counters = (int)read_varint(buffer, offset, size);
-	int i = 0;
-	for (; i < counters; i++)
-		this->counters[i] = read_varint(buffer, offset, size);
-	for (; i < array_length(this->counters); i++)
-		this->counters[i] = -1;
+	{
+		auto counters = (int)read_varint(buffer, offset, size);
+		int i = 0;
+		for (; i < counters; i++)
+			this->counters[i] = read_varint(buffer, offset, size);
+		for (; i < array_length(this->counters); i++)
+			this->counters[i] = -1;
+	}
 	auto temp_grass = read_varint(buffer, offset, size);
 	if (temp_grass == std::numeric_limits<std::uint32_t>::max())
 		this->grass_tile = -1;
@@ -81,6 +83,29 @@ TilesetData::TilesetData(
 
 	read_pair_list(this->impassability_pairs, buffer, offset, size);
 	read_pair_list(this->impassability_pairs_water, buffer, offset, size);
+
+	{
+		auto bookcases = (int)read_varint(buffer, offset, size);
+		for (int i = 0; i < bookcases; i++){
+			auto &bt = this->bookcase_tiles[i];
+			bt.tile_no = read_varint(buffer, offset, size);
+			bt.is_script = !!read_varint(buffer, offset, size);
+			if (bt.is_script)
+				bt.script_name = read_string(buffer, offset, size);
+			else
+				bt.text_id = (TextResourceId)read_varint(buffer, offset, size);
+		}
+	}
+}
+
+const BookcaseTile *TilesetData::get_bookcase_info(int tile){
+	for (auto &bt : this->bookcase_tiles){
+		if (bt.tile_no < 0)
+			break;
+		if (bt.tile_no == tile)
+			return &bt;
+	}
+	return nullptr;
 }
 
 MapStore::blocksets_t MapStore::load_blocksets(){
