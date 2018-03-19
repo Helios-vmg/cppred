@@ -38,12 +38,17 @@ PokemonData::PokemonData(){
 			"allocated",        // 24
 			"overworld_sprite", // 25
 			"starter_index",    // 26
+			"pokedex_entry",    // 27
+			"description",		// 28
+			"height_feet",		// 29
+			"height_inches",	// 30
+			"weight_pounds",	// 31
 		};
 
 		CsvParser csv(pokemon_data_file);
 		unsigned rows = csv.row_count();
 		for (unsigned i = 0; i < rows; i++)
-			this->species.push_back(SpeciesData(csv.get_ordered_row(i, data_order)));
+			this->species.emplace_back(csv.get_ordered_row(i, data_order));
 	}
 
 	std::map<std::string, SpeciesData *> species;
@@ -151,6 +156,24 @@ static std::string filter_text(const std::string &input){
 	return ret;
 }
 
+static unsigned parse_decimal_float(const std::string &s){
+	if (s.size() < 2)
+		return to_unsigned(s);
+	int count = 0;
+	for (auto c : s)
+		count += c == '.';
+	if (count > 1 || count && s[s.size() - 2] != '.')
+		throw std::runtime_error("Invalid fraction: " + s + ". Must be in format \"12345678.9\", \".9\", or \"12345678\".");
+	unsigned ret = 0;
+	for (auto c : s){
+		if (c == '.')
+			continue;
+		ret *= 10;
+		ret += c - '0';
+	}
+	return ret;
+}
+
 SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 	this->species_id = to_unsigned(columns[0]);
 	this->pokedex_id = to_unsigned_default(columns[1]);
@@ -204,6 +227,13 @@ SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 	this->allocated = to_bool(columns[24]);
 	this->overworld_sprite = columns[25];
 	this->starter_index = to_int(columns[26]);
+	if (this->allocated){
+		this->pokedex_entry = columns[27];
+		this->brief = columns[28];
+		this->height_feet = to_unsigned(columns[29]);
+		this->height_inches = to_unsigned(columns[30]);
+		this->weight_tenths_of_pounds = parse_decimal_float(columns[31]);
+	}
 }
 
 EvolutionTrigger::EvolutionTrigger(const std::vector<std::string> &columns){
@@ -310,6 +340,17 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			"0x" << std::setw(2) << std::setfill('0') << species.cry_pitch << ", "
 			"0x" << std::setw(2) << std::setfill('0') << species.cry_length << std::dec <<
 			" },\n"
+			"    TextResourceId::" << species.pokedex_entry << ",\n";
+		if (species.brief.size())
+			file <<
+			"    \"" << species.brief << "\",\n";
+		else
+			file <<
+			"    nullptr,\n";
+		file <<
+			"    " << species.height_feet << ",\n"
+			"    " << species.height_inches<< ",\n"
+			"    " << species.weight_tenths_of_pounds << ",\n"
 			"    {\n"
 			;
 

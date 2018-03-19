@@ -48,6 +48,11 @@ public:
 	unsigned cry_length;
 	bool allocated;
 	int starter_index;
+	std::string pokedex_entry = "ExclamationText";
+	std::string brief;
+	unsigned height_feet = 0,
+		height_inches = 0,
+		weight_tenths_of_pounds = 0;
 	std::vector<EvolutionTrigger> evolution_triggers;
 	std::vector<LearnedMove> learned_moves;
 
