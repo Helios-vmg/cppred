@@ -79,13 +79,16 @@ void TwoWayMixer::update(double now){
 		assert(low_frame.first->frame_no == high_frame.first->frame_no);
 		bool active = high_frame.first->active;
 		if (active){
+			int divisor = this->volume_divisor * 3;
 			for (size_t i = 0; i < AudioFrame::length; i++){
-				low_frame.first->buffer[i] /= 10;
-				low_frame.first->buffer[i] += high_frame.first->buffer[i];
+				low_frame.first->buffer[i] = high_frame.first->buffer[i] / 2;
 			}
 		}else{
-			for (size_t i = 0; i < AudioFrame::length; i++)
-				low_frame.first->buffer[i] += high_frame.first->buffer[i];
+			int divisor = this->volume_divisor * 3;
+			for (size_t i = 0; i < AudioFrame::length; i++){
+				low_frame.first->buffer[i] /= divisor;
+				low_frame.first->buffer[i] += high_frame.first->buffer[i] / 2;
+			}
 		}
 		AudioRenderer::return_used_frame(high_frame);
 		if (!this->queue.try_enqueue(low_frame))

@@ -41,36 +41,37 @@ void PlayerCharacter::coroutine_entry_point(){
 	while (!this->quit_coroutine){
 		if (!this->run_saved_actions())
 			continue;
-		auto &engine = this->game->get_engine();
+
 		if (this->ignore_input){
 			this->coroutine->yield();
 			continue;
 		}
-		auto input = engine.get_input_state();
+
+		auto input = this->game->get_engine().get_input_state();
 		if (input.any_direction()){
 			if (!this->move_internal(this->input_to_direction(input)))
 				this->coroutine->yield();
 			continue;
-		}else{
-			input = this->game->joypad_only_newly_pressed();
-			if (input.get_start()){
-				//handle menu
-			}else if (input.get_a()){
-				MapObjectInstance *instances[8];
-				auto &world = this->game->get_world();
-				world.get_objects_at_location(instances, world.remap_coordinates(this->position + direction_to_vector(this->facing_direction)));
-				bool activated = false;
-				for (auto instance : instances){
-					if (!instance)
-						break;
-					instance->activate(*this);
-					activated = true;
-				}
-				if (!activated)
-					this->check_for_bookshelf_or_card_key_door();
-			}
-			this->coroutine->yield();
 		}
+
+		input = this->game->joypad_only_newly_pressed();
+		if (input.get_start()){
+			//handle menu
+		}else if (input.get_a()){
+			MapObjectInstance *instances[8];
+			auto &world = this->game->get_world();
+			world.get_objects_at_location(instances, world.remap_coordinates(this->position + direction_to_vector(this->facing_direction)));
+			bool activated = false;
+			for (auto instance : instances){
+				if (!instance)
+					break;
+				instance->activate(*this);
+				activated = true;
+			}
+			if (!activated)
+				this->check_for_bookshelf_or_card_key_door();
+		}
+		this->coroutine->yield();
 	}
 }
 

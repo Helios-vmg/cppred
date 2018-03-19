@@ -75,6 +75,7 @@ void Engine::run(){
 			global_console = this->console.get();
 		}
 		auto two_way_mixer = std::make_unique<TwoWayMixer>(*this->audio_device);
+		this->two_way_mixer = two_way_mixer.get();
 		two_way_mixer->set_renderers(std::make_unique<HeliosRenderer>(*two_way_mixer), std::make_unique<HeliosRenderer>(*two_way_mixer));
 		auto interfacep = std::make_unique<CppRed::AudioProgramInterface>(two_way_mixer->get_low_priority_renderer(), two_way_mixer->get_high_priority_renderer(), version);
 		auto &interface = *interfacep;

@@ -1,8 +1,9 @@
 #pragma once
+#include "common_types.h"
 #include "../CodeGeneration/output/pokemon_enums.h"
 #include "../CodeGeneration/output/move_enums.h"
 #include "../CodeGeneration/output/items.h"
-#include "common_types.h"
+#include "../CodeGeneration/output/text.h"
 #include "GraphicsAsset.h"
 #include <array>
 #include <vector>
@@ -91,6 +92,11 @@ struct BasePokemonInfo{
 	const GraphicsAsset * const back;
 	PokemonOverworldSprite overworld_sprite;
 	PokemonCryData cry_data;
+	TextResourceId pokedex_entry;
+	const char * const brief;
+	byte_t height_feet;
+	byte_t height_inches;
+	int weight_tenths_of_pounds;
 
 	BasePokemonInfo(
 		PokedexId pokedex_id,
@@ -112,7 +118,12 @@ struct BasePokemonInfo{
 		const GraphicsAsset * const front,
 		const GraphicsAsset * const back,
 		PokemonOverworldSprite overworld_sprite,
-		PokemonCryData &&cry_data
+		PokemonCryData &&cry_data,
+		TextResourceId pokedex_entry,
+		const char * const brief,
+		byte_t height_feet,
+		byte_t height_inches,
+		int weight_tenths_of_pounds
 	):
 		pokedex_id(pokedex_id),
 		species_id(species_id),
@@ -133,7 +144,12 @@ struct BasePokemonInfo{
 		front(front),
 		back(back),
 		overworld_sprite(overworld_sprite),
-		cry_data(cry_data)
+		cry_data(cry_data),
+		pokedex_entry(pokedex_entry),
+		brief(brief),
+		height_feet(height_feet),
+		height_inches(height_inches),
+		weight_tenths_of_pounds(weight_tenths_of_pounds)
 	{}
 	BasePokemonInfo(const BasePokemonInfo &) = delete;
 	BasePokemonInfo(BasePokemonInfo &&) = delete;
@@ -181,6 +197,11 @@ public:
 		const GraphicsAsset * const back,
 		PokemonOverworldSprite overworld_sprite,
 		PokemonCryData &&cry_data,
+		TextResourceId pokedex_entry,
+		const char * const brief,
+		byte_t height_feet,
+		byte_t height_inches,
+		int weight_tenths_of_pounds,
 		std::array<MoveId, N1> &&initial_attacks,
 		std::array<EvolutionTrigger, N2> &&evolution_triggers,
 		std::array<LearnedMove, N3> &&learned_moves
@@ -205,7 +226,12 @@ public:
 		front,
 		back,
 		overworld_sprite,
-		std::move(cry_data)
+		std::move(cry_data),
+		pokedex_entry,
+		brief,
+		height_feet,
+		height_inches,
+		weight_tenths_of_pounds
 	),
 		initial_attacks(std::move(initial_attacks)),
 		evolution_triggers(std::move(evolution_triggers)),

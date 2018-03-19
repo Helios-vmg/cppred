@@ -24,6 +24,10 @@ DECLARE_SCRIPT(BluesHouseScript);
 DECLARE_SCRIPT(BluesHouseText1);
 DECLARE_SCRIPT(OaksLabScript);
 DECLARE_SCRIPT(OaksLabText1);
+DECLARE_SCRIPT(OaksLabText2);
+DECLARE_SCRIPT(OaksLabText3);
+DECLARE_SCRIPT(OaksLabText4);
+DECLARE_SCRIPT(OaksLabText5);
 
 }
 }

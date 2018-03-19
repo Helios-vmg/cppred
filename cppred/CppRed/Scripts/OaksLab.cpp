@@ -7,6 +7,7 @@
 #include "../../../CodeGeneration/output/variables.h"
 #include "../../../CodeGeneration/output/actors.h"
 #include <CppRed/Npc.h>
+#include <sstream>
 
 namespace CppRed{
 namespace Scripts{
@@ -124,18 +125,17 @@ DECLARE_SCRIPT(OaksLabScript06){
 	auto &player = world.get_pc();
 	if (player.get_map_position().y < 6)
 		return;
+	if (player.is_moving())
+		player.abort_movement();
 	auto &blue = dynamic_cast<NpcTrainer &>(world.get_actor(ActorId::BlueInOaksLab));
 	blue.set_random_facing_direction(false);
 	blue.set_facing_direction(FacingDirection::Down);
+	player.set_ignore_input(true);
 	game.run_dialog_from_script(TextResourceId::OaksLabLeavingText);
 	game.reset_dialog_state();
 	player.move(FacingDirection::Up);
 	blue.set_random_facing_direction(true);
-	return;
-
-
-	auto &vs = game.get_variable_store();
-	vs.set(IntegerVariableId::OaksLabScriptIndex, -1);
+	player.set_ignore_input(false);
 }
 
 DECLARE_SCRIPT(OaksLabText1){
@@ -148,49 +148,133 @@ DECLARE_SCRIPT(OaksLabText1){
 		text = TextResourceId::OaksLabText41;
 	else
 		text = TextResourceId::OaksLabText40;
-	game.run_dialog_from_script(text);
+	game.run_dialog_from_world(text, *parameters.caller);
+}
+
+static SpeciesId starter_index_to_species_id(int starter_index){
+	const BasePokemonInfo *pokemon = nullptr;
+	for (auto &p : pokemon_by_pokedex_id){
+		if (p->starter_index == starter_index){
+			pokemon = p;
+			break;
+		}
+	}
+	if (!pokemon){
+		std::stringstream stream;
+		stream << "Invalid started index: " << starter_index;
+		throw std::runtime_error(stream.str());
+	}
+	return pokemon->species_id;
+}
+
+static void display_dex(const script_parameters &parameters, int starter_index){
+	
+}
+
+struct BallScriptData{
+	int starter_index;
+	int blues_starter_index;
+	int blues_ball_index;
+	TextResourceId question;
+	VisibilityFlagId vfi;
+	ActorId reds_ball;
+};
+
+static void ball_script(const script_parameters &parameters, int index){
+	static const BallScriptData static_data[] = {
+		{ 1, 2, 1, TextResourceId::OaksLabCharmanderText, VisibilityFlagId::hs_starter_ball_1, ActorId::CharmanderPokeball },
+		{ 2, 0, 2, TextResourceId::OaksLabSquirtleText,   VisibilityFlagId::hs_starter_ball_2, ActorId::SquirtlePokeball   },
+		{ 0, 1, 0, TextResourceId::OaksLabBulbasaurText,  VisibilityFlagId::hs_starter_ball_3, ActorId::BulbasaurPokeball  },
+	};
+	auto &game = *parameters.game;
+	auto &vs = game.get_variable_store();
+	if (vs.get(EventId::event_got_starter)){
+		game.run_dialog_from_script(TextResourceId::OaksLabLastMonText);
+		game.reset_dialog_state();
+		return;
+	}
+	if (!vs.get(EventId::event_oak_asked_to_choose_mon)){
+		game.run_dialog_from_script(TextResourceId::OaksLabText39);
+		game.reset_dialog_state();
+		return;
+	}
+
+	auto &data = static_data[index];
+	auto reds_species = starter_index_to_species_id(data.starter_index);
+	auto &reds_pokemon = *pokemon_by_species_id[(int)reds_species];
+	parameters.game->display_pokedex_page(reds_pokemon.pokedex_id, *parameters.caller);
+	game.run_dialog_from_script(data.question);
+	bool answer = true; //game.run_yes_no_dialog(Point(14, 7));
+	if (!answer){
+		game.reset_dialog_state();
+		return;
+	}
+	auto blues_species = starter_index_to_species_id(data.blues_starter_index);
+	vs.set(IntegerVariableId::wPlayerStarter, (int)reds_species);
+	vs.set(data.vfi, false);
+	vs.set(StringVariableId::wcd6d_ReceivedItemName, reds_pokemon.display_name);
+	auto &world = game.get_world();
+	world.get_actor(data.reds_ball).set_visible(false);
+
+	game.run_dialog_from_script(TextResourceId::OaksLabMonEnergeticText, false);
+	game.run_dialog_from_script(TextResourceId::OaksLabReceivedMonText, false);
+	auto &audio = game.get_audio_interface();
+	audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
+	audio.wait_for_sfx_to_end();
 	game.reset_dialog_state();
 }
 
+DECLARE_SCRIPT(OaksLabText2){
+	ball_script(parameters, 0);
+}
+
+DECLARE_SCRIPT(OaksLabText3){
+	ball_script(parameters, 1);
+}
+
 DECLARE_SCRIPT(OaksLabText4){
+	ball_script(parameters, 2);
+}
+
+DECLARE_SCRIPT(OaksLabText5){
 	auto &game = *parameters.game;
 	auto &vs = game.get_variable_store();
 	if (vs.get(EventId::event_pallet_after_getting_pokeballs) || vs.get(EventId::event_got_pokedex)){
-		game.run_dialog_from_script(TextResourceId::OaksLabText_1d31d);
+		game.run_dialog_from_world(TextResourceId::OaksLabText_1d31d, *parameters.caller);
 		//TODO: DisplayDexRating
 	}else{
 		auto &world = game.get_world();
 		auto &player = world.get_pc();
 		if (player.has_item_in_inventory(ItemId::PokeBall)){
 			//I don't think this will ever execute.
-			game.run_dialog_from_script(TextResourceId::OaksLabPleaseVisitText);
+			game.run_dialog_from_world(TextResourceId::OaksLabPleaseVisitText, *parameters.caller);
 		}else if (vs.get(EventId::event_beat_route22_rival_1st_battle)){
 			bool got = vs.get(EventId::event_got_pokeballs_from_oak);
 			if (got)
-				game.run_dialog_from_script(TextResourceId::OaksLabPleaseVisitText);
+				game.run_dialog_from_world(TextResourceId::OaksLabPleaseVisitText, *parameters.caller);
 			else{
 				vs.set(EventId::event_got_pokeballs_from_oak, true);
 				player.receive(ItemId::PokeBall, 5);
-				game.run_dialog_from_script(TextResourceId::OaksLabGivePokeballsText1);
+				game.run_dialog_from_world(TextResourceId::OaksLabGivePokeballsText1, *parameters.caller);
 				game.get_audio_interface().play_sound(AudioResourceId::SFX_Get_Key_Item);
-				game.run_dialog_from_script(TextResourceId::OaksLabGivePokeballsText2);
+				game.run_dialog_from_world(TextResourceId::OaksLabGivePokeballsText2, *parameters.caller);
 			}
 		}else if (vs.get(EventId::event_got_pokedex)){
-			game.run_dialog_from_script(TextResourceId::OaksLabAroundWorldText);
+			game.run_dialog_from_world(TextResourceId::OaksLabAroundWorldText, *parameters.caller);
 		}else if (vs.get(EventId::event_battled_rival_in_oaks_lab)){
 			if (player.has_item_in_inventory(ItemId::OaksParcel)){
-				game.run_dialog_from_script(TextResourceId::OaksLabDeliverParcelText1);
+				game.run_dialog_from_world(TextResourceId::OaksLabDeliverParcelText1, *parameters.caller);
 				game.get_audio_interface().play_sound(AudioResourceId::SFX_Get_Key_Item);
-				game.run_dialog_from_script(TextResourceId::OaksLabDeliverParcelText2);
+				game.run_dialog_from_world(TextResourceId::OaksLabDeliverParcelText2, *parameters.caller);
 				player.remove_all(ItemId::OaksParcel);
 				vs.set(IntegerVariableId::OaksLabScriptIndex, 15);
 			}else
-				game.run_dialog_from_script(TextResourceId::OaksLabText_1d2fa);
+				game.run_dialog_from_world(TextResourceId::OaksLabText_1d2fa, *parameters.caller);
 		}else{
 			if (vs.get(IntegerVariableId::event_received_starter))
-				game.run_dialog_from_script(TextResourceId::OaksLabText_1d2f5);
+				game.run_dialog_from_world(TextResourceId::OaksLabText_1d2f5, *parameters.caller);
 			else
-				game.run_dialog_from_script(TextResourceId::OaksLabText_1d2f0);
+				game.run_dialog_from_world(TextResourceId::OaksLabText_1d2f0, *parameters.caller);
 		}
 	}
 	game.reset_dialog_state();

@@ -201,9 +201,6 @@ NamesChosenDuringOakSpeech oak_speech(Game &game){
 	ret.rival_name = select_rival_name(game);
 	red_closing(game);
 
-	auto &variables = game.get_variable_store();
-	variables.delete_string("temp_player_name");
-	variables.delete_string("temp_rival_name");
 #else
 	game.get_audio_interface().play_sound(AudioResourceId::Stop);
 	auto &default_names_player = get_default_names(game.get_version());

@@ -33,7 +33,7 @@ void Npc::coroutine_entry_point(){
 		if (this->randomize_facing_direction || can_move_further){
 			auto &rand = this->game->get_engine().get_prng();
 			this->coroutine->wait(rand.generate_double() * (128.0 / 60.0) + 1);
-			if (!this->randomize_facing_direction)
+			if (!this->randomize_facing_direction && !can_move_further)
 				continue;
 			auto direction = (FacingDirection)rand(4);
 			

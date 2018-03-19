@@ -8,6 +8,7 @@ hOaksAideNumMonsOwned,int
 hOaksAideRequirement,int
 hSpriteIndexOrTextID,int
 LastOutdoorsMap,int
+OaksLabScriptIndex,int
 PalletTownScriptIndex,int
 SilphCoElevatorCurrentFloor,int
 wAmountMoneyWon,int
@@ -22,6 +23,7 @@ wExpAmountGained,int
 wHPBarHPDifference,int
 wPlayerCoins,int
 wPlayerNumHits,int
+wPlayerStarter,int
 wTotalPayDayMoney,int
 name_rate_new_nickname,string
 player_name,string
@@ -87,4 +89,3 @@ wLinkEnemyTrainerName,string
 wNameOfPlayerMonToBeTraded,string
 wOaksAideRewardItemName,string
 wTrainerName,string
-OaksLabScriptIndex,int

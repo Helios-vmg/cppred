@@ -6,6 +6,8 @@
 #include "TextResources.h"
 #include "pokemon_version.h"
 #include "AudioInterface.h"
+#include "ScreenOwner.h"
+#include "Actor.h"
 #include <string>
 #include <unordered_map>
 #include <queue>
@@ -77,7 +79,6 @@ enum class GameState{
 
 class Game{
 	Engine *engine;
-	std::unique_ptr<Coroutine> coroutine;
 	PokemonVersion version;
 	TextStore text_store;
 	InputState joypad_held;
@@ -91,11 +92,18 @@ class Game{
 	AudioInterface audio_interface;
 	std::unique_ptr<World> world;
 	bool reset_dialog_was_delayed = false;
+	bool no_text_delay = false;
+	std::unique_ptr<Coroutine> coroutine;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
-	void render();
+	template <typename T, typename ...Params>
+	void switch_screen_owner(Actor &actor, Params &&...params){
+		std::unique_ptr<ScreenOwner> p(new T(*this, std::forward<Params>(params)...));
+		actor.set_new_screen_owner(std::move(p));
+		Coroutine::get_current_coroutine().yield();
+	}
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program);
 	Game(Game &&) = delete;
@@ -118,6 +126,7 @@ public:
 	InputState joypad_auto_repeat();
 	InputState joypad_only_newly_pressed();
 	void wait_for_sound_to_finish();
+	bool run_yes_no_dialog(const Point &point);
 	typedef decltype(SavableData::load("")) load_save_t;
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
@@ -136,11 +145,11 @@ public:
 		const Point &minimum_size = { 0, 0 },
 		bool ignore_b = false
 	);
-	void put_string(const Point &position, TileRegion region, const char *string);
+	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
+	void run_dex_entry_from_script(TextResourceId);
 	void run_dialog(TextResourceId, bool wait_at_end = false);
-	void run_dialog(TextResourceId, TileRegion, bool wait_at_end = false);
 	void run_dialog_from_script(TextResourceId text, bool wait_at_end = true){
-		this->run_dialog(text, TileRegion::Window, wait_at_end);
+		this->run_dialog(text, wait_at_end);
 	}
 	void run_dialog_from_world(TextResourceId, Actor &activator, bool hide_window_at_end = true);
 	void reset_dialog_state();
@@ -171,6 +180,8 @@ public:
 	Coroutine &get_coroutine(){
 		return *this->coroutine;
 	}
+	void display_pokedex_page(PokedexId, Actor &requester);
+	void draw_portrait(const GraphicsAsset &, TileRegion, const Point &corner, bool flipped = false);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)

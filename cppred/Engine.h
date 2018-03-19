@@ -22,6 +22,7 @@ class Renderer;
 class Console;
 class AudioDevice;
 class AudioScheduler;
+class TwoWayMixer;
 
 namespace CppRed{
 class AudioProgramInterface;
@@ -51,6 +52,7 @@ class Engine{
 	std::unique_ptr<std::string> exception_thrown;
 	ScriptStore script_store;
 	bool gamepad_disabled = false;
+	TwoWayMixer *two_way_mixer = nullptr;
 
 	void initialize_video();
 	void initialize_audio();
@@ -78,6 +80,9 @@ public:
 		return this->gamepad_disabled ? InputState() : this->input_state;
 	}
 	DEFINE_GETTER_SETTER(gamepad_disabled)
+	TwoWayMixer &get_mixer(){
+		return *this->two_way_mixer;
+	}
 
 	void go_to_debug();
 	void restart();

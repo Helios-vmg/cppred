@@ -1,3 +1,4 @@
+#include "common_types.h"
 #include "Data.h"
 #include "Renderer.h"
 #include "Maps.h"

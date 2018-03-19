@@ -267,6 +267,9 @@ void AudioProgram::update_channel(int i){
 	if (!c->update()){
 		c.reset();
 		if (!this->for_music && i >= 4 && !this->is_sfx_playing()){
+			this->fade_out_counter = this->fade_out_counter_reload_value = 8;
+			this->fade_out_control = 1;
+			std::cout << "Completed " << this->resources[(int)this->sound_id].name << std::endl;
 			this->renderer->set_active(false);
 			this->sfx_finish_event.signal();
 		}
@@ -274,8 +277,20 @@ void AudioProgram::update_channel(int i){
 }
 
 void AudioProgram::compute_fade_out(){
-	//TODO
-	this->renderer->set_NR50(0x77);
+	if (!this->fade_out_control){
+		this->renderer->set_NR50(0x77);
+		return;
+	}
+	auto nr50 = this->renderer->get_NR50();
+	if (!nr50){
+		this->play_sound_internal(AudioResourceId::Stop);
+		this->fade_out_control = 0;
+		return;
+	}
+	if (!--this->fade_out_counter){
+		this->fade_out_counter = this->fade_out_counter_reload_value;
+		this->renderer->set_NR50(nr50 - 0x11);
+	}
 }
 
 void AudioProgram::perform_update(){
@@ -605,6 +620,7 @@ DEFINE_COMMAND_FUNCTION(ExecuteMusic){
 #ifdef LOG_COMMAND_EXECUTION
 	Logger() << "(" << this->channel_no << ") " << "execute_music\n";
 #endif
+	this->program->renderer->set_active(true);
 	this->do_execute_music = true;
 	return true;
 }
@@ -914,6 +930,7 @@ void AudioProgram::play_sound(AudioResourceId id){
 void AudioProgram::play_sound_internal(AudioResourceId id){
 	if (id == AudioResourceId::None)
 		return;
+	this->fade_out_control = 0;
 	if (id == AudioResourceId::Stop){
 		//Turn on sound hardware.
 		this->renderer->set_NR52(0x80);

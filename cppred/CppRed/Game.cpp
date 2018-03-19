@@ -13,6 +13,7 @@
 #include "../Console.h"
 #include <iostream>
 #include <sstream>
+#include "PokedexPageDisplay.h"
 
 namespace CppRed{
 
@@ -187,13 +188,18 @@ void Game::draw_box(const Point &corner, const Point &size, TileRegion region){
 	dst[1 + size.x].tile_no = tiles[8];
 }
 
-void Game::put_string(const Point &position, TileRegion region, const char *string){
+void Game::put_string(const Point &position, TileRegion region, const char *string, int pad_to){
 	int i = position.x + position.y * Tilemap::w;
 	auto tilemap = this->engine->get_renderer().get_tilemap(region).tiles;
-	for (; *string; string++){
-		tilemap[i].tile_no = (byte_t)*string;
+	int characters = 0;
+	for (; string[characters]; characters++){
+		tilemap[i].tile_no = (byte_t)string[characters];
 		tilemap[i].flipped_x = false;
 		tilemap[i].flipped_y = false;
+		i = (i + 1) % Tilemap::size;
+	}
+	for (; characters < pad_to; characters++){
+		tilemap[i].tile_no = ' ';
 		i = (i + 1) % Tilemap::size;
 	}
 }
@@ -257,19 +263,16 @@ int Game::handle_standard_menu(TileRegion region, const Point &position, const s
 	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b);
 }
 
-void Game::run_dialog(TextResourceId resource, TileRegion region, bool wait_at_end){
+void Game::run_dialog(TextResourceId resource, bool wait_at_end){
 	if (!this->dialog_box_visible){
-		if (region == TileRegion::Window){
-			auto dialog_state = Game::get_default_dialog_state();
-			auto &renderer = this->engine->get_renderer();
-			renderer.set_window_region_start((dialog_state.box_corner - Point(1, 1)) * Renderer::tile_size);
-			renderer.set_window_region_size((dialog_state.box_size + Point(2, 2)) * Renderer::tile_size);
-			renderer.set_enable_window(true);
-		}
-		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, region);
+		auto dialog_state = Game::get_default_dialog_state();
+		auto &renderer = this->engine->get_renderer();
+		renderer.set_window_region_start((dialog_state.box_corner - Point(1, 1)) * Renderer::tile_size);
+		renderer.set_window_region_size((dialog_state.box_size + Point(2, 2)) * Renderer::tile_size);
+		renderer.set_enable_window(true);
+		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Window);
 		this->dialog_box_visible = true;
 	}
-	this->text_state.region = region;
 	this->text_store.execute(*this, resource, this->text_state);
 	if (wait_at_end)
 		PromptCommand::wait_for_continue(*this, this->text_state, false);
@@ -280,19 +283,32 @@ void Game::run_dialog(TextResourceId resource, TileRegion region, bool wait_at_e
 	this->joypad_pressed = InputState();
 }
 
-void Game::run_dialog(TextResourceId resource, bool wait_at_end){
-	this->run_dialog(resource, TileRegion::Background, wait_at_end);
+void Game::run_dialog_from_world(TextResourceId id, Actor &activator, bool hide_window_at_end){
+	this->switch_screen_owner<TextDisplay>(activator, id, hide_window_at_end);
 }
 
-void Game::run_dialog_from_world(TextResourceId id, Actor &activator, bool hide_window_at_end){
-	std::unique_ptr<ScreenOwner> p(new TextDisplay(*this, id, hide_window_at_end));
-	activator.set_new_screen_owner(std::move(p));
-	Coroutine::get_current_coroutine().yield();
+void Game::run_dex_entry_from_script(TextResourceId id){
+	auto dialog_state = Game::get_default_dialog_state();
+	dialog_state.box_corner.y -= 2;
+	dialog_state.box_size.y += 2;
+	dialog_state.first_position.y -= 3;
+	dialog_state.position =
+		dialog_state.start_of_line =
+			dialog_state.first_position;
+	auto &renderer = this->engine->get_renderer();
+	renderer.set_window_region_start((dialog_state.box_corner) * Renderer::tile_size);
+	renderer.set_window_region_size((dialog_state.box_size) * Renderer::tile_size);
+	renderer.set_enable_window(true);
+	auto old = this->no_text_delay;
+	this->no_text_delay = true;
+	this->text_store.execute(*this, id, dialog_state);
+	this->no_text_delay = old;
+	PromptCommand::wait_for_continue(*this, dialog_state, false);
+	this->joypad_pressed = InputState();
 }
 
 TextState Game::get_default_dialog_state(){
 	TextState ret;
-	ret.region = TileRegion::Background;
 	ret.first_position =
 		ret.position =
 		ret.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
@@ -303,13 +319,14 @@ TextState Game::get_default_dialog_state(){
 }
 
 void Game::reset_dialog_state(){
-	if (this->text_state.region == TileRegion::Window)
-		this->engine->get_renderer().set_enable_window(false);
+	this->engine->get_renderer().set_enable_window(false);
 	this->text_state = this->get_default_dialog_state();
 	this->dialog_box_visible = false;
 }
 
 void Game::text_print_delay(){
+	if (this->no_text_delay)
+		return;
 	Coroutine::get_current_coroutine().wait_frames((int)this->options.text_speed);
 }
 
@@ -563,6 +580,22 @@ void Game::execute(const char *script_name, Actor &caller, const char *parameter
 	params.caller = &caller;
 	params.parameter = parameter;
 	this->engine->execute_script(params);
+}
+
+void Game::display_pokedex_page(PokedexId id, Actor &requester){
+	this->switch_screen_owner<PokedexPageDisplay>(requester, id);
+}
+
+void Game::draw_portrait(const GraphicsAsset &graphics, TileRegion region, const Point &corner, bool flipped){
+	auto point = corner;
+	if (graphics.height < 7)
+		point.y += 7 - graphics.height;
+	if (graphics.width)
+		point.x += (7 - graphics.width) / 2;
+	if (!flipped)
+		this->engine->get_renderer().draw_image_to_tilemap(point, graphics, region);
+	else
+		this->engine->get_renderer().draw_image_to_tilemap_flipped(point, graphics, region);
 }
 
 }

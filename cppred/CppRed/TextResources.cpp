@@ -110,9 +110,11 @@ void progressively_write_text(const T &data, Game &game, TextState &state){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
-	auto tiles = renderer.get_tilemap(state.region).tiles + state.position.x + state.position.y * Tilemap::w;
+	auto tiles = renderer.get_tilemap(TileRegion::Window).tiles + state.position.x + state.position.y * Tilemap::w;
 	for (auto c : data){
-		(tiles++)->tile_no = (typename std::make_unsigned<decltype(c)>::type)c;
+		tiles->tile_no = (typename std::make_unsigned<decltype(c)>::type)c;
+		tiles->opaque = true;
+		tiles++;
 		state.position.x++;
 		game.text_print_delay();
 	}
@@ -132,16 +134,21 @@ void LineCommand::execute(Game &game, TextState &state){
 void TextResourceCommand::wait_for_continue(Game &game, TextState &state, bool display_arrow){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	auto tilemap = renderer.get_tilemap(state.region).tiles;
-	auto &arrow_location = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w].tile_no;
+	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
+	auto &tile = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w];
+	auto &arrow_location = tile.tile_no;
+	auto &opaqueness = tile.opaque;
 	for (bool b = true;; b = !b){
-		if (display_arrow)
+		if (display_arrow){
 			arrow_location = b ? down_arrow : ' ';
+			opaqueness = true;
+		}
 		if (game.check_for_user_interruption_no_auto_repeat(0.5))
 			break;
 	}
 	if (display_arrow){
 		arrow_location = ' ';
+		opaqueness = true;
 		game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 	}
 }
@@ -149,7 +156,7 @@ void TextResourceCommand::wait_for_continue(Game &game, TextState &state, bool d
 void ContCommand::execute(Game &game, TextState &state){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	auto tilemap = renderer.get_tilemap(state.region).tiles;
+	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	
 	this->wait_for_continue(game, state);
 
@@ -161,8 +168,11 @@ void ContCommand::execute(Game &game, TextState &state){
 				tilemap[state.box_corner.x + x + y0] = tilemap[state.box_corner.x + x + y1];
 		}
 		auto y0 = (state.box_corner.y + state.box_size.y - 1) * Tilemap::w;
-		for (int x = 0; x < state.box_size.x; x++)
-			tilemap[state.box_corner.x + x + y0].tile_no = ' ';
+		for (int x = 0; x < state.box_size.x; x++){
+			auto &tile = tilemap[state.box_corner.x + x + y0];
+			tile.tile_no = ' ';
+			tile.opaque = true;
+		}
 		Coroutine::get_current_coroutine().wait_frames(6);
 	}
 	state.position = state.start_of_line;
@@ -171,14 +181,17 @@ void ContCommand::execute(Game &game, TextState &state){
 void ParaCommand::execute(Game &game, TextState &state){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	auto tilemap = renderer.get_tilemap(state.region).tiles;
+	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	
 	this->wait_for_continue(game, state);
 	
 	for (int y = 0; y < state.box_size.y; y++){
 		auto y0 = (state.box_corner.y + y) * Tilemap::w;
-		for (int x = 0; x < state.box_size.x; x++)
-			tilemap[state.box_corner.x + x + y0].tile_no = ' ';
+		for (int x = 0; x < state.box_size.x; x++){
+			auto &tile = tilemap[state.box_corner.x + x + y0];
+			tile.tile_no = ' ';
+			tile.opaque = true;
+		}
 	}
 	state.start_of_line = state.position = state.first_position;
 }
@@ -192,7 +205,11 @@ void DoneCommand::execute(Game &game, TextState &){
 	game.delayed_reset_dialog();
 }
 
-void DexCommand::execute(Game &, TextState &){}
+void DexCommand::execute(Game &game, TextState &state){
+	char temp[] = {'.'};
+	progressively_write_text(temp, game, state);
+}
+
 void AutocontCommand::execute(Game &, TextState &){}
 
 void MemCommand::execute(Game &game, TextState &state){

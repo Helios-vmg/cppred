@@ -43,6 +43,8 @@ DECLARE_SCRIPT(PalletTownScript0){
 	auto position = player.get_map_position();
 	if (position.y > 1)
 		return;
+	if (player.is_moving())
+		player.abort_movement();
 	player.set_facing_direction(FacingDirection::Down);
 	auto &ai = game.get_audio_interface();
 	ai.play_sound(AudioResourceId::Stop);
@@ -101,10 +103,15 @@ DECLARE_SCRIPT(PalletTownScript0){
 			oak_done = true;
 		});
 		while (!oak_done || !player_done){
-			player_co.get_clock().step();
-			player_co.resume();
-			oak_co.get_clock().step();
-			oak_co.resume();
+			if (!player_done){
+				player_co.get_clock().step();
+				player_co.resume();
+			}
+			if (!oak_done){
+				oak_co.get_clock().step();
+				oak_co.resume();
+			}else
+				oak.set_visible(false);
 			coroutine.yield();
 		}
 		static_cast<Npc &>(oak).set_special_movement_duration(old);

@@ -51,6 +51,7 @@
     <ClInclude Include="CppRed\ItemActor.h" />
     <ClInclude Include="CppRed\Npc.h" />
     <ClInclude Include="CppRed\PlayerCharacter.h" />
+    <ClInclude Include="CppRed\PokedexPageDisplay.h" />
     <ClInclude Include="CppRed\ScreenOwner.h" />
     <ClInclude Include="CppRed\Scripts\Scripts.h" />
     <ClInclude Include="CppRed\TextDisplay.h" />
@@ -89,6 +90,7 @@
     <ClCompile Include="CppRed\ItemActor.cpp" />
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
+    <ClCompile Include="CppRed\PokedexPageDisplay.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
     <ClCompile Include="CppRed\Scripts\BluesHouse.cpp" />
     <ClCompile Include="CppRed\Scripts\OaksLab.cpp" />
@@ -317,7 +319,7 @@ cd %a%
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -383,7 +385,7 @@ cd %a%
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>

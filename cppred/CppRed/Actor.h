@@ -37,6 +37,7 @@ protected:
 	bool visible = true;
 	bool ignore_occupancy = false;
 	std::deque<std::function<void()>> saved_actions;
+	bool aborting_movement = false;
 
 	template <typename T>
 	void apply_to_all_sprites(const T &f){
@@ -50,7 +51,7 @@ protected:
 	void initialize_reduced_sprite(const GraphicsAsset &graphics, Renderer &);
 	void initialize_single_sprite(const GraphicsAsset &graphics, Renderer &);
 	virtual void coroutine_entry_point();
-	void run_walking_animation(const Point &delta, FacingDirection);
+	bool run_walking_animation(const Point &delta, FacingDirection);
 	bool move(const Point &delta, FacingDirection);
 	virtual void entered_new_map(Map old_map, Map new_map, bool warped){}
 	virtual bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection direction);
@@ -105,6 +106,9 @@ public:
 		return false;
 	}
 	virtual void set_random_facing_direction(bool value){}
+	void abort_movement(){
+		this->aborting_movement = true;
+	}
 };
 
 class NonPlayerActor : public Actor{

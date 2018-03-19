@@ -92,6 +92,7 @@ class TwoWayMixer : public AudioRenderer, public AbstractAudioDevice{
 	std::unique_ptr<GbAudioRenderer> low_priority_renderer;
 	std::unique_ptr<GbAudioRenderer> high_priority_renderer;
 	moodycamel::ReaderWriterQueue<AudioRenderer::frame_t> queue;
+	int volume_divisor = 1;
 
 	AudioFrame *get_current_frame() override;
 	void return_used_frame(AudioFrame *frame) override;
@@ -104,6 +105,12 @@ public:
 	void update(double now) override;
 	void set_renderer(AudioRenderer &) override{}
 	void clear_renderer() override{}
+	void add_volume_divisor(int d){
+		this->volume_divisor *= d;
+	}
+	void remove_volume_divisor(int d){
+		this->volume_divisor /= d;
+	}
 	GbAudioRenderer &get_low_priority_renderer(){
 		return *this->low_priority_renderer;
 	}

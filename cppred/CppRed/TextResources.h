@@ -32,7 +32,6 @@ enum class TextResourceCommandType{
 
 class TextState{
 public:
-	TileRegion region;
 	Point start_of_line;
 	Point position;
 	Point box_corner,

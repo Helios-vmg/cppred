@@ -6,6 +6,7 @@
 #include "VideoDevice.h"
 #include <SDL.h>
 #include <vector>
+#include <deque>
 #include <map>
 #include <memory>
 
@@ -55,7 +56,7 @@ private:
 		const Palette *palette;
 	};
 	RenderPoint intermediate_render_surface[logical_screen_width * logical_screen_height];
-	std::vector<RendererContext> stack;
+	std::deque<RendererContext> stack;
 	RendererContext *current_context;
 	std::vector<Sprite *> sprite_list;
 

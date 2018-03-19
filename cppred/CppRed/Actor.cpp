@@ -183,19 +183,23 @@ bool Actor::move(const Point &delta, FacingDirection direction){
 	auto &map1 = world.get_map_instance(pos1.map);
 	//Note: during movement, both source and destination blocks are occupied by the actor.
 	map1.set_cell_occupation(pos1.position, true);
-	this->run_walking_animation(delta, direction);
-	auto map0 = world.try_get_map_instance(pos0.map);
-	if (map0)
-		map0->set_cell_occupation(pos0.position, false);
-	this->position = pos1;
-	if (pos0.map != pos1.map)
-		this->entered_new_map(pos0.map, pos1.map, false);
+	bool ret = this->run_walking_animation(delta, direction);
+	if (!ret)
+		map1.set_cell_occupation(pos1.position, false);
+	else{
+		auto map0 = world.try_get_map_instance(pos0.map);
+		if (map0)
+			map0->set_cell_occupation(pos0.position, false);
+		this->position = pos1;
+		if (pos0.map != pos1.map)
+			this->entered_new_map(pos0.map, pos1.map, false);
+	}
 	this->moving = false;
-	return true;
+	this->aborting_movement = false;
+	return ret;
 }
 
-void Actor::run_walking_animation(const Point &delta, FacingDirection direction){
-	//TODO
+bool Actor::run_walking_animation(const Point &delta, FacingDirection direction){
 	auto &E = this->game->get_engine();
 	auto &coroutine = Coroutine::get_current_coroutine();
 	auto &c = coroutine.get_clock();
@@ -215,6 +219,8 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 		}
 		this->pixel_offset = delta * (movement_per_frame * (t * 60));
 		coroutine.yield();
+		if (this->aborting_movement)
+			break;
 		last_t = t;
 	}
 	if (this->walking_animation_state % 2){
@@ -222,6 +228,7 @@ void Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 		this->set_visible_sprite();
 	}
 	this->pixel_offset = Point();
+	return !this->aborting_movement;
 }
 
 
