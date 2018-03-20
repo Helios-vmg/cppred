@@ -91,6 +91,7 @@
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\PokedexPageDisplay.cpp" />
+    <ClCompile Include="CppRed\Pokemon.cpp" />
     <ClCompile Include="CppRed\ScreenOwner.cpp" />
     <ClCompile Include="CppRed\Scripts\BluesHouse.cpp" />
     <ClCompile Include="CppRed\Scripts\OaksLab.cpp" />

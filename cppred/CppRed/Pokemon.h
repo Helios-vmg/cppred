@@ -6,14 +6,6 @@
 
 namespace CppRed{
 
-struct PokemonStats{
-	int hp;
-	int attack;
-	int defense;
-	int speed;
-	int special;
-};
-
 class Pokemon{
 	SpeciesId species;
 	std::string nickname;
@@ -25,15 +17,17 @@ class Pokemon{
 	int experience;
 	PokemonStats stat_experience;
 	PokemonStats computed_stats;
-	byte_t dvs[2];
-	byte_t pp[4];
+	std::uint16_t individual_values;
+	int pp[4];
+	
+	int get_iv(PokemonStats::StatId) const;
 public:
 	//Generates a random pokemon with the given species and level.
-	Pokemon(SpeciesId species, int level, XorShift128 &);
-	Pokemon(const Pokemon &);
-	Pokemon(Pokemon &&);
-	const Pokemon &operator=(const Pokemon &);
-	const Pokemon &operator=(Pokemon &&);
+	Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &);
+	Pokemon(const Pokemon &) = default;
+	Pokemon(Pokemon &&) = default;
+	int get_stat(PokemonStats::StatId, bool ignore_xp = false) const;
+	//void set_stat_xp(PokemonStats::StatId )
 };
 
 class Party{
@@ -43,6 +37,7 @@ private:
 	std::vector<Pokemon> members;
 public:
 	Party() = default;
+	bool add_pokemon(SpeciesId, int level, std::uint16_t original_trainer_id, XorShift128 &);
 };
 
 }

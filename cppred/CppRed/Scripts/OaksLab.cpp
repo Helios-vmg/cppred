@@ -222,6 +222,7 @@ static void ball_script(const script_parameters &parameters, int index){
 	audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
 	audio.wait_for_sfx_to_end();
 	auto &player = world.get_pc();
+	player.get_party().add_pokemon(reds_pokemon.species_id, 5, player.get_trainer_id(), game.get_engine().get_prng());
 	game.reset_dialogue_state();
 }
 

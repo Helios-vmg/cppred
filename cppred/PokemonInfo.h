@@ -71,17 +71,59 @@ struct LearnedMove{
 	MoveId move;
 };
 
+struct PokemonStats{
+	int hp;
+	int attack;
+	int defense;
+	int speed;
+	int special;
+
+	enum class StatId{
+		Hp = 0,
+		Attack,
+		Defense,
+		Speed,
+		Special,
+	};
+	int &get_stat(StatId id){
+		switch (id){
+			case StatId::Hp:
+				return this->hp;
+			case StatId::Attack:
+				return this->attack;
+			case StatId::Defense:
+				return this->defense;
+			case StatId::Speed:
+				return this->speed;
+			case StatId::Special:
+				return this->special;
+		}
+		return this->special;
+	}
+	int get_stat(StatId id) const{
+		switch (id){
+			case StatId::Hp:
+				return this->hp;
+			case StatId::Attack:
+				return this->attack;
+			case StatId::Defense:
+				return this->defense;
+			case StatId::Speed:
+				return this->speed;
+			case StatId::Special:
+				return this->special;
+		}
+		return this->special;
+	}
+};
+
 struct BasePokemonInfo{
 	PokedexId pokedex_id;
 	SpeciesId species_id;
 	const char *internal_name;
 	bool allocated;
 	std::int8_t starter_index;
-	byte_t base_hp;
-	byte_t base_attack;
-	byte_t base_defense;
-	byte_t base_speed;
-	byte_t base_special;
+	PokemonStats base_stats;
 	std::array<PokemonTypeId, 2> type;
 	byte_t catch_rate;
 	byte_t base_xp_yield;
@@ -130,11 +172,7 @@ struct BasePokemonInfo{
 		internal_name(internal_name),
 		allocated(allocated),
 		starter_index(starter_index),
-		base_hp(base_hp),
-		base_attack(base_attack),
-		base_defense(base_defense),
-		base_speed(base_speed),
-		base_special(base_special),
+		base_stats{base_hp, base_attack, base_defense, base_speed, base_special},
 		type(std::move(type)),
 		catch_rate(catch_rate),
 		base_xp_yield(base_xp_yield),

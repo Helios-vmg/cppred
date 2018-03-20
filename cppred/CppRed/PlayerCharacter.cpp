@@ -15,7 +15,8 @@ const PlayerCharacter::warp_check_f PlayerCharacter::warp_check_functions[2] = {
 };
 
 PlayerCharacter::PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer):
-		Actor(game, parent_coroutine, name, renderer, RedSprite){
+		Actor(game, parent_coroutine, name, renderer, RedSprite),
+		Trainer(game.get_engine().get_prng()){
 }
 
 void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer){

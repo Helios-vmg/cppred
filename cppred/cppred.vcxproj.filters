@@ -340,5 +340,8 @@
     <ClCompile Include="CppRed\PokedexPageDisplay.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="CppRed\Pokemon.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

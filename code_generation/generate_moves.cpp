@@ -11,6 +11,9 @@ struct MoveData{
 	std::string name;
 	unsigned field_move_index;
 	std::string display_name;
+	std::string additional_effect;
+	unsigned power;
+	/**/
 };
 
 static void generate_enums(const std::map<unsigned, MoveData> &moves){

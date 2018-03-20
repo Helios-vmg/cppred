@@ -16,11 +16,20 @@ public:
 protected:
 	Party party;
 	std::vector<InventorySpace> inventory;
+	std::uint16_t trainer_id;
 public:
+	Trainer(XorShift128 &);
 	virtual ~Trainer() = 0;
 	bool has_item_in_inventory(ItemId) const;
 	void receive(ItemId, int);
 	void remove_all(ItemId);
+	Party &get_party(){
+		return this->party;
+	}
+	const Party &get_party() const{
+		return this->party;
+	}
+	DEFINE_GETTER(trainer_id)
 };
 
 inline Trainer::~Trainer(){}

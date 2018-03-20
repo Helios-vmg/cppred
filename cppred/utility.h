@@ -55,6 +55,15 @@ public:
 	}
 	void generate_block(void *buffer, size_t size);
 	double generate_double();
+	template <typename T>
+	void generate(T &dst){
+		dst = (T)(*this)(std::numeric_limits<T>::max() + 1);
+	}
+	void generate(std::uint64_t &dst){
+		dst = (*this)();
+		dst <<= 32;
+		dst |= (*this)();
+	}
 };
 
 template <typename T, size_t N>
