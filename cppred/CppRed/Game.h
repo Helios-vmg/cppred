@@ -87,11 +87,11 @@ class Game{
 	GameOptions options;
 	bool options_initialized = false;
 	TextState text_state;
-	bool dialog_box_visible = false;
+	bool dialogue_box_visible = false;
 	VariableStore variable_store;
 	AudioInterface audio_interface;
 	std::unique_ptr<World> world;
-	bool reset_dialog_was_delayed = false;
+	bool reset_dialogue_was_delayed = false;
 	bool no_text_delay = false;
 	std::unique_ptr<Coroutine> coroutine;
 
@@ -126,7 +126,7 @@ public:
 	InputState joypad_auto_repeat();
 	InputState joypad_only_newly_pressed();
 	void wait_for_sound_to_finish();
-	bool run_yes_no_dialog(const Point &point);
+	bool run_yes_no_menu(const Point &point);
 	typedef decltype(SavableData::load("")) load_save_t;
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
@@ -134,29 +134,31 @@ public:
 		TileRegion region,
 		const Point &position,
 		const std::vector<std::string> &items,
-		const Point &minimum_size = { 0, 0 },
-		bool ignore_b = false
+		const Point &minimum_size = Point(),
+		bool ignore_b = false,
+		bool initial_padding = true
 	);
 	int handle_standard_menu_with_title(
 		TileRegion region,
 		const Point &position,
 		const std::vector<std::string> &items,
 		const char *title,
-		const Point &minimum_size = { 0, 0 },
-		bool ignore_b = false
+		const Point &minimum_size = Point(),
+		bool ignore_b = false,
+		bool initial_padding = true
 	);
 	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
 	void run_dex_entry_from_script(TextResourceId);
-	void run_dialog(TextResourceId, bool wait_at_end = false);
-	void run_dialog_from_script(TextResourceId text, bool wait_at_end = true){
-		this->run_dialog(text, wait_at_end);
+	void run_dialogue(TextResourceId, bool wait_at_end = false);
+	void run_dialogue_from_script(TextResourceId text, bool wait_at_end = true){
+		this->run_dialogue(text, wait_at_end);
 	}
-	void run_dialog_from_world(TextResourceId, Actor &activator, bool hide_window_at_end = true);
-	void reset_dialog_state();
-	void delayed_reset_dialog(){
-		this->reset_dialog_was_delayed = true;
+	void run_dialogue_from_world(TextResourceId, Actor &activator, bool hide_window_at_end = true);
+	void reset_dialogue_state();
+	void delayed_reset_dialogue(){
+		this->reset_dialogue_was_delayed = true;
 	}
-	static TextState get_default_dialog_state();
+	static TextState get_default_dialogue_state();
 	void text_print_delay();
 	VariableStore &get_variable_store(){
 		return this->variable_store;

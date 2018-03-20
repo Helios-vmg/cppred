@@ -11,9 +11,9 @@ TextDisplay::TextDisplay(Game &game, TextResourceId text_id, bool hide_window_at
 
 std::unique_ptr<ScreenOwner> TextDisplay::run(){
 	auto &renderer = this->game->get_engine().get_renderer();
-	this->game->run_dialog_from_script(this->text_id);
+	this->game->run_dialogue_from_script(this->text_id);
 	if (this->hide)
-		this->game->reset_dialog_state();
+		this->game->reset_dialogue_state();
 
 	return nullptr;
 }

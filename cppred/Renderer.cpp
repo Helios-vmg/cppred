@@ -23,19 +23,48 @@ Renderer::Renderer(VideoDevice &device): device(&device){
 	this->initialize_data();
 }
 
-void Renderer::push(){
-	if (!this->stack.size())
-		this->stack.resize(1);
+template <typename T>
+void push(T *&p, std::deque<T> &q){
+	if (!q.size())
+		q.resize(1);
 	else
-		this->stack.emplace_back(*this->current_context);
-	this->current_context = &this->stack.back();
+		q.emplace_back(*p);
+	p = &q.back();
+}
+
+template <typename T>
+bool pop(T *&p, std::deque<T> &q){
+	if (q.size() == 1)
+		return false;
+	q.pop_back();
+	p = &q.back();
+	return true;
+}
+
+void Renderer::push(){
+	::push(this->current_context, this->stack);
 }
 
 void Renderer::pop(){
-	if (this->stack.size() == 1)
+	if (!::pop(this->current_context, this->stack))
 		throw std::runtime_error("Renderer::pop(): Incorrect usage. Attempted to pop the last context!");
-	this->stack.pop_back();
-	this->current_context = &this->stack.back();
+}
+
+void Renderer::push_window(){
+	this->current_context->push_window();
+}
+
+void Renderer::pop_window(){
+	this->current_context->pop_window();
+}
+
+void Renderer::RendererContext::push_window(){
+	::push(this->window, this->windows);
+}
+
+void Renderer::RendererContext::pop_window(){
+	if (!::pop(this->window, this->windows))
+		throw std::runtime_error("Renderer::RendererContext::pop(): Incorrect usage. Attempted to pop the last window!");
 }
 
 std::unique_ptr<VideoDevice> Renderer::initialize_device(int scale){
@@ -71,9 +100,9 @@ void Renderer::initialize_data(){
 }
 
 bool sort_sprites(Sprite *a, Sprite *b){
-	if (a->get_x() > b->get_x())
+	if (a->get_y() > b->get_y())
 		return true;
-	if (a->get_x() < b->get_x())
+	if (a->get_y() < b->get_y())
 		return false;
 	return a->get_id() < b->get_id();
 }
@@ -88,14 +117,12 @@ void Renderer::do_software_rendering(){
 	if (!this->main_texture.try_lock(surf))
 		return;
 
-	for (auto &point : this->intermediate_render_surface){
-		point.value = -1;
-		point.palette = nullptr;
-	}
+	fill(this->intermediate_render_surface, {-1, nullptr, false});
 
+	this->render_windows();
+	this->render_sprites(true);
 	this->render_background();
-	this->render_sprites();
-	this->render_window();
+	this->render_sprites(false);
 	this->final_render(surf);
 	
 #ifdef MEASURE_RENDERING_TIMES
@@ -117,6 +144,8 @@ void Renderer::render_background(){
 			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
 			auto &color_index = point.value;
 			auto &palette = point.palette;
+			if (point.complete)
+				continue;
 
 			color_index = -1;
 			palette = nullptr;
@@ -136,20 +165,27 @@ void Renderer::render_background(){
 					tile_offset_y = (tile_size - 1) - tile_offset_y;
 				color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
 				palette = &tile.palette;
-				if (!*palette)
+				if (!*palette){
 					palette = &bg_palette;
+					//point.complete = true;
+				}
 			}
 		}
 	}
 }
 
-void Renderer::render_sprites(){
+void Renderer::render_sprites(bool priority){
 	if (!this->enable_sprites())
 		return;
 
 	this->sprite_list.clear();
 	for (auto &kv : this->sprites()){
 		auto sprite = kv.second;
+		bool any = false;
+		for (SpriteTile &tile : sprite->iterate_tiles())
+			any = any || tile.has_priority;
+		if (any != priority)
+			continue;
 		auto x0 = sprite->get_x();
 		auto y0 = sprite->get_y();
 		auto x1 = x0 + sprite->get_w() * tile_size;
@@ -191,6 +227,8 @@ void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
 			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
 			auto &color_index = point.value;
 			auto &palette = point.palette;
+			if (point.complete)
+				continue;
 
 			auto sprite_tile_x = sprite_offset_x / tile_size;
 			auto sprite_tile_y = sprite_offset_y / tile_size;
@@ -217,25 +255,34 @@ void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
 				palette = &sprite_palette;
 				if (!*palette)
 					palette = sprite_palettes[(int)sprite_palette_region];
+				point.complete = true;
 			}
 		}
 	}
 }
 
-void Renderer::render_window(){
+void Renderer::render_windows(){
+	auto &w = this->current_context->windows;
+	for (auto i = w.rbegin(), e = w.rend(); i != e; ++i)
+		this->render_window(*i);
+}
+
+void Renderer::render_window(const WindowLayer &window){
 	if (!this->enable_window())
 		return;
-	auto &window_region_start = this->window_region_start();
-	auto &window_tilemap = this->window_tilemap();
-	auto &window_origin = this->window_origin();
+	auto &window_region_start = window.window_region_start;
+	auto &window_tilemap = window.window_tilemap;
+	auto &window_origin = window.window_origin;
 	auto &bg_palette = this->bg_palette();
-	auto end = window_region_start + this->window_region_size();
+	auto end = window_region_start + window.window_region_size;
 	auto x0 = window_region_start.x;
 	for (int y = window_region_start.y; y < end.y; y++){
 		for (int x = x0; x < end.x; x++){
 			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
 			auto &color_index = point.value;
 			auto &palette = point.palette;
+			if (point.complete)
+				continue;
 
 			color_index = -1;
 			palette = nullptr;
@@ -250,8 +297,10 @@ void Renderer::render_window(){
 			auto tile_offset_y = src.y % tile_size;
 			color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
 			palette = &tile.palette;
-			if (!*palette)
+			if (!*palette){
 				palette = &bg_palette;
+				point.complete = true;
+			}
 		}
 	}
 }
@@ -384,7 +433,6 @@ void Renderer::clear_screen(){
 	}
 	{
 		Tile null;
-		null.opaque = false;
 		fill(this->window_tilemap().tiles, null);
 	}
 	Point zero = { 0, 0 };
@@ -403,6 +451,10 @@ void Renderer::set_enable_bg(bool value){
 
 void Renderer::set_enable_window(bool value){
 	this->enable_window() = value;
+}
+
+bool Renderer::get_enable_window(){
+	return this->enable_window();
 }
 
 void Renderer::set_enable_sprites(bool value){
@@ -462,4 +514,25 @@ void Renderer::set_y_bg_offset(int y0, int y1, const Point &p){
 
 void Renderer::set_y_window_offset(int y0, int y1, const Point &p){
 	this->set_y_offset(this->window_offsets(), y0, y1, p);
+}
+
+
+Renderer::RendererContext::RendererContext(){
+	this->windows.resize(1);
+	this->window = &this->windows.back();
+}
+
+Renderer::RendererContext::RendererContext(const RendererContext &other){
+	this->bg_tilemap = other.bg_tilemap;
+	this->windows = other.windows;
+	this->window = &this->windows.back();
+	this->bg_palette = other.bg_palette;
+	this->sprite0_palette = other.sprite0_palette;
+	this->sprite1_palette = other.sprite1_palette;
+	std::copy(other.bg_offsets, other.bg_offsets + array_length(other.bg_offsets), this->bg_offsets);
+	this->bg_global_offset = other.bg_global_offset;
+	this->sprites = other.sprites;
+	this->enable_bg = other.enable_bg;
+	this->enable_window = other.enable_window;
+	this->enable_sprites = other.enable_sprites;
 }

@@ -113,7 +113,6 @@ void progressively_write_text(const T &data, Game &game, TextState &state){
 	auto tiles = renderer.get_tilemap(TileRegion::Window).tiles + state.position.x + state.position.y * Tilemap::w;
 	for (auto c : data){
 		tiles->tile_no = (typename std::make_unsigned<decltype(c)>::type)c;
-		tiles->opaque = true;
 		tiles++;
 		state.position.x++;
 		game.text_print_delay();
@@ -137,18 +136,14 @@ void TextResourceCommand::wait_for_continue(Game &game, TextState &state, bool d
 	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	auto &tile = tilemap[state.continue_location.x + state.continue_location.y * Tilemap::w];
 	auto &arrow_location = tile.tile_no;
-	auto &opaqueness = tile.opaque;
 	for (bool b = true;; b = !b){
-		if (display_arrow){
+		if (display_arrow)
 			arrow_location = b ? down_arrow : ' ';
-			opaqueness = true;
-		}
 		if (game.check_for_user_interruption_no_auto_repeat(0.5))
 			break;
 	}
 	if (display_arrow){
 		arrow_location = ' ';
-		opaqueness = true;
 		game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 	}
 }
@@ -171,7 +166,6 @@ void ContCommand::execute(Game &game, TextState &state){
 		for (int x = 0; x < state.box_size.x; x++){
 			auto &tile = tilemap[state.box_corner.x + x + y0];
 			tile.tile_no = ' ';
-			tile.opaque = true;
 		}
 		Coroutine::get_current_coroutine().wait_frames(6);
 	}
@@ -190,7 +184,6 @@ void ParaCommand::execute(Game &game, TextState &state){
 		for (int x = 0; x < state.box_size.x; x++){
 			auto &tile = tilemap[state.box_corner.x + x + y0];
 			tile.tile_no = ' ';
-			tile.opaque = true;
 		}
 	}
 	state.start_of_line = state.position = state.first_position;
@@ -202,7 +195,7 @@ void PromptCommand::execute(Game &game, TextState &state){
 }
 
 void DoneCommand::execute(Game &game, TextState &){
-	game.delayed_reset_dialog();
+	game.delayed_reset_dialogue();
 }
 
 void DexCommand::execute(Game &game, TextState &state){

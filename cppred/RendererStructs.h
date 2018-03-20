@@ -68,14 +68,12 @@ public:
 	bool flipped_x;
 	bool flipped_y;
 	Palette palette;
-	bool opaque;
 
-	explicit Tile(std::uint16_t tile_no = 0, bool flipped_x = false, bool flipped_y = false, Palette palette = null_palette, bool opaque = true):
+	explicit Tile(std::uint16_t tile_no = 0, bool flipped_x = false, bool flipped_y = false, Palette palette = null_palette):
 		tile_no(tile_no),
 		flipped_x(flipped_x),
 		flipped_y(flipped_y),
-		palette(palette),
-		opaque(opaque){}
+		palette(palette){}
 };
 
 class SpriteTile : public Tile{

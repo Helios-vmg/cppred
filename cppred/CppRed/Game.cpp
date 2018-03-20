@@ -43,7 +43,7 @@ Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface
 	this->world.reset(new World(*this));
 	this->coroutine.reset(new Coroutine("Game coroutine", this->engine->get_stepping_clock(), [this](Coroutine &){ Scripts::entry_point(*this); }));
 	this->coroutine->set_on_yield([this](){ this->update_joypad_state(); });
-	this->reset_dialog_state();
+	this->reset_dialogue_state();
 }
 
 Game::~Game(){
@@ -210,8 +210,10 @@ int Game::handle_standard_menu_with_title(
 		const std::vector<std::string> &items,
 		const char *title,
 		const Point &minimum_size,
-		bool ignore_b){
+		bool ignore_b,
+		bool initial_padding){
 
+	region = TileRegion::Window;
 	auto position = position_;
 	auto width = minimum_size.x;
 	auto n = (int)items.size();
@@ -221,8 +223,19 @@ int Game::handle_standard_menu_with_title(
 		position.x = Renderer::logical_screen_tile_width - (width + 2);
 	if (position.y + n * 2 + 2 > Renderer::logical_screen_tile_height)
 		position.y = Renderer::logical_screen_tile_height - (n * 2 + 2);
+	
+	Point size(width, std::max(n * 2 - !initial_padding, minimum_size.y));
+	this->draw_box(position, size, region);
 
-	this->draw_box(position, { width, std::max(n * 2, minimum_size.y) }, region);
+	size += {2, 2};
+
+	auto &renderer = this->engine->get_renderer();
+	renderer.set_window_origin({0, 0});
+	renderer.set_window_region_start(position * Renderer::tile_size);
+	renderer.set_window_region_size(size * Renderer::tile_size);
+	auto old_window = renderer.get_enable_window();
+	renderer.set_enable_window(true);
+
 	if (title){
 		auto l = (int)strlen(title);
 		this->put_string(position + Point{ (width - l) / 2 + 1, 0 }, region, title);
@@ -230,23 +243,25 @@ int Game::handle_standard_menu_with_title(
 
 	int y = 1;
 	for (auto &s : items)
-		this->put_string(position + Point{ 2, y++ * 2 }, region, s.c_str());
+		this->put_string(position + Point{ 2, y++ * 2 - !initial_padding }, region, s.c_str());
 
 	int current_item = 0;
-	auto tilemap = this->engine->get_renderer().get_tilemap(region).tiles;
+	auto tilemap = renderer.get_tilemap(region).tiles;
 	while (true){
-		auto index = position.x + 1 + (position.y + (current_item + 1) * 2) * Tilemap::w;
+		auto index = position.x + 1 + (position.y + (current_item + 1) * 2 - !initial_padding) * Tilemap::w;
 		tilemap[index].tile_no = black_arrow;
 		int addend = 0;
 		do{
-			this->coroutine->yield();
+			Coroutine::get_current_coroutine().yield();
 			auto state = this->joypad_auto_repeat();
 			if (!ignore_b && state.get_b()){
 				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+				renderer.set_enable_window(old_window);
 				return -1;
 			}
 			if (state.get_a()){
 				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+				renderer.set_enable_window(old_window);
 				return current_item;
 			}
 			if (!(state.get_down() || state.get_up()))
@@ -256,58 +271,59 @@ int Game::handle_standard_menu_with_title(
 		tilemap[index].tile_no = ' ';
 		current_item = (current_item + n + addend) % n;
 	}
+	assert(false);
 	return -1;
 }
 
-int Game::handle_standard_menu(TileRegion region, const Point &position, const std::vector<std::string> &items, const Point &minimum_size, bool ignore_b){
-	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b);
+int Game::handle_standard_menu(TileRegion region, const Point &position, const std::vector<std::string> &items, const Point &minimum_size, bool ignore_b, bool initial_padding){
+	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b, initial_padding);
 }
 
-void Game::run_dialog(TextResourceId resource, bool wait_at_end){
-	if (!this->dialog_box_visible){
-		auto dialog_state = Game::get_default_dialog_state();
+void Game::run_dialogue(TextResourceId resource, bool wait_at_end){
+	if (!this->dialogue_box_visible){
+		auto dialogue_state = Game::get_default_dialogue_state();
 		auto &renderer = this->engine->get_renderer();
-		renderer.set_window_region_start((dialog_state.box_corner - Point(1, 1)) * Renderer::tile_size);
-		renderer.set_window_region_size((dialog_state.box_size + Point(2, 2)) * Renderer::tile_size);
+		renderer.set_window_region_start((dialogue_state.box_corner - Point(1, 1)) * Renderer::tile_size);
+		renderer.set_window_region_size((dialogue_state.box_size + Point(2, 2)) * Renderer::tile_size);
 		renderer.set_enable_window(true);
 		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Window);
-		this->dialog_box_visible = true;
+		this->dialogue_box_visible = true;
 	}
 	this->text_store.execute(*this, resource, this->text_state);
 	if (wait_at_end)
 		PromptCommand::wait_for_continue(*this, this->text_state, false);
-	if (this->reset_dialog_was_delayed){
-		this->reset_dialog_state();
-		this->reset_dialog_was_delayed = false;
+	if (this->reset_dialogue_was_delayed){
+		this->reset_dialogue_state();
+		this->reset_dialogue_was_delayed = false;
 	}
 	this->joypad_pressed = InputState();
 }
 
-void Game::run_dialog_from_world(TextResourceId id, Actor &activator, bool hide_window_at_end){
+void Game::run_dialogue_from_world(TextResourceId id, Actor &activator, bool hide_window_at_end){
 	this->switch_screen_owner<TextDisplay>(activator, id, hide_window_at_end);
 }
 
 void Game::run_dex_entry_from_script(TextResourceId id){
-	auto dialog_state = Game::get_default_dialog_state();
-	dialog_state.box_corner.y -= 2;
-	dialog_state.box_size.y += 2;
-	dialog_state.first_position.y -= 3;
-	dialog_state.position =
-		dialog_state.start_of_line =
-			dialog_state.first_position;
+	auto dialogue_state = Game::get_default_dialogue_state();
+	dialogue_state.box_corner.y -= 2;
+	dialogue_state.box_size.y += 2;
+	dialogue_state.first_position.y -= 3;
+	dialogue_state.position =
+		dialogue_state.start_of_line =
+			dialogue_state.first_position;
 	auto &renderer = this->engine->get_renderer();
-	renderer.set_window_region_start((dialog_state.box_corner) * Renderer::tile_size);
-	renderer.set_window_region_size((dialog_state.box_size) * Renderer::tile_size);
+	renderer.set_window_region_start((dialogue_state.box_corner) * Renderer::tile_size);
+	renderer.set_window_region_size((dialogue_state.box_size) * Renderer::tile_size);
 	renderer.set_enable_window(true);
 	auto old = this->no_text_delay;
 	this->no_text_delay = true;
-	this->text_store.execute(*this, id, dialog_state);
+	this->text_store.execute(*this, id, dialogue_state);
 	this->no_text_delay = old;
-	PromptCommand::wait_for_continue(*this, dialog_state, false);
+	PromptCommand::wait_for_continue(*this, dialogue_state, false);
 	this->joypad_pressed = InputState();
 }
 
-TextState Game::get_default_dialog_state(){
+TextState Game::get_default_dialogue_state(){
 	TextState ret;
 	ret.first_position =
 		ret.position =
@@ -318,10 +334,10 @@ TextState Game::get_default_dialog_state(){
 	return ret;
 }
 
-void Game::reset_dialog_state(){
+void Game::reset_dialogue_state(){
 	this->engine->get_renderer().set_enable_window(false);
-	this->text_state = this->get_default_dialog_state();
-	this->dialog_box_visible = false;
+	this->text_state = this->get_default_dialogue_state();
+	this->dialogue_box_visible = false;
 }
 
 void Game::text_print_delay(){
@@ -596,6 +612,15 @@ void Game::draw_portrait(const GraphicsAsset &graphics, TileRegion region, const
 		this->engine->get_renderer().draw_image_to_tilemap(point, graphics, region);
 	else
 		this->engine->get_renderer().draw_image_to_tilemap_flipped(point, graphics, region);
+}
+
+bool Game::run_yes_no_menu(const Point &point){
+	std::vector<std::string> items = {
+		"YES",
+		"NO",
+	};
+	AutoRendererWindowPusher pusher(this->engine->get_renderer());
+	return this->handle_standard_menu(TileRegion::Window, point, items, Point(), false, false) == 0;
 }
 
 }

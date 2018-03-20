@@ -28,22 +28,32 @@ public:
 	typedef typename sprite_map_t::iterator sprite_iterator;
 
 private:
+	struct WindowLayer{
+		Tilemap window_tilemap;
+		Point window_offsets[logical_screen_height];
+		Point window_origin;
+		Point window_region_start;
+		Point window_region_size;
+	};
+
 	struct RendererContext{
 		Tilemap bg_tilemap;
-		Tilemap window_tilemap;
+		std::deque<WindowLayer> windows;
+		WindowLayer *window;
 		Palette bg_palette;
 		Palette sprite0_palette;
 		Palette sprite1_palette;
 		Point bg_offsets[logical_screen_height];
-		Point window_offsets[logical_screen_height];
 		Point bg_global_offset = { 0, 0 };
-		Point window_origin;
-		Point window_region_start;
-		Point window_region_size;
 		sprite_map_t sprites;
 		bool enable_bg = false;
 		bool enable_window = false;
 		bool enable_sprites = true;
+
+		RendererContext();
+		RendererContext(const RendererContext &);
+		void push_window();
+		void pop_window();
 	};
 
 	VideoDevice *device;
@@ -54,6 +64,7 @@ private:
 	struct RenderPoint{
 		int value;
 		const Palette *palette;
+		bool complete;
 	};
 	RenderPoint intermediate_render_surface[logical_screen_width * logical_screen_height];
 	std::deque<RendererContext> stack;
@@ -70,30 +81,36 @@ private:
 #define Renderer_DEFINE_ACCESSOR(name) \
 	decltype(RendererContext::name) &name(){ return this->context().name; } \
 	const decltype(RendererContext::name) &name() const{ return this->context().name; }
+	
+#define Renderer_DEFINE_WINDOW_ACCESSOR(name) \
+	decltype(WindowLayer::name) &name(){ return this->context().window->name; } \
+	const decltype(WindowLayer::name) &name() const{ return this->context().window->name; }
 
 	Renderer_DEFINE_ACCESSOR(bg_tilemap)
-	Renderer_DEFINE_ACCESSOR(window_tilemap)
+	Renderer_DEFINE_WINDOW_ACCESSOR(window_tilemap)
 	Renderer_DEFINE_ACCESSOR(bg_palette)
 	Renderer_DEFINE_ACCESSOR(sprite0_palette)
 	Renderer_DEFINE_ACCESSOR(sprite1_palette)
 	Renderer_DEFINE_ACCESSOR(bg_offsets)
-	Renderer_DEFINE_ACCESSOR(window_offsets)
+	Renderer_DEFINE_WINDOW_ACCESSOR(window_offsets)
 	Renderer_DEFINE_ACCESSOR(bg_global_offset)
-	Renderer_DEFINE_ACCESSOR(window_origin)
-	Renderer_DEFINE_ACCESSOR(window_region_start)
-	Renderer_DEFINE_ACCESSOR(window_region_size)
+	Renderer_DEFINE_WINDOW_ACCESSOR(window_origin)
+	Renderer_DEFINE_WINDOW_ACCESSOR(window_region_start)
+	Renderer_DEFINE_WINDOW_ACCESSOR(window_region_size)
 	Renderer_DEFINE_ACCESSOR(sprites)
 	Renderer_DEFINE_ACCESSOR(enable_bg)
 	Renderer_DEFINE_ACCESSOR(enable_window)
 	Renderer_DEFINE_ACCESSOR(enable_sprites)
+	Renderer_DEFINE_ACCESSOR(window)
 
 	void initialize_assets();
 	void initialize_data();
 	void do_software_rendering();
 	void render_background();
-	void render_sprites();
+	void render_sprites(bool priority);
 	void render_sprite(Sprite &, const Palette **);
-	void render_window();
+	void render_window(const WindowLayer &);
+	void render_windows();
 	void final_render(TextureSurface &);
 	void set_y_offset(Point (&)[logical_screen_height], int y0, int y1, const Point &);
 	std::vector<Point> draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &, TileRegion, Palette, bool);
@@ -123,6 +140,7 @@ public:
 	void clear_screen();
 	void set_enable_bg(bool value);
 	void set_enable_window(bool value);
+	bool get_enable_window();
 	void set_enable_sprites(bool value);
 	void fill_rectangle(TileRegion region, const Point &corner, const Point &size, const Tile &tile);
 	void clear_sprites();
@@ -160,6 +178,8 @@ public:
 	void set_y_window_offset(int y0, int y1, const Point &);
 	void push();
 	void pop();
+	void push_window();
+	void pop_window();
 };
 
 class AutoRendererPusher{
@@ -180,6 +200,30 @@ public:
 	const AutoRendererPusher &operator=(AutoRendererPusher &&other){
 		if (this->renderer)
 			this->renderer->pop();
+		this->renderer = other.renderer;
+		other.renderer = nullptr;
+		return *this;
+	}
+};
+
+class AutoRendererWindowPusher{
+	Renderer *renderer;
+public:
+	AutoRendererWindowPusher(Renderer &renderer): renderer(&renderer){
+		this->renderer->push_window();
+	}
+	AutoRendererWindowPusher(const AutoRendererPusher &) = delete;
+	AutoRendererWindowPusher(AutoRendererPusher &&other){
+		*this = std::move(other);
+	}
+	~AutoRendererWindowPusher(){
+		if (this->renderer)
+			this->renderer->pop_window();
+	}
+	const AutoRendererWindowPusher &operator=(const AutoRendererWindowPusher &) = delete;
+	const AutoRendererWindowPusher &operator=(AutoRendererWindowPusher &&other){
+		if (this->renderer)
+			this->renderer->pop_window();
 		this->renderer = other.renderer;
 		other.renderer = nullptr;
 		return *this;

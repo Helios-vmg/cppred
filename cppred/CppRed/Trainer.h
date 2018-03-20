@@ -19,7 +19,7 @@ protected:
 public:
 	virtual ~Trainer() = 0;
 	bool has_item_in_inventory(ItemId) const;
-	void  receive(ItemId, int);
+	void receive(ItemId, int);
 	void remove_all(ItemId);
 };
 
