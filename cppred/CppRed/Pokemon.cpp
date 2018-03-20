@@ -42,7 +42,7 @@ int Pokemon::get_iv(PokemonStats::StatId which) const{
 	if (which == PokemonStats::StatId::Hp){
 		int ret = 0;
 		for (int i = 0; i < 4; i++){
-			int index = i ^= 1;
+			int index = (i ^ 1) * 4;
 			int val = (this->individual_values >> index) & 0x01;
 			ret <<= 1;
 			ret |= val;
