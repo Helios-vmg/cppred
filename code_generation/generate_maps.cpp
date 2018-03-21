@@ -20,10 +20,17 @@ static const char * const blocksets2_file = "input/blocksets2.csv";
 static const char * const collision_file = "input/collision.csv";
 static const char * const map_connections_file = "input/map_connections.csv";
 static const char * const map_text_file = "input/map_text.csv";
-static const char * const text_file = "input/text.txt";
+extern const char * const text_file = "input/text.txt";
 static const char * const audio_csv_file = "output/audio.csv";
 static const char * const map_sprites_visibility_file = "input/map_sprites_visibility.csv";
 static const char * const bookcases_file = "input/bookcases.csv";
+extern const char * const pokemon_data_file;
+extern const char * const evolutions_file;
+extern const char * const pokemon_moves_file;
+extern const char * const moves_file;
+extern const char * const pokemon_types_file;
+extern const char * const effects_file;
+
 static const std::vector<std::string> input_files = {
 	maps_file,
 	tilesets_file,
@@ -36,7 +43,14 @@ static const std::vector<std::string> input_files = {
 	audio_csv_file,
 	map_sprites_visibility_file,
 	bookcases_file,
+	pokemon_data_file,
+	evolutions_file,
+	pokemon_moves_file,
+	moves_file,
+	pokemon_types_file,
+	effects_file,
 };
+
 static const char * const hash_key = "generate_maps";
 static const char * const date_string = __DATE__ __TIME__;
 

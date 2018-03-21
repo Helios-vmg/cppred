@@ -2,8 +2,26 @@
 #include "../common/sha1.h"
 #include "PokemonData.h"
 
-static const char * const events_file = "input/trainer_parties.csv";
+static const char * const map_objects_file = "input/trainer_parties.csv";
+extern const char * const pokemon_data_file;
+extern const char * const evolutions_file;
+extern const char * const pokemon_moves_file;
+extern const char * const moves_file;
+extern const char * const pokemon_types_file;
+extern const char * const effects_file;
+
+static const std::vector<std::string> input_files = {
+	map_objects_file,
+	pokemon_data_file,
+	evolutions_file,
+	pokemon_moves_file,
+	moves_file,
+	pokemon_types_file,
+	effects_file,
+};
+
 static const char * const hash_key = "generate_trainer_parties";
+
 static const char * const date_string = __DATE__ __TIME__;
 
 struct TrainerPartyMember{
@@ -39,7 +57,7 @@ struct TrainerClass{
 };
 
 static void generate_trainer_parties_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data){
-	auto current_hash = hash_file(events_file, date_string);
+	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating trainer parties.\n";
 		return;
@@ -58,7 +76,7 @@ static void generate_trainer_parties_internal(known_hashes_t &known_hashes, std:
 
 	std::map<std::string, TrainerClass> classes;
 
-	CsvParser csv(events_file);
+	CsvParser csv(map_objects_file);
 	auto rows = csv.row_count();
 	for (size_t i = 0; i < rows; i++){
 		auto row = csv.get_ordered_row(i, order);

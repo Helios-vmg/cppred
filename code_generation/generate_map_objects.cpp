@@ -3,9 +3,28 @@
 #include "PokemonData.h"
 #include "Variables.h"
 
-static const char * const events_file = "input/map_objects.csv";
+static const char * const map_objects_file = "input/map_objects.csv";
 static const char * const names_input_file = "input/map_object_names.csv";
+extern const char * const pokemon_data_file;
+extern const char * const evolutions_file;
+extern const char * const pokemon_moves_file;
+extern const char * const moves_file;
+extern const char * const pokemon_types_file;
+extern const char * const effects_file;
+
+static const std::vector<std::string> input_files = {
+	map_objects_file,
+	names_input_file,
+	pokemon_data_file,
+	evolutions_file,
+	pokemon_moves_file,
+	moves_file,
+	pokemon_types_file,
+	effects_file,
+};
+
 static const char * const hash_key = "generate_map_objects";
+
 static const char * const date_string = __DATE__ __TIME__;
 
 static const std::map<std::string, std::string> types_map = {
@@ -279,7 +298,8 @@ static std::map<unsigned, std::string> load_name_map(){
 //------------------------------------------------------------------------------
 
 static void generate_map_objects_internal(known_hashes_t &known_hashes, std::unique_ptr<PokemonData> &pokemon_data, Variables &variables){
-	auto current_hash = hash_files({events_file, names_input_file}, date_string);
+
+	auto current_hash = hash_files(input_files, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating map objects.\n";
 		return;
@@ -305,7 +325,7 @@ static void generate_map_objects_internal(known_hashes_t &known_hashes, std::uni
 		"legacy_sprite_id",	// 12
 	};
 
-	CsvParser csv(events_file);
+	CsvParser csv(map_objects_file);
 	std::map<std::string, std::vector<MapObject>> map_sets;
 	size_t rows = csv.row_count();
 	auto name_map = load_name_map();

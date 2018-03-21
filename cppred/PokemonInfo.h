@@ -1,29 +1,42 @@
 #pragma once
 #include "common_types.h"
+#include "../CodeGeneration/output/pokemon_moves.h"
 #include "../CodeGeneration/output/pokemon_enums.h"
-#include "../CodeGeneration/output/move_enums.h"
 #include "../CodeGeneration/output/items.h"
 #include "../CodeGeneration/output/text.h"
 #include "GraphicsAsset.h"
 #include <array>
 #include <vector>
 
-enum class PokemonTypeId{
-	Normal = 0,
-	Fighting = 1,
-	Flying = 2,
-	Poison = 3,
-	Ground = 4,
-	Rock = 5,
-	Bug = 7,
-	Ghost = 8,
-	Fire = 20,
-	Water = 21,
-	Grass = 22,
-	Electric = 23,
-	Psychic = 24,
-	Ice = 25,
-	Dragon = 26,
+struct MoveData{
+	MoveId id;
+	const char *name;
+	int field_move_index;
+	const char *display_name;
+	MoveAdditionalEffect additional_effect;
+	int power;
+	PokemonTypeId type;
+	int accuracy;
+	int pp;
+	explicit MoveData(
+		MoveId id,
+		const char *name,
+		int field_move_index,
+		const char *display_name,
+		MoveAdditionalEffect additional_effect,
+		int power,
+		PokemonTypeId type,
+		int accuracy,
+		int pp):
+		id(id),
+		name(name),
+		field_move_index(field_move_index),
+		display_name(display_name),
+		additional_effect(additional_effect),
+		power(power),
+		type(type),
+		accuracy(accuracy),
+		pp(pp){}
 };
 
 enum class PokemonOverworldSprite{

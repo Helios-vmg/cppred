@@ -42,9 +42,6 @@
     <ClInclude Include="generate_text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="generate_moves.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="generate_items.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -114,9 +111,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generate_text.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="generate_moves.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generate_items.cpp">

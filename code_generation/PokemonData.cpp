@@ -7,8 +7,14 @@
 extern const char * const pokemon_data_file = "input/pokemon_data.csv";
 extern const char * const evolutions_file = "input/evolutions.csv";
 extern const char * const pokemon_moves_file = "input/pokemon_moves.csv";
+extern const char * const moves_file = "input/moves.csv";
+extern const char * const pokemon_types_file = "input/pokemon_types.csv";
+extern const char * const effects_file = "input/move_effects.csv";
 
-PokemonData::PokemonData(){
+PokemonData::PokemonData():
+		types(pokemon_types_file),
+		effects(effects_file),
+		moves(moves_file, this->types, this->effects){
 	{
 		static const std::vector<std::string> data_order = {
 			"species_id",       // 0
@@ -48,7 +54,7 @@ PokemonData::PokemonData(){
 		CsvParser csv(pokemon_data_file);
 		unsigned rows = csv.row_count();
 		for (unsigned i = 0; i < rows; i++)
-			this->species.emplace_back(csv.get_ordered_row(i, data_order));
+			this->species.emplace_back(csv.get_ordered_row(i, data_order), this->moves, this->types);
 	}
 
 	std::map<std::string, SpeciesData *> species;
@@ -81,7 +87,7 @@ PokemonData::PokemonData(){
 		CsvParser csv(pokemon_moves_file);
 		unsigned rows = csv.row_count();
 		for (unsigned i = 0; i < rows; i++){
-			LearnedMove move(csv.get_ordered_row(i, moves_order));
+			LearnedMove move(csv.get_ordered_row(i, moves_order), this->moves);
 			species[move.species]->learned_moves.push_back(move);
 		}
 	}
@@ -174,7 +180,7 @@ static unsigned parse_decimal_float(const std::string &s){
 	return ret;
 }
 
-SpeciesData::SpeciesData(const std::vector<std::string> &columns){
+SpeciesData::SpeciesData(const std::vector<std::string> &columns, const MoveStore &moves, const TypeStore &types){
 	this->species_id = to_unsigned(columns[0]);
 	this->pokedex_id = to_unsigned_default(columns[1]);
 	this->name = columns[2];
@@ -183,56 +189,60 @@ SpeciesData::SpeciesData(const std::vector<std::string> &columns){
 	this->base_defense = to_unsigned_default(columns[5]);
 	this->base_speed = to_unsigned_default(columns[6]);
 	this->base_special = to_unsigned_default(columns[7]);
-	for (int i = 0; i < 2; i++){
-		this->type[i] = columns[8 + i];
-		if (!this->type[i].size())
-			this->type[i] = "Normal";
-	}
-	this->catch_rate = to_unsigned_default(columns[10]);
-	this->base_xp_yield = to_unsigned_default(columns[11]);
-	for (int i = 0; i < 4; i++){
-		if (!columns[12 + i].size())
-			continue;
-		this->initial_attacks.push_back(columns[12 + i]);
-	}
-	this->growth_rate = to_unsigned_default(columns[16]);
-	{
-		auto &bitmap = columns[17];
-		if (bitmap.size() != 7 * 8)
-			throw std::runtime_error("tmlearn_bitmap has invalid length.");
-		for (int i = 0; i < 7; i++){
-			this->tmlearn_bitmap[i] = 0;
-			for (int j = 0; j < 8; j++){
-				char c = bitmap[i * 8 + j];
-				this->tmlearn_bitmap[i] |= (c != '0') << j;
+	try{
+		for (int i = 0; i < 2; i++){
+			auto &s = columns[8 + i];
+			this->type[i] = types.get_type(!s.size() ? "Normal" : s);
+		}
+		this->catch_rate = to_unsigned_default(columns[10]);
+		this->base_xp_yield = to_unsigned_default(columns[11]);
+		for (int i = 0; i < 4; i++){
+			auto &s = columns[12 + i];
+			if (!s.size())
+				continue;
+			this->initial_attacks.push_back(moves.get_move(s));
+		}
+		this->growth_rate = to_unsigned_default(columns[16]);
+		{
+			auto &bitmap = columns[17];
+			if (bitmap.size() != 7 * 8)
+				throw std::runtime_error("tmlearn_bitmap has invalid length.");
+			for (int i = 0; i < 7; i++){
+				this->tmlearn_bitmap[i] = 0;
+				for (int j = 0; j < 8; j++){
+					char c = bitmap[i * 8 + j];
+					this->tmlearn_bitmap[i] |= (c != '0') << j;
+				}
 			}
 		}
-	}
-	this->display_name = filter_text(columns[18]);
-	this->front_image = columns[19];
-	this->back_image = columns[20];
-	this->cry_base = hex_no_prefix_to_unsigned_default(columns[21]);
-	this->cry_pitch = hex_no_prefix_to_unsigned_default(columns[22]);
-	this->cry_length = hex_no_prefix_to_unsigned_default(columns[23]);
+		this->display_name = filter_text(columns[18]);
+		this->front_image = columns[19];
+		this->back_image = columns[20];
+		this->cry_base = hex_no_prefix_to_unsigned_default(columns[21]);
+		this->cry_pitch = hex_no_prefix_to_unsigned_default(columns[22]);
+		this->cry_length = hex_no_prefix_to_unsigned_default(columns[23]);
 
-	if (this->front_image.size())
-		this->front_image = "&" + this->front_image;
-	else
-		this->front_image = "nullptr";
-	if (this->back_image.size())
-		this->back_image = "&" + this->back_image;
-	else
-		this->back_image = "nullptr";
+		if (this->front_image.size())
+			this->front_image = "&" + this->front_image;
+		else
+			this->front_image = "nullptr";
+		if (this->back_image.size())
+			this->back_image = "&" + this->back_image;
+		else
+			this->back_image = "nullptr";
 
-	this->allocated = to_bool(columns[24]);
-	this->overworld_sprite = columns[25];
-	this->starter_index = to_int(columns[26]);
-	if (this->allocated){
-		this->pokedex_entry = columns[27];
-		this->brief = columns[28];
-		this->height_feet = to_unsigned(columns[29]);
-		this->height_inches = to_unsigned(columns[30]);
-		this->weight_tenths_of_pounds = parse_decimal_float(columns[31]);
+		this->allocated = to_bool(columns[24]);
+		this->overworld_sprite = columns[25];
+		this->starter_index = to_int(columns[26]);
+		if (this->allocated){
+			this->pokedex_entry = columns[27];
+			this->brief = columns[28];
+			this->height_feet = to_unsigned(columns[29]);
+			this->height_inches = to_unsigned(columns[30]);
+			this->weight_tenths_of_pounds = parse_decimal_float(columns[31]);
+		}
+	}catch (std::exception &e){
+		throw std::runtime_error("Error while processing Pokemon data for " + this->name + ": " + e.what());
 	}
 }
 
@@ -244,10 +254,22 @@ EvolutionTrigger::EvolutionTrigger(const std::vector<std::string> &columns){
 	this->item = columns[4];
 }
 
-LearnedMove::LearnedMove(const std::vector<std::string> &columns){
+LearnedMove::LearnedMove(const std::vector<std::string> &columns, const MoveStore &moves){
 	this->species = columns[0];
 	this->level = to_unsigned(columns[1]);
-	this->move = columns[2];
+	this->move = moves.get_move(columns[2]);
+}
+
+void PokemonData::generate_secondary_enums(const char *filename) const{
+	std::ofstream file(filename);
+	file << generated_file_warning <<
+		"\n"
+		"#pragma once\n"
+		"\n";
+	
+	this->types.generate_static_data_declarations(file);
+	this->effects.generate_static_data_declarations(file);
+	this->moves.generate_static_data_declarations(file);
 }
 
 void PokemonData::generate_enums(const char *filename) const{
@@ -304,6 +326,9 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 		"\n"
 		"#include \"" << header_name << "\"\n"
 		"\n";
+	
+	this->types.generate_static_data_definitions(file);
+	this->moves.generate_static_data_definitions(file);
 
 	for (auto &species : this->species){
 		file <<
@@ -319,8 +344,8 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			"    " << species.base_speed << ",\n"
 			"    " << species.base_special << ",\n"
 			"    {\n"
-			"        PokemonTypeId::" << species.type[0] << ",\n"
-			"        PokemonTypeId::" << species.type[1] << ",\n"
+			"        PokemonTypeId::" << species.type[0]->get_name() << ",\n"
+			"        PokemonTypeId::" << species.type[1]->get_name() << ",\n"
 			"    },\n"
 			"    " << species.catch_rate << ",\n"
 			"    " << species.base_xp_yield << ",\n"
@@ -355,7 +380,7 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			;
 
 		for (auto &attack : species.initial_attacks)
-			file << "        MoveId::" << attack << ",\n";
+			file << "        MoveId::" << attack->get_name() << ",\n";
 
 		file <<
 			"    },\n"
@@ -382,7 +407,7 @@ void PokemonData::generate_static_data_definitions(const char *filename, const c
 			"    },\n"
 			"    {\n";
 		for (auto &move : species.learned_moves)
-			file << "        LEARN(" << move.level << ", " << move.move << "),\n";
+			file << "        LEARN(" << move.level << ", " << move.move->get_name() << "),\n";
 		file <<
 			"    },\n"
 			"};\n"
@@ -435,4 +460,199 @@ unsigned PokemonData::get_species_id(const std::string &name){
 	if (it == map.end())
 		throw std::runtime_error("Error: Invalid SpeciesId: " + name);
 	return it->second;
+}
+
+MoveStore::MoveStore(const char *path, const TypeStore &types, const AdditionalEffectStore &effects){
+	static const std::vector<std::string> data_order = {
+		"id",
+		"name",
+		"field_move_index",
+		"display_name",
+		"additional_effect",
+		"power",
+		"type",
+		"accuracy",
+		"pp",
+	};
+
+	CsvParser csv(path);
+	auto rows = csv.row_count();
+	for (size_t i = 0; i < rows; i++){
+		auto row = csv.get_ordered_row(i, data_order);
+		auto move = std::make_shared<MoveData>(row, types, effects);
+		this->moves_by_name[move->get_name()] = move;
+		this->moves_by_id[move->get_id()] = move;
+	}
+	this->moves_serialized.resize(this->moves_by_id.rbegin()->second->get_id() + 1);
+	for (auto &kv : this->moves_by_id)
+		if (kv.second->get_display_name().size())
+			this->moves_serialized[kv.first] = kv.second;
+}
+
+std::shared_ptr<MoveData> MoveStore::get_move(const std::string &name) const{
+	auto it = this->moves_by_name.find(name);
+	if (it == this->moves_by_name.end())
+		throw std::runtime_error("Move not found: " + name);
+	return it->second;
+}
+
+MoveData::MoveData(const std::vector<std::string> &columns, const TypeStore &types, const AdditionalEffectStore &effects){
+	this->id                = to_unsigned(columns[0]);
+	this->name              =             columns[1] ;
+	this->field_move_index  = to_unsigned(columns[2]);
+	this->display_name      =             columns[3] ;
+	this->power             = to_unsigned(columns[5]);
+	this->accuracy          = to_unsigned(columns[7]);
+	this->pp                = to_unsigned(columns[8]);
+
+	try{
+		this->additional_effect = effects.get_effect(columns[4]);
+		this->type = types.get_type(columns[6]);
+	}catch (std::exception &e){
+		throw std::runtime_error("Error while processing move data for " + this->name + ": " + e.what());
+	}
+}
+
+TypeData::TypeData(const std::vector<std::string> &columns){
+	this->id           = to_unsigned(columns[0]);
+	this->name         =             columns[1] ;
+	this->display_name =             columns[2] ;
+}
+
+TypeStore::TypeStore(const char *path){
+	static const std::vector<std::string> data_order = {
+		"id",
+		"name",
+		"display_name",
+	};
+
+	CsvParser csv(path);
+	auto rows = csv.row_count();
+	for (size_t i = 0; i < rows; i++){
+		auto row = csv.get_ordered_row(i, data_order);
+		auto move = std::make_shared<TypeData>(row);
+		this->types_by_name[move->get_name()] = move;
+		this->types_by_id[move->get_id()] = move;
+		unsigned id = this->normalized_strings.size();
+		this->normalized_strings[move->get_display_name()] = id;
+	}
+}
+
+AdditionalEffectStore::AdditionalEffectStore(const char *path){
+	static const std::vector<std::string> data_order = {
+		"id",
+		"name",
+	};
+
+	CsvParser csv(path);
+	auto rows = csv.row_count();
+	for (size_t i = 0; i < rows; i++){
+		auto row = csv.get_ordered_row(i, data_order);
+		auto effect = std::make_shared<AdditionalEffectData>(row);
+		this->effects_by_name[effect->get_name()] = effect;
+		this->effects_by_id[effect->get_id()] = effect;
+	}
+}
+
+AdditionalEffectData::AdditionalEffectData(const std::vector<std::string> &columns){
+	this->id = to_unsigned(columns[0]);
+	this->name = columns[1];
+}
+
+std::shared_ptr<AdditionalEffectData> AdditionalEffectStore::get_effect(const std::string &name) const{
+	auto it = this->effects_by_name.find(name);
+	if (it == this->effects_by_name.end())
+		throw std::runtime_error("Effect not found: " + name);
+	return it->second;
+}
+
+std::shared_ptr<TypeData> TypeStore::get_type(const std::string &name) const{
+	auto it = this->types_by_name.find(name);
+	if (it == this->types_by_name.end())
+		throw std::runtime_error("Type not found: " + name);
+	return it->second;
+}
+
+void TypeStore::generate_static_data_declarations(std::ostream &header) const{
+	header << "enum class PokemonTypeId{\n";
+	for (auto &kv : this->types_by_id)
+		header << "    " << kv.second->get_name() << " = " << kv.second->get_id() << ",\n";
+	header <<
+		"};\n"
+		"\n"
+		"extern const char * const pokemon_type_strings[" << this->types_by_id.size() << "];\n"
+		"\n";
+}
+
+void TypeStore::generate_static_data_definitions(std::ostream &source) const{
+	source << "const char * const pokemon_type_strings2[] = {\n";
+	{
+		std::map<unsigned, std::string> temp_inverse;
+		for (auto &kv : this->normalized_strings)
+			temp_inverse[kv.second] = kv.first;
+		for (auto &kv : temp_inverse)
+			source << "    \"" << kv.second << "\",\n";
+	}
+	source <<
+		"};\n"
+		"\n"
+		"extern const char * const pokemon_type_strings[" << this->types_by_id.size() << "] = {\n";
+	for (auto &kv : this->types_by_id)
+		source << "    pokemon_type_strings2[" << this->normalized_strings.find(kv.second->get_display_name())->second << "],\n";
+	source << "};\n";
+}
+
+void AdditionalEffectStore::generate_static_data_declarations(std::ostream &header) const{
+	header << "enum class MoveAdditionalEffect{\n";
+	for (auto &kv : this->effects_by_id)
+		header << "    " << kv.second->get_name() << " = " << kv.second->get_id() << ",\n";
+	header <<
+		"};\n"
+		"\n";
+}
+
+void MoveStore::generate_static_data_declarations(std::ostream &header) const{
+	header << "enum class MoveId{\n";
+	for (auto &kv : this->moves_by_id)
+		header << "    " << kv.second->get_name() << " = " << kv.second->get_id() << ",\n";
+
+	header <<
+		"};\n"
+		"\n"
+		"struct MoveData;\n"
+		"\n"
+		"extern const MoveData * const pokemon_moves_by_id[" << this->moves_serialized.size() << "];\n"
+		"static const size_t pokemon_moves_by_id_size = " << this->moves_serialized.size() << ";\n";
+}
+
+void MoveStore::generate_static_data_definitions(std::ostream &source) const{
+	for (auto &kv : this->moves_by_name){
+		if (!kv.second->get_display_name().size())
+			continue;
+		kv.second->output(source);
+		source << '\n';
+	}
+	source << "\n"
+		"extern const MoveData * const pokemon_moves_by_id[" << this->moves_serialized.size() << "] = {\n";
+	for (auto &p : this->moves_serialized){
+		if (p)
+			source << "    &move_" << p->get_name();
+		else
+			source << "    nullptr";
+		source << ",\n";
+	}
+	source << "};\n";
+}
+
+void MoveData::output(std::ostream &stream) const{
+	stream << "static const MoveData move_" << this->name << "("
+		"MoveId::" << this->name << ", "
+		"\"" << this->name << "\", "
+		<< this->field_move_index << ", "
+		"\"" << this->display_name << "\", "
+		"MoveAdditionalEffect::" << this->additional_effect->get_name() << ", "
+		<< this->power << ", "
+		"PokemonTypeId::" << this->type->get_name() << ", "
+		<< this->accuracy << ", "
+		<< this->pp << ");";
 }

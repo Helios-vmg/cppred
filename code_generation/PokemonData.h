@@ -2,6 +2,93 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <memory>
+
+class TypeData{
+	unsigned id;
+	std::string name;
+	std::string display_name;
+public:
+	TypeData(const std::vector<std::string> &columns);
+	const std::string &get_name() const{
+		return this->name;
+	}
+	unsigned get_id() const{
+		return this->id;
+	}
+	const std::string &get_display_name() const{
+		return this->display_name;
+	}
+};
+
+class TypeStore{
+	std::map<std::string, std::shared_ptr<TypeData>> types_by_name;
+	std::map<unsigned, std::shared_ptr<TypeData>> types_by_id;
+	std::map<std::string, unsigned> normalized_strings;
+public:
+	TypeStore(const char *path);
+	std::shared_ptr<TypeData> get_type(const std::string &name) const;
+	void generate_static_data_declarations(std::ostream &header) const;
+	void generate_static_data_definitions(std::ostream &source) const;
+};
+
+class AdditionalEffectData{
+	unsigned id;
+	std::string name;
+public:
+	AdditionalEffectData(const std::vector<std::string> &columns);
+	unsigned get_id() const{
+		return this->id;
+	}
+	const std::string &get_name() const{
+		return this->name;
+	}
+};
+
+class AdditionalEffectStore{
+	std::map<std::string, std::shared_ptr<AdditionalEffectData>> effects_by_name;
+	std::map<unsigned, std::shared_ptr<AdditionalEffectData>> effects_by_id;
+public:
+	AdditionalEffectStore(const char *path);
+	std::shared_ptr<AdditionalEffectData> get_effect(const std::string &name) const;
+	void generate_static_data_declarations(std::ostream &header) const;
+	//void generate_static_data_definitions(std::ostream &source) const;
+};
+
+class MoveData{
+	unsigned id;
+	std::string name;
+	unsigned field_move_index;
+	std::string display_name;
+	std::shared_ptr<AdditionalEffectData> additional_effect;
+	unsigned power;
+	std::shared_ptr<TypeData> type;
+	unsigned accuracy;
+	unsigned pp;
+public:
+	MoveData(const std::vector<std::string> &columns, const TypeStore &types, const AdditionalEffectStore &);
+	unsigned get_id() const{
+		return this->id;
+	}
+	const std::string &get_name() const{
+		return this->name;
+	}
+	const std::string &get_display_name() const{
+		return this->display_name;
+	}
+	void output(std::ostream &) const;
+};
+
+class MoveStore{
+	std::map<std::string, std::shared_ptr<MoveData>> moves_by_name;
+	std::map<unsigned, std::shared_ptr<MoveData>> moves_by_id;
+	std::vector<std::shared_ptr<MoveData>> moves_serialized;
+public:
+	MoveStore(const char *path, const TypeStore &types, const AdditionalEffectStore &);
+	std::shared_ptr<MoveData> get_move(const std::string &name) const;
+	void generate_static_data_declarations(std::ostream &header) const;
+	void generate_static_data_definitions(std::ostream &source) const;
+};
 
 class EvolutionTrigger{
 public:
@@ -18,9 +105,9 @@ class LearnedMove{
 public:
 	std::string species;
 	unsigned level;
-	std::string move;
+	std::shared_ptr<MoveData> move;
 
-	LearnedMove(const std::vector<std::string> &columns);
+	LearnedMove(const std::vector<std::string> &columns, const MoveStore &moves);
 };
 
 class SpeciesData{
@@ -33,10 +120,10 @@ public:
 	unsigned base_defense;
 	unsigned base_speed;
 	unsigned base_special;
-	std::string type[2];
+	std::shared_ptr<TypeData> type[2];
 	unsigned catch_rate;
 	unsigned base_xp_yield;
-	std::vector<std::string> initial_attacks;
+	std::vector<std::shared_ptr<MoveData>> initial_attacks;
 	unsigned growth_rate;
 	unsigned char tmlearn_bitmap[7];
 	std::string display_name;
@@ -56,7 +143,7 @@ public:
 	std::vector<EvolutionTrigger> evolution_triggers;
 	std::vector<LearnedMove> learned_moves;
 
-	SpeciesData(const std::vector<std::string> &columns);
+	SpeciesData(const std::vector<std::string> &columns, const MoveStore &moves, const TypeStore &types);
 
 	bool operator<(const SpeciesData &other) const{
 		if ((!this->pokedex_id && !this->species_id) && !(!other.pokedex_id && !other.species_id))
@@ -76,12 +163,16 @@ public:
 };
 
 class PokemonData{
+	TypeStore types;
+	AdditionalEffectStore effects;
+	MoveStore moves;
 	std::vector<SpeciesData> species;
 	std::map<std::string, unsigned> map;
 
 	unsigned count_pokedex_species() const;
 public:
 	PokemonData();
+	void generate_secondary_enums(const char *filename) const;
 	void generate_enums(const char *filename) const;
 	void generate_static_data_declarations(const char *filename) const;
 	void generate_static_data_definitions(const char *filename, const char *header_name) const;

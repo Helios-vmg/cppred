@@ -1,7 +1,7 @@
 #include "generate_variables.h"
 #include "Variables.h"
 
-static const char * const events_file = "input/events.csv";
+static const char * const map_objects_file = "input/events.csv";
 static const char * const map_sprites_visibility_file = "input/map_sprites_visibility.csv";
 extern const char * const variables_file = "input/variables.csv";
 static const char * const hash_key = "generate_variables";
@@ -54,7 +54,7 @@ static std::vector<byte_t> load_default_visibilities(){
 
 static void generate_variables_internal(known_hashes_t &known_hashes, Variables &variables){
 	std::vector<std::string> input_files = {
-		events_file,
+		map_objects_file,
 		map_sprites_visibility_file,
 		variables_file,
 	};
@@ -79,7 +79,7 @@ static void generate_variables_internal(known_hashes_t &known_hashes, Variables 
 		"namespace CppRed{\n";
 
 
-	generate_file(header, "EventId", events_file, "id", "name");
+	generate_file(header, "EventId", map_objects_file, "id", "name");
 	generate_file(header, "VisibilityFlagId", map_sprites_visibility_file, "id", "visibility_flag");
 
 	std::vector<std::string> integers;

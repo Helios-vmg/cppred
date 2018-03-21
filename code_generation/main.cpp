@@ -3,7 +3,6 @@
 #include "generate_maps.h"
 #include "generate_pokemon_data.h"
 #include "generate_text.h"
-#include "generate_moves.h"
 #include "generate_items.h"
 #include "generate_audio.h"
 #include "generate_map_objects.h"
@@ -20,7 +19,7 @@
 #include <ctime>
 
 const char * const hashes_path = "output/hashes.csv";
-const char * const text_file = "input/text.txt";
+extern const char * const text_file;
 
 known_hashes_t load_hashes(){
 	known_hashes_t ret;
@@ -64,7 +63,6 @@ int main(){
 		generate_maps(hashes, gs, ts);
 		generate_pokemon_data(hashes, pokemon_data);
 		generate_text(hashes, ts);
-		generate_moves(hashes);
 		generate_items(hashes);
 		generate_map_objects(hashes, pokemon_data, variables);
 		generate_trainer_parties(hashes, pokemon_data);
