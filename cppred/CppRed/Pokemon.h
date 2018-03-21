@@ -27,6 +27,8 @@ public:
 	Pokemon(const Pokemon &) = default;
 	Pokemon(Pokemon &&) = default;
 	int get_stat(PokemonStats::StatId, bool ignore_xp = false) const;
+	static int calculate_min_xp_to_reach_level(SpeciesId species, int level);
+	static int calculate_level_at_xp(SpeciesId species, int xp);
 	//void set_stat_xp(PokemonStats::StatId )
 };
 
