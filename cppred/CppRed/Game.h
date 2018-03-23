@@ -77,6 +77,8 @@ enum class GameState{
 	TextDisplay,
 };
 
+const Point standard_dialogue_yes_no_position(14, 7);
+
 class Game{
 	Engine *engine;
 	PokemonVersion version;
@@ -88,22 +90,37 @@ class Game{
 	bool options_initialized = false;
 	TextState text_state;
 	bool dialogue_box_visible = false;
+	bool dialogue_box_clear_required = true;
 	VariableStore variable_store;
 	AudioInterface audio_interface;
 	std::unique_ptr<World> world;
 	bool reset_dialogue_was_delayed = false;
 	bool no_text_delay = false;
 	std::unique_ptr<Coroutine> coroutine;
+	std::vector<std::unique_ptr<ScreenOwner>> owners_stack;
+	int locks_acquired = 0;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 	template <typename T, typename ...Params>
-	void switch_screen_owner(Actor &actor, Params &&...params){
-		std::unique_ptr<ScreenOwner> p(new T(*this, std::forward<Params>(params)...));
-		actor.set_new_screen_owner(std::move(p));
-		Coroutine::get_current_coroutine().yield();
+	void switch_screen_owner(Params &&...params){
+		this->owners_stack.emplace_back(new T(*this, std::forward<Params>(params)...));
+		//Coroutine::get_current_coroutine().yield();
 	}
+	template <typename T, typename ...Params>
+	bool check_screen_owner(bool require_unlock, Params &&...params){
+		if (require_unlock && !this->locks_acquired)
+			return false;
+		this->switch_screen_owner<T>(std::forward<Params>(params)...);
+		auto c = Coroutine::get_current_coroutine_ptr();
+		if (c != this->coroutine.get())
+			c->yield();
+		return true;
+	}
+	bool update_internal();
+	ScreenOwner *get_current_owner();
+	std::array<std::shared_ptr<Sprite>, 2> load_mon_sprites(SpeciesId species);
 public:
 	Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program);
 	Game(Game &&) = delete;
@@ -148,13 +165,9 @@ public:
 		bool initial_padding = true
 	);
 	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
-	void run_dex_entry_from_script(TextResourceId);
-	void run_dialogue(TextResourceId, bool wait_at_end = false);
-	void run_dialogue_from_script(TextResourceId text, bool wait_at_end = true){
-		this->run_dialogue(text, wait_at_end);
-	}
-	void run_dialogue_from_world(TextResourceId, Actor &activator, bool hide_window_at_end = true);
-	void reset_dialogue_state();
+	void run_dex_entry(TextResourceId);
+	void run_dialogue(TextResourceId, bool wait_at_end, bool hide_dialogue_at_end);
+	void reset_dialogue_state(bool also_hide_window = true);
 	void delayed_reset_dialogue(){
 		this->reset_dialogue_was_delayed = true;
 	}
@@ -182,11 +195,18 @@ public:
 	Coroutine &get_coroutine(){
 		return *this->coroutine;
 	}
-	void display_pokedex_page(PokedexId, Actor &requester);
+	void display_pokedex_page(PokedexId);
 	void draw_portrait(const GraphicsAsset &, TileRegion, const Point &corner, bool flipped = false);
+	void run_in_own_coroutine(std::function<void()> &&);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
+	void lock(){
+		this->locks_acquired++;
+	}
+	void unlock(){
+		this->locks_acquired--;
+	}
 };
 
 }

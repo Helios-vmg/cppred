@@ -8,10 +8,10 @@ namespace CppRed{
 
 class TextDisplay : public ScreenOwner{
 	TextResourceId text_id;
+	bool wait;
 	bool hide;
 public:
-	TextDisplay(Game &, TextResourceId, bool hide_window_at_end = true);
-	std::unique_ptr<ScreenOwner> run() override;
+	TextDisplay(Game &, TextResourceId, bool wait_at_end, bool hide_window_at_end);
 	void pause() override{}
 };
 

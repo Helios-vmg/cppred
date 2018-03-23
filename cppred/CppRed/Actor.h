@@ -33,7 +33,6 @@ protected:
 	std::unique_ptr<Coroutine> coroutine;
 	bool quit_coroutine = false;
 	MapObjectInstance *object_instance = nullptr;
-	std::unique_ptr<ScreenOwner> screen_owner;
 	bool visible = true;
 	bool ignore_occupancy = false;
 	std::deque<std::function<void()>> saved_actions;
@@ -79,8 +78,6 @@ public:
 	Point get_map_position() const{
 		return this->position.position;
 	}
-	void set_new_screen_owner(std::unique_ptr<ScreenOwner> &&);
-	std::unique_ptr<ScreenOwner> get_new_screen_owner();
 	void pause();
 	virtual void set_facing_direction(FacingDirection direction);
 	DEFINE_GETTER(facing_direction)

@@ -232,14 +232,6 @@ bool Actor::run_walking_animation(const Point &delta, FacingDirection direction)
 }
 
 
-void Actor::set_new_screen_owner(std::unique_ptr<ScreenOwner> &&owner){
-	this->screen_owner = std::move(owner);
-}
-
-std::unique_ptr<ScreenOwner> Actor::get_new_screen_owner(){
-	return std::move(this->screen_owner);
-}
-
 void Actor::set_facing_direction(FacingDirection direction){
 	this->standing_sprites[(int)this->facing_direction]->set_visible(false);
 	this->facing_direction = direction;

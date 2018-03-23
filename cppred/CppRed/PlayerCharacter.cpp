@@ -190,7 +190,7 @@ void PlayerCharacter::check_for_bookshelf_or_card_key_door(){
 	if (info->is_script)
 		this->game->execute(info->script_name.c_str(), *this);
 	else
-		this->game->run_dialogue_from_world(info->text_id, *this);
+		this->game->run_dialogue(info->text_id, true, true);
 }
 
 }

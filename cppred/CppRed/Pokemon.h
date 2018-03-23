@@ -40,6 +40,8 @@ public:
 	bool null() const{
 		return this->species == SpeciesId::None;
 	}
+	DEFINE_GETTER(species)
+	DEFINE_GETTER_SETTER(nickname)
 };
 
 class Party{
@@ -50,6 +52,8 @@ private:
 public:
 	Party() = default;
 	bool add_pokemon(SpeciesId, int level, std::uint16_t original_trainer_id, XorShift128 &);
+	bool add_pokemon(const Pokemon &);
+	Pokemon &get_last_added_pokemon();
 };
 
 }

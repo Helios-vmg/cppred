@@ -6,6 +6,10 @@
 namespace CppRed{
 
 PokedexPageDisplay::PokedexPageDisplay(Game &game, PokedexId species): ScreenOwner(game), species(species){
+	this->done = false;
+	this->coroutine.reset(new Coroutine("PokedexPageDisplay coroutine", game.get_coroutine().get_clock(), [this](Coroutine &){
+		this->coroutine_entry_point();
+	}));
 }
 
 template <size_t Digits, int max = std::numeric_limits<int>::max(), int min = 0>
@@ -32,7 +36,7 @@ std::array<char, Digits + 1> int_to_char_array(int n, char padding = '0'){
 	return ret;
 }
 
-std::unique_ptr<ScreenOwner> PokedexPageDisplay::run(){
+void PokedexPageDisplay::coroutine_entry_point(){
 	auto &engine = this->game->get_engine();
 	auto &renderer = engine.get_renderer();
 	auto &pokemon = *pokemon_by_pokedex_id[(int)this->species - 1];
@@ -51,7 +55,7 @@ std::unique_ptr<ScreenOwner> PokedexPageDisplay::run(){
 	this->game->put_string({15, 6}, TileRegion::Background, "??");
 	this->game->put_string({13, 8}, TileRegion::Background, " ???");
 
-	auto &coroutine = this->game->get_coroutine();
+	auto &coroutine = Coroutine::get_current_coroutine();
 	auto &audio_interface = this->game->get_audio_interface();
 	auto &mixer = engine.get_mixer();
 	mixer.add_volume_divisor(2);
@@ -69,10 +73,10 @@ std::unique_ptr<ScreenOwner> PokedexPageDisplay::run(){
 	this->game->put_string({11, 8}, TileRegion::Background, int_to_char_array<4, 9999>(pokemon.weight_tenths_of_pounds / 10, ' ').data());
 	this->game->put_string({16, 8}, TileRegion::Background, int_to_char_array<1, 9>(pokemon.weight_tenths_of_pounds % 10, ' ').data());
 
-	this->game->run_dex_entry_from_script(pokemon.pokedex_entry);
+	this->game->run_dex_entry(pokemon.pokedex_entry);
 	
 	mixer.remove_volume_divisor(2);
-	return nullptr;
+	this->done = true;
 }
 
 }

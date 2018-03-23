@@ -160,7 +160,7 @@ void DialogingMapObject::activate(CppRed::Game &game, CppRed::Actor &activator, 
 		return;
 	const auto &text = this->map_data->map_text[index];
 	if (text.simple_text)
-		game.run_dialogue_from_world(text.text, activator);
+		game.run_dialogue(text.text, true, true);
 	else
 		game.execute(text.script.c_str(), activator);
 }

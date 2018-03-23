@@ -45,8 +45,8 @@ void Trainer::remove_all(ItemId item){
 	}
 }
 
-void Trainer::add_pokemon_to_party(SpeciesId species, int level){
-	
-}
+//void Trainer::add_pokemon_to_party(SpeciesId species, int level){
+//	
+//}
 
 }

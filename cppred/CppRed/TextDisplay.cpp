@@ -3,19 +3,17 @@
 
 namespace CppRed{
 
-TextDisplay::TextDisplay(Game &game, TextResourceId text_id, bool hide_window_at_end):
+TextDisplay::TextDisplay(Game &game, TextResourceId text_id, bool wait_at_end, bool hide_window_at_end):
 		ScreenOwner(game),
 		text_id(text_id),
+		wait(wait_at_end),
 		hide(hide_window_at_end){
-}
-
-std::unique_ptr<ScreenOwner> TextDisplay::run(){
-	auto &renderer = this->game->get_engine().get_renderer();
-	this->game->run_dialogue_from_script(this->text_id);
-	if (this->hide)
-		this->game->reset_dialogue_state();
-
-	return nullptr;
+	this->done = false;
+	this->coroutine.reset(new Coroutine("TextDisplay coroutine", game.get_coroutine().get_clock(), [this](Coroutine &){
+		auto &renderer = this->game->get_engine().get_renderer();
+		this->game->run_dialogue(this->text_id, this->wait, this->hide);
+		this->done = true;
+	}));
 }
 
 }

@@ -49,6 +49,7 @@
     <ClInclude Include="CppRed/TitleScreen.h" />
     <ClInclude Include="CppRed\Actor.h" />
     <ClInclude Include="CppRed\ItemActor.h" />
+    <ClInclude Include="CppRed\CoroutineExecuter.h" />
     <ClInclude Include="CppRed\Npc.h" />
     <ClInclude Include="CppRed\PlayerCharacter.h" />
     <ClInclude Include="CppRed\PokedexPageDisplay.h" />
@@ -88,6 +89,7 @@
     <ClCompile Include="CppRed/AudioInterface.cpp" />
     <ClCompile Include="CppRed\Actor.cpp" />
     <ClCompile Include="CppRed\ItemActor.cpp" />
+    <ClCompile Include="CppRed\CoroutineExecuter.cpp" />
     <ClCompile Include="CppRed\Npc.cpp" />
     <ClCompile Include="CppRed\PlayerCharacter.cpp" />
     <ClCompile Include="CppRed\PokedexPageDisplay.cpp" />

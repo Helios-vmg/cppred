@@ -8,9 +8,10 @@ namespace CppRed{
 
 class PokedexPageDisplay : public ScreenOwner{
 	PokedexId species;
+
+	void coroutine_entry_point();
 public:
 	PokedexPageDisplay(Game &, PokedexId species);
-	std::unique_ptr<ScreenOwner> run() override;
 	void pause() override{}
 };
 

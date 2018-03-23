@@ -46,7 +46,7 @@ public:
 	MapInstance *try_get_map_instance(Map);
 	const MapInstance &get_map_instance(Map) const;
 	bool get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &);
-	std::unique_ptr<ScreenOwner> run() override;
+	RunResult run() override;
 	WorldCoordinates remap_coordinates(const WorldCoordinates &position_parameter);
 	bool can_move_to(const WorldCoordinates &current_position, const WorldCoordinates &next_position, FacingDirection, bool ignore_occupancy = false);
 	void entered_map(Map old_map, Map new_map, bool warped);

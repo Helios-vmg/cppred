@@ -119,14 +119,14 @@ static void oak_introduction(CppRed::Game &game){
 	renderer.draw_image_to_tilemap({ 6, 4 }, ProfOakPic);
 	fade_in(game);
 
-	game.run_dialogue(TextResourceId::OakSpeechText1);
+	game.run_dialogue(TextResourceId::OakSpeechText1, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
 	renderer.draw_image_to_tilemap_flipped({ 6, 4 }, *pokemon_by_species_id[(int)SpeciesId::Nidorino]->front);
 	scroll_from_the_right(game);
-	game.run_dialogue(TextResourceId::OakSpeechText2A);
+	game.run_dialogue(TextResourceId::OakSpeechText2A, false, false);
 	game.get_audio_interface().play_cry(SpeciesId::Nidorina);
-	game.run_dialogue(TextResourceId::OakSpeechText2B);
+	game.run_dialogue(TextResourceId::OakSpeechText2B, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
 }
@@ -137,12 +137,12 @@ static std::string select_player_name(CppRed::Game &game){
 
 	auto red_pic = renderer.draw_image_to_tilemap({ 6, 4 }, RedPicFront);
 	scroll_from_the_right(game);
-	game.run_dialogue(TextResourceId::IntroducePlayerText);
+	game.run_dialogue(TextResourceId::IntroducePlayerText, false, false);
 	scroll_portrait(game, red_pic, false, RedPicFront);
 	auto ret = select_x_name(game, false);
 	game.get_variable_store().set(CppRed::StringVariableId::temp_player_name, ret);
 	scroll_portrait(game, red_pic, true, RedPicFront);
-	game.run_dialogue(TextResourceId::YourNameIsText);
+	game.run_dialogue(TextResourceId::YourNameIsText, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
 	return ret;
@@ -154,12 +154,12 @@ static std::string select_rival_name(CppRed::Game &game){
 
 	auto blue_pic = renderer.draw_image_to_tilemap({ 6, 4 }, Rival1Pic);
 	fade_in(game);
-	game.run_dialogue(TextResourceId::IntroduceRivalText);
+	game.run_dialogue(TextResourceId::IntroduceRivalText, false, false);
 	scroll_portrait(game, blue_pic, false, Rival1Pic);
 	auto ret = select_x_name(game, true);
 	game.get_variable_store().set(CppRed::StringVariableId::temp_rival_name, ret);
 	scroll_portrait(game, blue_pic, true, Rival1Pic);
-	game.run_dialogue(TextResourceId::HisNameIsText);
+	game.run_dialogue(TextResourceId::HisNameIsText, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
 	return ret;
@@ -172,7 +172,7 @@ static void red_closing(CppRed::Game &game){
 	renderer.draw_image_to_tilemap({ 6, 4 }, RedPicFront);
 	fade_in(game);
 
-	game.run_dialogue(TextResourceId::OakSpeechText3);
+	game.run_dialogue(TextResourceId::OakSpeechText3, false, false);
 	game.get_audio_interface().play_sound(AudioResourceId::SFX_Shrink);
 	Coroutine::get_current_coroutine().wait_frames(4);
 	renderer.draw_image_to_tilemap({ 6, 4 }, ShrinkPic1);

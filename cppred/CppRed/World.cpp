@@ -281,36 +281,20 @@ bool World::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoo
 
 std::unique_ptr<ScreenOwner> World::update(){
 	this->current_map->update(*this->game);
-	this->player_character->update();
-	auto ret = this->player_character->get_new_screen_owner();
-	if (ret)
-		return ret;
-	this->set_camera_position();
-	for (auto &actor : this->actors){
-		actor->update();
-		ret = actor->get_new_screen_owner();
-		if (ret)
-			return ret;
+	{
+		std::lock_guard<Game> lg(*this->game);
+		this->player_character->update();
+		this->set_camera_position();
+		for (auto &actor : this->actors)
+			actor->update();
 	}
 	return nullptr;
 }
 
-std::unique_ptr<ScreenOwner> World::run(){
-	auto &renderer = this->game->get_engine().get_renderer();
-	renderer.set_enable_bg(true);
-	renderer.set_enable_sprites(true);
-	renderer.set_palette(PaletteRegion::Background, default_palette);
-	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
-	auto &coroutine = Coroutine::get_current_coroutine();
-	while (true){
-		auto ret = this->update();
-		if (ret)
-			return ret;
-		this->render(renderer);
-		coroutine.yield();
-	}
-	assert(false);
-	return nullptr;
+ScreenOwner::RunResult World::run(){
+	this->update();
+	this->render(this->game->get_engine().get_renderer());
+	return RunResult::Continue;
 }
 
 void World::create_main_characters(const std::string &player_name, const std::string &rival_name){
@@ -330,6 +314,11 @@ bool World::facing_edge_of_map(const WorldCoordinates &pos, FacingDirection dir)
 }
 
 void World::render(Renderer &renderer){
+	renderer.set_enable_bg(true);
+	renderer.set_enable_sprites(true);
+	renderer.set_palette(PaletteRegion::Background, default_palette);
+	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
+	
 	auto &bg = renderer.get_tilemap(TileRegion::Background);
 	renderer.set_bg_global_offset(Point(Renderer::tile_size * 2, Renderer::tile_size * 2) + this->pixel_offset);
 	auto current_map = this->player_character->get_current_map();

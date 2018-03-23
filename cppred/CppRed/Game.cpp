@@ -14,6 +14,7 @@
 #include <iostream>
 #include <sstream>
 #include "PokedexPageDisplay.h"
+#include "CoroutineExecuter.h"
 
 namespace CppRed{
 
@@ -279,8 +280,10 @@ int Game::handle_standard_menu(TileRegion region, const Point &position, const s
 	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b, initial_padding);
 }
 
-void Game::run_dialogue(TextResourceId resource, bool wait_at_end){
-	if (!this->dialogue_box_visible){
+void Game::run_dialogue(TextResourceId resource, bool wait_at_end, bool hide_dialogue_at_end){
+	if (this->check_screen_owner<TextDisplay>(true, resource, wait_at_end, hide_dialogue_at_end))
+		return;
+	if (!this->dialogue_box_visible || this->dialogue_box_clear_required){
 		auto dialogue_state = Game::get_default_dialogue_state();
 		auto &renderer = this->engine->get_renderer();
 		renderer.set_window_region_start((dialogue_state.box_corner - Point(1, 1)) * Renderer::tile_size);
@@ -288,22 +291,19 @@ void Game::run_dialogue(TextResourceId resource, bool wait_at_end){
 		renderer.set_enable_window(true);
 		this->draw_box(this->text_state.box_corner - Point{ 1, 1 }, this->text_state.box_size, TileRegion::Window);
 		this->dialogue_box_visible = true;
+		this->dialogue_box_clear_required = false;
 	}
 	this->text_store.execute(*this, resource, this->text_state);
 	if (wait_at_end)
 		PromptCommand::wait_for_continue(*this, this->text_state, false);
-	if (this->reset_dialogue_was_delayed){
+	if (this->reset_dialogue_was_delayed || hide_dialogue_at_end){
 		this->reset_dialogue_state();
 		this->reset_dialogue_was_delayed = false;
 	}
 	this->joypad_pressed = InputState();
 }
 
-void Game::run_dialogue_from_world(TextResourceId id, Actor &activator, bool hide_window_at_end){
-	this->switch_screen_owner<TextDisplay>(activator, id, hide_window_at_end);
-}
-
-void Game::run_dex_entry_from_script(TextResourceId id){
+void Game::run_dex_entry(TextResourceId id){
 	auto dialogue_state = Game::get_default_dialogue_state();
 	dialogue_state.box_corner.y -= 2;
 	dialogue_state.box_size.y += 2;
@@ -334,10 +334,13 @@ TextState Game::get_default_dialogue_state(){
 	return ret;
 }
 
-void Game::reset_dialogue_state(){
-	this->engine->get_renderer().set_enable_window(false);
+void Game::reset_dialogue_state(bool also_hide_window){
 	this->text_state = this->get_default_dialogue_state();
-	this->dialogue_box_visible = false;
+	this->dialogue_box_clear_required = true;
+	if (also_hide_window){
+		this->engine->get_renderer().set_enable_window(false);
+		this->dialogue_box_visible = false;
+	}
 }
 
 void Game::text_print_delay(){
@@ -386,6 +389,12 @@ void VariableStore::load_initial_visibility_flags(){
 }
 
 std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int max_length_){
+	std::string ret;
+	if (this->check_screen_owner<CoroutineExecuter>(true, [this, &ret, type, species, max_length_](){
+		ret = this->get_name_from_user(type, species, max_length_);
+	}))
+		return ret;
+
 	if (!max_length_)
 		return "";
 	size_t max_display_length = type == NameEntryType::Pokemon ? 10 : 7;
@@ -396,7 +405,9 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 		max_length = max_length_;
 
 	auto &renderer = this->engine->get_renderer();
+	AutoRendererPusher pusher(renderer);
 	renderer.clear_screen();
+	renderer.clear_sprites();
 	std::string query_string;
 	query_string.reserve(Tilemap::w);
 	switch (type){
@@ -435,7 +446,7 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 	Point cursor_position = { 0, 0 };
 	const int grid_w = 9;
 	const int grid_h = 5;
-	std::string ret;
+	auto &coroutine = Coroutine::get_current_coroutine();
 	while (true){
 		if (redraw_alphabet){
 			for (int y = 0; y < grid_h; y++){
@@ -479,7 +490,7 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 		}
 
 		while (true){
-			this->coroutine->yield();
+			coroutine.yield();
 			auto input = this->joypad_only_newly_pressed();
 			if (input.get_up()){
 				cursor_position.y = (cursor_position.y + grid_h) % (grid_h + 1);
@@ -558,27 +569,30 @@ void Game::create_main_characters(const std::string &player_name, const std::str
 }
 
 void Game::game_loop(){
-	std::vector<std::unique_ptr<ScreenOwner>> owners_stack;
-	ScreenOwner *last_owner = nullptr;
-	while (true){
-		ScreenOwner *current_owner;
-		if (owners_stack.size())
-			current_owner = owners_stack.back().get();
-		else
-			current_owner = this->world.get();
-		if (last_owner)
-			last_owner->pause();
-		auto new_owner = current_owner->run();
-		if (!new_owner){
-			if (!owners_stack.size())
-				return;
-			owners_stack.pop_back();
-			last_owner = nullptr;
-		}else{
-			last_owner = current_owner;
-			owners_stack.emplace_back(std::move(new_owner));
-		}
+	while (this->update_internal())
+		this->coroutine->yield();
+}
+
+ScreenOwner *Game::get_current_owner(){
+	return !this->owners_stack.size() ? this->world.get() : this->owners_stack.back().get();
+}
+
+bool Game::update_internal(){
+	auto current_owner = this->get_current_owner();
+	switch (current_owner->run()){
+		case ScreenOwner::RunResult::Continue:
+			break;
+		case ScreenOwner::RunResult::Terminate:
+			if (!this->owners_stack.size())
+				return false;
+			this->owners_stack.pop_back();
+			current_owner = nullptr;
+			break;
 	}
+	auto new_owner = this->get_current_owner();
+	if (new_owner != current_owner && current_owner)
+		current_owner->pause();
+	return true;
 }
 
 void Game::entered_map(Map old_map, Map new_map, bool warped){
@@ -598,8 +612,8 @@ void Game::execute(const char *script_name, Actor &caller, const char *parameter
 	this->engine->execute_script(params);
 }
 
-void Game::display_pokedex_page(PokedexId id, Actor &requester){
-	this->switch_screen_owner<PokedexPageDisplay>(requester, id);
+void Game::display_pokedex_page(PokedexId id){
+	this->check_screen_owner<PokedexPageDisplay>(false, id);
 }
 
 void Game::draw_portrait(const GraphicsAsset &graphics, TileRegion region, const Point &corner, bool flipped){
@@ -621,6 +635,46 @@ bool Game::run_yes_no_menu(const Point &point){
 	};
 	AutoRendererWindowPusher pusher(this->engine->get_renderer());
 	return this->handle_standard_menu(TileRegion::Window, point, items, Point(), false, false) == 0;
+}
+
+void Game::run_in_own_coroutine(std::function<void()> &&f){
+	this->switch_screen_owner<CoroutineExecuter>(std::move(f));
+	auto c = Coroutine::get_current_coroutine_ptr();
+	if (c != this->coroutine.get())
+		c->yield();
+}
+
+std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species){
+	auto &data = *pokemon_by_pokedex_id[(int)species];
+	auto &renderer = this->engine->get_renderer();
+	std::array<std::shared_ptr<Sprite>, 2> ret;
+	ret[0] = renderer.create_sprite(2, 2);
+	ret[1] = renderer.create_sprite(2, 2);
+	switch (data.overworld_sprite){
+		case PokemonOverworldSprite::Mon:
+			ret[0]->get_tile(0, 0).tile_no = SlowbroSprite.first_tile
+				/**/
+			break;
+		case PokemonOverworldSprite::Ball: break;
+		case PokemonOverworldSprite::Helix: break;
+		case PokemonOverworldSprite::Fairy: break;
+		case PokemonOverworldSprite::Bird: break;
+		case PokemonOverworldSprite::Water: break;
+		case PokemonOverworldSprite::Bug: break;
+		case PokemonOverworldSprite::Grass: break;
+		case PokemonOverworldSprite::Snake: break;
+		case PokemonOverworldSprite::Quadruped: break;
+		case PokemonOverworldSprite::Invalid: break;
+		case PokemonOverworldSprite::Invalid11: break;
+		case PokemonOverworldSprite::Invalid12: break;
+		case PokemonOverworldSprite::Invalid13: break;
+		case PokemonOverworldSprite::Invalid14: break;
+		case PokemonOverworldSprite::Invalid15: break;
+		case PokemonOverworldSprite::Count: break;
+		default: break;
+
+
+	}
 }
 
 }

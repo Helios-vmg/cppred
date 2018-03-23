@@ -10,6 +10,19 @@ bool Party::add_pokemon(SpeciesId species, int level, std::uint16_t original_tra
 	return true;
 }
 
+bool Party::add_pokemon(const Pokemon &pokemon){
+	if (this->members.size() >= this->max_party_size)
+		return false;
+	this->members.push_back(pokemon);
+	return true;
+}
+
+Pokemon &Party::get_last_added_pokemon(){
+	if (!this->members.size())
+		throw std::runtime_error("Internal error: Party::get_last_added_pokemon() called when no pokemon had been added.");
+	return this->members.back();
+}
+
 int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp){
 	auto &stat = this->computed_stats.get_stat(which);
 	if (stat < 0){
