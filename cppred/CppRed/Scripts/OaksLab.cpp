@@ -50,14 +50,14 @@ DECLARE_SCRIPT(OaksLabScript){
 		OaksLabScript08,
 		nullptr,
 		OaksLabScript10,
-		//OaksLabScript11,
-		//OaksLabScript12,
-		//OaksLabScript13,
-		//OaksLabScript14,
-		//OaksLabScript15,
-		//OaksLabScript16,
-		//OaksLabScript17,
-		//OaksLabScript18,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		OaksLabScript18,
 	};
 	if (index >= 0 && index < array_length(scripts))
 		scripts[index](parameters);
@@ -127,11 +127,10 @@ DECLARE_SCRIPT(OaksLabScript06){
 	auto &blue = dynamic_cast<NpcTrainer &>(world.get_actor(ActorId::BlueInOaksLab));
 	blue.set_random_facing_direction(false);
 	blue.set_facing_direction(FacingDirection::Down);
-	player.set_ignore_input(true);
+	AutoIgnoreInput aii(player);
 	game.run_dialogue(TextResourceId::OaksLabLeavingText, true, true);
 	player.move(FacingDirection::Up);
 	blue.set_random_facing_direction(true);
-	player.set_ignore_input(false);
 }
 
 struct BallScriptData{
@@ -177,7 +176,7 @@ DECLARE_SCRIPT(OaksLabScript08){
 	auto blues_species = starter_index_to_species_id(blue_ball_data.starter_index);
 	auto &blues_pokemon = *pokemon_by_species_id[(int)blues_species];
 
-	player.set_ignore_input(true);
+	AutoIgnoreInput aii(player);
 
 	//Move Blue into position in front of the ball.
 	Point destination(red_ball_data.blues_ball_index + 6, 4);
@@ -194,6 +193,7 @@ DECLARE_SCRIPT(OaksLabScript08){
 	vs.set(blue_ball_data.vfi, 0);
 
 	vs.set(StringVariableId::wcd6d_ReceivedItemName, blues_pokemon.display_name);
+	game.reset_dialogue_state(false);
 	game.run_dialogue(TextResourceId::OaksLabRivalReceivedMonText, false, false);
 	auto &audio = game.get_audio_interface();
 	audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
@@ -204,8 +204,6 @@ DECLARE_SCRIPT(OaksLabScript08){
 	vs.set(EventId::event_got_starter, true);
 	vs.set(IntegerVariableId::wRivalStarter, (int)blues_species);
 	vs.set(IntegerVariableId::OaksLabScriptIndex, 10);
-
-	player.set_ignore_input(false);
 }
 
 DECLARE_SCRIPT(OaksLabScript10){
@@ -215,7 +213,7 @@ DECLARE_SCRIPT(OaksLabScript10){
 	if (player.get_map_position().y < 6)
 		return;
 	auto &vs = game.get_variable_store();
-	player.set_ignore_input(true);
+	AutoIgnoreInput aii(player);
 	player.abort_movement();
 	auto red_ball_index = vs.get(IntegerVariableId::red_ball_index);
 	auto &red_ball_data = static_data[red_ball_index];
@@ -234,9 +232,42 @@ DECLARE_SCRIPT(OaksLabScript10){
 	blue.set_facing_direction(FacingDirection::Down);
 
 	auto blue_party = (red_ball_data.starter_index + 2) % 3 + 1;
-	auto &party = blue.get_party(blue_party);
-	game.run_trainer_battle(party);
-	/**/
+	game.run_trainer_battle(
+		TextResourceId::FirstBlueBattlePlayerWon,
+		TextResourceId::FirstBlueBattlePlayerLost,
+		blue,
+		blue_party
+	);
+	world.play_current_map_music();
+	player.get_party().heal();
+	vs.set(EventId::event_battled_rival_in_oaks_lab, true);
+	game.run_dialogue(TextResourceId::OaksLabRivalToughenUpText, true, true);
+	
+	destination = {4 + 5 - player.get_map_position().x, 11};
+	path = blue.find_path(destination);
+	auto &audio = game.get_audio_interface();
+	audio.play_sound(AudioResourceId::Music_MeetRivalAlternative);
+	{
+		bool done = false;
+		auto &coroutine = Coroutine::get_current_coroutine();
+		Coroutine blue_moving("Blue's moving coroutine temp", coroutine.get_clock(), [&done, &blue, &path](Coroutine &){
+			blue.follow_path(path);
+			done = true;
+		});
+		while (!done){
+			player.look_towards_actor(blue);
+			blue_moving.get_clock().step();
+			blue_moving.resume();
+			coroutine.yield();
+		}
+	}
+	blue.set_visible(false);
+	vs.set(VisibilityFlagId::hs_oaks_lab_rival, false);
+	world.play_current_map_music();
+	vs.set(IntegerVariableId::OaksLabScriptIndex, 18);
+}
+
+DECLARE_SCRIPT(OaksLabScript18){
 }
 
 DECLARE_SCRIPT(OaksLabText1){
@@ -255,9 +286,9 @@ DECLARE_SCRIPT(OaksLabText1){
 static void ball_script(const script_parameters &parameters, int index, bool run = false){
 	auto &game = *parameters.game;
 	if (!run){
-		game.run_in_own_coroutine([&parameters, index](){
+		game.run_in_own_coroutine([parameters, index](){
 			ball_script(parameters, index, true);
-		});
+		}, false);
 		return;
 	}
 	auto &world = game.get_world();

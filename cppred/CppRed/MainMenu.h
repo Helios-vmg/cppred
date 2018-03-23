@@ -13,6 +13,7 @@ enum class MainMenuResult{
 };
 
 MainMenuResult main_menu(Game &game);
+void show_options(CppRed::Game &game);
 
 }
 }

@@ -14,6 +14,7 @@
 
 const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_display_period;
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
+const int Engine::screen_scale = 2;
 
 Engine::Engine():
 #ifndef Engine_USE_FIXED_CLOCK

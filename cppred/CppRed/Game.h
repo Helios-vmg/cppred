@@ -17,6 +17,7 @@ struct MapData;
 namespace CppRed{
 
 class Trainer;
+class NpcTrainer;
 class PlayerCharacter;
 class World;
 enum class EventId;
@@ -78,6 +79,24 @@ enum class GameState{
 };
 
 const Point standard_dialogue_yes_no_position(14, 7);
+
+enum class MenuAnchor{
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight,
+};
+
+struct StandardMenuOptions{
+	Point position;
+	const std::vector<std::string> *items;
+	const char *title = nullptr;
+	Point minimum_size;
+	bool ignore_b = false;
+	bool initial_padding = true;
+	MenuAnchor anchor = MenuAnchor::TopLeft;
+	std::function<void()> before_item_display;
+};
 
 class Game{
 	Engine *engine;
@@ -147,14 +166,7 @@ public:
 	typedef decltype(SavableData::load("")) load_save_t;
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
-	int handle_standard_menu(
-		TileRegion region,
-		const Point &position,
-		const std::vector<std::string> &items,
-		const Point &minimum_size = Point(),
-		bool ignore_b = false,
-		bool initial_padding = true
-	);
+	int handle_standard_menu(const StandardMenuOptions &);
 	int handle_standard_menu_with_title(
 		TileRegion region,
 		const Point &position,
@@ -197,7 +209,7 @@ public:
 	}
 	void display_pokedex_page(PokedexId);
 	void draw_portrait(const GraphicsAsset &, TileRegion, const Point &corner, bool flipped = false);
-	void run_in_own_coroutine(std::function<void()> &&);
+	bool run_in_own_coroutine(std::function<void()> &&, bool synchronous = true);
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
@@ -208,7 +220,7 @@ public:
 		this->locks_acquired--;
 	}
 	void dialogue_wait();
-	void run_trainer_battle(const BaseTrainerParty &);
+	bool run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &, int party_index = -1);
 };
 
 }

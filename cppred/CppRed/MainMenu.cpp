@@ -5,12 +5,17 @@
 #include "Renderer.h"
 #include "../CodeGeneration/output/audio.h"
 
-static void show_options(CppRed::Game &game){
+namespace CppRed{
+namespace Scripts{
+
+void show_options(CppRed::Game &game){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 
 	auto options = game.get_options();
+	AutoRendererPusher pusher(renderer);
 	renderer.clear_screen();
+	renderer.clear_sprites();
 
 	for (int i = 0; i < 3; i++)
 		game.draw_box({ 0, i * 5 }, { Renderer::logical_screen_tile_width - 2, 3 }, TileRegion::Background);
@@ -43,6 +48,7 @@ static void show_options(CppRed::Game &game){
 	int vertical_cursor_position = 0;
 	auto tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
 	bool done = false;
+	auto &coroutine = Coroutine::get_current_coroutine();
 	while (!done){
 		int i;
 		for (auto &vpos : cursor_positions){
@@ -68,7 +74,7 @@ static void show_options(CppRed::Game &game){
 		}
 
 		while (true){
-			game.get_coroutine().yield();
+			coroutine.yield();
 			auto input = game.joypad_auto_repeat();
 			if (input.get_left()){
 				if (!horizontal_cursor_positions[vertical_cursor_position])
@@ -108,9 +114,6 @@ static void show_options(CppRed::Game &game){
 	game.get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 }
 
-namespace CppRed{
-namespace Scripts{
-
 MainMenuResult main_menu(Game &game){
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
@@ -134,7 +137,10 @@ MainMenuResult main_menu(Game &game){
 	items.push_back("NEW GAME");
 	items.push_back("OPTION");
 	while (true){
-		selection = game.handle_standard_menu(TileRegion::Background, { 0, 0 }, items, { 13, 0 });
+		StandardMenuOptions options;
+		options.items = &items;
+		options.minimum_size = {13,0};
+		selection = game.handle_standard_menu(options);
 		selection += (selection >= 0) * delta;
 		
 		if (selection < 0)

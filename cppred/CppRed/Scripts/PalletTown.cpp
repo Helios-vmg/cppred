@@ -86,16 +86,23 @@ DECLARE_SCRIPT(PalletTownScript0){
 		auto player_path = player.find_path(player_destination);
 		bool oak_done = false,
 			player_done = false;
-		game.run_in_own_coroutine([&](){
+		Coroutine player_co("player temp coroutine", coroutine.get_clock(), [&](Coroutine &){
 			player.follow_path(player_path);
 			player_done = true;
 		});
-		game.run_in_own_coroutine([&](){
+		Coroutine oak_co("oak temp coroutine", coroutine.get_clock(), [&](Coroutine &){
 			oak.follow_path(oak_path);
 			oak_done = true;
 		});
 		while (!oak_done || !player_done){
-			if (oak_done)
+			if (!player_done){
+				player_co.get_clock().step();
+				player_co.resume();
+			}
+			if (!oak_done){
+				oak_co.get_clock().step();
+				oak_co.resume();
+			}else
 				oak.set_visible(false);
 			coroutine.yield();
 		}

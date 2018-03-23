@@ -42,6 +42,7 @@ public:
 	}
 	DEFINE_GETTER(species)
 	DEFINE_GETTER_SETTER(nickname)
+	void heal();
 };
 
 class Party{
@@ -54,6 +55,10 @@ public:
 	bool add_pokemon(SpeciesId, int level, std::uint16_t original_trainer_id, XorShift128 &);
 	bool add_pokemon(const Pokemon &);
 	Pokemon &get_last_added_pokemon();
+	void heal();
+	size_t size() const{
+		return this->members.size();
+	}
 };
 
 }

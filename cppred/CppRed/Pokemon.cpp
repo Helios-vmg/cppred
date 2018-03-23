@@ -23,6 +23,11 @@ Pokemon &Party::get_last_added_pokemon(){
 	return this->members.back();
 }
 
+void Party::heal(){
+	for (auto &member : this->members)
+		member.heal();
+}
+
 int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp){
 	auto &stat = this->computed_stats.get_stat(which);
 	if (stat < 0){
@@ -166,6 +171,11 @@ int Pokemon::calculate_level_at_xp(SpeciesId species, int xp){
 		d = hi - lo;
 	}
 	return lo;
+}
+
+void Pokemon::heal(){
+	this->current_hp = this->get_stat(PokemonStats::StatId::Hp);
+	this->status = StatusCondition::Normal;
 }
 
 }

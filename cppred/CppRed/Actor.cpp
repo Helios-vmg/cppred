@@ -336,4 +336,25 @@ void NonPlayerActor::update_sprites(){
 	this->apply_to_all_sprites([&position](Sprite &sprite){ sprite.set_position(position); });
 }
 
+Point Actor::get_screen_position() const{
+	return this->standing_sprites[0]->get_position();
+}
+
+void Actor::look_towards_actor(const Actor &other){
+	auto p1 = this->get_screen_position();
+	auto p2 = other.get_screen_position();
+	auto delta = p2 - p1;
+	if (abs(delta.y) > abs(delta.x)){
+		if (delta.y < 0)
+			this->set_facing_direction(FacingDirection::Up);
+		else
+			this->set_facing_direction(FacingDirection::Down);
+	}else{
+		if (delta.x < 0)
+			this->set_facing_direction(FacingDirection::Left);
+		else
+			this->set_facing_direction(FacingDirection::Right);
+	}
+}
+
 }

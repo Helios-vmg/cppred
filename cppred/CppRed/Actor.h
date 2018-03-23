@@ -113,6 +113,8 @@ public:
 		this->aborting_movement = true;
 	}
 	std::shared_ptr<Sprite> show_emotion_bubble(Renderer &, EmotionBubble);
+	virtual Point get_screen_position() const;
+	virtual void look_towards_actor(const Actor &);
 };
 
 class NonPlayerActor : public Actor{

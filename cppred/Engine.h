@@ -87,7 +87,7 @@ public:
 	void go_to_debug();
 	void restart();
 	void throw_exception(const std::exception &e);
-	static const int screen_scale = 4;
+	static const int screen_scale;
 	static const int dmg_clock_frequency = 1 << 22;
 	static const int dmg_display_period = 70224;
 	static const double logical_refresh_rate;

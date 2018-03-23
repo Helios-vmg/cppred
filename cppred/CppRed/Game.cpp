@@ -205,28 +205,19 @@ void Game::put_string(const Point &position, TileRegion region, const char *stri
 	}
 }
 
-int Game::handle_standard_menu_with_title(
-		TileRegion region,
-		const Point &position_,
-		const std::vector<std::string> &items,
-		const char *title,
-		const Point &minimum_size,
-		bool ignore_b,
-		bool initial_padding){
-
-	region = TileRegion::Window;
-	auto position = position_;
-	auto width = minimum_size.x;
-	auto n = (int)items.size();
-	for (auto &s : items)
+int Game::handle_standard_menu(const StandardMenuOptions &options){
+	auto position = options.position;
+	auto width = options.minimum_size.x;
+	auto n = (int)options.items->size();
+	for (auto &s : *options.items)
 		width = std::max((int)s.size() + 1, width);
 	if (position.x + width + 2 > Renderer::logical_screen_tile_width)
 		position.x = Renderer::logical_screen_tile_width - (width + 2);
 	if (position.y + n * 2 + 2 > Renderer::logical_screen_tile_height)
 		position.y = Renderer::logical_screen_tile_height - (n * 2 + 2);
 	
-	Point size(width, std::max(n * 2 - !initial_padding, minimum_size.y));
-	this->draw_box(position, size, region);
+	Point size(width, std::max(n * 2 - !options.initial_padding, options.minimum_size.y));
+	this->draw_box(position, size, TileRegion::Window);
 
 	size += {2, 2};
 
@@ -237,25 +228,28 @@ int Game::handle_standard_menu_with_title(
 	auto old_window = renderer.get_enable_window();
 	renderer.set_enable_window(true);
 
-	if (title){
-		auto l = (int)strlen(title);
-		this->put_string(position + Point{ (width - l) / 2 + 1, 0 }, region, title);
+	if (options.before_item_display)
+		options.before_item_display();
+
+	if (options.title){
+		auto l = (int)strlen(options.title);
+		this->put_string(position + Point((width - l) / 2 + 1, 0), TileRegion::Window, options.title);
 	}
 
 	int y = 1;
-	for (auto &s : items)
-		this->put_string(position + Point{ 2, y++ * 2 - !initial_padding }, region, s.c_str());
+	for (auto &s : *options.items)
+		this->put_string(position + Point{ 2, y++ * 2 - !options.initial_padding }, TileRegion::Window, s.c_str());
 
 	int current_item = 0;
-	auto tilemap = renderer.get_tilemap(region).tiles;
+	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	while (true){
-		auto index = position.x + 1 + (position.y + (current_item + 1) * 2 - !initial_padding) * Tilemap::w;
+		auto index = position.x + 1 + (position.y + (current_item + 1) * 2 - !options.initial_padding) * Tilemap::w;
 		tilemap[index].tile_no = black_arrow;
 		int addend = 0;
 		do{
 			Coroutine::get_current_coroutine().yield();
 			auto state = this->joypad_auto_repeat();
-			if (!ignore_b && state.get_b()){
+			if (!options.ignore_b && state.get_b()){
 				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 				renderer.set_enable_window(old_window);
 				return -1;
@@ -274,10 +268,6 @@ int Game::handle_standard_menu_with_title(
 	}
 	assert(false);
 	return -1;
-}
-
-int Game::handle_standard_menu(TileRegion region, const Point &position, const std::vector<std::string> &items, const Point &minimum_size, bool ignore_b, bool initial_padding){
-	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b, initial_padding);
 }
 
 void Game::dialogue_wait(){
@@ -653,14 +643,21 @@ bool Game::run_yes_no_menu(const Point &point){
 		"NO",
 	};
 	AutoRendererWindowPusher pusher(this->engine->get_renderer());
-	return this->handle_standard_menu(TileRegion::Window, point, items, Point(), false, false) == 0;
+	StandardMenuOptions options;
+	options.position = point;
+	options.items = &items;
+	return this->handle_standard_menu(options) == 0;
 }
 
-void Game::run_in_own_coroutine(std::function<void()> &&f){
+bool Game::run_in_own_coroutine(std::function<void()> &&f, bool synchronous){
 	this->switch_screen_owner<CoroutineExecuter>(std::move(f));
 	auto c = Coroutine::get_current_coroutine_ptr();
-	if (c != this->coroutine.get())
-		c->yield();
+	if (c != this->coroutine.get()){
+		if (synchronous)
+			c->yield();
+		return true;
+	}
+	return !synchronous;
 }
 
 std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species){
@@ -679,6 +676,11 @@ std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species)
 		}
 	}
 	return ret;
+}
+
+bool Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &trainer, int party_index){
+	//TODO
+	return true;
 }
 
 }

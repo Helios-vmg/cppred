@@ -61,6 +61,11 @@
 	channel Music_MeetRival_Ch1 1
 	channel Music_MeetRival_Ch2 2
 
+.Music_MeetRivalAlternative 1 music
+	channel Music_MeetRival_branch_b1a2 0
+	channel Music_MeetRival_branch_b21d 1
+	channel Music_MeetRival_branch_b2b5 2
+
 .Music_MuseumGuy 1 music
 	channel Music_MuseumGuy_Ch0 0
 	channel Music_MuseumGuy_Ch1 1

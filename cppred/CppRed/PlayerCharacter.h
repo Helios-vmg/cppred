@@ -32,10 +32,39 @@ private:
 	static FacingDirection input_to_direction(const InputState &input);
 	bool move_internal(FacingDirection) override;
 	void check_for_bookshelf_or_card_key_door();
+	void display_menu();
+	void display_party_menu();
+	void display_inventory_menu();
+	void display_player_menu();
+	void display_save_dialog();
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	void teleport(const WorldCoordinates &);
 	DEFINE_GETTER_SETTER(ignore_input)
+};
+
+class AutoIgnoreInput{
+	PlayerCharacter *pc;
+public:
+	AutoIgnoreInput(PlayerCharacter &pc): pc(&pc){
+		this->pc->set_ignore_input(true);
+	}
+	AutoIgnoreInput(const AutoIgnoreInput &) = delete;
+	AutoIgnoreInput(AutoIgnoreInput &&other){
+		*this = std::move(other);
+	}
+	~AutoIgnoreInput(){
+		if (this->pc)
+			this->pc->set_ignore_input(false);
+	}
+	const AutoIgnoreInput &operator=(const AutoIgnoreInput &) = delete;
+	const AutoIgnoreInput &operator=(AutoIgnoreInput &&other){
+		if (this->pc)
+			this->pc->set_ignore_input(false);
+		this->pc = other.pc;
+		other.pc = nullptr;
+		return *this;
+	}
 };
 
 }

@@ -7459,13 +7459,13 @@ our POKÈMON!<para>
 Come on, I'll take
 you on!<done>
 
-.OaksLabText_1d3be
+.FirstBlueBattlePlayerWon
 WHAT?
 Unbelievable!<cont>
 I picked the<cont>
 wrong POKÈMON!<prompt><end>
 
-.OaksLabText_1d3c3
+.FirstBlueBattlePlayerLost
 <mem,rival_name>: Yeah! Am
 I great or what?<prompt><end>
 

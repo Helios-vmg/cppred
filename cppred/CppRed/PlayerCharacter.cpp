@@ -3,6 +3,8 @@
 #include "Actor.h"
 #include "../Maps.h"
 #include "World.h"
+#include "MainMenu.h"
+#include "../../CodeGeneration/output/variables.h"
 #include <cassert>
 #include <iostream>
 
@@ -57,7 +59,7 @@ void PlayerCharacter::coroutine_entry_point(){
 
 		input = this->game->joypad_only_newly_pressed();
 		if (input.get_start()){
-			//handle menu
+			this->game->run_in_own_coroutine([this](){ this->display_menu(); });
 		}else if (input.get_a()){
 			MapObjectInstance *instances[8];
 			auto &world = this->game->get_world();
@@ -192,5 +194,79 @@ void PlayerCharacter::check_for_bookshelf_or_card_key_door(){
 	else
 		this->game->run_dialogue(info->text_id, true, true);
 }
+
+void PlayerCharacter::display_menu(){
+	auto &coroutine = Coroutine::get_current_coroutine();
+	auto &renderer = this->game->get_engine().get_renderer();
+	auto &tilemap = renderer.get_tilemap(TileRegion::Window);
+	bool done = false;
+	bool first_time = true;
+
+	std::vector<std::string> items;
+	std::vector<std::function<void()>> callbacks;
+	
+	bool have_pokedex = this->game->get_variable_store().get(EventId::event_got_pokedex);
+
+	if (have_pokedex){
+		items.push_back("POK\xE5DEX");
+		callbacks.push_back([](){});
+	}
+	
+	items.push_back("POK\xE5MON");
+	callbacks.push_back([this](){
+		if (!this->party.size())
+			return;
+		this->display_party_menu();
+	});
+	
+	items.push_back("ITEM");
+	callbacks.push_back([this](){
+		this->display_inventory_menu();
+	});
+	
+	items.push_back(this->name);
+	callbacks.push_back([this](){
+		this->display_player_menu();
+	});
+	
+	items.push_back("SAVE");
+	callbacks.push_back([this](){
+		this->display_save_dialog();
+	});
+	
+	items.push_back("OPTION");
+	callbacks.push_back([this](){
+		Scripts::show_options(*this->game);
+	});
+	
+	items.push_back("EXIT");
+	callbacks.push_back([&done](){ done = true; });
+	
+	StandardMenuOptions options;
+	options.position = {Renderer::logical_screen_tile_width - 1, 0};
+	options.items = &items;
+	options.before_item_display = [this, &first_time](){
+		if (!first_time)
+			return;
+		auto &audio = this->game->get_audio_interface();
+		audio.play_sound(AudioResourceId::SFX_Start_Menu);
+		audio.wait_for_sfx_to_end();
+		first_time = false;
+	};
+	while (!done){
+		auto input = this->game->handle_standard_menu(options);
+		if (input < 0)
+			break;
+		callbacks[input]();
+	}
+}
+
+void PlayerCharacter::display_party_menu(){}
+
+void PlayerCharacter::display_inventory_menu(){}
+
+void PlayerCharacter::display_player_menu(){}
+
+void PlayerCharacter::display_save_dialog(){}
 
 }
