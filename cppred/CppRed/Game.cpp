@@ -447,6 +447,15 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 	const int grid_w = 9;
 	const int grid_h = 5;
 	auto &coroutine = Coroutine::get_current_coroutine();
+	std::array<std::shared_ptr<Sprite>, 2> sprites;
+	if (type == NameEntryType::Pokemon){
+		sprites = this->load_mon_sprites(species);
+		sprites[0]->set_position({8, 0});
+		sprites[1]->set_position({8, 0});
+		renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
+	}
+	auto &clock = coroutine.get_clock();
+	auto initial_time = clock.get();
 	while (true){
 		if (redraw_alphabet){
 			for (int y = 0; y < grid_h; y++){
@@ -485,12 +494,18 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 		}
 		tilemap[mode_select_cursor_location.x + mode_select_cursor_location.y * Tilemap::w].tile_no = cursor_position.y == grid_h ? black_arrow : ' ';
 
-		if (type == NameEntryType::Pokemon){
-			//TODO: Draw animated pokemon sprite.
-		}
-
 		while (true){
 			coroutine.yield();
+
+			if (type == NameEntryType::Pokemon){
+				auto current_time = clock.get();
+				auto frame = (int)((current_time - initial_time) * (60.0 / 17.0));
+				frame %= 2;
+				sprites[frame]->set_visible(true);
+				frame = (frame + 1) % 2;
+				sprites[frame]->set_visible(false);
+			}
+
 			auto input = this->joypad_only_newly_pressed();
 			if (input.get_up()){
 				cursor_position.y = (cursor_position.y + grid_h) % (grid_h + 1);
@@ -557,7 +572,7 @@ std::string Game::get_name_from_user(NameEntryType type, int max_length){
 }
 
 std::string Game::get_name_from_user(SpeciesId species, int max_length){
-	auto ret = this->get_name_from_user(NameEntryType::Pokemon, SpeciesId::None, max_length);
+	auto ret = this->get_name_from_user(NameEntryType::Pokemon, species, max_length);
 	Logger() << "Selected name: " << ret << '\n';
 	return ret;
 }
@@ -645,36 +660,21 @@ void Game::run_in_own_coroutine(std::function<void()> &&f){
 }
 
 std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species){
-	auto &data = *pokemon_by_pokedex_id[(int)species];
+	auto &data = *pokemon_by_species_id[(int)species];
 	auto &renderer = this->engine->get_renderer();
 	std::array<std::shared_ptr<Sprite>, 2> ret;
 	ret[0] = renderer.create_sprite(2, 2);
 	ret[1] = renderer.create_sprite(2, 2);
-	switch (data.overworld_sprite){
-		case PokemonOverworldSprite::Mon:
-			ret[0]->get_tile(0, 0).tile_no = SlowbroSprite.first_tile
-				/**/
-			break;
-		case PokemonOverworldSprite::Ball: break;
-		case PokemonOverworldSprite::Helix: break;
-		case PokemonOverworldSprite::Fairy: break;
-		case PokemonOverworldSprite::Bird: break;
-		case PokemonOverworldSprite::Water: break;
-		case PokemonOverworldSprite::Bug: break;
-		case PokemonOverworldSprite::Grass: break;
-		case PokemonOverworldSprite::Snake: break;
-		case PokemonOverworldSprite::Quadruped: break;
-		case PokemonOverworldSprite::Invalid: break;
-		case PokemonOverworldSprite::Invalid11: break;
-		case PokemonOverworldSprite::Invalid12: break;
-		case PokemonOverworldSprite::Invalid13: break;
-		case PokemonOverworldSprite::Invalid14: break;
-		case PokemonOverworldSprite::Invalid15: break;
-		case PokemonOverworldSprite::Count: break;
-		default: break;
-
-
+	auto first_tile = MonPartySprites2.first_tile + (int)data.overworld_sprite;
+	for (int j = 0; j < 2; j++){
+		int i = 0;
+		for (SpriteTile &tile : ret[j]->iterate_tiles()){
+			tile.tile_no = first_tile + i % 2 + i / 2 * MonPartySprites2.width + j * MonPartySprites2.width * 2;
+			tile.has_priority = true;
+			i++;
+		}
 	}
+	return ret;
 }
 
 }

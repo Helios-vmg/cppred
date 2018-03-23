@@ -267,7 +267,7 @@ void AudioProgram::update_channel(int i){
 	if (!c->update()){
 		c.reset();
 		if (!this->for_music && i >= 4 && !this->is_sfx_playing()){
-			this->fade_out_counter = this->fade_out_counter_reload_value = 8;
+			this->fade_out_counter = this->fade_out_counter_reload_value = 4;
 			this->fade_out_control = 1;
 			this->renderer->set_active(false);
 			this->sfx_finish_event.signal();

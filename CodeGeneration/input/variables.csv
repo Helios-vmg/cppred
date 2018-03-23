@@ -10,6 +10,7 @@ hSpriteIndexOrTextID,int
 LastOutdoorsMap,int
 OaksLabScriptIndex,int
 PalletTownScriptIndex,int
+red_ball_index,int
 SilphCoElevatorCurrentFloor,int
 wAmountMoneyWon,int
 wcf0d,int
