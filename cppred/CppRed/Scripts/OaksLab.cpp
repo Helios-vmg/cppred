@@ -7,6 +7,7 @@
 #include "../../../CodeGeneration/output/audio.h"
 #include "../../../CodeGeneration/output/variables.h"
 #include "../../../CodeGeneration/output/actors.h"
+#include "../../../CodeGeneration/output/trainer_parties.h"
 #include <CppRed/Npc.h>
 #include <sstream>
 
@@ -47,8 +48,8 @@ DECLARE_SCRIPT(OaksLabScript){
 		OaksLabScript06,
 		nullptr,
 		OaksLabScript08,
-		OaksLabScript09,
-		//OaksLabScript10,
+		nullptr,
+		OaksLabScript10,
 		//OaksLabScript11,
 		//OaksLabScript12,
 		//OaksLabScript13,
@@ -117,7 +118,6 @@ DECLARE_SCRIPT(OaksLabScript00){
 
 DECLARE_SCRIPT(OaksLabScript06){
 	auto &game = *parameters.game;
-	auto &vs = game.get_variable_store();
 	auto &world = game.get_world();
 	auto &player = world.get_pc();
 	if (player.get_map_position().y < 6)
@@ -140,7 +140,7 @@ struct BallScriptData{
 	int blues_ball_index;
 	TextResourceId question;
 	VisibilityFlagId vfi;
-	ActorId reds_ball;
+	ActorId ball_sprite;
 };
 
 static const BallScriptData static_data[] = {
@@ -148,39 +148,6 @@ static const BallScriptData static_data[] = {
 	{ 2, 0, 2, TextResourceId::OaksLabSquirtleText,   VisibilityFlagId::hs_starter_ball_2, ActorId::SquirtlePokeball   },
 	{ 0, 1, 0, TextResourceId::OaksLabBulbasaurText,  VisibilityFlagId::hs_starter_ball_3, ActorId::BulbasaurPokeball  },
 };
-
-DECLARE_SCRIPT(OaksLabScript08){
-	auto &game = *parameters.game;
-	auto &vs = game.get_variable_store();
-	auto &world = game.get_world();
-	auto &player = world.get_pc();
-	auto &blue = dynamic_cast<NpcTrainer &>(world.get_actor(ActorId::BlueInOaksLab));
-	auto red_ball_index = vs.get(IntegerVariableId::red_ball_index);
-	Point destination(static_data[red_ball_index].blues_ball_index + 6, 4);
-	auto path = blue.find_path(destination);
-	player.set_ignore_input(true);
-	blue.set_random_facing_direction(false);
-	blue.follow_path(path);
-	blue.set_facing_direction(FacingDirection::Up);
-	/**/
-	vs.set(IntegerVariableId::OaksLabScriptIndex, 9);
-}
-
-DECLARE_SCRIPT(OaksLabScript09){
-}
-
-DECLARE_SCRIPT(OaksLabText1){
-	auto &game = *parameters.game;
-	auto &vs = game.get_variable_store();
-	TextResourceId text;
-	if (!vs.get(EventId::event_followed_oak_into_lab_2))
-		text = TextResourceId::OaksLabGaryText1;
-	else if (vs.get(EventId::event_got_starter))
-		text = TextResourceId::OaksLabText41;
-	else
-		text = TextResourceId::OaksLabText40;
-	game.run_dialogue(text, true, true);
-}
 
 static SpeciesId starter_index_to_species_id(int starter_index){
 	const BasePokemonInfo *pokemon = nullptr;
@@ -198,8 +165,91 @@ static SpeciesId starter_index_to_species_id(int starter_index){
 	return pokemon->species_id;
 }
 
-static void display_dex(const script_parameters &parameters, int starter_index){
+DECLARE_SCRIPT(OaksLabScript08){
+	auto &game = *parameters.game;
+	auto &vs = game.get_variable_store();
+	auto &world = game.get_world();
+	auto &player = world.get_pc();
+	auto &blue = dynamic_cast<NpcTrainer &>(world.get_actor(ActorId::BlueInOaksLab));
+	auto red_ball_index = vs.get(IntegerVariableId::red_ball_index);
+	auto &red_ball_data = static_data[red_ball_index];
+	auto &blue_ball_data = static_data[red_ball_data.blues_ball_index];
+	auto blues_species = starter_index_to_species_id(blue_ball_data.starter_index);
+	auto &blues_pokemon = *pokemon_by_species_id[(int)blues_species];
+
+	player.set_ignore_input(true);
+
+	//Move Blue into position in front of the ball.
+	Point destination(red_ball_data.blues_ball_index + 6, 4);
+	auto path = blue.find_path(destination);
+	blue.set_random_facing_direction(false);
+	blue.follow_path(path);
+	blue.set_facing_direction(FacingDirection::Up);
+
+	game.run_dialogue(TextResourceId::OaksLabRivalPickingMonText, true, false);
 	
+	//Hide Blue's ball permanently.
+	auto &blues_ball_sprite = world.get_actor(blue_ball_data.ball_sprite);
+	blues_ball_sprite.set_visible(false);
+	vs.set(blue_ball_data.vfi, 0);
+
+	vs.set(StringVariableId::wcd6d_ReceivedItemName, blues_pokemon.display_name);
+	game.run_dialogue(TextResourceId::OaksLabRivalReceivedMonText, false, false);
+	auto &audio = game.get_audio_interface();
+	audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
+	audio.wait_for_sfx_to_end();
+	game.dialogue_wait();
+	game.reset_dialogue_state();
+	
+	vs.set(EventId::event_got_starter, true);
+	vs.set(IntegerVariableId::wRivalStarter, (int)blues_species);
+	vs.set(IntegerVariableId::OaksLabScriptIndex, 10);
+
+	player.set_ignore_input(false);
+}
+
+DECLARE_SCRIPT(OaksLabScript10){
+	auto &game = *parameters.game;
+	auto &world = game.get_world();
+	auto &player = world.get_pc();
+	if (player.get_map_position().y < 6)
+		return;
+	auto &vs = game.get_variable_store();
+	player.set_ignore_input(true);
+	player.abort_movement();
+	auto red_ball_index = vs.get(IntegerVariableId::red_ball_index);
+	auto &red_ball_data = static_data[red_ball_index];
+
+	auto &blue = dynamic_cast<NpcTrainer &>(world.get_actor(ActorId::BlueInOaksLab));
+	blue.set_facing_direction(FacingDirection::Down);
+	player.set_facing_direction(FacingDirection::Up);
+
+	game.get_audio_interface().play_sound(AudioResourceId::Music_MeetRival);
+	game.run_dialogue(TextResourceId::OaksLabRivalChallengeText, true, true);
+
+	auto destination = player.get_map_position() + Point(0, -1);
+	auto path = blue.find_path(destination);
+	blue.set_random_facing_direction(false);
+	blue.follow_path(path);
+	blue.set_facing_direction(FacingDirection::Down);
+
+	auto blue_party = (red_ball_data.starter_index + 2) % 3 + 1;
+	auto &party = blue.get_party(blue_party);
+	game.run_trainer_battle(party);
+	/**/
+}
+
+DECLARE_SCRIPT(OaksLabText1){
+	auto &game = *parameters.game;
+	auto &vs = game.get_variable_store();
+	TextResourceId text;
+	if (!vs.get(EventId::event_followed_oak_into_lab_2))
+		text = TextResourceId::OaksLabGaryText1;
+	else if (vs.get(EventId::event_got_starter))
+		text = TextResourceId::OaksLabText41;
+	else
+		text = TextResourceId::OaksLabText40;
+	game.run_dialogue(text, true, true);
 }
 
 static void ball_script(const script_parameters &parameters, int index, bool run = false){
@@ -232,11 +282,10 @@ static void ball_script(const script_parameters &parameters, int index, bool run
 		game.reset_dialogue_state();
 		return;
 	}
-	//auto blues_species = starter_index_to_species_id(data.blues_starter_index);
 	vs.set(IntegerVariableId::wPlayerStarter, (int)reds_species);
 	vs.set(data.vfi, false);
 	vs.set(StringVariableId::wcd6d_ReceivedItemName, reds_pokemon.display_name);
-	world.get_actor(data.reds_ball).set_visible(false);
+	world.get_actor(data.ball_sprite).set_visible(false);
 
 	game.reset_dialogue_state(false);
 	game.run_dialogue(TextResourceId::OaksLabMonEnergeticText, false, true);

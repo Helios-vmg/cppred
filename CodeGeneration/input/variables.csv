@@ -25,6 +25,7 @@ wHPBarHPDifference,int
 wPlayerCoins,int
 wPlayerNumHits,int
 wPlayerStarter,int
+wRivalStarter,int
 wTotalPayDayMoney,int
 name_rate_new_nickname,string
 player_name,string

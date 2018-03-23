@@ -60,17 +60,10 @@ DECLARE_SCRIPT(PalletTownScript0){
 	game.run_dialogue(TextResourceId::OakAppearsText, false, false);
 	auto &coroutine = Coroutine::get_current_coroutine();
 	{
-		auto exclamation_mark = renderer.create_sprite(2, 2);
-		int i = 0;
-		for (SpriteTile &tile : exclamation_mark->iterate_tiles()){
-			tile.tile_no = EmotionBubbles.first_tile + i++;
-			tile.has_priority = true;
-		}
-		exclamation_mark->set_position((PlayerCharacter::screen_block_offset + Point(0, -1)) * Renderer::tile_size * 2 + Point(0, -Renderer::tile_size / 2));
-		exclamation_mark->set_visible(true);
+		auto bubble = player.show_emotion_bubble(renderer, EmotionBubble::Surprise);
 		coroutine.wait(1);
-		game.reset_dialogue_state();
 	}
+	game.reset_dialogue_state();
 	auto &oak = world.get_actor(ActorId::PalletOak);
 	oak.set_visible(true);
 	oak.set_facing_direction(FacingDirection::Up);
@@ -93,29 +86,21 @@ DECLARE_SCRIPT(PalletTownScript0){
 		auto player_path = player.find_path(player_destination);
 		bool oak_done = false,
 			player_done = false;
-		Coroutine player_co("player temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
+		game.run_in_own_coroutine([&](){
 			player.follow_path(player_path);
 			player_done = true;
 		});
-		Coroutine oak_co("oak temp coroutine", Coroutine::get_current_coroutine().get_clock(), [&](Coroutine &){
+		game.run_in_own_coroutine([&](){
 			oak.follow_path(oak_path);
 			oak_done = true;
 		});
 		while (!oak_done || !player_done){
-			if (!player_done){
-				player_co.get_clock().step();
-				player_co.resume();
-			}
-			if (!oak_done){
-				oak_co.get_clock().step();
-				oak_co.resume();
-			}else
+			if (oak_done)
 				oak.set_visible(false);
 			coroutine.yield();
 		}
 		static_cast<Npc &>(oak).set_special_movement_duration(old);
 	}
-	oak.set_visible(false);
 	player.set_ignore_occupancy(true);
 	world.set_automatic_music_transition(false);
 	player.move(FacingDirection::Up);

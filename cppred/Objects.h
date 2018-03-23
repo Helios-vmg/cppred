@@ -236,15 +236,13 @@ public:
 
 class TrainerMapObject : public NpcMapObject{
 protected:
-	std::shared_ptr<BaseTrainerParty> party;
+	std::map<int, std::shared_ptr<BaseTrainerParty>> parties;
+	int default_party;
 
 public:
 	TrainerMapObject(BufferReader &,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map);
-	TrainerMapObject(const char *name, const Point &position, const GraphicsAsset &sprite, MapObjectFacingDirection facing_direction, bool wandering, int range, int text_id, const std::shared_ptr<BaseTrainerParty> &party):
-		NpcMapObject(name, position, sprite, facing_direction, wandering, range, text_id),
-		party(party){}
+		const std::map<std::string, std::map<int, std::shared_ptr<BaseTrainerParty>>> &parties_map);
 	const char *get_type_string() const override{
 		return "trainer";
 	}

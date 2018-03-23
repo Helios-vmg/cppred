@@ -280,6 +280,10 @@ int Game::handle_standard_menu(TileRegion region, const Point &position, const s
 	return this->handle_standard_menu_with_title(region, position, items, nullptr, minimum_size, ignore_b, initial_padding);
 }
 
+void Game::dialogue_wait(){
+	PromptCommand::wait_for_continue(*this, this->text_state, false);
+}
+
 void Game::run_dialogue(TextResourceId resource, bool wait_at_end, bool hide_dialogue_at_end){
 	if (this->check_screen_owner<TextDisplay>(true, resource, wait_at_end, hide_dialogue_at_end))
 		return;
@@ -295,7 +299,7 @@ void Game::run_dialogue(TextResourceId resource, bool wait_at_end, bool hide_dia
 	}
 	this->text_store.execute(*this, resource, this->text_state);
 	if (wait_at_end)
-		PromptCommand::wait_for_continue(*this, this->text_state, false);
+		this->dialogue_wait();
 	if (this->reset_dialogue_was_delayed || hide_dialogue_at_end){
 		this->reset_dialogue_state();
 		this->reset_dialogue_was_delayed = false;
@@ -319,7 +323,7 @@ void Game::run_dex_entry(TextResourceId id){
 	this->no_text_delay = true;
 	this->text_store.execute(*this, id, dialogue_state);
 	this->no_text_delay = old;
-	PromptCommand::wait_for_continue(*this, dialogue_state, false);
+	this->dialogue_wait();
 	this->joypad_pressed = InputState();
 }
 

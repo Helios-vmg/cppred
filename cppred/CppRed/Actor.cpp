@@ -290,6 +290,18 @@ void Actor::follow_path(const std::vector<PathStep> &steps){
 	this->ignore_occupancy = false;
 }
 
+std::shared_ptr<Sprite> Actor::show_emotion_bubble(Renderer &renderer, EmotionBubble bubble_id){
+	auto ret = renderer.create_sprite(2, 2);
+	int bubble_tile = EmotionBubbles.first_tile + 4 * (int)bubble_id;
+	for (auto &tile : ret->iterate_tiles()){
+		tile.tile_no = bubble_tile++;
+		tile.has_priority = true;
+	}
+	ret->set_position(this->standing_sprites[0]->get_position() + Point(0, -1) * Renderer::tile_size * 2);
+	ret->set_visible(true);
+	return ret;
+}
+
 bool Actor::run_saved_actions(){
 	if (!this->saved_actions.size())
 		return true;

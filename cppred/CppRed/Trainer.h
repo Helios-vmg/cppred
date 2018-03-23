@@ -35,8 +35,19 @@ public:
 inline Trainer::~Trainer(){}
 
 class NpcTrainer : public Npc, public Trainer{
+	std::map<int, std::shared_ptr<BaseTrainerParty>> parties;
+	int default_party;
 public:
-	NpcTrainer(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &instance);
+	NpcTrainer(
+		Game &game,
+		Coroutine &parent_coroutine,
+		const std::string &name,
+		Renderer &renderer,
+		const GraphicsAsset &sprite,
+		MapObjectInstance &instance,
+		const std::map<int, std::shared_ptr<BaseTrainerParty>> &,
+		int default_party);
+	const BaseTrainerParty &get_party(int index = -1);
 };
 
 }

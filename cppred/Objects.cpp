@@ -92,10 +92,10 @@ ItemMapObject::ItemMapObject(BufferReader &buffer,
 
 TrainerMapObject::TrainerMapObject(BufferReader &buffer,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::pair<std::string, int>, std::shared_ptr<BaseTrainerParty>> &parties_map): NpcMapObject(buffer, graphics_map){
+		const std::map<std::string, std::map<int, std::shared_ptr<BaseTrainerParty>>> &parties_map): NpcMapObject(buffer, graphics_map){
 	auto class_name = buffer.read_string();
-	auto party_index = (int)buffer.read_varint();
-	this->party = find_in_constant_map(parties_map, std::make_pair(class_name, party_index));
+	this->default_party = (int)buffer.read_varint();
+	this->parties = find_in_constant_map(parties_map, class_name);
 }
 
 PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map):
@@ -181,7 +181,16 @@ void ObjectWithSprite::activate(CppRed::Game &game, CppRed::Actor &activator, Cp
 }
 
 CppRed::actor_ptr<CppRed::Actor> TrainerMapObject::create_actor(CppRed::Game &game, Renderer &renderer, Map map, MapObjectInstance &instance) const{
-	auto ret = CppRed::create_actor2<CppRed::NpcTrainer>(game, game.get_coroutine(), this->name, renderer, *this->sprite, instance);
+	auto ret = CppRed::create_actor2<CppRed::NpcTrainer>(
+		game,
+		game.get_coroutine(),
+		this->name,
+		renderer,
+		*this->sprite,
+		instance,
+		this->parties,
+		this->default_party
+	);
 	auto npc = (CppRed::Npc *)ret.get();
 	this->initialize_actor(*npc, map, game);
 	return ret;

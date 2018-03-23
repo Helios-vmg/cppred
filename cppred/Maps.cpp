@@ -184,7 +184,7 @@ MapStore::trainer_parties_t MapStore::load_trainer_parties(){
 				member.species = (SpeciesId)read_varint(buffer, offset, size);
 				member.level = (int)read_varint(buffer, offset, size);
 			}
-			ret[std::make_pair(class_name, party_index)] = party;
+			ret[class_name][party_index] = party;
 		}
 	}
 	return ret;

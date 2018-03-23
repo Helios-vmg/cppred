@@ -16,6 +16,12 @@ struct PathStep{
 	Point after_state;
 };
 
+enum class EmotionBubble{
+	Surprise = 0,
+	Confusion = 1,
+	Happiness = 2,
+};
+
 class Actor{
 protected:
 	Game *game;
@@ -106,6 +112,7 @@ public:
 	void abort_movement(){
 		this->aborting_movement = true;
 	}
+	std::shared_ptr<Sprite> show_emotion_bubble(Renderer &, EmotionBubble);
 };
 
 class NonPlayerActor : public Actor{

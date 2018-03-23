@@ -207,6 +207,8 @@ public:
 	void unlock(){
 		this->locks_acquired--;
 	}
+	void dialogue_wait();
+	void run_trainer_battle(const BaseTrainerParty &);
 };
 
 }
