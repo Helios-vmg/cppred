@@ -396,13 +396,30 @@ void Console::sound_test(){
 	this->engine->go_to_debug();
 	auto &program = this->get_audio_program();
 	CppRed::AudioInterface audio_interface(program);
-	auto sounds = program.get_resource_strings();
-	sounds.erase(sounds.begin());
-	sounds.push_back("Stop");
+	auto sound_strings = program.get_resource_strings();
+	sound_strings.erase(sound_strings.begin());
+	std::vector<int> indices;
+	{
+		std::vector<std::pair<std::string, int>> temp;
+		indices.reserve(sound_strings.size());
+		temp.reserve(sound_strings.size());
+		int i = 1;
+		for (auto &s : sound_strings)
+			temp.emplace_back(s, i++);
+		std::sort(temp.begin(), temp.end());
+		sound_strings.clear();
+		for (auto &pair : temp){
+			sound_strings.push_back(pair.first);
+			indices.push_back(pair.second);
+		}
+
+		sound_strings.push_back("Stop");
+		indices.push_back((int)indices.size() + 1);
+	}
 	int item = 0;
 	while (true){
-		item = this->handle_menu(sounds, item);
-		audio_interface.play_sound((AudioResourceId)(item + 1));
+		item = this->handle_menu(sound_strings, item);
+		audio_interface.play_sound((AudioResourceId)indices[item]);
 	}
 }
 
