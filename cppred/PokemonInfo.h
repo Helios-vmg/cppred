@@ -91,6 +91,19 @@ struct PokemonStats{
 	int speed;
 	int special;
 
+	PokemonStats():
+		hp(0),
+		attack(0),
+		defense(0),
+		speed(0),
+		special(0){}
+	PokemonStats(int hp, int attack, int defense, int speed, int special):
+		hp(hp),
+		attack(attack),
+		defense(defense),
+		speed(speed),
+		special(special){}
+
 	enum class StatId{
 		Hp = 0,
 		Attack,
@@ -127,6 +140,16 @@ struct PokemonStats{
 				return this->special;
 		}
 		return this->special;
+	}
+	bool null() const{
+		return !this->hp && !this->attack && !this->defense && !this->defense && !this->speed && !this->special;
+	}
+	void set_all(int value){
+		this->hp = 
+			this->attack = 
+			this->defense = 
+			this->speed = 
+			this->special = value;
 	}
 };
 

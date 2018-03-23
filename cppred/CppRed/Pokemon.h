@@ -22,14 +22,24 @@ class Pokemon{
 	
 	int get_iv(PokemonStats::StatId) const;
 public:
+	Pokemon():
+		species(SpeciesId::None),
+		current_hp(0),
+		level(0),
+		status(StatusCondition::Normal),
+		original_trainer_id(0),
+		experience(0),
+		individual_values(0){}
 	//Generates a random pokemon with the given species and level.
-	Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &);
+	Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &, const PokemonStats &input_stats = PokemonStats());
 	Pokemon(const Pokemon &) = default;
 	Pokemon(Pokemon &&) = default;
-	int get_stat(PokemonStats::StatId, bool ignore_xp = false) const;
+	int get_stat(PokemonStats::StatId, bool ignore_xp = false);
 	static int calculate_min_xp_to_reach_level(SpeciesId species, int level);
 	static int calculate_level_at_xp(SpeciesId species, int xp);
-	//void set_stat_xp(PokemonStats::StatId )
+	bool null() const{
+		return this->species == SpeciesId::None;
+	}
 };
 
 class Party{

@@ -10,21 +10,25 @@ bool Party::add_pokemon(SpeciesId species, int level, std::uint16_t original_tra
 	return true;
 }
 
-int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp) const{
-	auto &pokemon = *pokemon_by_species_id[(int)this->species];
-	int base_stat = pokemon.base_stats.get_stat(which);
-	int bonus = 0;
-	if (!ignore_xp){
-		int stat_xp = this->stat_experience.get_stat(which);
-		bonus = (int)ceil(sqrt(stat_xp));
+int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp){
+	auto &stat = this->computed_stats.get_stat(which);
+	if (stat < 0){
+		auto &pokemon = *pokemon_by_species_id[(int)this->species];
+		int base_stat = pokemon.base_stats.get_stat(which);
+		int bonus = 0;
+		if (!ignore_xp){
+			int stat_xp = this->stat_experience.get_stat(which);
+			bonus = (int)ceil(sqrt(stat_xp));
+		}
+		int iv = this->get_iv(which);
+		int ret = ((base_stat + iv) * 2 + bonus / 4) * this->level / 100;
+		if (which == PokemonStats::StatId::Hp)
+			ret += this->level + 10;
+		else
+			ret += 5;
+		stat = ret;
 	}
-	int iv = this->get_iv(which);
-	int ret = ((base_stat + iv) * 2 + bonus / 4) * this->level / 100;
-	if (which == PokemonStats::StatId::Hp)
-		ret += this->level + 10;
-	else
-		ret += 5;
-	return ret;
+	return stat;
 }
 
 /*
@@ -37,6 +41,15 @@ int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp) const{
  * speed   individual value = FEDC
  * special individual value = BA98
  * HP      individual value = 40C8
+ *
+ * Example:
+ *
+ * IV = 48161 (0xBC21, 1011 1100 0010 0001)
+ * attack  IV = 2  (0010)
+ * defense IV = 1  (0001)
+ * speed   IV = 12 (1100)
+ * special IV = 11 (1011)
+ * HP      IV = 6  (0110)
  *
  */
 int Pokemon::get_iv(PokemonStats::StatId which) const{
@@ -56,7 +69,7 @@ int Pokemon::get_iv(PokemonStats::StatId which) const{
 }
 
 
-Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &rng){
+Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &rng, const PokemonStats &input_stats){
 	this->species = species;
 	this->level = level;
 	auto &pokemon = *pokemon_by_species_id[(int)species];
@@ -73,6 +86,10 @@ Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id
 	rng.generate(this->individual_values);
 	this->current_hp = this->get_stat(PokemonStats::StatId::Hp, true);
 	this->experience = this->calculate_min_xp_to_reach_level(this->species, this->level);
+	if (!input_stats.null())
+		this->computed_stats = input_stats;
+	else
+		this->computed_stats.set_all(-1);
 }
 
 struct GrowthPolynomial{
