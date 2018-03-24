@@ -368,3 +368,38 @@ enum class FacingDirection{
 
 Point direction_to_vector(FacingDirection);
 FacingDirection invert_direction(FacingDirection);
+
+template <size_t N>
+class FixedBitmap{
+public:
+	static const size_t size = (N + 7) / 8;
+private:
+	byte_t data[size];
+public:
+	FixedBitmap(bool default_value = false){
+		memset(this->data, default_value ? 0xFF : 0x00, size);
+	}
+	FixedBitmap(const FixedBitmap &other) = default;
+	const FixedBitmap &operator=(const FixedBitmap &other){
+		memcpy(this->data, other.data, size);
+		return *this;
+	}
+	FixedBitmap(FixedBitmap &&other) = delete;
+	void operator=(FixedBitmap &&other) = delete;
+	void set(size_t index, bool value = true){
+		byte_t mask = 1 << (index % 8);
+		if (value)
+			this->data[index / 8] |= mask;
+		else
+			this->data[index / 8] &= ~mask;
+	}
+	bool get(size_t index) const{
+		byte_t mask = 1 << (index % 8);
+		return !!(this->data[index / 8] & mask);
+	}
+	std::array<byte_t, size> get_data() const{
+		std::array<byte_t, size> ret;
+		memcpy(ret.data(), this->data, size);
+		return ret;
+	}
+};
