@@ -3,12 +3,12 @@ id,name,display_name,price,use_function,is_key
 1,MasterBall,MASTER BALL,0,ItemUseBall,false
 2,UltraBall,ULTRA BALL,1200,ItemUseBall,false
 3,GreatBall,GREAT BALL,600,ItemUseBall,false
-4,PokeBall,POK√© BALL,200,ItemUseBall,false
+4,PokeBall,POKÈ BALL,200,ItemUseBall,false
 5,TownMap,TOWN MAP,0,ItemUseTownMap,true
 6,Bicycle,BICYCLE,0,ItemUseBicycle,true
 7,Surfboard,?????,0,ItemUseSurfboard,true
 8,SafariBall,SAFARI BALL,1000,ItemUseBall,true
-9,Pokedex,POK√©DEX,0,ItemUsePokedex,true
+9,Pokedex,POKÈDEX,0,ItemUsePokedex,true
 10,MoonStone,MOON STONE,0,ItemUseEvoStone,false
 11,Antidote,ANTIDOTE,100,ItemUseMedicine,false
 12,BurnHeal,BURN HEAL,250,ItemUseMedicine,false
@@ -50,7 +50,7 @@ id,name,display_name,price,use_function,is_key
 48,CardKey,CARD KEY,0,ItemUseCardKey,true
 49,Nugget,NUGGET,10000,UnusableItem,false
 50,PpUp2,PP UP,9800,UnusableItem,false
-51,PokeDoll,POK√© DOLL,1000,ItemUsePokedoll,false
+51,PokeDoll,POKÈ DOLL,1000,ItemUsePokedoll,false
 52,FullHeal,FULL HEAL,600,ItemUseMedicine,false
 53,Revive,REVIVE,1500,ItemUseMedicine,false
 54,MaxRevive,MAX REVIVE,4000,ItemUseMedicine,false
@@ -72,7 +72,7 @@ id,name,display_name,price,use_function,is_key
 70,OaksParcel,OAK's PARCEL,0,ItemUseOaksParcel,true
 71,Itemfinder,ITEMFINDER,0,ItemUseItemfinder,true
 72,SilphScope,SILPH SCOPE,0,UnusableItem,true
-73,PokeFlute,POK√© FLUTE,0,ItemUsePokeflute,true
+73,PokeFlute,POKÈ FLUTE,0,ItemUsePokeflute,true
 74,LiftKey,LIFT KEY,0,UnusableItem,true
 75,ExpAll,EXP.ALL,0,UnusableItem,false
 76,OldRod,OLD ROD,0,ItemUseOldRod,true
