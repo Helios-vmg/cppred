@@ -95,73 +95,6 @@ PokemonData::PokemonData():
 	std::sort(this->species.begin(), this->species.end());
 }
 
-static const std::pair<std::string, std::string> charmap[] = {
-	{ "\\\\",       "\\\\01" },
-	{ "<POKE>",     "\\\\02" },
-	{ "<pkmn>",     "\\\\03" },
-	{ "<PLAYER>",   "\\\\04" },
-	{ "<RIVAL>",    "\\\\05" },
-	{ "<USER>",     "\\\\06" },
-	{ "<TARGET>",   "\\\\07" },
-	{ "<CURRENCY>", "\\\\08" },
-	{ "'d",         "\\\\09" },
-	{ "'l",         "\\\\0A" },
-	{ "'s",         "\\\\0B" },
-	{ "'t",         "\\\\0C" },
-	{ "'v",         "\\\\0D" },
-	{ "'r",         "\\\\0E" },
-	{ "'m",         "\\\\0F" },
-	{ "<FEMALE>",   "\\\\10" },
-	{ "<MALE>",     "\\\\11" },
-};
-
-static std::string filter_text(const std::string &input){
-	std::string ret;
-	for (size_t i = 0; i < input.size(); ){
-		auto c = input[i];
-		if (c == '@'){
-			i++;
-			continue;
-		}
-		bool Continue = false;
-		for (auto &p : charmap){
-			if (p.first.size() > input.size() - i)
-				continue;
-			if (p.first != input.substr(i, p.first.size()))
-				continue;
-			ret += p.second;
-			i += p.first.size();
-			Continue = true;
-			break;
-		}
-		if (Continue)
-			continue;
-		if (c == '<'){
-			if (i + 2 > input.size())
-				throw std::runtime_error("Syntax error: string can't contain '<': " + input);
-			if (input[i + 1] != '$')
-				throw std::runtime_error("Missed a case: " + input);
-			if (i + 5 > input.size())
-				throw std::runtime_error("Syntax error: Incomplete <$XX> sequence: " + input);
-			auto a = input[i + 2];
-			auto b = input[i + 3];
-			if (!is_hex(a) || !is_hex(b) || input[i + 4] != '>')
-				throw std::runtime_error("Syntax error: Invalid <$XX> sequence: " + input);
-			if (a == '0' && b == '0')
-				throw std::runtime_error("Internal error: Can't represent <$00>: " + input);
-			ret += "\\\\x\\x";
-			ret += (char)toupper(a);
-			ret += (char)toupper(b);
-			ret += "\" \"";
-			i += 5;
-			continue;
-		}
-		ret += c;
-		i++;
-	}
-	return ret;
-}
-
 static unsigned parse_decimal_float(const std::string &s){
 	if (s.size() < 2)
 		return to_unsigned(s);
@@ -316,7 +249,9 @@ void PokemonData::generate_static_data_declarations(const char *filename) const{
 
 	file <<
 		"extern const BasePokemonInfo * const pokemon_by_species_id[" << this->species.size() << "];\n"
-		"extern const BasePokemonInfo * const pokemon_by_pokedex_id[" << this->count_pokedex_species() << "];\n";
+		"static const size_t pokemon_by_species_id_size = " << this->species.size() << ";\n"
+		"extern const BasePokemonInfo * const pokemon_by_pokedex_id[" << this->count_pokedex_species() << "];\n"
+		"static const size_t pokemon_by_pokedex_id_size = " << this->count_pokedex_species() << ";\n";
 }
 
 void PokemonData::generate_static_data_definitions(const char *filename, const char *header_name) const{

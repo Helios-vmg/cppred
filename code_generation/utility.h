@@ -39,6 +39,7 @@ void write_data_csv(const char *path, const data_map_t &);
 std::vector<byte_t> compress_memory_DEFLATE(std::vector<byte_t> &in_data);
 void write_buffer_to_header_and_source(std::ostream &header, std::ostream &source, const std::vector<byte_t> &data, const char *array_name);
 std::vector<int> to_int_vector(const std::string &s, bool sort = false);
+std::string filter_text(const std::string &input);
 
 template <typename T>
 void write_collection_to_stream(std::ostream &stream, const T &begin, const T &end){

@@ -699,8 +699,9 @@ static void write_header_and_source(const char *header_path, const char *source_
 	{
 		std::ofstream header(header_path);
 		std::ofstream csv(csv_path);
-		header << "#pragma once\n"
-			<< generated_file_warning <<
+		header <<
+			generated_file_warning <<
+			"#pragma once\n"
 			"\n"
 			"extern const byte_t audio_sequence_data[];\n"
 			"static const size_t audio_sequence_data_size = " << sequences.size() << ";\n"

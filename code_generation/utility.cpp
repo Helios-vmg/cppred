@@ -24,14 +24,14 @@ static bool to_int_internal(int &dst, const std::string &s){
 unsigned to_unsigned(const std::string &s){
 	unsigned ret;
 	if (!to_unsigned_internal(ret, s))
-		throw std::runtime_error("Can't convert \"" + s + "\" to integer.");
+		throw std::runtime_error("Can't convert \"" + s + "\" to an integer.");
 	return ret;
 }
 
 int to_int(const std::string &s){
 	int ret;
 	if (!to_int_internal(ret, s))
-		throw std::runtime_error("Can't convert \"" + s + "\" to integer.");
+		throw std::runtime_error("Can't convert \"" + s + "\" to an integer.");
 	return ret;
 }
 
@@ -44,7 +44,7 @@ bool hex_no_prefix_to_unsigned_internal(unsigned &dst, const std::string &s){
 unsigned hex_no_prefix_to_unsigned(const std::string &s){
 	unsigned ret;
 	if (!hex_no_prefix_to_unsigned_internal(ret, s))
-		throw std::runtime_error((std::string)"Can't convert \"" + s + "\" from hex to integer.");
+		throw std::runtime_error((std::string)"Can't convert \"" + s + "\" from hex to an integer.");
 	return ret;
 }
 
@@ -279,5 +279,73 @@ std::vector<int> to_int_vector(const std::string &s, bool sort){
 		ret.push_back(i);
 	if (sort)
 		std::sort(ret.begin(), ret.end());
+	return ret;
+}
+
+static const std::pair<std::string, std::string> charmap[] = {
+	{ "\\\\",       "\\x01\"\"" },
+	{ "<POKE>",     "POK\\xE5\"\"" },
+	{ "<pkmn>",     "{}" },
+	//{ "<PLAYER>",   "\\x04\"\"" },
+	//{ "<RIVAL>",    "\\x05\"\"" },
+	//{ "<USER>",     "\\x06\"\"" },
+	//{ "<TARGET>",   "\\x07\"\"" },
+	//{ "<CURRENCY>", "\\x08\"\"" },
+	{ "\xE9",       "\\xE5\"\"" },
+	{ "'d",         "\\xE4\"\"" },
+	{ "'l",         "\\xEC\"\"" },
+	{ "'s",         "\\xF3\"\"" },
+	{ "'t",         "\\xF4\"\"" },
+	{ "'v",         "\\xF6\"\"" },
+	{ "'r",         "\\xF2\"\"" },
+	{ "'m",         "\\xED\"\"" },
+	{ "<FEMALE>",   "+" },
+	{ "<MALE>",     "%" },
+};
+
+std::string filter_text(const std::string &input){
+	std::string ret;
+	for (size_t i = 0; i < input.size(); ){
+		auto c = input[i];
+		if (c == '@'){
+			i++;
+			continue;
+		}
+		bool Continue = false;
+		for (auto &p : charmap){
+			if (p.first.size() > input.size() - i)
+				continue;
+			if (p.first != input.substr(i, p.first.size()))
+				continue;
+			ret += p.second;
+			i += p.first.size();
+			Continue = true;
+			break;
+		}
+		if (Continue)
+			continue;
+		if (c == '<'){
+			if (i + 2 > input.size())
+				throw std::runtime_error("Syntax error: string can't contain '<': " + input);
+			if (input[i + 1] != '$')
+				throw std::runtime_error("Missed a case: " + input);
+			if (i + 5 > input.size())
+				throw std::runtime_error("Syntax error: Incomplete <$XX> sequence: " + input);
+			auto a = input[i + 2];
+			auto b = input[i + 3];
+			if (!is_hex(a) || !is_hex(b) || input[i + 4] != '>')
+				throw std::runtime_error("Syntax error: Invalid <$XX> sequence: " + input);
+			if (a == '0' && b == '0')
+				throw std::runtime_error("Internal error: Can't represent <$00>: " + input);
+			ret += "\\\\x\\x";
+			ret += (char)toupper(a);
+			ret += (char)toupper(b);
+			ret += "\" \"";
+			i += 5;
+			continue;
+		}
+		ret += c;
+		i++;
+	}
 	return ret;
 }
