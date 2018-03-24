@@ -1,5 +1,5 @@
 #include "ScriptStore.h"
-#include "CppRed/Scripts/Scripts.h"
+#include "CppRed/Scripts/ScriptDeclarations.h"
 #include "utility.h"
 #include <algorithm>
 #include "Console.h"
@@ -19,6 +19,9 @@ ScriptStore::ScriptStore(){
 	ADD_SCRIPT(OaksLabText3);
 	ADD_SCRIPT(OaksLabText4);
 	ADD_SCRIPT(OaksLabText5);
+	ADD_SCRIPT(DisplayOakLabEmailText);
+	ADD_SCRIPT(DisplayOakLabLeftPoster);
+	ADD_SCRIPT(DisplayOakLabRightPoster);
 	//Add scripts.
 
 	std::sort(this->scripts.begin(), this->scripts.end(), [](const auto &a, const auto &b){ return a.first < b.first; });

@@ -1,4 +1,4 @@
-#include "Scripts.h"
+#include "ScriptDeclarations.h"
 #include "../Game.h"
 #include "../World.h"
 #include "../PlayerCharacter.h"

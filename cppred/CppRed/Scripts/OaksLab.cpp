@@ -1,4 +1,4 @@
-#include "Scripts.h"
+#include "ScriptDeclarations.h"
 #include "../Game.h"
 #include "../World.h"
 #include "../PlayerCharacter.h"
@@ -390,6 +390,22 @@ DECLARE_SCRIPT(OaksLabText5){
 		}
 	}
 	game.reset_dialogue_state();
+}
+
+DECLARE_SCRIPT(DisplayOakLabEmailText){
+	parameters.game->get_audio_interface().play_sound(AudioResourceId::SFX_Turn_On_PC);
+	parameters.game->run_dialogue(TextResourceId::OakLabEmailText, true, true);
+	parameters.game->get_audio_interface().play_sound(AudioResourceId::SFX_Turn_Off_PC);
+}
+
+DECLARE_SCRIPT(DisplayOakLabLeftPoster){
+	parameters.game->run_dialogue(TextResourceId::PushStartText, true, true);
+}
+
+DECLARE_SCRIPT(DisplayOakLabRightPoster){
+	bool less_than_two = parameters.game->get_world().get_pc().get_pokedex().get_owned_count() < 2;
+	TextResourceId id = less_than_two ? TextResourceId::SaveOptionText : TextResourceId::StrengthsAndWeaknessesText;
+	parameters.game->run_dialogue(id, true, true);
 }
 
 }
