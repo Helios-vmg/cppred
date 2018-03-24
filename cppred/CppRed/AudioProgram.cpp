@@ -269,6 +269,7 @@ void AudioProgram::update_channel(int i){
 		if (!this->for_music && i >= 4 && !this->is_sfx_playing()){
 			this->fade_out_counter = this->fade_out_counter_reload_value = 4;
 			this->fade_out_control = 1;
+			this->sound_id_after_fade_out = AudioResourceId::Stop;
 			this->renderer->set_active(false);
 			this->sfx_finish_event.signal();
 		}
@@ -282,7 +283,8 @@ void AudioProgram::compute_fade_out(){
 	}
 	auto nr50 = this->renderer->get_NR50();
 	if (!nr50){
-		this->play_sound_internal(AudioResourceId::Stop);
+		this->play_sound_internal(this->sound_id_after_fade_out);
+		this->sound_id_after_fade_out = AudioResourceId::Stop;
 		this->fade_out_control = 0;
 		return;
 	}
@@ -1235,6 +1237,23 @@ void AudioProgramInterface::update(double now){
 
 AudioProgramInterface::double_lock AudioProgramInterface::acquire_lock(){
 	return {this->music.acquire_lock(), this->sfx.acquire_lock()};
+}
+
+void AudioProgramInterface::fade_out_music_to_silence(double duration){
+	auto lock = this->music.acquire_lock();
+	this->music.set_fade_out_control(1);
+	auto c = (int)(duration * 60) / 7;
+	this->music.set_fade_out_counter_reload_value(c);
+	this->music.set_fade_out_counter(c);
+}
+
+void AudioProgramInterface::fade_out_music_then_change_tracks(AudioResourceId id, double duration){
+	auto lock = this->music.acquire_lock();
+	this->music.set_fade_out_control(1);
+	auto c = (int)(duration * 60) / 7;
+	this->music.set_fade_out_counter_reload_value(c);
+	this->music.set_fade_out_counter(c);
+	this->music.set_sound_id_after_fade_out(id);
 }
 
 }

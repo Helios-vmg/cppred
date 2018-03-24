@@ -88,14 +88,21 @@ enum class MenuAnchor{
 };
 
 struct StandardMenuOptions{
+	static const int int_max = std::numeric_limits<int>::max();
+
 	Point position;
 	const std::vector<std::string> *items;
 	const char *title = nullptr;
 	Point minimum_size;
+	Point maximum_size = {int_max, int_max};
 	bool ignore_b = false;
 	bool initial_padding = true;
 	MenuAnchor anchor = MenuAnchor::TopLeft;
 	std::function<void()> before_item_display;
+	int initial_item = 0;
+	byte_t cancel_mask = InputState::mask_b;
+	int window_size = int_max;
+	bool push_window = true;
 };
 
 class Game{
@@ -167,15 +174,6 @@ public:
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
 	int handle_standard_menu(const StandardMenuOptions &);
-	int handle_standard_menu_with_title(
-		TileRegion region,
-		const Point &position,
-		const std::vector<std::string> &items,
-		const char *title,
-		const Point &minimum_size = Point(),
-		bool ignore_b = false,
-		bool initial_padding = true
-	);
 	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
 	void run_dex_entry(TextResourceId);
 	void run_dialogue(TextResourceId, bool wait_at_end, bool hide_dialogue_at_end);

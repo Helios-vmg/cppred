@@ -179,9 +179,6 @@
     <ClInclude Include="CppRed\PlayerCharacter.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TrainerData.h">
-      <Filter>Engine code</Filter>
-    </ClInclude>
     <ClInclude Include="CppRed\Actor.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
@@ -213,6 +210,18 @@
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
     <ClInclude Include="CppRed\CoroutineExecuter.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainerData.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed\Scripts\ScriptDeclarations.h">
+      <Filter>CppRed\Scripts\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed\ItemData.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CppRed\ItemFunctions.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -347,6 +356,9 @@
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
     <ClCompile Include="CppRed\CoroutineExecuter.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\ItemFunctions.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

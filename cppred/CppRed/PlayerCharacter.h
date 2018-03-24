@@ -12,6 +12,35 @@ namespace CppRed{
 class Game;
 class World;
 
+class Pokedex{
+	FixedBitmap<pokemon_by_pokedex_id_size> seen;
+	FixedBitmap<pokemon_by_pokedex_id_size> owned;
+	int seen_count = 0;
+	int owned_count = 0;
+
+	void set(FixedBitmap<pokemon_by_pokedex_id_size> &, int &, SpeciesId);
+	bool get(const FixedBitmap<pokemon_by_pokedex_id_size> &, SpeciesId);
+public:
+	Pokedex() = default;
+	Pokedex(const Pokedex &) = default;
+	Pokedex(Pokedex &&) = delete;
+	void set_seen(SpeciesId species){
+		this->set(this->seen, this->seen_count, species);
+	}
+	bool get_seen(SpeciesId species){
+		return this->get(this->seen, species);
+	}
+	void set_owned(SpeciesId species){
+		this->set_seen(species);
+		this->set(this->owned, this->owned_count, species);
+	}
+	bool get_owned(SpeciesId species){
+		return this->get(this->owned, species);
+	}
+	DEFINE_GETTER(seen_count)
+	DEFINE_GETTER(owned_count)
+};
+
 class PlayerCharacter : public Actor, public Trainer{
 public:
 	static const Point screen_block_offset;
@@ -20,6 +49,7 @@ private:
 	static const warp_check_f warp_check_functions[2];
 	const MapWarp *saved_post_warp = nullptr;
 	bool ignore_input = false;
+	Pokedex pokedex;
 
 	void coroutine_entry_point() override;
 	void entered_new_map(Map old_map, Map new_map, bool warped) override;
@@ -41,6 +71,9 @@ public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	void teleport(const WorldCoordinates &);
 	DEFINE_GETTER_SETTER(ignore_input)
+	Pokedex &get_pokedex(){
+		return this->pokedex;
+	}
 };
 
 class AutoIgnoreInput{

@@ -14,7 +14,7 @@
 
 const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_display_period;
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
-const int Engine::screen_scale = 2;
+const int Engine::screen_scale = 4;
 
 Engine::Engine():
 #ifndef Engine_USE_FIXED_CLOCK
@@ -204,23 +204,25 @@ bool Engine::handle_events(){
 				return false;
 			case SDL_MOUSEBUTTONDOWN:
 				{
-					Point location(event.button.x, event.button.y);
-					location.x = location.x / (this->screen_scale * Renderer::tile_size * 2);
-					location.y = location.y / (this->screen_scale * Renderer::tile_size * 2);
-					location -= CppRed::PlayerCharacter::screen_block_offset;
 					auto &world = this->game->get_world();
-					auto &pc = world.get_pc();
-					location += pc.get_map_position();
-					MapObjectInstance *objects[8];
-					world.get_objects_at_location(objects, {pc.get_current_map(), location});
-					std::stringstream stream;
-					stream << "Clicked at " << location << '\n';
-					for (auto object : objects){
-						if (!object)
-							break;
-						stream << "Found a " << object->get_object().get_type_string() << " named " << object->get_object().get_name() << '\n';
+					if (world.player_initialized()){
+						Point location(event.button.x, event.button.y);
+						location.x = location.x / (this->screen_scale * Renderer::tile_size * 2);
+						location.y = location.y / (this->screen_scale * Renderer::tile_size * 2);
+						location -= CppRed::PlayerCharacter::screen_block_offset;
+						auto &pc = world.get_pc();
+						location += pc.get_map_position();
+						MapObjectInstance *objects[8];
+						world.get_objects_at_location(objects, {pc.get_current_map(), location});
+						std::stringstream stream;
+						stream << "Clicked at " << location << '\n';
+						for (auto object : objects){
+							if (!object)
+								break;
+							stream << "Found a " << object->get_object().get_type_string() << " named " << object->get_object().get_name() << '\n';
+						}
+						Logger() << stream.str();
 					}
-					Logger() << stream.str();
 					break;
 				}
 			case SDL_KEYDOWN:

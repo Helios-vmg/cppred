@@ -14,7 +14,6 @@ enum class ActorId;
 class World : public ScreenOwner{
 	actor_ptr<PlayerCharacter> player_character = null_actor_ptr<PlayerCharacter>();
 	std::string rival_name;
-	//actor_ptr<NpcTrainer> rival = null_actor_ptr<NpcTrainer>();
 	MapStore map_store;
 	std::vector<actor_ptr<Actor>> actors;
 	Point camera_position;
@@ -40,7 +39,7 @@ public:
 	MapStore &get_map_store(){
 		return this->map_store;
 	}
-	void teleport_player(const MapWarp &);
+	WorldCoordinates get_warp_destination(const MapWarp &);
 	void teleport_player(const WorldCoordinates &);
 	MapInstance &get_map_instance(Map);
 	MapInstance *try_get_map_instance(Map);
@@ -55,6 +54,9 @@ public:
 	void pause() override;
 	PlayerCharacter &get_pc(){
 		return *this->player_character;
+	}
+	bool player_initialized(){
+		return !!this->player_character;
 	}
 	Actor &get_actor(ActorId);
 	void play_current_map_music();

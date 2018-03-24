@@ -24,6 +24,8 @@ public:
 	void pause_music();
 	void unpause_music();
 	void wait_for_sfx_to_end();
+	void fade_out_music_to_silence(double duration);
+	void fade_out_music_then_change_tracks(AudioResourceId, double duration);
 };
 
 }

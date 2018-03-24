@@ -100,4 +100,12 @@ void AudioInterface::wait_for_sfx_to_end(){
 	this->program->wait_for_sfx_to_end();
 }
 
+void AudioInterface::fade_out_music_to_silence(double duration){
+	this->program->fade_out_music_to_silence(duration);
+}
+
+void AudioInterface::fade_out_music_then_change_tracks(AudioResourceId id, double duration){
+	this->program->fade_out_music_then_change_tracks(id, duration);
+}
+
 }

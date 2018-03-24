@@ -153,9 +153,9 @@ Game::load_save_t Game::load_save(){
 
 void Game::draw_box(const Point &corner, const Point &size, TileRegion region){
 	if (corner.x < 0 || corner.y < 0)
-		throw std::runtime_error("CppRedEngine::handle_standard_menu(): invalid position.");
+		throw std::runtime_error("CppRedEngine::draw_box(): invalid position.");
 	if (size.x > Renderer::logical_screen_tile_width - 2 || size.y > Renderer::logical_screen_tile_height - 2)
-		throw std::runtime_error("CppRedEngine::handle_standard_menu(): invalid dimensions.");
+		throw std::runtime_error("CppRedEngine::draw_box(): invalid dimensions.");
 	const std::uint16_t w = TextBoxGraphics.width;
 	const std::uint16_t f = TextBoxGraphics.first_tile + 1 + 6 * w;
 	const std::uint16_t tiles[] = {
@@ -211,17 +211,25 @@ int Game::handle_standard_menu(const StandardMenuOptions &options){
 	auto n = (int)options.items->size();
 	for (auto &s : *options.items)
 		width = std::max((int)s.size() + 1, width);
-	if (position.x + width + 2 > Renderer::logical_screen_tile_width)
-		position.x = Renderer::logical_screen_tile_width - (width + 2);
-	if (position.y + n * 2 + 2 > Renderer::logical_screen_tile_height)
-		position.y = Renderer::logical_screen_tile_height - (n * 2 + 2);
 	
 	Point size(width, std::max(n * 2 - !options.initial_padding, options.minimum_size.y));
+
+	size.x = std::min(size.x, options.maximum_size.x);
+	size.y = std::min(size.y, options.maximum_size.y);
+	
+	position.x = std::min(position.x, Renderer::logical_screen_tile_width  - (size.x + 2));
+	position.y = std::min(position.y, Renderer::logical_screen_tile_height - (size.y + 2));
+	
 	this->draw_box(position, size, TileRegion::Window);
 
+	auto text_region_position = position + Point(1, 1);
+	auto text_region_size = size;
 	size += {2, 2};
 
 	auto &renderer = this->engine->get_renderer();
+	AutoRendererWindowPusher pusher; 
+	if (options.push_window)
+		pusher = AutoRendererWindowPusher(renderer);
 	renderer.set_window_origin({0, 0});
 	renderer.set_window_region_start(position * Renderer::tile_size);
 	renderer.set_window_region_size(size * Renderer::tile_size);
@@ -236,21 +244,40 @@ int Game::handle_standard_menu(const StandardMenuOptions &options){
 		this->put_string(position + Point((width - l) / 2 + 1, 0), TileRegion::Window, options.title);
 	}
 
-	int y = 1;
-	for (auto &s : *options.items)
-		this->put_string(position + Point{ 2, y++ * 2 - !options.initial_padding }, TileRegion::Window, s.c_str());
+	bool redraw_options = true;
+	int window_size = options.window_size;
+	if (window_size == StandardMenuOptions::int_max){
+		int y = 1;
+		for (auto &s : *options.items)
+			this->put_string(position + Point{2, y++ * 2 - !options.initial_padding}, TileRegion::Window, s.c_str());
+		window_size = (int)options.items->size();
+		redraw_options = false;
+	}
 
-	int current_item = 0;
+	int current_item = options.initial_item;
+	int window_position = 0;
 	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	while (true){
-		auto index = position.x + 1 + (position.y + (current_item + 1) * 2 - !options.initial_padding) * Tilemap::w;
+		if (redraw_options){
+			renderer.fill_rectangle(TileRegion::Window, text_region_position, text_region_size, Tile());
+			int y = 1;
+			auto &items = *options.items;
+			for (int i = 0; i < window_size; i++){
+				auto &s = items[i + window_position];
+				this->put_string(position + Point{2, y++ * 2 - !options.initial_padding}, TileRegion::Window, s.c_str());
+			}
+			redraw_options = false;
+		}
+		
+		auto index = position.x + 1 + (position.y + (current_item + 1 - window_position) * 2 - !options.initial_padding) * Tilemap::w;
 		tilemap[index].tile_no = black_arrow;
 		int addend = 0;
 		do{
 			Coroutine::get_current_coroutine().yield();
 			auto state = this->joypad_auto_repeat();
-			if (!options.ignore_b && state.get_b()){
-				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
+			if (!options.ignore_b && !!(state.get_value() & options.cancel_mask)){
+				if (state.get_b())
+					this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 				renderer.set_enable_window(old_window);
 				return -1;
 			}
@@ -265,6 +292,13 @@ int Game::handle_standard_menu(const StandardMenuOptions &options){
 		}while (!addend);
 		tilemap[index].tile_no = ' ';
 		current_item = (current_item + n + addend) % n;
+		if (current_item >= window_position + window_size){
+			window_position = current_item - (window_size - 1);
+			redraw_options = true;
+		}else if (current_item < window_position){
+			window_position = current_item;
+			redraw_options = true;
+		}
 	}
 	assert(false);
 	return -1;

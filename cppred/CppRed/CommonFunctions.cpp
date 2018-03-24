@@ -22,6 +22,7 @@ bool standard_add_pokemon(Game &game, PlayerCharacter &player, const Pokemon &po
 		auto name = game.get_name_from_user(pokemon.get_species());
 		party.get_last_added_pokemon().set_nickname(name);
 	}
+	player.get_pokedex().set_owned(pokemon.get_species());
 	return true;
 }
 

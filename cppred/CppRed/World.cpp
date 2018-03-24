@@ -17,15 +17,22 @@ World::~World(){
 	for (auto &actor : this->actors)
 		actor->stop();
 	this->map_store.stop();
-	this->player_character->stop();
-	//this->rival->stop();
+	if (this->player_character)
+		this->player_character->stop();
 }
 
 void World::teleport_player(const WorldCoordinates &destination){
+	auto &vs = this->game->get_variable_store();
+	auto current_map = this->player_character->get_current_map();
+	if (current_map != Map::Nowhere){
+		auto &map2 = this->map_store.get_map_data(current_map);
+		if (map2.tileset->type == TilesetType::Outdoor)
+			vs.set(IntegerVariableId::LastOutdoorsMap, map2.legacy_id);
+	}
 	this->player_character->teleport(destination);
 }
 
-void World::teleport_player(const MapWarp &warp){
+WorldCoordinates World::get_warp_destination(const MapWarp &warp){
 	auto &destination = warp.get_destination();
 	auto index = warp.get_destination_warp_index();
 	const MapData *map;
@@ -42,13 +49,8 @@ void World::teleport_player(const MapWarp &warp){
 		auto casted = dynamic_cast<MapWarp *>(object.get());
 		if (!casted)
 			continue;
-		if (casted->get_index() == index){
-			auto &map2 = this->map_store.get_map_data(this->player_character->get_current_map());
-			if (map2.tileset->type == TilesetType::Outdoor)
-				vs.set(IntegerVariableId::LastOutdoorsMap, map2.legacy_id);
-			this->teleport_player({map->map_id, casted->get_position()});
-			return;
-		}
+		if (casted->get_index() == index)
+			return {map->map_id, casted->get_position()};
 	}
 	std::stringstream stream;
 	stream << "Invalid map warp (" << warp.get_name() << "). Destination not found.";

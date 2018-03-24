@@ -193,8 +193,8 @@ MapStore::trainer_parties_t MapStore::load_trainer_parties(){
 MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_map){
 	std::map<std::string, ItemId> items_map;
 
-	for (size_t i = 0; i < item_strings_size; i++)
-		items_map[item_strings[i].first] = item_strings[i].second;
+	for (auto &item : item_data)
+		items_map[item.name] = item.id;
 	auto trainer_map = this->load_trainer_parties();
 
 	std::vector<std::pair<std::string, std::function<std::unique_ptr<MapObject>(BufferReader &)>>> constructors;

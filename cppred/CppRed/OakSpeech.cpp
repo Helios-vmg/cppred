@@ -98,7 +98,11 @@ static std::string select_x_name(CppRed::Game &game, bool rival){
 	for (auto s : default_names)
 		items.push_back(s);
 	auto tilemap_copy = renderer.get_tilemap(TileRegion::Background);
-	auto selection = game.handle_standard_menu_with_title(TileRegion::Background, { 0, 0 }, items, "NAME", { 0, 10 }, true);
+	CppRed::StandardMenuOptions options;
+	options.items = &items;
+	options.title = "NAME";
+	options.minimum_size = {0, 10};
+	auto selection = game.handle_standard_menu(options);
 	std::string ret;
 	if (selection)
 		ret = default_names[selection - 1];
@@ -122,6 +126,7 @@ static void oak_introduction(CppRed::Game &game){
 	game.run_dialogue(TextResourceId::OakSpeechText1, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
+	game.reset_dialogue_state();
 	renderer.draw_image_to_tilemap_flipped({ 6, 4 }, *pokemon_by_species_id[(int)SpeciesId::Nidorino]->front);
 	scroll_from_the_right(game);
 	game.run_dialogue(TextResourceId::OakSpeechText2A, false, false);
@@ -129,6 +134,7 @@ static void oak_introduction(CppRed::Game &game){
 	game.run_dialogue(TextResourceId::OakSpeechText2B, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
+	game.reset_dialogue_state();
 }
 
 static std::string select_player_name(CppRed::Game &game){
@@ -142,9 +148,11 @@ static std::string select_player_name(CppRed::Game &game){
 	auto ret = select_x_name(game, false);
 	game.get_variable_store().set(CppRed::StringVariableId::temp_player_name, ret);
 	scroll_portrait(game, red_pic, true, RedPicFront);
+	game.reset_dialogue_state(false);
 	game.run_dialogue(TextResourceId::YourNameIsText, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
+	game.reset_dialogue_state();
 	return ret;
 }
 
@@ -159,9 +167,11 @@ static std::string select_rival_name(CppRed::Game &game){
 	auto ret = select_x_name(game, true);
 	game.get_variable_store().set(CppRed::StringVariableId::temp_rival_name, ret);
 	scroll_portrait(game, blue_pic, true, Rival1Pic);
+	game.reset_dialogue_state(false);
 	game.run_dialogue(TextResourceId::HisNameIsText, false, false);
 	game.fade_out_to_white();
 	game.clear_screen();
+	game.reset_dialogue_state();
 	return ret;
 }
 
@@ -182,12 +192,15 @@ static void red_closing(CppRed::Game &game){
 	renderer.mass_set_tiles(to_erase, Tile());
 	auto red = renderer.create_sprite(2, 2);
 	red->set_visible(true);
-	red->set_palette(default_world_sprite_palette);
+	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
 	for (int i = 0; i < 4; i++)
 		red->get_tile(i % 2, i / 2).tile_no = RedSprite.first_tile + i;
 	red->set_position({ 8 * Renderer::tile_size, Renderer::tile_size * (7 * 2 + 1) / 2 });
 	game.get_coroutine().wait(0.5);
+	game.get_audio_interface().fade_out_music_to_silence(0.5);
 	game.fade_out_to_white();
+	game.reset_dialogue_state();
+	Coroutine::get_current_coroutine().wait(1);
 }
 
 namespace CppRed{

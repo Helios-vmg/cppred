@@ -2,14 +2,15 @@
 #include "Data.h"
 #include "../common/AudioCommandType.h"
 #include "../common/AudioResourceType.h"
+#include "../CodeGeneration/output/audio.h"
 #include "pokemon_version.h"
 #include "threads.h"
+#include "utility.h"
 #include <mutex>
 #include <memory>
 #include <string>
 
 class GbAudioRenderer;
-enum class AudioResourceId;
 
 namespace CppRed{
 
@@ -42,6 +43,7 @@ class AudioProgram{
 	bool for_music;
 	PokemonVersion version;
 	AudioResourceId sound_id;
+	AudioResourceId sound_id_after_fade_out = AudioResourceId::Stop;
 	enum class PauseMusicState{
 		NotPaused,
 		PauseRequested,
@@ -197,12 +199,10 @@ public:
 	void clear_channel(int channel);
 	std::vector<std::string> get_resource_strings();
 	std::unique_lock<std::mutex> acquire_lock();
-	int get_fade_control() const{
-		return this->fade_out_control;
-	}
-	void set_fade_control(int f){
-		this->fade_out_control = f;
-	}
+	DEFINE_GETTER_SETTER(fade_out_control)
+	DEFINE_GETTER_SETTER(fade_out_counter_reload_value)
+	DEFINE_GETTER_SETTER(fade_out_counter)
+	DEFINE_GETTER_SETTER(sound_id_after_fade_out)
 	void copy_fade_control();
 	void wait_for_sfx_to_end();
 	void set_frequency_modifier(int value){
@@ -232,6 +232,8 @@ public:
 	std::vector<std::string> get_resource_strings(){
 		return this->music.get_resource_strings();
 	}
+	void fade_out_music_to_silence(double duration);
+	void fade_out_music_then_change_tracks(AudioResourceId, double duration);
 };
 
 }

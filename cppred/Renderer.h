@@ -209,6 +209,7 @@ public:
 class AutoRendererWindowPusher{
 	Renderer *renderer;
 public:
+	AutoRendererWindowPusher(): renderer(nullptr){}
 	AutoRendererWindowPusher(Renderer &renderer): renderer(&renderer){
 		this->renderer->push_window();
 	}
@@ -227,6 +228,9 @@ public:
 		this->renderer = other.renderer;
 		other.renderer = nullptr;
 		return *this;
+	}
+	void release(){
+		this->renderer = nullptr;
 	}
 };
 

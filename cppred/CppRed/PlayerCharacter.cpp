@@ -6,7 +6,7 @@
 #include "MainMenu.h"
 #include "../../CodeGeneration/output/variables.h"
 #include <cassert>
-#include <iostream>
+#include <sstream>
 
 namespace CppRed{
 
@@ -83,7 +83,8 @@ bool PlayerCharacter::move_internal(FacingDirection direction){
 		if (this->saved_post_warp){
 			auto warp = this->saved_post_warp;
 			this->saved_actions.push_back([this, warp](){
-				this->game->get_world().teleport_player(*warp);
+				auto &world = this->game->get_world();
+				world.teleport_player(world.get_warp_destination(*warp));
 			});
 			this->saved_post_warp = nullptr;
 		}
@@ -118,8 +119,10 @@ bool PlayerCharacter::run_warp_logic_collision(){
 	}
 	if (!warp)
 		return false;
-	//auto c = Coroutine::get_current_coroutine_ptr();
-	world.teleport_player(*warp);
+	auto destination = world.get_warp_destination(*warp);
+	if (!this->can_move_to(destination, destination + direction_to_vector(this->facing_direction), this->facing_direction))
+		return false;
+	world.teleport_player(destination);
 	return true;
 }
 
@@ -200,7 +203,6 @@ void PlayerCharacter::display_menu(){
 	auto &renderer = this->game->get_engine().get_renderer();
 	auto &tilemap = renderer.get_tilemap(TileRegion::Window);
 	bool done = false;
-	bool first_time = true;
 
 	std::vector<std::string> items;
 	std::vector<std::function<void()>> callbacks;
@@ -208,16 +210,17 @@ void PlayerCharacter::display_menu(){
 	bool have_pokedex = this->game->get_variable_store().get(EventId::event_got_pokedex);
 
 	if (have_pokedex){
-		items.push_back("POK\xE5DEX");
+		items.push_back("POK""\xE5""DEX");
 		callbacks.push_back([](){});
 	}
 	
-	items.push_back("POK\xE5MON");
-	callbacks.push_back([this](){
-		if (!this->party.size())
+	if (this->party.size()){
+		items.push_back("POK""\xE5""MON");
+		callbacks.push_back([this](){
 			return;
-		this->display_party_menu();
-	});
+			this->display_party_menu();
+		});
+	}
 	
 	items.push_back("ITEM");
 	callbacks.push_back([this](){
@@ -245,28 +248,66 @@ void PlayerCharacter::display_menu(){
 	StandardMenuOptions options;
 	options.position = {Renderer::logical_screen_tile_width - 1, 0};
 	options.items = &items;
-	options.before_item_display = [this, &first_time](){
-		if (!first_time)
-			return;
+	options.before_item_display = [this](){
 		auto &audio = this->game->get_audio_interface();
 		audio.play_sound(AudioResourceId::SFX_Start_Menu);
-		audio.wait_for_sfx_to_end();
-		first_time = false;
 	};
+	options.cancel_mask |= InputState::mask_start;
+	options.push_window = false;
+	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
 	while (!done){
 		auto input = this->game->handle_standard_menu(options);
 		if (input < 0)
 			break;
 		callbacks[input]();
+		options.before_item_display = decltype(options.before_item_display)();
+		options.initial_item = input;
 	}
 }
 
 void PlayerCharacter::display_party_menu(){}
 
-void PlayerCharacter::display_inventory_menu(){}
+void PlayerCharacter::display_inventory_menu(){
+	StandardMenuOptions options;
+	std::vector<std::string> items;
+	for (int i = 0; i < 40; i++){
+		items.push_back(item_data[i].display_name);
+	}
+	items.push_back("CANCEL");
+	options.items = &items;
+	options.position = {4, 2};
+	options.minimum_size = options.maximum_size = {16 - 2, 11 - 2};
+	options.window_size = 4;
+	options.push_window = false;
+	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
+	while (true){
+		int selection = this->game->handle_standard_menu(options);
+		if (selection < 0 || selection == items.size() - 1)
+			break;
+	}
+}
 
 void PlayerCharacter::display_player_menu(){}
 
 void PlayerCharacter::display_save_dialog(){}
 
+void Pokedex::set(FixedBitmap<pokemon_by_pokedex_id_size> &v, int &c, SpeciesId s){
+	auto &data = *pokemon_by_species_id[(int)s];
+	if (!data.allocated)
+		return;
+	auto index = (int)data.pokedex_id - 1;
+	if (v.get(index))
+		return;
+	v.set(index);
+	c++;
+}
+
+bool Pokedex::get(const FixedBitmap<pokemon_by_pokedex_id_size> &v, SpeciesId s){
+	auto &data = *pokemon_by_species_id[(int)s];
+	if (!data.allocated)
+		return false;
+	auto index = (int)data.pokedex_id - 1;
+	return v.get(index);
+}
+	
 }
