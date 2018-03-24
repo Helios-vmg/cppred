@@ -1,156 +1,159 @@
-id,name
-0,None
-1,MasterBall
-2,UltraBall
-3,GreatBall
-4,PokeBall
-5,TownMap
-6,Bicycle
-7,Surfboard
-8,SafariBall
-9,Pokedex
-10,MoonStone
-11,Antidote
-12,BurnHeal
-13,IceHeal
-14,Awakening
-15,ParlyzHeal
-16,FullRestore
-17,MaxPotion
-18,HyperPotion
-19,SuperPotion
-20,Potion
-21,Boulderbadge
-22,Cascadebadge
-21,SafariBait
-22,SafariRock
-23,Thunderbadge
-24,Rainbowbadge
-25,Soulbadge
-26,Marshbadge
-27,Volcanobadge
-28,Earthbadge
-29,EscapeRope
-30,Repel
-31,OldAmber
-32,FireStone
-33,ThunderStone
-34,WaterStone
-35,HpUp
-36,Protein
-37,Iron
-38,Carbos
-39,Calcium
-40,RareCandy
-41,DomeFossil
-42,HelixFossil
-43,SecretKey
-44,UnusedItem
-45,BikeVoucher
-46,XAccuracy
-47,LeafStone
-48,CardKey
-49,Nugget
-50,PpUp2
-51,PokeDoll
-52,FullHeal
-53,Revive
-54,MaxRevive
-55,GuardSpec
-56,SuperRepel
-57,MaxRepel
-58,DireHit
-59,Coin
-60,FreshWater
-61,SodaPop
-62,Lemonade
-63,SSTicket
-64,GoldTeeth
-65,XAttack
-66,XDefend
-67,XSpeed
-68,XSpecial
-69,CoinCase
-70,OaksParcel
-71,Itemfinder
-72,SilphScope
-73,PokeFlute
-74,LiftKey
-75,ExpAll
-76,OldRod
-77,GoodRod
-78,SuperRod
-79,PpUp
-80,Ether
-81,MaxEther
-82,Elixer
-83,MaxElixer
-84,FloorB2f
-85,FloorB1f
-86,Floor1f
-87,Floor2f
-88,Floor3f
-89,Floor4f
-90,Floor5f
-91,Floor6f
-92,Floor7f
-93,Floor8f
-94,Floor9f
-95,Floor10f
-96,Floor11f
-97,FloorB4f
-196,Hm01
-197,Hm02
-198,Hm03
-199,Hm04
-200,Hm05
-201,Tm01
-202,Tm02
-203,Tm03
-204,Tm04
-205,Tm05
-206,Tm06
-207,Tm07
-208,Tm08
-209,Tm09
-210,Tm10
-211,Tm11
-212,Tm12
-213,Tm13
-214,Tm14
-215,Tm15
-216,Tm16
-217,Tm17
-218,Tm18
-219,Tm19
-220,Tm20
-221,Tm21
-222,Tm22
-223,Tm23
-224,Tm24
-225,Tm25
-226,Tm26
-227,Tm27
-228,Tm28
-229,Tm29
-230,Tm30
-231,Tm31
-232,Tm32
-233,Tm33
-234,Tm34
-235,Tm35
-236,Tm36
-237,Tm37
-238,Tm38
-239,Tm39
-240,Tm40
-241,Tm41
-242,Tm42
-243,Tm43
-244,Tm44
-245,Tm45
-246,Tm46
-247,Tm47
-248,Tm48
-249,Tm49
-250,Tm50
+id,name,display_name,price,use_function,is_key
+0,None,?????,0,,false
+1,MasterBall,MASTER BALL,0,ItemUseBall,false
+2,UltraBall,ULTRA BALL,1200,ItemUseBall,false
+3,GreatBall,GREAT BALL,600,ItemUseBall,false
+4,PokeBall,POKé BALL,200,ItemUseBall,false
+5,TownMap,TOWN MAP,0,ItemUseTownMap,true
+6,Bicycle,BICYCLE,0,ItemUseBicycle,true
+7,Surfboard,?????,0,ItemUseSurfboard,true
+8,SafariBall,SAFARI BALL,1000,ItemUseBall,true
+9,Pokedex,POKéDEX,0,ItemUsePokedex,true
+10,MoonStone,MOON STONE,0,ItemUseEvoStone,false
+11,Antidote,ANTIDOTE,100,ItemUseMedicine,false
+12,BurnHeal,BURN HEAL,250,ItemUseMedicine,false
+13,IceHeal,ICE HEAL,250,ItemUseMedicine,false
+14,Awakening,AWAKENING,200,ItemUseMedicine,false
+15,ParlyzHeal,PARLYZ HEAL,200,ItemUseMedicine,false
+16,FullRestore,FULL RESTORE,3000,ItemUseMedicine,false
+17,MaxPotion,MAX POTION,2500,ItemUseMedicine,false
+18,HyperPotion,HYPER POTION,1500,ItemUseMedicine,false
+19,SuperPotion,SUPER POTION,700,ItemUseMedicine,false
+20,Potion,POTION,300,ItemUseMedicine,false
+21,Boulderbadge,BOULDERBADGE,0,ItemUseBait,true
+22,Cascadebadge,CASCADEBADGE,0,ItemUseRock,true
+23,Thunderbadge,THUNDERBADGE,0,UnusableItem,true
+24,Rainbowbadge,RAINBOWBADGE,0,UnusableItem,true
+25,Soulbadge,SOULBADGE,0,UnusableItem,true
+26,Marshbadge,MARSHBADGE,0,UnusableItem,true
+27,Volcanobadge,VOLCANOBADGE,0,UnusableItem,true
+28,Earthbadge,EARTHBADGE,0,UnusableItem,true
+29,EscapeRope,ESCAPE ROPE,550,ItemUseEscapeRope,false
+30,Repel,REPEL,350,ItemUseRepel,false
+31,OldAmber,OLD AMBER,0,UnusableItem,true
+32,FireStone,FIRE STONE,2100,ItemUseEvoStone,false
+33,ThunderStone,THUNDERSTONE,2100,ItemUseEvoStone,false
+34,WaterStone,WATER STONE,2100,ItemUseEvoStone,false
+35,HpUp,HP UP,9800,ItemUseVitamin,false
+36,Protein,PROTEIN,9800,ItemUseVitamin,false
+37,Iron,IRON,9800,ItemUseVitamin,false
+38,Carbos,CARBOS,9800,ItemUseVitamin,false
+39,Calcium,CALCIUM,9800,ItemUseVitamin,false
+40,RareCandy,RARE CANDY,4800,ItemUseVitamin,false
+41,DomeFossil,DOME FOSSIL,0,UnusableItem,true
+42,HelixFossil,HELIX FOSSIL,0,UnusableItem,true
+43,SecretKey,SECRET KEY,0,UnusableItem,true
+44,UnusedItem,?????,0,UnusableItem,true
+45,BikeVoucher,BIKE VOUCHER,0,UnusableItem,true
+46,XAccuracy,X ACCURACY,950,ItemUseXAccuracy,false
+47,LeafStone,LEAF STONE,2100,ItemUseEvoStone,false
+48,CardKey,CARD KEY,0,ItemUseCardKey,true
+49,Nugget,NUGGET,10000,UnusableItem,false
+50,PpUp2,PP UP,9800,UnusableItem,false
+51,PokeDoll,POKé DOLL,1000,ItemUsePokedoll,false
+52,FullHeal,FULL HEAL,600,ItemUseMedicine,false
+53,Revive,REVIVE,1500,ItemUseMedicine,false
+54,MaxRevive,MAX REVIVE,4000,ItemUseMedicine,false
+55,GuardSpec,GUARD SPEC.,700,ItemUseGuardSpec,false
+56,SuperRepel,SUPER REPEL,500,ItemUseSuperRepel,false
+57,MaxRepel,MAX REPEL,700,ItemUseMaxRepel,false
+58,DireHit,DIRE HIT,650,ItemUseDireHit,false
+59,Coin,COIN,10,UnusableItem,false
+60,FreshWater,FRESH WATER,200,ItemUseMedicine,false
+61,SodaPop,SODA POP,300,ItemUseMedicine,false
+62,Lemonade,LEMONADE,350,ItemUseMedicine,false
+63,SSTicket,S.S.TICKET,0,UnusableItem,true
+64,GoldTeeth,GOLD TEETH,0,UnusableItem,true
+65,XAttack,X ATTACK,500,ItemUseXStat,false
+66,XDefend,X DEFEND,550,ItemUseXStat,false
+67,XSpeed,X SPEED,350,ItemUseXStat,false
+68,XSpecial,X SPECIAL,350,ItemUseXStat,false
+69,CoinCase,COIN CASE,0,ItemUseCoinCase,true
+70,OaksParcel,OAK's PARCEL,0,ItemUseOaksParcel,true
+71,Itemfinder,ITEMFINDER,0,ItemUseItemfinder,true
+72,SilphScope,SILPH SCOPE,0,UnusableItem,true
+73,PokeFlute,POKé FLUTE,0,ItemUsePokeflute,true
+74,LiftKey,LIFT KEY,0,UnusableItem,true
+75,ExpAll,EXP.ALL,0,UnusableItem,false
+76,OldRod,OLD ROD,0,ItemUseOldRod,true
+77,GoodRod,GOOD ROD,0,ItemUseGoodRod,true
+78,SuperRod,SUPER ROD,0,ItemUseSuperRod,true
+79,PpUp,PP UP,0,ItemUsePPUp,false
+80,Ether,ETHER,0,ItemUsePPRestore,false
+81,MaxEther,MAX ETHER,0,ItemUsePPRestore,false
+82,Elixer,ELIXER,0,ItemUsePPRestore,false
+83,MaxElixer,MAX ELIXER,0,ItemUsePPRestore,false
+84,FloorB2f,B2F,0,,false
+85,FloorB1f,B1F,0,,false
+86,Floor1f,1F,0,,false
+87,Floor2f,2F,0,,false
+88,Floor3f,3F,0,,false
+89,Floor4f,4F,0,,false
+90,Floor5f,5F,0,,false
+91,Floor6f,6F,0,,false
+92,Floor7f,7F,0,,false
+93,Floor8f,8F,0,,false
+94,Floor9f,9F,0,,false
+95,Floor10f,10F,0,,false
+96,Floor11f,11F,0,,false
+97,FloorB4f,B4F,0,,false
+196,Hm01,HM01,0,,true
+197,Hm02,HM02,0,,true
+198,Hm03,HM03,0,,true
+199,Hm04,HM04,0,,true
+200,Hm05,HM05,0,,true
+201,Tm01,TM01,1500,,false
+202,Tm02,TM02,1000,,false
+203,Tm03,TM03,1000,,false
+204,Tm04,TM04,500,,false
+205,Tm05,TM05,1500,,false
+206,Tm06,TM06,2000,,false
+207,Tm07,TM07,1000,,false
+208,Tm08,TM08,2000,,false
+209,Tm09,TM09,1500,,false
+210,Tm10,TM10,2000,,false
+211,Tm11,TM11,1000,,false
+212,Tm12,TM12,500,,false
+213,Tm13,TM13,2000,,false
+214,Tm14,TM14,2500,,false
+215,Tm15,TM15,2500,,false
+216,Tm16,TM16,2500,,false
+217,Tm17,TM17,1500,,false
+218,Tm18,TM18,1000,,false
+219,Tm19,TM19,1500,,false
+220,Tm20,TM20,1000,,false
+221,Tm21,TM21,2500,,false
+222,Tm22,TM22,2500,,false
+223,Tm23,TM23,2500,,false
+224,Tm24,TM24,1000,,false
+225,Tm25,TM25,2500,,false
+226,Tm26,TM26,2000,,false
+227,Tm27,TM27,2500,,false
+228,Tm28,TM28,1000,,false
+229,Tm29,TM29,2000,,false
+230,Tm30,TM30,500,,false
+231,Tm31,TM31,1000,,false
+232,Tm32,TM32,500,,false
+233,Tm33,TM33,500,,false
+234,Tm34,TM34,1000,,false
+235,Tm35,TM35,2000,,false
+236,Tm36,TM36,1000,,false
+237,Tm37,TM37,1000,,false
+238,Tm38,TM38,2500,,false
+239,Tm39,TM39,1000,,false
+240,Tm40,TM40,2000,,false
+241,Tm41,TM41,1000,,false
+242,Tm42,TM42,1000,,false
+243,Tm43,TM43,2500,,false
+244,Tm44,TM44,1000,,false
+245,Tm45,TM45,1000,,false
+246,Tm46,TM46,2000,,false
+247,Tm47,TM47,1500,,false
+248,Tm48,TM48,2000,,false
+249,Tm49,TM49,2000,,false
+250,Tm50,TM50,1000,,false
+251,Unknown0xFB,?????,0,,false
+252,Unknown0xFC,?????,0,,false
+253,Unknown0xFD,?????,0,,false
+254,Unknown0xFE,?????,0,,false
+255,Unknown0xFF,?????,0,,false
