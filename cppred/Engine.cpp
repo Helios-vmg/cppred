@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <sstream>
+#include <iomanip>
 
 const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_display_period;
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;
@@ -63,9 +64,11 @@ void Engine::run(){
 	PokemonVersion version = PokemonVersion::Red;
 	bool continue_running = true;
 #ifdef CPU_USAGE
-		HighResolutionClock clock;
-		double last = clock.get();
-		double time_processing = 0;
+	HighResolutionClock clock;
+	double last = clock.get();
+	double time_processing = 0;
+	double logic_time = 0;
+	double renderer_time = 0;
 #endif
 	while (continue_running){
 		this->video_device->set_window_title(to_string(version));
@@ -101,16 +104,28 @@ void Engine::run(){
 			if (!this->debug_mode)
 				this->game->update();
 
+#ifdef CPU_USAGE
+			auto t1 = clock.get();
+#endif
+
 			this->renderer->render();
 			this->console->render();
 #ifdef CPU_USAGE
-			auto t1 = clock.get();
-			time_processing += t1 - t0;
-			if (t1 >= last + 1){
+			auto t2 = clock.get();
+			logic_time += t1 - t0;
+			renderer_time += t2 - t1;
+			time_processing += t2 - t0;
+			if (t2 >= last + 1){
 				std::stringstream temp;
-				temp << "Engine::run() CPU usage: " << time_processing / (t1 - last) * 100 << " %\n";
+				auto total = t2 - last;
+				auto total_usage = time_processing / total * 100;
+				auto current_logic_time = (int)(logic_time / time_processing * 100);
+				auto current_renderer_time = (int)(renderer_time / time_processing * 100);
+				temp << "Engine::run() CPU usage: " << std::setw(5) << std::setprecision(3) << total_usage << " % (logic: " << current_logic_time << " %, renderer: " << current_renderer_time << "%)\n";
 				this->console->log_string(temp.str());
-				last = t1;
+				last = t2;
+				logic_time = 0;
+				renderer_time = 0;
 				time_processing = 0;
 			}
 #endif
