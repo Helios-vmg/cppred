@@ -262,7 +262,6 @@ void PlayerCharacter::display_menu(){
 			break;
 		callbacks[input]();
 		options.before_item_display = decltype(options.before_item_display)();
-		options.initial_item = input;
 	}
 }
 

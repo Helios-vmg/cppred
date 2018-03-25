@@ -101,6 +101,7 @@ struct StandardMenuOptions{
 	MenuAnchor anchor = MenuAnchor::TopLeft;
 	std::function<void()> before_item_display;
 	int initial_item = 0;
+	int initial_window_position = 0;
 	byte_t cancel_mask = InputState::mask_b;
 	int window_size = int_max;
 	bool push_window = true;
@@ -174,7 +175,7 @@ public:
 	typedef decltype(SavableData::load("")) load_save_t;
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
-	int handle_standard_menu(const StandardMenuOptions &);
+	int handle_standard_menu(StandardMenuOptions &);
 	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
 	void run_dex_entry(TextResourceId);
 	void run_dialogue(TextResourceId, bool wait_at_end, bool hide_dialogue_at_end);
