@@ -56,9 +56,15 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 			header << "    " << name << " = " << id << ",\n";
 			source <<
 				"    {"
-				" ItemId::" << name << ", "
-				"\"" << name << "\", "
-				"\"" << filter_text(display_name) << "\", " <<
+				" ItemId::" << name << ", ";
+			if (display_name.size()){
+				source <<
+					"\"" << name << "\", "
+					"\"" << filter_text(display_name) << "\", ";
+			}else
+				source << "nullptr, nullptr, ";
+			
+			source <<
 				price << ", " <<
 				bool_to_string(is_key) << ", ";
 			if (use_function.size())

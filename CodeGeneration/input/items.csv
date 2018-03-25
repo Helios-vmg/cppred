@@ -250,8 +250,8 @@ id,name,display_name,price,use_function,is_key
 248,Tm48,TM48,2000,,false
 249,Tm49,TM49,2000,,false
 250,Tm50,TM50,1000,,false
-251,Unknown0xFB,?????,0,,false
-252,Unknown0xFC,?????,0,,false
-253,Unknown0xFD,?????,0,,false
-254,Unknown0xFE,?????,0,,false
-255,Unknown0xFF,?????,0,,false
+251,Unknown0xFB,,0,,false
+252,Unknown0xFC,,0,,false
+253,Unknown0xFD,,0,,false
+254,Unknown0xFE,,0,,false
+255,Unknown0xFF,,0,,false
