@@ -32,5 +32,7 @@ void ItemUseVitamin(ItemId item_used, Game &game, Actor &user){}
 void ItemUseXAccuracy(ItemId item_used, Game &game, Actor &user){}
 void ItemUseXStat(ItemId item_used, Game &game, Actor &user){}
 void UnusableItem(ItemId item_used, Game &game, Actor &user){}
+void ItemUseHm(ItemId item_used, Game &game, Actor &user){}
+void ItemUseTm(ItemId item_used, Game &game, Actor &user){}
 
 }

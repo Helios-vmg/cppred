@@ -205,6 +205,22 @@ void Game::put_string(const Point &position, TileRegion region, const char *stri
 	}
 }
 
+static void write_menu_strings(Game &game, const StandardMenuOptions &options, const Point &position, int window_position, int window_size){
+	auto string_position = position;
+	string_position.x += 2;
+	string_position.y += options.initial_padding ? 2 : 1;
+	auto &items = *options.items;
+	for (int i = 0; i < window_size; i++){
+		auto index = i + window_position;
+		auto &s = items[index];
+		game.put_string(string_position, TileRegion::Window, s.c_str());
+		string_position.y++;
+		if (options.extra_data)
+			game.put_string(string_position, TileRegion::Window, (*options.extra_data)[index].c_str());
+		string_position.y++;
+	}
+}
+
 int Game::handle_standard_menu(const StandardMenuOptions &options){
 	auto position = options.position;
 	auto width = options.minimum_size.x;
@@ -246,26 +262,19 @@ int Game::handle_standard_menu(const StandardMenuOptions &options){
 
 	bool redraw_options = true;
 	int window_size = options.window_size;
+	int window_position = 0;
 	if (window_size == StandardMenuOptions::int_max){
-		int y = 1;
-		for (auto &s : *options.items)
-			this->put_string(position + Point{2, y++ * 2 - !options.initial_padding}, TileRegion::Window, s.c_str());
 		window_size = (int)options.items->size();
+		write_menu_strings(*this, options, position, window_position, window_size);
 		redraw_options = false;
 	}
 
 	int current_item = options.initial_item;
-	int window_position = 0;
 	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	while (true){
 		if (redraw_options){
 			renderer.fill_rectangle(TileRegion::Window, text_region_position, text_region_size, Tile());
-			int y = 1;
-			auto &items = *options.items;
-			for (int i = 0; i < window_size; i++){
-				auto &s = items[i + window_position];
-				this->put_string(position + Point{2, y++ * 2 - !options.initial_padding}, TileRegion::Window, s.c_str());
-			}
+			write_menu_strings(*this, options, position, window_position, window_size);
 			redraw_options = false;
 		}
 		

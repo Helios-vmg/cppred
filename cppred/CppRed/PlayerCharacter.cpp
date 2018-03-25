@@ -7,6 +7,7 @@
 #include "../../CodeGeneration/output/variables.h"
 #include <cassert>
 #include <sstream>
+#include <iomanip>
 
 namespace CppRed{
 
@@ -267,14 +268,48 @@ void PlayerCharacter::display_menu(){
 
 void PlayerCharacter::display_party_menu(){}
 
+static std::array<char, 12> generate_inventory_quantity(int q){
+	std::array<char, 12> ret;
+	memset(ret.data(), ' ', 11);
+	int i = 11;
+	ret[i--] = 0;
+	if (!q){
+		ret[i--] = '0';
+		ret[--i] = '*';
+		return ret;
+	}
+	int digits = 0;
+	for (; q; i--){
+		if (i < 0){
+			ret[0] = '*';
+			return ret;
+		}
+		ret[i] = '0' + q % 10;
+		q /= 10;
+		digits++;
+	}
+	if (digits < 2)
+		i++;
+	ret[i] = '*';
+	return ret;
+}
+
 void PlayerCharacter::display_inventory_menu(){
 	StandardMenuOptions options;
 	std::vector<std::string> items;
-	for (int i = 0; i < 40; i++){
-		items.push_back(item_data[i].display_name);
+	std::vector<std::string> quantities;
+	for (auto &item : this->inventory){
+		auto &data = item_data[(int)item.item];
+		items.push_back(data.display_name);
+		if (data.is_key)
+			quantities.emplace_back();
+		else
+			quantities.emplace_back(generate_inventory_quantity(item.quantity).data());
 	}
 	items.push_back("CANCEL");
+	quantities.emplace_back();
 	options.items = &items;
+	options.extra_data = &quantities;
 	options.position = {4, 2};
 	options.minimum_size = options.maximum_size = {16 - 2, 11 - 2};
 	options.window_size = 4;
@@ -284,6 +319,9 @@ void PlayerCharacter::display_inventory_menu(){
 		int selection = this->game->handle_standard_menu(options);
 		if (selection < 0 || selection == items.size() - 1)
 			break;
+		auto item = this->inventory[selection].item;
+		auto &data = item_data[(int)item];
+		data.use_function(item, *this->game, *this);
 	}
 }
 
@@ -309,5 +347,20 @@ bool Pokedex::get(const FixedBitmap<pokemon_by_pokedex_id_size> &v, SpeciesId s)
 	auto index = (int)data.pokedex_id - 1;
 	return v.get(index);
 }
-	
+
+bool PlayerCharacter::give_item(ItemId item, int quantity){
+	for (auto &i : this->inventory){
+		if (i.item == item){
+			if (max_inventory_item_quantity - quantity < i.quantity)
+				return false;
+			i.quantity += quantity;
+			return true;
+		}
+	}
+	if (this->inventory.size() >= max_inventory_size)
+		return false;
+	this->inventory.emplace_back(InventorySpace{ item, quantity });
+	return true;
+}
+
 }

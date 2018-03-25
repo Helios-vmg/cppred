@@ -237,5 +237,11 @@ public:
 static const std::uint16_t white_arrow = (std::uint16_t)('A' + 128);
 static const std::uint16_t black_arrow = (std::uint16_t)('B' + 128);
 static const std::uint16_t down_arrow = (std::uint16_t)('C' + 128);
+static const std::uint16_t multiplication_symbol = (std::uint16_t)'*';
+static const std::uint16_t male_symbol = (std::uint16_t)'%';
+static const std::uint16_t female_symbol = (std::uint16_t)'+';
+static const std::uint16_t poke_symbol = (std::uint16_t)'{';
+static const std::uint16_t mon_symbol = (std::uint16_t)'}';
+static const std::uint16_t decimal_symbol = (std::uint16_t)('d' + 128);
 
 #include "../CodeGeneration/output/graphics_public.h"

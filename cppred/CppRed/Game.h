@@ -91,7 +91,8 @@ struct StandardMenuOptions{
 	static const int int_max = std::numeric_limits<int>::max();
 
 	Point position;
-	const std::vector<std::string> *items;
+	const std::vector<std::string> *items = nullptr;
+	const std::vector<std::string> *extra_data = nullptr;
 	const char *title = nullptr;
 	Point minimum_size;
 	Point maximum_size = {int_max, int_max};

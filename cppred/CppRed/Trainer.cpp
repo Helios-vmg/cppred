@@ -5,6 +5,9 @@
 
 namespace CppRed{
 
+const size_t Trainer::max_inventory_size = 20;
+const int Trainer::max_inventory_item_quantity = 99;
+
 Trainer::Trainer(XorShift128 &rng){
 	typedef decltype(this->trainer_id) T;
 	this->trainer_id = (T)rng((std::uint32_t)std::numeric_limits<T>::max() + 1);

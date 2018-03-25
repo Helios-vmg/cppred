@@ -74,6 +74,7 @@ public:
 	Pokedex &get_pokedex(){
 		return this->pokedex;
 	}
+	bool give_item(ItemId, int quantity = 1);
 };
 
 class AutoIgnoreInput{

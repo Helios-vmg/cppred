@@ -13,6 +13,7 @@ struct InventorySpace{
 class Trainer{
 public:
 	static const size_t max_inventory_size;
+	static const int max_inventory_item_quantity;
 protected:
 	Party party;
 	std::vector<InventorySpace> inventory;
