@@ -2,6 +2,7 @@
 #include "utility.h"
 #include "GraphicsAsset.h"
 #include "CppRed/Actor.h"
+#include "CppRed/actor_ptr.h"
 #ifndef HAVE_PCH
 #include <string>
 #endif

@@ -8,6 +8,7 @@
 #include "Coroutine.h"
 #ifndef HAVE_PCH
 #include <sstream>
+#include <algorithm>
 #endif
 
 namespace CppRed{

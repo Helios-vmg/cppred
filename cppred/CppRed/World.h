@@ -12,7 +12,7 @@ class Game;
 enum class ActorId;
 
 class World : public ScreenOwner{
-	actor_ptr<PlayerCharacter> player_character = null_actor_ptr<PlayerCharacter>();
+	actor_ptr<PlayerCharacter> player_character;
 	std::string rival_name;
 	MapStore map_store;
 	std::vector<actor_ptr<Actor>> actors;

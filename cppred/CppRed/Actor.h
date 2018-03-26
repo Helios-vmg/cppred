@@ -129,42 +129,4 @@ public:
 	~NonPlayerActor();
 };
 
-template <typename T> 
-using actor_ptr = std::unique_ptr<T, void (*)(T *)>;
-
-template <typename T>
-void actor_deleter(T *p){
-	if (!p)
-		return;
-	p->uninit();
-	delete p;
-}
-
-template <typename T>
-void actor_deleter2(Actor *p){
-	if (!p)
-		return;
-	p->uninit();
-	delete (T *)p;
-}
-
-template <typename T>
-actor_ptr<T> null_actor_ptr(){
-	return actor_ptr<T>(nullptr, actor_deleter<T>);
-}
-
-template <typename T, typename... P>
-actor_ptr<T> create_actor(P &&... params){
-	actor_ptr<T> ret(new T(std::forward<P>(params)...), actor_deleter<T>);
-	ret->init();
-	return ret;
-}
-
-template <typename T, typename... P>
-actor_ptr<Actor> create_actor2(P &&... params){
-	actor_ptr<Actor> ret(new T(std::forward<P>(params)...), actor_deleter2<T>);
-	ret->init();
-	return ret;
-}
-
 }

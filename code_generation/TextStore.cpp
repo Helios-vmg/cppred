@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "PokemonData.h"
 #include "Variables.h"
 #include "../common/csv_parser.h"

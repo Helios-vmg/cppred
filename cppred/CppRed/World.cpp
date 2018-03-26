@@ -13,7 +13,9 @@
 
 namespace CppRed{
 
-World::World(Game &game): ScreenOwner(game){
+World::World(Game &game):
+	ScreenOwner(game),
+	player_character(null_actor_ptr<PlayerCharacter>()){
 }
 
 World::~World(){

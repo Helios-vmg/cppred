@@ -365,4 +365,11 @@ void Actor::look_towards_actor(const Actor &other){
 	}
 }
 
+void actor_deleter_helper(Actor *p){
+	if (!p)
+		return;
+	p->uninit();
+	delete p;
+}
+
 }

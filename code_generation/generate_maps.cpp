@@ -10,6 +10,7 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 static const char * const maps_file = "input/maps.csv";
 static const char * const tilesets_file = "input/tilesets.csv";

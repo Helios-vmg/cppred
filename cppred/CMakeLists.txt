@@ -4,6 +4,7 @@ project (cppred)
 
 file(GLOB SOURCES "*.cpp")
 file(GLOB CPPRED_SOURCES "CppRed/*.cpp")
+file(GLOB SCRIPTS_SOURCES "CppRed/Scripts/*.cpp")
 
 INCLUDE(FindPkgConfig)
 
@@ -16,5 +17,5 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(cppred ${SOURCES} ${CPPRED_SOURCES})
+add_executable(cppred ${SOURCES} ${CPPRED_SOURCES} ${SCRIPTS_SOURCES})
 target_link_libraries(cppred ${SDL2_LIBRARIES} pthread boost_coroutine boost_context)

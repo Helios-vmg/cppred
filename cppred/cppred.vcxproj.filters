@@ -230,6 +230,9 @@
     <ClInclude Include="stdafx.h">
       <Filter>CppRed\Other\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRed\actor_ptr.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">

@@ -16,6 +16,7 @@
 #include <sstream>
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 #endif
 
 Blockset::Blockset(const byte_t *buffer, size_t &offset, size_t size){

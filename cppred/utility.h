@@ -5,6 +5,9 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <limits>
+#include <iostream>
+#include <cstring>
 #endif
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)

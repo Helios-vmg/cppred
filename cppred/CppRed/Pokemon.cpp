@@ -2,6 +2,7 @@
 #include "Pokemon.h"
 #ifndef HAVE_PCH
 #include <sstream>
+#include <cmath>
 #endif
 
 namespace CppRed{
