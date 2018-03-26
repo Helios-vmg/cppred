@@ -32,5 +32,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#if (defined _WIN32 || defined _WIN64)
 #include <Windows.h>
+#endif
 #endif
