@@ -1,4 +1,5 @@
 #include "VideoDevice.h"
+#include <SDL.h>
 #include <string>
 
 VideoDevice::VideoDevice(const Point &size):

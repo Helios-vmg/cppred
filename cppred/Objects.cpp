@@ -8,6 +8,7 @@
 #include "CppRed/TextDisplay.h"
 #include "../CodeGeneration/output/variables.h"
 #include "CppRed/ItemActor.h"
+#include <cassert>
 
 MapObject::~MapObject(){}
 

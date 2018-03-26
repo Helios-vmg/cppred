@@ -2,9 +2,12 @@
 #include "Maps.h"
 #include "Game.h"
 #include "World.h"
+#include "Coroutine.h"
+#include "HighResolutionClock.h"
 #include <set>
 #include <deque>
 #include <utility>
+#include <cassert>
 
 static void initialize_sprite(std::shared_ptr<Sprite> &sprite, Renderer &renderer, const GraphicsAsset &graphics, int first_tile, bool flip_x = false){
 	sprite = renderer.create_sprite(2, 2);
@@ -315,6 +318,8 @@ NonPlayerActor::NonPlayerActor(Game &game, Coroutine &parent_coroutine, const st
 		Actor(game, parent_coroutine, name, renderer, sprite){
 	this->object_instance = &instance;
 }
+
+NonPlayerActor::~NonPlayerActor(){}
 
 void NonPlayerActor::coroutine_entry_point(){
 	this->standing_sprites[(int)this->facing_direction]->set_visible(this->visible);

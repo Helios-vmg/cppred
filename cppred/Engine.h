@@ -4,17 +4,9 @@
 #include "Renderer.h"
 #include "HighResolutionClock.h"
 #include "ScriptStore.h"
-#include <SDL.h>
-#include <boost/coroutine2/all.hpp>
 #include <thread>
+#include <mutex>
 #include <memory>
-
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
 
 enum class PokemonVersion;
 class XorShift128;
@@ -23,6 +15,8 @@ class Console;
 class AudioDevice;
 class AudioScheduler;
 class TwoWayMixer;
+struct SDL_Window;
+typedef struct SDL_Window SDL_Window;
 
 namespace CppRed{
 class AudioProgramInterface;

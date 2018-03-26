@@ -1,7 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "../utility.h"
+
+class Coroutine;
 
 namespace CppRed{
 
@@ -13,9 +14,9 @@ protected:
 	std::unique_ptr<Coroutine> coroutine;
 	bool done;
 
-	ScreenOwner(Game &game): game(&game){}
+	ScreenOwner(Game &game);
 public:
-	virtual ~ScreenOwner(){}
+	virtual ~ScreenOwner();
 	enum class RunResult{
 		Continue,
 		Terminate,

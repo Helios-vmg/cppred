@@ -42,3 +42,4 @@ CodeGeneration/output/*.cpp
 .vs/
 CodeGeneration/output/*.csv
 tools/pokered/
+/cppred/buildShowingIncludes.bat

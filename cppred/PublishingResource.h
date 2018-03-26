@@ -3,7 +3,6 @@
 #include <memory>
 #include <mutex>
 #include <atomic>
-#include <iostream>
 #include "queue/readerwriterqueue.h"
 #include "utility.h"
 

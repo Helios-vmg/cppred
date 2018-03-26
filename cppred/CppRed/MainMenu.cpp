@@ -4,6 +4,7 @@
 #include "Engine.h"
 #include "Renderer.h"
 #include "../CodeGeneration/output/audio.h"
+#include "Coroutine.h"
 
 namespace CppRed{
 namespace Scripts{

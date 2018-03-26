@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer.h"
 #include "../utility.h"
+#include "../Coroutine.h"
 #include <deque>
 #include <functional>
 
@@ -123,6 +124,7 @@ protected:
 	virtual void update_sprites() override;
 public:
 	NonPlayerActor(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
+	~NonPlayerActor();
 };
 
 template <typename T> 

@@ -4,6 +4,7 @@
 #include "../PokemonInfo.h"
 #include "../CodeGeneration/output/audio.h"
 #include "../CodeGeneration/output/pokemon_declarations.h"
+#include "Coroutine.h"
 #include <sstream>
 
 namespace CppRed{

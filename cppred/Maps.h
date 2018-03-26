@@ -14,14 +14,15 @@
 #include <memory>
 #include <map>
 
+class MapStore;
+enum class TextResourceId;
+class Coroutine;
+
 namespace CppRed{
 class Actor;
 class Game;
 enum class VisibilityFlagId;
 }
-
-class MapStore;
-enum class TextResourceId;
 
 struct Blockset{
 	std::string name;

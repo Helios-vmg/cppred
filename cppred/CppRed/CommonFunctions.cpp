@@ -1,6 +1,5 @@
 #include "CommonFunctions.h"
 #include "Engine.h"
-#include "Renderer.h"
 #include "PlayerCharacter.h"
 #include "Game.h"
 #include "../../CodeGeneration/output/variables.h"

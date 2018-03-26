@@ -15,6 +15,7 @@ protected:
 	bool move_internal(FacingDirection) override;
 public:
 	Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &);
+	~Npc();
 	void set_wandering(int radius);
 	double movement_duration() const override{
 		return this->special_movement_duration;

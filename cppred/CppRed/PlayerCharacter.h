@@ -69,6 +69,7 @@ private:
 	void display_save_dialog();
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
+	~PlayerCharacter();
 	void teleport(const WorldCoordinates &);
 	DEFINE_GETTER_SETTER(ignore_input)
 	Pokedex &get_pokedex(){

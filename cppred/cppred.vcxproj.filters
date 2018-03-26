@@ -224,6 +224,9 @@
     <ClInclude Include="CppRed\ItemFunctions.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Coroutine.h">
+      <Filter>Engine code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -360,6 +363,9 @@
     </ClCompile>
     <ClCompile Include="CppRed\ItemFunctions.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Coroutine.cpp">
+      <Filter>Engine code\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

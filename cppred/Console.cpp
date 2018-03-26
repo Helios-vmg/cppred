@@ -4,8 +4,11 @@
 #include "CppRed/AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"
 #include "font.inl"
+#include "Coroutine.h"
+#include "HighResolutionClock.h"
 #include <sstream>
 #include <iomanip>
+#include <cassert>
 
 #ifdef RGB
 #undef RGB
@@ -31,13 +34,9 @@ Console::Console(Engine &engine):
 	this->initialize_background(0x80);
 	this->initialize_text_layer(this->text_layer);
 	this->initialize_text_layer(this->log_layer);
-	this->coroutine.reset(new coroutine_t(
-		[this](yielder_t &y){
-			this->yielder = &y;
-			this->yield();
-			this->coroutine_entry_point();
-		}
-	));
+	this->coroutine.reset(new Coroutine("Console coroutine", engine.get_stepping_clock(), [this](Coroutine &){
+		this->coroutine_entry_point();
+	}));
 }
 
 CharacterMatrix::CharacterMatrix(const Point &size, int scale){
@@ -270,18 +269,25 @@ ConsoleCommunicationChannel *Console::update(){
 	if (!this->visible)
 		return nullptr;
 
-	auto &co = (*this->coroutine)();
-	return co ? co.get() : nullptr;
+	this->coroutine->get_clock().step();
+	this->coroutine->resume();
+	return this->ccc;
 }
 
 void Console::yield(){
-	(*this->yielder)(nullptr);
+	this->coroutine->yield();
+}
+
+void Console::yield(ConsoleCommunicationChannel &ccc){
+	this->ccc = &ccc;
+	this->yield();
+	this->ccc = nullptr;
 }
 
 CppRed::AudioProgramInterface &Console::get_audio_program(){
 	ConsoleCommunicationChannel ccc;
 	ccc.request_id = ConsoleRequestId::GetAudioProgram;
-	(*this->yielder)(&ccc);
+	this->yield(ccc);
 	return *ccc.audio_program;
 }
 
@@ -445,19 +451,19 @@ void Console::cry_test(){
 void Console::restart_game(){
 	ConsoleCommunicationChannel ccc;
 	ccc.request_id = ConsoleRequestId::Restart;
-	(*this->yielder)(&ccc);
+	this->yield(ccc);
 }
 
 void Console::flip_version(){
 	ConsoleCommunicationChannel ccc;
 	ccc.request_id = ConsoleRequestId::FlipVersion;
-	(*this->yielder)(&ccc);
+	this->yield(ccc);
 }
 
 PokemonVersion Console::get_version(){
 	ConsoleCommunicationChannel ccc;
 	ccc.request_id = ConsoleRequestId::GetVersion;
-	(*this->yielder)(&ccc);
+	this->yield(ccc);
 	return ccc.version;
 }
 

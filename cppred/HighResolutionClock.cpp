@@ -1,6 +1,6 @@
 #include "HighResolutionClock.h"
 #include "utility.h"
-#include <iostream>
+#include <cassert>
 
 #if (defined _WIN32 || defined _WIN64)
 #define WIN32_LEAN_AND_MEAN

@@ -22,6 +22,8 @@ PlayerCharacter::PlayerCharacter(Game &game, Coroutine &parent_coroutine, const 
 		Trainer(game.get_engine().get_prng()){
 }
 
+PlayerCharacter::~PlayerCharacter(){}
+
 void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer &renderer){
 	Actor::initialize_sprites(graphics, renderer);
 	auto s = Renderer::tile_size;

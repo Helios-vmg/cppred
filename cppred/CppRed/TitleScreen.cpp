@@ -5,6 +5,8 @@
 #include "Data.h"
 #include "../CodeGeneration/output/audio.h"
 #include <cmath>
+#include "Coroutine.h"
+#include "HighResolutionClock.h"
 
 template <typename T, size_t N>
 static void draw_image_from_offsets(Renderer &renderer, Point first_point, const GraphicsAsset &asset, const T (&offsets)[N]){

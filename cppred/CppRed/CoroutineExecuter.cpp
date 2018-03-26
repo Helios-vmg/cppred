@@ -1,5 +1,7 @@
 #include "CoroutineExecuter.h"
 #include "Game.h"
+#include "Coroutine.h"
+#include "HighResolutionClock.h"
 
 namespace CppRed{
 

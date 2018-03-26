@@ -12,6 +12,7 @@
 #include <cassert>
 #include <sstream>
 #include <iomanip>
+#include <SDL.h>
 
 const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_display_period;
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;

@@ -1,19 +1,9 @@
 #pragma once
 #include "common_types.h"
 #include "HighResolutionClock.h"
-#include <array>
 #include <vector>
 #include <map>
-#include <thread>
 #include <string>
-#include <boost/coroutine2/all.hpp>
-
-#ifdef max
-#undef max
-#endif
-#ifdef min
-#undef min
-#endif
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 
@@ -38,7 +28,9 @@
 		this->x = value; \
 	}
 
-typedef std::array<std::uint32_t, 4> xorshift128_state;
+struct xorshift128_state{
+	std::uint32_t data[4];
+};
 
 class XorShift128{
 	xorshift128_state state;
@@ -255,58 +247,6 @@ struct WorldCoordinates{
 	}
 };
 
-class Coroutine{
-public:
-	typedef std::function<void(Coroutine &)> entry_point_t;
-	typedef std::function<void()> on_yield_t;
-private:
-	thread_local static Coroutine *coroutine_stack;
-	Coroutine *next_coroutine;
-	std::string name;
-	PausableClock clock;
-	bool active = false;
-	std::thread::id resume_thread_id;
-	typedef boost::coroutines2::asymmetric_coroutine<void>::pull_type coroutine_t;
-	typedef boost::coroutines2::asymmetric_coroutine<void>::push_type yielder_t;
-	std::unique_ptr<coroutine_t> coroutine;
-	on_yield_t on_yield;
-	entry_point_t entry_point;
-	yielder_t *yielder = nullptr;
-	bool first_run;
-	double wait_remainder = 0;
-
-	void push();
-	void pop();
-	void init();
-public:
-	Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point);
-	Coroutine(const std::string &name, entry_point_t &&entry_point);
-	bool resume();
-	void yield();
-	void wait(double seconds);
-	void wait_frames(int frames);
-	void set_on_yield(on_yield_t &&on_yield){
-		this->on_yield = std::move(on_yield);
-	}
-	void clear_on_yield(){
-		this->on_yield = on_yield_t();
-	}
-	static Coroutine *get_current_coroutine_ptr(){
-		return Coroutine::coroutine_stack;
-	}
-	static Coroutine &get_current_coroutine(){
-		auto p = get_current_coroutine_ptr();
-		if (!p)
-			throw std::runtime_error("No coroutine is running!");
-		return *p;
-	}
-	PausableClock &get_clock(){
-		return this->clock;
-	}
-	DEFINE_GETTER(name)
-	DEFINE_GETTER(active)
-};
-
 class BufferReader{
 	const byte_t *buffer;
 	size_t size;
@@ -397,9 +337,7 @@ public:
 		byte_t mask = 1 << (index % 8);
 		return !!(this->data[index / 8] & mask);
 	}
-	std::array<byte_t, size> get_data() const{
-		std::array<byte_t, size> ret;
-		memcpy(ret.data(), this->data, size);
-		return ret;
+	void get_data(byte_t (&dst)[size]) const{
+		memcpy(dst, this->data, size);
 	}
 };

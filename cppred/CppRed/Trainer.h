@@ -33,8 +33,6 @@ public:
 	DEFINE_GETTER(trainer_id)
 };
 
-inline Trainer::~Trainer(){}
-
 class NpcTrainer : public Npc, public Trainer{
 	std::map<int, std::shared_ptr<BaseTrainerParty>> parties;
 	int default_party;
@@ -48,6 +46,7 @@ public:
 		MapObjectInstance &instance,
 		const std::map<int, std::shared_ptr<BaseTrainerParty>> &,
 		int default_party);
+	~NpcTrainer();
 	const BaseTrainerParty &get_party(int index = -1);
 };
 

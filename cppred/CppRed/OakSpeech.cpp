@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "../CodeGeneration/output/audio.h"
 #include "../CodeGeneration/output/variables.h"
+#include "Coroutine.h"
 
 static void fade_in(CppRed::Game &game){
 	const Palette palettes[] = {

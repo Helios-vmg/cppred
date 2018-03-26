@@ -6,10 +6,11 @@
 #include <memory>
 #include <vector>
 #include <sstream>
-#include <boost/coroutine2/all.hpp>
+#include <mutex>
 #include "pokemon_version.h"
 
 class Engine;
+class Coroutine;
 
 enum class ConsoleRequestId{
 	None,
@@ -58,10 +59,8 @@ class Console{
 	bool log_enabled = false;
 	std::mutex log_mutex;
 
-	typedef boost::coroutines2::asymmetric_coroutine<ConsoleCommunicationChannel *>::pull_type coroutine_t;
-	typedef boost::coroutines2::asymmetric_coroutine<ConsoleCommunicationChannel *>::push_type yielder_t;
-	std::unique_ptr<coroutine_t> coroutine;
-	yielder_t *yielder = nullptr;
+	std::unique_ptr<Coroutine> coroutine;
+	ConsoleCommunicationChannel *ccc = nullptr;
 
 	int current_menu_position = -1;
 	int current_menu_size = -1;
@@ -73,6 +72,7 @@ class Console{
 
 	void coroutine_entry_point();
 	void yield();
+	void yield(ConsoleCommunicationChannel &ccc);
 	CppRed::AudioProgramInterface &get_audio_program();
 
 	int handle_menu(const std::vector<std::string> &, int default_item = 0, int item_separation = 1);

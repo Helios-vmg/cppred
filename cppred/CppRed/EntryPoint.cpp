@@ -11,6 +11,7 @@
 #include "World.h"
 #include "PlayerCharacter.h"
 #include "../utility.h"
+#include <cassert>
 
 namespace CppRed{
 namespace Scripts{

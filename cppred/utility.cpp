@@ -5,18 +5,17 @@
 #include <iostream>
 #include "Engine.h"
 
-thread_local Coroutine *Coroutine::coroutine_stack = nullptr;
-
 std::uint32_t XorShift128::gen(){
-	auto x = this->state[3];
+	auto &state = this->state.data;
+	auto x = state[3];
 	x ^= x << 11;
 	x ^= x >> 8;
-	this->state[3] = this->state[2];
-	this->state[2] = this->state[1];
-	this->state[1] = this->state[0];
-	x ^= this->state[0];
-	x ^= this->state[0] >> 19;
-	this->state[0] = x;
+	state[3] = state[2];
+	state[2] = state[1];
+	state[1] = state[0];
+	x ^= state[0];
+	x ^= state[0] >> 19;
+	state[0] = x;
 	return x;
 }
 
@@ -61,7 +60,7 @@ double XorShift128::generate_double(){
 xorshift128_state get_seed(){
 	xorshift128_state ret;
 	std::random_device rnd;
-	for (auto &i : ret)
+	for (auto &i : ret.data)
 		i = rnd();
 	return ret;
 }
@@ -151,88 +150,6 @@ std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t siz
 	memcpy(&ret[0], buffer + offset, ret.size());
 	offset += ret.size();
 	return ret;
-}
-
-Coroutine::Coroutine(const std::string &name, entry_point_t &&entry_point):
-	Coroutine(name, get_current_coroutine().get_clock(), std::move(entry_point)){}
-
-Coroutine::Coroutine(const std::string &name, AbstractClock &base_clock, entry_point_t &&entry_point):
-		name(name),
-		clock(base_clock, name + " clock"),
-		entry_point(std::move(entry_point)){
-	this->init();
-}
-
-void Coroutine::init(){
-	this->first_run = true;
-	this->push();
-	this->coroutine.reset(new coroutine_t([this](yielder_t &y){
-		this->resume_thread_id = std::this_thread::get_id();
-		this->yielder = &y;
-		if (this->first_run){
-			this->yield();
-			this->first_run = false;
-		}
-		this->entry_point(*this);
-	}));
-	this->pop();
-}
-
-void Coroutine::push(){
-	this->next_coroutine = Coroutine::coroutine_stack;
-	Coroutine::coroutine_stack = this;
-}
-
-void Coroutine::pop(){
-	Coroutine::coroutine_stack = this->next_coroutine;
-}
-
-void Coroutine::yield(){
-	if (Coroutine::coroutine_stack != this)
-		throw std::runtime_error("Coroutine::yield() was used incorrectly!");
-	if (std::this_thread::get_id() != this->resume_thread_id)
-		throw std::runtime_error("Coroutine::yield() must be called from the thread that resumed the coroutine!");
-	if (!this->yielder)
-		throw std::runtime_error("Coroutine::yield() must be called while the coroutine is active!");
-	auto yielder = this->yielder;
-	this->yielder = nullptr;
-	(*yielder)();
-	this->yielder = yielder;
-	if (this->on_yield)
-		this->on_yield();
-}
-
-bool Coroutine::resume(){
-	this->resume_thread_id = std::this_thread::get_id();
-	if (this->active)
-		throw std::runtime_error("Attempting to resume a running coroutine!");
-	this->active = true;
-	this->push();
-	//Logger() << this->name << " RESUMES\n";
-	this->clock.resume();
-	auto ret = !!(*this->coroutine)();
-	//Logger() << this->name << " PAUSES\n";
-	this->pop();
-	this->active = false;
-	if (!ret)
-		this->init();
-	return ret;
-}
-
-void Coroutine::wait(double s){
-	auto target = this->clock.get() + s + this->wait_remainder;
-	while (true){
-		this->yield();
-		auto now = this->clock.get();
-		if (now >= target){
-			this->wait_remainder = target - now;
-			return;
-		}
-	}
-}
-
-void Coroutine::wait_frames(int frames){
-	this->wait(frames * Engine::logical_refresh_period);
 }
 
 byte_t BufferReader::read_byte(){

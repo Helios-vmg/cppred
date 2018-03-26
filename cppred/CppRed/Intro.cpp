@@ -1,13 +1,11 @@
 #include "Intro.h"
-#include "CommonFunctions.h"
 #include "Game.h"
 #include "Engine.h"
 #include "Renderer.h"
-#include "CommonFunctions.h"
 #include "utility.h"
 #include "pokemon_version.h"
 #include "../CodeGeneration/output/audio.h"
-#include <iostream>
+#include "Coroutine.h"
 
 static void display_copyright(CppRed::Game &game){
 	auto &engine = game.get_engine();

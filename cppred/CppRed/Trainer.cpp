@@ -13,6 +13,8 @@ Trainer::Trainer(XorShift128 &rng){
 	this->trainer_id = (T)rng((std::uint32_t)std::numeric_limits<T>::max() + 1);
 }
 
+Trainer::~Trainer(){}
+
 NpcTrainer::NpcTrainer(
 	Game &game,
 	Coroutine &parent_coroutine,
@@ -27,6 +29,8 @@ NpcTrainer::NpcTrainer(
 		parties(parties),
 		default_party(default_party){
 }
+
+NpcTrainer::~NpcTrainer(){}
 
 const BaseTrainerParty &NpcTrainer::get_party(int index){
 	if (index < 0)

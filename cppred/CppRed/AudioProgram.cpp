@@ -4,7 +4,7 @@
 #include "AudioRenderer.h"
 #include "../common/calculate_frequency.h"
 #include "../CodeGeneration/output/audio.h"
-#include <set>
+#include "../Coroutine.h"
 #include <sstream>
 #include <Console.h>
 

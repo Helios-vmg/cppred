@@ -9,10 +9,10 @@
 #include "ScreenOwner.h"
 #include "Actor.h"
 #include <string>
-#include <unordered_map>
 #include <queue>
 
 struct MapData;
+class Coroutine;
 
 namespace CppRed{
 

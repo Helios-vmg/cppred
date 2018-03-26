@@ -21,6 +21,7 @@
     <ClInclude Include="AudioScheduler.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Coroutine.h" />
     <ClInclude Include="CppRed/AudioInterface.h" />
     <ClInclude Include="CppRed/AudioProgram.h" />
     <ClInclude Include="CppRed/ClearSave.h" />
@@ -77,6 +78,7 @@
     <ClCompile Include="AudioRenderer.cpp" />
     <ClCompile Include="AudioScheduler.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="Coroutine.cpp" />
     <ClCompile Include="CppRed/AudioInterface.cpp" />
     <ClCompile Include="CppRed\Actor.cpp" />
     <ClCompile Include="CppRed\ItemActor.cpp" />
@@ -183,10 +185,11 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING;NOMINMAX</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <StringPooling>true</StringPooling>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,7 +212,7 @@ cd %a%
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;NOMINMAX</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -219,6 +222,7 @@ cd %a%
       <ControlFlowGuard>false</ControlFlowGuard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -243,7 +247,7 @@ cd %a%
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING;NOMINMAX</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -253,6 +257,7 @@ cd %a%
       <ControlFlowGuard>false</ControlFlowGuard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

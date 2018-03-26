@@ -2,13 +2,16 @@
 #include "Game.h"
 #include "../Maps.h"
 #include "World.h"
-#include <iostream>
+#include "Coroutine.h"
+#include "HighResolutionClock.h"
 
 namespace CppRed{
 
 Npc::Npc(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer, const GraphicsAsset &sprite, MapObjectInstance &instance):
 		NonPlayerActor(game, parent_coroutine, name, renderer, sprite, instance){
 }
+
+Npc::~Npc(){}
 
 static int geometric_distribution(XorShift128 &rand, std::uint32_t n){
 	int ret = n;

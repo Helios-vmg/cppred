@@ -11,10 +11,11 @@
 #include "../../CodeGeneration/output/audio.h"
 #include "../../CodeGeneration/output/variables.h"
 #include "../Console.h"
-#include <iostream>
-#include <sstream>
 #include "PokedexPageDisplay.h"
 #include "CoroutineExecuter.h"
+#include <iostream>
+#include <sstream>
+#include <cassert>
 
 namespace CppRed{
 
