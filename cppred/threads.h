@@ -1,8 +1,10 @@
 #pragma once
 
+#ifndef HAVE_PCH
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#endif
 
 class Event{
 	bool signalled = false;

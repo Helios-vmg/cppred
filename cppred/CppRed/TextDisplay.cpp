@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TextDisplay.h"
 #include "Game.h"
 #include "Coroutine.h"

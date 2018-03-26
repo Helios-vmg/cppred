@@ -2,8 +2,10 @@
 #include "Renderer.h"
 #include "../utility.h"
 #include "../Coroutine.h"
+#ifndef HAVE_PCH
 #include <deque>
 #include <functional>
+#endif
 
 class MapObjectInstance;
 

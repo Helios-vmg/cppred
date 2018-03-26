@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ScreenOwner.h"
+#ifndef HAVE_PCH
 #include <functional>
+#endif
 
 namespace CppRed{
 

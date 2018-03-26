@@ -3,8 +3,10 @@
 #include "PublishingResource.h"
 #include "AudioData.h"
 #include "AudioDevice.h"
+#ifndef HAVE_PCH
 #include <fstream>
 #include <SDL_hints.h>
+#endif
 
 //#define OUTPUT_AUDIO_TO_FILE
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "EntryPoint.h"
 #include "Engine.h"
 #include "Renderer.h"
@@ -11,7 +12,9 @@
 #include "World.h"
 #include "PlayerCharacter.h"
 #include "../utility.h"
+#ifndef HAVE_PCH
 #include <cassert>
+#endif
 
 namespace CppRed{
 namespace Scripts{

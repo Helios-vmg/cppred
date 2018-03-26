@@ -1,7 +1,10 @@
+#include "stdafx.h"
 #include "Engine.h"
+#ifndef HAVE_PCH
 #include <SDL_main.h>
 #include <stdexcept>
 #include <fstream>
+#endif
 
 int main(int argc, char **argv){
 	try{

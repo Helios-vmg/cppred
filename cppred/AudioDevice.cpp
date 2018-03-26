@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AudioDevice.h"
 #include "AudioData.h"
 #include "AudioRenderer.h"

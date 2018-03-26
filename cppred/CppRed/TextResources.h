@@ -1,9 +1,11 @@
 #pragma once
 #include "Data.h"
 #include "RendererStructs.h"
+#ifndef HAVE_PCH
 #include <vector>
 #include <memory>
 #include <string>
+#endif
 
 namespace CppRed{
 

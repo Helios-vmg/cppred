@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Console.h"
 #include "Renderer.h"
 #include "Engine.h"
@@ -6,9 +7,11 @@
 #include "font.inl"
 #include "Coroutine.h"
 #include "HighResolutionClock.h"
+#ifndef HAVE_PCH
 #include <sstream>
 #include <iomanip>
 #include <cassert>
+#endif
 
 #ifdef RGB
 #undef RGB

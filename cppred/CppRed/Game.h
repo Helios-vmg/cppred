@@ -8,8 +8,10 @@
 #include "AudioInterface.h"
 #include "ScreenOwner.h"
 #include "Actor.h"
+#ifndef HAVE_PCH
 #include <string>
 #include <queue>
+#endif
 
 struct MapData;
 class Coroutine;

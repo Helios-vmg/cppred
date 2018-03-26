@@ -1,6 +1,8 @@
 #pragma once
+#ifndef HAVE_PCH
 #include <array>
 #include <memory>
+#endif
 
 enum class SpeciesId;
 

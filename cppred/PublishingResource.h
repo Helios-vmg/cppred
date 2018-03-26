@@ -1,10 +1,12 @@
 #pragma once
+#include "queue/readerwriterqueue.h"
+#include "utility.h"
+#ifndef HAVE_PCH
 #include <vector>
 #include <memory>
 #include <mutex>
 #include <atomic>
-#include "queue/readerwriterqueue.h"
-#include "utility.h"
+#endif
 
 template <typename T>
 class PublishingResource{

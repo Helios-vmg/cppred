@@ -1,9 +1,11 @@
 #pragma once
 #include "common_types.h"
 #include "HighResolutionClock.h"
+#ifndef HAVE_PCH
 #include <vector>
 #include <map>
 #include <string>
+#endif
 
 #define BITMAP(x) (bits_from_u32<0x##x>::value)
 

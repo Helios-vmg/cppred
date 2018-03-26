@@ -227,6 +227,9 @@
     <ClInclude Include="Coroutine.h">
       <Filter>Engine code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>CppRed\Other\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -366,6 +369,9 @@
     </ClCompile>
     <ClCompile Include="Coroutine.cpp">
       <Filter>Engine code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>CppRed\Other\Sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

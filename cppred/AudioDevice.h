@@ -1,6 +1,8 @@
 #pragma once
 #include "AudioData.h"
+#ifndef HAVE_PCH
 #include <SDL.h>
+#endif
 
 class AudioRenderer;
 

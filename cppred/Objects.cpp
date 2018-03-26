@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Objects.h"
 #include "Maps.h"
 #include "CppRed/Actor.h"
@@ -8,7 +9,9 @@
 #include "CppRed/TextDisplay.h"
 #include "../CodeGeneration/output/variables.h"
 #include "CppRed/ItemActor.h"
+#ifndef HAVE_PCH
 #include <cassert>
+#endif
 
 MapObject::~MapObject(){}
 

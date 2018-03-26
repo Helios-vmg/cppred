@@ -2,7 +2,9 @@
 #include "Data.h"
 #include "Status.h"
 #include "utility.h"
+#ifndef HAVE_PCH
 #include <cstdint>
+#endif
 
 namespace CppRed{
 

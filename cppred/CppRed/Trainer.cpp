@@ -1,7 +1,10 @@
+#include "stdafx.h"
 #include "Trainer.h"
 #include "Game.h"
 #include "Engine.h"
+#ifndef HAVE_PCH
 #include <limits>
+#endif
 
 namespace CppRed{
 

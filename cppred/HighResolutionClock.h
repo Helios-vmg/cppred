@@ -1,6 +1,8 @@
 #pragma once
+#ifndef HAVE_PCH
 #include <memory>
 #include <string>
+#endif
 
 class AbstractClock{
 public:

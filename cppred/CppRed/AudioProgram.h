@@ -6,9 +6,11 @@
 #include "pokemon_version.h"
 #include "threads.h"
 #include "utility.h"
+#ifndef HAVE_PCH
 #include <mutex>
 #include <memory>
 #include <string>
+#endif
 
 class GbAudioRenderer;
 

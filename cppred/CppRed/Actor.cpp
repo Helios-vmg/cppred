@@ -1,13 +1,16 @@
+#include "stdafx.h"
 #include "Actor.h"
 #include "Maps.h"
 #include "Game.h"
 #include "World.h"
 #include "Coroutine.h"
 #include "HighResolutionClock.h"
+#ifndef HAVE_PCH
 #include <set>
 #include <deque>
 #include <utility>
 #include <cassert>
+#endif
 
 static void initialize_sprite(std::shared_ptr<Sprite> &sprite, Renderer &renderer, const GraphicsAsset &graphics, int first_tile, bool flip_x = false){
 	sprite = renderer.create_sprite(2, 2);

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Engine.h"
 #include "CppRed/AudioProgram.h"
 #include "CppRed/Game.h"
@@ -8,11 +9,13 @@
 #include "AudioRenderer.h"
 #include "HeliosRenderer.h"
 #include "Console.h"
+#ifndef HAVE_PCH
 #include <stdexcept>
 #include <cassert>
 #include <sstream>
 #include <iomanip>
 #include <SDL.h>
+#endif
 
 const double Engine::logical_refresh_rate = (double)dmg_clock_frequency / dmg_display_period;
 const double Engine::logical_refresh_period = (double)dmg_display_period / dmg_clock_frequency;

@@ -4,11 +4,13 @@
 #include "RendererStructs.h"
 #include "Sprite.h"
 #include "VideoDevice.h"
+#ifndef HAVE_PCH
 #include <SDL.h>
 #include <vector>
 #include <deque>
 #include <map>
 #include <memory>
+#endif
 
 class Engine;
 

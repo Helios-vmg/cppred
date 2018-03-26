@@ -1,12 +1,15 @@
+#include "stdafx.h"
 #include "TitleScreen.h"
 #include "Game.h"
 #include "Engine.h"
 #include "Renderer.h"
 #include "Data.h"
 #include "../CodeGeneration/output/audio.h"
-#include <cmath>
 #include "Coroutine.h"
 #include "HighResolutionClock.h"
+#ifndef HAVE_PCH
+#include <cmath>
+#endif
 
 template <typename T, size_t N>
 static void draw_image_from_offsets(Renderer &renderer, Point first_point, const GraphicsAsset &asset, const T (&offsets)[N]){

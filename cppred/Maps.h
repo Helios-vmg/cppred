@@ -10,9 +10,11 @@
 #include "ScriptStore.h"
 #include "TrainerData.h"
 #include "utility.h"
+#ifndef HAVE_PCH
 #include <vector>
 #include <memory>
 #include <map>
+#endif
 
 class MapStore;
 enum class TextResourceId;

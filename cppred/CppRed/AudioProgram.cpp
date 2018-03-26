@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AudioProgram.h"
 #include "Data.h"
 #include "utility.h"
@@ -5,8 +6,10 @@
 #include "../common/calculate_frequency.h"
 #include "../CodeGeneration/output/audio.h"
 #include "../Coroutine.h"
+#include "Console.h"
+#ifndef HAVE_PCH
 #include <sstream>
-#include <Console.h>
+#endif
 
 const byte_t command_parameter_counts[] = {
 	1, //tempo

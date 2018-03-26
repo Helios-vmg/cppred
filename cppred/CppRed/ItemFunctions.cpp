@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ItemFunctions.h"
 
 namespace CppRed{

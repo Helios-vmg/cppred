@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AudioScheduler.h"
 #include "Engine.h"
 #include "AudioRenderer.h"

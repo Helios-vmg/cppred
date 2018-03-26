@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "World.h"
 #include "PlayerCharacter.h"
 #include "Game.h"
@@ -5,8 +6,10 @@
 #include "PlayerCharacter.h"
 #include "../CodeGeneration/output/variables.h"
 #include "../CodeGeneration/output/actors.h"
+#ifndef HAVE_PCH
 #include <sstream>
 #include <iostream>
+#endif
 
 namespace CppRed{
 

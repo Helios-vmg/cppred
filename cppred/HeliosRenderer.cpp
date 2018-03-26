@@ -1,7 +1,10 @@
+#include "stdafx.h"
 #include "HeliosRenderer.h"
 #include "AudioDevice.h"
 #include "utility.h"
+#ifndef HAVE_PCH
 #include <sstream>
+#endif
 
 #define CHANNEL_SELECTION 0xF
 #define CHANNEL1 (1 << 0)

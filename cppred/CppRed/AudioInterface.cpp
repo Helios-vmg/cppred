@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "AudioInterface.h"
 #include "AudioProgram.h"
 #include "../CodeGeneration/output/audio.h"

@@ -2,12 +2,14 @@
 #include "common_types.h"
 #include "CppRed/AudioInterface.h"
 #include "VideoDevice.h"
+#include "pokemon_version.h"
+#ifndef HAVE_PCH
 #include <SDL.h>
 #include <memory>
 #include <vector>
 #include <sstream>
 #include <mutex>
-#include "pokemon_version.h"
+#endif
 
 class Engine;
 class Coroutine;

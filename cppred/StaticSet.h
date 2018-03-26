@@ -1,7 +1,9 @@
 #pragma once
+#ifndef HAVE_PCH
 #include <vector>
 #include <algorithm>
 #include <initializer_list>
+#endif
 
 template <typename T>
 class StaticSet{

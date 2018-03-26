@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ItemActor.h"
 #include "Game.h"
 #include "World.h"

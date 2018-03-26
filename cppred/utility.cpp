@@ -1,9 +1,12 @@
+#include "stdafx.h"
 #include "utility.h"
+#include "Engine.h"
+#ifndef HAVE_PCH
 #include <random>
 #include <cmath>
 #include <cstring>
 #include <iostream>
-#include "Engine.h"
+#endif
 
 std::uint32_t XorShift128::gen(){
 	auto &state = this->state.data;

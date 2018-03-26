@@ -1,8 +1,11 @@
+#include "stdafx.h"
 #include "Coroutine.h"
 #include "utility.h"
 #include "Engine.h"
 #include <boost/coroutine2/all.hpp>
+#ifndef HAVE_PCH
 #include <stdexcept>
+#endif
 
 class Coroutine::Pimpl{
 	thread_local static Pimpl *coroutine_stack;

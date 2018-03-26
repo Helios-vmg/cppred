@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ScriptDeclarations.h"
 #include "../Game.h"
 #include "../World.h"
@@ -6,7 +7,7 @@
 #include "../../../CodeGeneration/output/audio.h"
 #include "../../../CodeGeneration/output/variables.h"
 #include "../../../CodeGeneration/output/actors.h"
-#include <CppRed/Npc.h>
+#include "CppRed/Npc.h"
 #include "../../Coroutine.h"
 
 namespace CppRed{

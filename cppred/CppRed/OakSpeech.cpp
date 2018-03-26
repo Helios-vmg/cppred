@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "OakSpeech.h"
 #include "Game.h"
 #include "../CodeGeneration/output/audio.h"

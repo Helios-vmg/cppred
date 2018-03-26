@@ -1,6 +1,8 @@
 #pragma once
+#ifndef HAVE_PCH
 #include <functional>
 #include <memory>
+#endif
 
 class AbstractClock;
 class PausableClock;

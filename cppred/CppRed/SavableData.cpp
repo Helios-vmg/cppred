@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SavableData.h"
 
 namespace CppRed{

@@ -1,7 +1,9 @@
 #pragma once
 #include "MiscClasses.h"
+#ifndef HAVE_PCH
 #include <memory>
 #include <string>
+#endif
 
 namespace CppRed{
 

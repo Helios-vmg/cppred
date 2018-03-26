@@ -1,8 +1,11 @@
+#include "stdafx.h"
 #include "ScriptStore.h"
 #include "CppRed/Scripts/ScriptDeclarations.h"
 #include "utility.h"
-#include <algorithm>
 #include "Console.h"
+#ifndef HAVE_PCH
+#include <algorithm>
+#endif
 
 #define ADD_SCRIPT(name) this->scripts.emplace_back(#name, CppRed::Scripts::name)
 

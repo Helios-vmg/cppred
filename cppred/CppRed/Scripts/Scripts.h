@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef HAVE_PCH
 #include <string>
+#endif
 
 namespace CppRed{
 class Game;

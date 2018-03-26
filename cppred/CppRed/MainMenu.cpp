@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "MainMenu.h"
 #include "Game.h"
 #include "MiscClasses.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TextResources.h"
 #include "Game.h"
 #include "utility.h"
@@ -5,7 +6,9 @@
 #include "../CodeGeneration/output/audio.h"
 #include "../CodeGeneration/output/pokemon_declarations.h"
 #include "Coroutine.h"
+#ifndef HAVE_PCH
 #include <sstream>
+#endif
 
 namespace CppRed{
 

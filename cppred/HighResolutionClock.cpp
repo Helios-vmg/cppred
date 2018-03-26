@@ -1,10 +1,15 @@
+#include "stdafx.h"
 #include "HighResolutionClock.h"
 #include "utility.h"
+#ifndef HAVE_PCH
 #include <cassert>
+#endif
 
 #if (defined _WIN32 || defined _WIN64)
 #define WIN32_LEAN_AND_MEAN
+#ifndef HAVE_PCH
 #include <Windows.h>
+#endif
 
 std::uint64_t get_timer_resolution(){
 	LARGE_INTEGER frequency;
@@ -18,7 +23,9 @@ std::uint64_t get_timer_count(){
 	return count.QuadPart;
 }
 #else
+#ifndef HAVE_PCH
 #include <chrono>
+#endif
 
 std::uint64_t get_timer_resolution(){
 	typedef std::chrono::high_resolution_clock::period T;

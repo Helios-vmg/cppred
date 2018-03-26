@@ -5,8 +5,10 @@
 #include "../CodeGeneration/output/items.h"
 #include "../CodeGeneration/output/text.h"
 #include "GraphicsAsset.h"
+#ifndef HAVE_PCH
 #include <array>
 #include <vector>
+#endif
 
 struct MoveData{
 	MoveId id;

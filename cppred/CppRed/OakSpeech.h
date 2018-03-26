@@ -1,5 +1,7 @@
 #pragma once
+#ifndef HAVE_PCH
 #include <string>
+#endif
 
 class Engine;
 

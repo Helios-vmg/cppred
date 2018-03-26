@@ -1,5 +1,7 @@
 #pragma once
+#ifndef HAVE_PCH
 #include <cstdint>
+#endif
 
 static const unsigned gb_cpu_frequency_power = 22;
 static const unsigned gb_cpu_frequency = 1 << gb_cpu_frequency_power;

@@ -1,6 +1,8 @@
 #pragma once
 #include "RendererStructs.h"
+#ifndef HAVE_PCH
 #include <memory>
+#endif
 
 struct SDL_Texture;
 typedef struct SDL_Texture SDL_Texture;

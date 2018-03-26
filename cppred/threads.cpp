@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "threads.h"
 #include "utility.h"
 

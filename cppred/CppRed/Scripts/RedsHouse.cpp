@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ScriptDeclarations.h"
 #include "../Game.h"
 #include "../World.h"

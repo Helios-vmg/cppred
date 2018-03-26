@@ -1,5 +1,8 @@
+#include "stdafx.h"
 #include "Pokemon.h"
+#ifndef HAVE_PCH
 #include <sstream>
+#endif
 
 namespace CppRed{
 

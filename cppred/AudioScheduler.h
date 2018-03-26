@@ -1,11 +1,13 @@
 #pragma once
 #include "threads.h"
+#ifndef HAVE_PCH
 #include <memory>
 #include <mutex>
 #include <thread>
 #include <atomic>
 #include <queue>
 #include <SDL.h>
+#endif
 
 class Engine;
 class AudioRenderer;

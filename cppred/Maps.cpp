@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Maps.h"
 #include "CppRed/Data.h"
 #include "CppRed/Pokemon.h"
@@ -8,12 +9,14 @@
 #include "RendererStructs.h"
 #include "utility.h"
 #include "Objects.h"
+#include "Console.h"
+#ifndef HAVE_PCH
 #include <map>
 #include <limits>
 #include <sstream>
 #include <cassert>
 #include <iostream>
-#include "Console.h"
+#endif
 
 Blockset::Blockset(const byte_t *buffer, size_t &offset, size_t size){
 	this->name = read_string(buffer, offset, size);

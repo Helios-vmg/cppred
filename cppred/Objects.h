@@ -1,8 +1,10 @@
 #pragma once
 #include "utility.h"
 #include "GraphicsAsset.h"
-#include <string>
 #include "CppRed/Actor.h"
+#ifndef HAVE_PCH
+#include <string>
+#endif
 
 namespace CppRed{
 class Actor;

@@ -1,9 +1,12 @@
+#include "stdafx.h"
 #include "Renderer.h"
 #include "utility.h"
+#include "Engine.h"
+#ifndef HAVE_PCH
 #include <stdexcept>
 #include <cassert>
 #include <iostream>
-#include "Engine.h"
+#endif
 
 #include "../CodeGeneration/output/graphics_private.h"
 #include <algorithm>

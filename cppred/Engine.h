@@ -4,9 +4,11 @@
 #include "Renderer.h"
 #include "HighResolutionClock.h"
 #include "ScriptStore.h"
+#ifndef HAVE_PCH
 #include <thread>
 #include <mutex>
 #include <memory>
+#endif
 
 enum class PokemonVersion;
 class XorShift128;

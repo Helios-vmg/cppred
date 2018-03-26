@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ScriptDeclarations.h"
 #include "../Game.h"
 #include "../World.h"
@@ -9,8 +10,10 @@
 #include "../../../CodeGeneration/output/actors.h"
 #include "../../../CodeGeneration/output/trainer_parties.h"
 #include "../../Coroutine.h"
-#include <CppRed/Npc.h>
+#include "CppRed/Npc.h"
+#ifndef HAVE_PCH
 #include <sstream>
+#endif
 
 namespace CppRed{
 namespace Scripts{

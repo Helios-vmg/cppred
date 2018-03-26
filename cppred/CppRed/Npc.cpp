@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Npc.h"
 #include "Game.h"
 #include "../Maps.h"

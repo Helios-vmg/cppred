@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Game.h"
 #include "Engine.h"
 #include "Renderer.h"
@@ -13,9 +14,11 @@
 #include "../Console.h"
 #include "PokedexPageDisplay.h"
 #include "CoroutineExecuter.h"
+#ifndef HAVE_PCH
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#endif
 
 namespace CppRed{
 

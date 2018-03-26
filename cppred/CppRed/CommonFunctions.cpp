@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CommonFunctions.h"
 #include "Engine.h"
 #include "PlayerCharacter.h"
