@@ -82,6 +82,16 @@ private:
 	AutoRendererWindowPusher display_use_toss_dialog(UseTossResult &, int);
 	void display_pc_withdraw_menu();
 	void display_pc_deposit_menu();
+	struct InventoryTransferOptions{
+		Inventory *dst;
+		Inventory *src;
+		TextResourceId nothing_to_do;
+		TextResourceId what_to_do;
+		TextResourceId how_many;
+		TextResourceId no_room;
+		TextResourceId done;
+	};
+	void display_inventory_transfer_menu(const InventoryTransferOptions &options);
 	void display_pc_toss_menu();
 	AutoRendererWindowPusher display_toss_quantity_dialog(int &result, const InventorySpace &, int);
 	InventoryChanges run_item_use_logic(const InventorySpace &is);

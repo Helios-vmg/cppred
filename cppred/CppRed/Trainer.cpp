@@ -86,4 +86,8 @@ iterator_range<std::vector<InventorySpace>::iterator> Inventory::iterate_items()
 	return iterator_range<std::vector<InventorySpace>::iterator>(this->inventory.begin(), this->inventory.end());
 }
 
+bool Inventory::empty() const{
+	return !this->inventory.size();
+}
+
 }

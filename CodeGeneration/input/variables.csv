@@ -56,7 +56,7 @@ wcd6d_PrizeName,string
 wcd6d_ReceivedItemName,string
 wcd6d_RequiredBadge,string
 wcd6d_StarterName,string
-wcd6d_StoredInPcItemName,string
+wcd6d_item_stored_withdrawn,string
 wcd6d_ThrownAwayItemName,string
 wcd6d_TrainerName,string
 wcd6d_TransformFinalFormMonName,string

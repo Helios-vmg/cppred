@@ -458,45 +458,69 @@ AutoRendererWindowPusher PlayerCharacter::display_use_toss_dialog(UseTossResult 
 }
 
 void PlayerCharacter::display_pc_withdraw_menu(){
+	InventoryTransferOptions options;
+	options.src = &this->pc_inventory;
+	options.dst = &this->inventory;
+	options.nothing_to_do = TextResourceId::NothingStoredText;
+	options.what_to_do = TextResourceId::WhatToWithdrawText;
+	options.how_many = TextResourceId::WithdrawHowManyText;
+	options.no_room = TextResourceId::CantCarryMoreText;
+	options.done = TextResourceId::WithdrewItemText;
+	this->display_inventory_transfer_menu(options);
+}
+
+void PlayerCharacter::display_pc_deposit_menu(){
+	InventoryTransferOptions options;
+	options.src = &this->inventory;
+	options.dst = &this->pc_inventory;
+	options.nothing_to_do = TextResourceId::NothingToDepositText;
+	options.what_to_do = TextResourceId::WhatToDepositText;
+	options.how_many = TextResourceId::DepositHowManyText;
+	options.no_room = TextResourceId::NoRoomToStoreText;
+	options.done = TextResourceId::ItemWasStoredText;
+	this->display_inventory_transfer_menu(options);
+}
+
+void PlayerCharacter::display_inventory_transfer_menu(const InventoryTransferOptions &options){
 	auto &game = *this->game;
 	auto &renderer = game.get_engine().get_renderer();
 	AutoRendererWindowPusher pusher1(renderer);
 	game.reset_dialogue_state(false);
-	game.run_dialogue(TextResourceId::WhatToWithdrawText, false, false);
-	this->display_inventory_menu(this->pc_inventory, [this, &game, &renderer](const InventorySpace &is, int y){
+	if (options.src->empty()){
+		game.run_dialogue(options.nothing_to_do, false, false);
+		return;
+	}
+	game.run_dialogue(options.what_to_do, false, false);
+	this->display_inventory_menu(*options.src, [this, &game, &renderer, &options](const InventorySpace &is, int y){
 		AutoRendererWindowPusher pusher2(renderer);
 		game.reset_dialogue_state(false);
-		game.run_dialogue(TextResourceId::WithdrawHowManyText, false, false);
+		game.run_dialogue(options.how_many, false, false);
 		int quantity;
 		{
-			GetQuantityFromUserOptions options;
-			options.position = standard_dialogue_quantity_position;
-			options.min = 1;
-			options.max = is.quantity;
-			options.minimum_digits = 2;
-			options.push_window = true;
-			quantity = game.get_quantity_from_user(options);
+			GetQuantityFromUserOptions options2;
+			options2.position = standard_dialogue_quantity_position;
+			options2.min = 1;
+			options2.max = is.quantity;
+			options2.minimum_digits = 2;
+			options2.push_window = true;
+			quantity = game.get_quantity_from_user(options2);
 		}
 		if (quantity < 1)
 			return InventoryChanges::NoChange;
-		if (!this->inventory.receive(is.item, quantity)){
+		if (!options.dst->receive(is.item, quantity)){
 			game.reset_dialogue_state(false);
-			game.run_dialogue(TextResourceId::CantCarryMoreText, false, false);
+			game.run_dialogue(TextResourceId::NoRoomToStoreText, false, false);
 			return InventoryChanges::NoChange;
 		}
-		this->pc_inventory.remove(is.item, quantity);
+		options.src->remove(is.item, quantity);
 		game.get_audio_interface().play_sound(AudioResourceId::SFX_Withdraw_Deposit);
 		game.reset_dialogue_state(false);
 		auto &vs = game.get_variable_store();
 		auto &data = item_data[(int)is.item];
-		vs.set(StringVariableId::wcd6d_ActionTargetMonName, data.display_name);
-		game.run_dialogue(TextResourceId::WithdrewItemText, false, false);
+		vs.set(StringVariableId::wcd6d_item_stored_withdrawn, data.display_name);
+		game.run_dialogue(options.done, false, false);
 		return InventoryChanges::Update;
 	});
-}
-
-void PlayerCharacter::display_pc_deposit_menu(){
-	
 }
 
 void PlayerCharacter::display_pc_toss_menu(){

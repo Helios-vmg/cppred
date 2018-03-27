@@ -24,6 +24,7 @@ public:
 	InventorySpace get(size_t i){
 		return this->inventory[i];
 	}
+	bool empty() const;
 };
 
 class Trainer{

@@ -3634,7 +3634,7 @@ to deposit?<done>
 How many?<done>
 
 .ItemWasStoredText
-<mem,wcd6d_StoredInPcItemName> was
+<mem,wcd6d_item_stored_withdrawn> was
 stored via PC.<prompt><end>
 
 .NothingToDepositText
@@ -3654,7 +3654,7 @@ How many?<done>
 
 .WithdrewItemText
 Withdrew
-<mem,wcd6d_ActionTargetMonName>.<prompt><end>
+<mem,wcd6d_item_stored_withdrawn>.<prompt><end>
 
 .NothingStoredText
 There is nothing
