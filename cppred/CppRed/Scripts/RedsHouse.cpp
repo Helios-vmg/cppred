@@ -35,6 +35,9 @@ DECLARE_SCRIPT(OpenRedsPC){
 	game.reset_dialogue_state(false);
 	parameters.game->get_world().get_pc().open_pc(true);
 	game.reset_dialogue_state();
+	//If the player pressed A on the "LOG OFF" menu option, SFX_Press_AB will be
+	//playing at this point. We want to play SFX_Turn_Off_PC instead, so just stop
+	//the SFX and play something else.
 	audio.stop_sfx();
 	audio.play_sound(AudioResourceId::SFX_Turn_Off_PC);
 	game.set_no_text_delay(old);

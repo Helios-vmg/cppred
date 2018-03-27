@@ -342,12 +342,15 @@ PlayerCharacter::InventoryChanges PlayerCharacter::run_item_toss_logic(const Inv
 	AutoRendererWindowPusher pusher3(renderer);
 	game.run_dialogue(TextResourceId::IsItOKToTossItemText, false, false);
 	bool ret = game.run_yes_no_menu(standard_dialogue_yes_no_position);
-	if (!ret)
+	if (!ret){
 		game.reset_dialogue_state();
-	else
-		this->inventory.remove(is.item, quantity);
+		return InventoryChanges::NoChange;
+	}
+	this->inventory.remove(is.item, quantity);
+	vs.set(StringVariableId::wcd6d_item_stored_withdrawn, data.display_name);
 	game.reset_dialogue_state();
-	return !ret ? InventoryChanges::NoChange : InventoryChanges::Update;
+	game.run_dialogue(TextResourceId::ThrewAwayItemText, false, true);
+	return InventoryChanges::Update;
 }
 
 void PlayerCharacter::display_inventory_menu(Inventory &inventory, const std::function<InventoryChanges(const InventorySpace &, int)> &on_selection){
@@ -481,6 +484,18 @@ void PlayerCharacter::display_pc_deposit_menu(){
 	this->display_inventory_transfer_menu(options);
 }
 
+void PlayerCharacter::display_pc_toss_menu(){
+	InventoryTransferOptions options;
+	options.src = &this->pc_inventory;
+	options.dst = nullptr;
+	options.nothing_to_do = TextResourceId::NothingStoredText;
+	options.what_to_do = TextResourceId::WhatToTossText;
+	options.how_many = TextResourceId::TossHowManyText;
+	options.no_room = TextResourceId::ExclamationText;
+	options.done = TextResourceId::ThrewAwayItemText;
+	this->display_inventory_transfer_menu(options);
+}
+
 void PlayerCharacter::display_inventory_transfer_menu(const InventoryTransferOptions &options){
 	auto &game = *this->game;
 	auto &renderer = game.get_engine().get_renderer();
@@ -507,24 +522,33 @@ void PlayerCharacter::display_inventory_transfer_menu(const InventoryTransferOpt
 		}
 		if (quantity < 1)
 			return InventoryChanges::NoChange;
-		if (!options.dst->receive(is.item, quantity)){
-			game.reset_dialogue_state(false);
-			game.run_dialogue(TextResourceId::NoRoomToStoreText, false, false);
-			return InventoryChanges::NoChange;
-		}
-		options.src->remove(is.item, quantity);
-		game.get_audio_interface().play_sound(AudioResourceId::SFX_Withdraw_Deposit);
-		game.reset_dialogue_state(false);
-		auto &vs = game.get_variable_store();
 		auto &data = item_data[(int)is.item];
+		auto &vs = game.get_variable_store();
+		if (options.dst){
+			if (!options.dst->receive(is.item, quantity)){
+				game.reset_dialogue_state(false);
+				game.run_dialogue(TextResourceId::NoRoomToStoreText, false, false);
+				return InventoryChanges::NoChange;
+			}
+			options.src->remove(is.item, quantity);
+			game.get_audio_interface().play_sound(AudioResourceId::SFX_Withdraw_Deposit);
+		}else{
+			game.reset_dialogue_state(false);
+			if (data.is_key){
+				game.run_dialogue(TextResourceId::TooImportantToTossText, false, false);
+				return InventoryChanges::NoChange;
+			}
+			vs.set(StringVariableId::wcf4b_ThrowingAwayItemName, data.display_name);
+			game.run_dialogue(TextResourceId::IsItOKToTossItemText, false, false);
+			if (!game.run_yes_no_menu(standard_dialogue_yes_no_position))
+				return InventoryChanges::NoChange;
+			options.src->remove(is.item, quantity);
+		}
+		game.reset_dialogue_state(false);
 		vs.set(StringVariableId::wcd6d_item_stored_withdrawn, data.display_name);
 		game.run_dialogue(options.done, false, false);
 		return InventoryChanges::Update;
 	});
-}
-
-void PlayerCharacter::display_pc_toss_menu(){
-	
 }
 
 AutoRendererWindowPusher PlayerCharacter::display_toss_quantity_dialog(int &result, const InventorySpace &is, int y){

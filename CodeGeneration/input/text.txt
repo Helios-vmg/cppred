@@ -12772,7 +12772,7 @@ the <mem,wcf4b_UsedItemName>.<prompt><end>
 
 .ThrewAwayItemText
 Threw away
-<mem,wcd6d_ThrownAwayItemName>.<prompt><end>
+<mem,wcd6d_item_stored_withdrawn>.<prompt><end>
 
 .IsItOKToTossItemText
 Is it OK to toss

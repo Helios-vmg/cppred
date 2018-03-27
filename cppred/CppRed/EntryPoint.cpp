@@ -53,10 +53,6 @@ void entry_point(Game &game){
 		game.get_variable_store().load_initial_visibility_flags();
 		auto &player = game.get_world().get_pc();
 		player.set_facing_direction(FacingDirection::Up);
-		player.get_inventory().receive(ItemId::MasterBall, 39);
-		player.get_inventory().receive(ItemId::Hm04, 15);
-		player.get_inventory().receive(ItemId::Bicycle, 1);
-		player.get_inventory().receive(ItemId::CardKey, 42);
 		player.get_pc_inventory().receive(ItemId::Potion, 79);
 		game.teleport_player({Map::RedsHouse2F, Point(3, 6)});
 		game.game_loop();
