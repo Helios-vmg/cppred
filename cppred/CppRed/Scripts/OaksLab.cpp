@@ -357,7 +357,7 @@ DECLARE_SCRIPT(OaksLabText5){
 	}else{
 		auto &world = game.get_world();
 		auto &player = world.get_pc();
-		if (player.has_item_in_inventory(ItemId::PokeBall)){
+		if (player.get_inventory().contains(ItemId::PokeBall)){
 			//I don't think this will ever execute.
 			game.run_dialogue(TextResourceId::OaksLabPleaseVisitText, true, true);
 		}else if (vs.get(EventId::event_beat_route22_rival_1st_battle)){
@@ -366,7 +366,7 @@ DECLARE_SCRIPT(OaksLabText5){
 				game.run_dialogue(TextResourceId::OaksLabPleaseVisitText, true, true);
 			else{
 				vs.set(EventId::event_got_pokeballs_from_oak, true);
-				player.receive(ItemId::PokeBall, 5);
+				player.get_inventory().receive(ItemId::PokeBall, 5);
 				game.run_dialogue(TextResourceId::OaksLabGivePokeballsText1, false, false);
 				auto &audio = game.get_audio_interface();
 				audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
@@ -376,13 +376,13 @@ DECLARE_SCRIPT(OaksLabText5){
 		}else if (vs.get(EventId::event_got_pokedex)){
 			game.run_dialogue(TextResourceId::OaksLabAroundWorldText, true, true);
 		}else if (vs.get(EventId::event_battled_rival_in_oaks_lab)){
-			if (player.has_item_in_inventory(ItemId::OaksParcel)){
+			if (player.get_inventory().contains(ItemId::OaksParcel)){
 				game.run_dialogue(TextResourceId::OaksLabDeliverParcelText1, false, false);
 				auto &audio = game.get_audio_interface();
 				audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
 				audio.wait_for_sfx_to_end();
 				game.run_dialogue(TextResourceId::OaksLabDeliverParcelText2, true, true);
-				player.remove_all(ItemId::OaksParcel);
+				player.get_inventory().remove(ItemId::OaksParcel);
 				vs.set(IntegerVariableId::OaksLabScriptIndex, 15);
 			}else
 				game.run_dialogue(TextResourceId::OaksLabText_1d2fa, true, true);

@@ -44,12 +44,14 @@ public:
 class PlayerCharacter : public Actor, public Trainer{
 public:
 	static const Point screen_block_offset;
+	static const size_t max_pc_size;
 private:
 	typedef bool (PlayerCharacter::*warp_check_f)(const World &) const;
 	static const warp_check_f warp_check_functions[2];
 	const MapWarp *saved_post_warp = nullptr;
 	bool ignore_input = false;
 	Pokedex pokedex;
+	Inventory pc_inventory;
 
 	void coroutine_entry_point() override;
 	void entered_new_map(Map old_map, Map new_map, bool warped) override;
@@ -65,17 +67,35 @@ private:
 	void display_menu();
 	void display_party_menu();
 	void display_inventory_menu();
+	enum class InventoryChanges{
+		NoChange,
+		Update,
+	};
+	void display_inventory_menu(Inventory &, const std::function<InventoryChanges(const InventorySpace &, int)> &);
 	void display_player_menu();
 	void display_save_dialog();
+	enum class UseTossResult{
+		Use,
+		Toss,
+		Cancel,
+	};
+	AutoRendererWindowPusher display_use_toss_dialog(UseTossResult &, int);
+	void display_pc_withdraw_menu();
+	void display_pc_deposit_menu();
+	void display_pc_toss_menu();
+	AutoRendererWindowPusher display_toss_quantity_dialog(int &result, const InventorySpace &, int);
+	InventoryChanges run_item_use_logic(const InventorySpace &is);
+	InventoryChanges run_item_toss_logic(const InventorySpace &is, int y);
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	~PlayerCharacter();
 	void teleport(const WorldCoordinates &);
 	DEFINE_GETTER_SETTER(ignore_input)
+	DEFINE_NON_CONST_GETTER(pc_inventory)
 	Pokedex &get_pokedex(){
 		return this->pokedex;
 	}
-	bool give_item(ItemId, int quantity = 1);
+	void open_pc(bool opened_at_home);
 };
 
 class AutoIgnoreInput{

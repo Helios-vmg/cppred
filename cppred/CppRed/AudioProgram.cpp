@@ -1238,6 +1238,11 @@ void AudioProgramInterface::update(double now){
 	this->sfx.update(now);
 }
 
+void AudioProgramInterface::stop_sfx(){
+	auto lock = this->sfx.acquire_lock();
+	this->sfx.play_sound(AudioResourceId::Stop);
+}
+
 AudioProgramInterface::double_lock AudioProgramInterface::acquire_lock(){
 	return {this->music.acquire_lock(), this->sfx.acquire_lock()};
 }

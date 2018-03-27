@@ -81,6 +81,7 @@ enum class GameState{
 };
 
 const Point standard_dialogue_yes_no_position(14, 7);
+const Point standard_dialogue_quantity_position(Renderer::logical_screen_tile_width, 9);
 
 enum class MenuAnchor{
 	TopLeft,
@@ -107,6 +108,17 @@ struct StandardMenuOptions{
 	byte_t cancel_mask = InputState::mask_b;
 	int window_size = int_max;
 	bool push_window = true;
+};
+
+struct GetQuantityFromUserOptions{
+	static const int int_max = std::numeric_limits<int>::max();
+	
+	Point position;
+	int min = 0;
+	int max = int_max;
+	bool push_window = true;
+	bool ignore_b = false;
+	int minimum_digits = 0;
 };
 
 class Game{
@@ -215,6 +227,7 @@ public:
 
 	DEFINE_GETTER_SETTER(options)
 	DEFINE_GETTER_SETTER(options_initialized)
+	DEFINE_GETTER_SETTER(no_text_delay)
 	void lock(){
 		this->locks_acquired++;
 	}
@@ -223,6 +236,8 @@ public:
 	}
 	void dialogue_wait();
 	bool run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &, int party_index = -1);
+	int get_quantity_from_user(const GetQuantityFromUserOptions &);
+	void reset_joypad_state();
 };
 
 }

@@ -18,6 +18,7 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include <cmath>
 #endif
 
 namespace CppRed{
@@ -146,6 +147,11 @@ InputState Game::joypad_auto_repeat(){
 	return held;
 }
 
+void Game::reset_joypad_state(){
+	this->joypad_pressed = InputState();
+	this->jls_timeout = std::numeric_limits<double>::max();
+}
+
 void Game::wait_for_sound_to_finish(){
 	//TODO
 }
@@ -214,7 +220,8 @@ static void write_menu_strings(Game &game, StandardMenuOptions &options, const P
 	string_position.x += 2;
 	string_position.y += options.initial_padding ? 2 : 1;
 	auto &items = *options.items;
-	for (int i = 0; i < window_size; i++){
+	int limit = std::min(window_size, (int)items.size() - window_position);
+	for (int i = 0; i < limit; i++){
 		auto index = i + window_position;
 		auto &s = items[index];
 		game.put_string(string_position, TileRegion::Window, s.c_str());
@@ -276,6 +283,7 @@ int Game::handle_standard_menu(StandardMenuOptions &options){
 
 	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
 	while (true){
+		this->reset_joypad_state();
 		if (redraw_options){
 			renderer.fill_rectangle(TileRegion::Window, text_region_position, text_region_size, Tile());
 			write_menu_strings(*this, options, position, window_position, window_size);
@@ -292,11 +300,13 @@ int Game::handle_standard_menu(StandardMenuOptions &options){
 				if (state.get_b())
 					this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 				renderer.set_enable_window(old_window);
+				this->reset_joypad_state();
 				return -1;
 			}
 			if (state.get_a()){
 				this->get_audio_interface().play_sound(AudioResourceId::SFX_Press_AB);
 				renderer.set_enable_window(old_window);
+				this->reset_joypad_state();
 				return current_item;
 			}
 			if (!(state.get_down() || state.get_up()))
@@ -314,6 +324,7 @@ int Game::handle_standard_menu(StandardMenuOptions &options){
 		}
 	}
 	assert(false);
+	this->reset_joypad_state();
 	return -1;
 }
 
@@ -341,7 +352,7 @@ void Game::run_dialogue(TextResourceId resource, bool wait_at_end, bool hide_dia
 		this->reset_dialogue_state();
 		this->reset_dialogue_was_delayed = false;
 	}
-	this->joypad_pressed = InputState();
+	this->reset_joypad_state();
 }
 
 void Game::run_dex_entry(TextResourceId id){
@@ -361,7 +372,7 @@ void Game::run_dex_entry(TextResourceId id){
 	this->text_store.execute(*this, id, dialogue_state);
 	this->no_text_delay = old;
 	this->dialogue_wait();
-	this->joypad_pressed = InputState();
+	this->reset_joypad_state();
 }
 
 TextState Game::get_default_dialogue_state(){
@@ -380,6 +391,7 @@ void Game::reset_dialogue_state(bool also_hide_window){
 	this->dialogue_box_clear_required = true;
 	if (also_hide_window){
 		this->engine->get_renderer().set_enable_window(false);
+		this->engine->get_renderer().set_window_region_size(Point());
 		this->dialogue_box_visible = false;
 	}
 }
@@ -693,6 +705,7 @@ bool Game::run_yes_no_menu(const Point &point){
 	StandardMenuOptions options;
 	options.position = point;
 	options.items = &items;
+	options.initial_padding = false;
 	return this->handle_standard_menu(options) == 0;
 }
 
@@ -728,6 +741,79 @@ std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species)
 bool Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &trainer, int party_index){
 	//TODO
 	return true;
+}
+
+int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
+	auto position = options.position;
+	Point size(0, 1);
+	if (options.max)
+		size.x = std::max(options.minimum_digits, (int)floor(log10(options.max) + 1));
+	size.x++;
+
+	if (position.x + (size.x + 2) > Renderer::logical_screen_tile_width)
+		position.x = Renderer::logical_screen_tile_width - (size.x + 2);
+
+	this->draw_box(position, size, TileRegion::Window);
+
+	auto text_region_position = position + Point(1, 1);
+	auto text_region_size = size;
+	size += {2, 2};
+
+	auto &renderer = this->engine->get_renderer();
+	AutoRendererWindowPusher pusher; 
+	if (options.push_window)
+		pusher = AutoRendererWindowPusher(renderer);
+	renderer.set_window_origin({0, 0});
+	renderer.set_window_region_start(position * Renderer::tile_size);
+	renderer.set_window_region_size(size * Renderer::tile_size);
+	auto old_window = renderer.get_enable_window();
+	renderer.set_enable_window(true);
+
+	int ret = options.min;
+
+	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
+	while (true){
+		this->reset_joypad_state();
+
+		std::stringstream stream;
+		stream << '*' << std::setw(text_region_size.x - 1) << std::setfill('0') << ret;
+		this->put_string(text_region_position, TileRegion::Window, stream.str().c_str());
+
+		while (true){
+			Coroutine::get_current_coroutine().yield();
+			auto state = this->joypad_auto_repeat();
+			if (!options.ignore_b && state.get_b()){
+				renderer.set_enable_window(old_window);
+				this->reset_joypad_state();
+				return options.min - 1;
+			}
+			if (state.get_a()){
+				renderer.set_enable_window(old_window);
+				this->reset_joypad_state();
+				return ret;
+			}
+			if (state.get_up()){
+				ret++;
+				break;
+			}
+			if (state.get_down()){
+				ret--;
+				break;
+			}
+			if (state.get_right()){
+				ret += 10;
+				break;
+			}
+			if (state.get_left()){
+				ret -= 10;
+				break;
+			}
+		}
+		ret = euclidean_modulo(ret - options.min, options.max - options.min + 1) + options.min;
+	}
+	assert(false);
+	this->reset_joypad_state();
+	return -1;
 }
 
 }

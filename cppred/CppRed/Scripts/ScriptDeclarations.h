@@ -22,6 +22,7 @@ DECLARE_SCRIPT(OaksLabText5);
 DECLARE_SCRIPT(DisplayOakLabEmailText);
 DECLARE_SCRIPT(DisplayOakLabLeftPoster);
 DECLARE_SCRIPT(DisplayOakLabRightPoster);
+DECLARE_SCRIPT(OpenRedsPC);
 
 }
 }

@@ -223,6 +223,7 @@ public:
 	void play_sound(AudioResourceId, bool lock = true);
 	void wait_for_sfx_to_end();
 	void update(double now);
+	void stop_sfx();
 	typedef std::pair<std::unique_lock<std::mutex>, std::unique_lock<std::mutex>> double_lock;
 	double_lock acquire_lock();
 	void set_frequency_modifier(int value){

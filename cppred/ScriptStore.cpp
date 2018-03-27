@@ -25,6 +25,7 @@ ScriptStore::ScriptStore(){
 	ADD_SCRIPT(DisplayOakLabEmailText);
 	ADD_SCRIPT(DisplayOakLabLeftPoster);
 	ADD_SCRIPT(DisplayOakLabRightPoster);
+	ADD_SCRIPT(OpenRedsPC);
 	//Add scripts.
 
 	std::sort(this->scripts.begin(), this->scripts.end(), [](const auto &a, const auto &b){ return a.first < b.first; });

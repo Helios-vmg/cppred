@@ -109,4 +109,8 @@ void AudioInterface::fade_out_music_then_change_tracks(AudioResourceId id, doubl
 	this->program->fade_out_music_then_change_tracks(id, duration);
 }
 
+void AudioInterface::stop_sfx(){
+	this->program->stop_sfx();
+}
+
 }

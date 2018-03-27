@@ -215,8 +215,9 @@ public:
 	AutoRendererWindowPusher(Renderer &renderer): renderer(&renderer){
 		this->renderer->push_window();
 	}
-	AutoRendererWindowPusher(const AutoRendererPusher &) = delete;
-	AutoRendererWindowPusher(AutoRendererPusher &&other){
+	AutoRendererWindowPusher(const AutoRendererWindowPusher &) = delete;
+	AutoRendererWindowPusher(AutoRendererWindowPusher &&other){
+		this->renderer = nullptr;
 		*this = std::move(other);
 	}
 	~AutoRendererWindowPusher(){
@@ -228,7 +229,7 @@ public:
 		if (this->renderer)
 			this->renderer->pop_window();
 		this->renderer = other.renderer;
-		other.renderer = nullptr;
+		other.release();
 		return *this;
 	}
 	void release(){

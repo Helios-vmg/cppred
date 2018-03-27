@@ -2,6 +2,7 @@
 #include "Pokemon.h"
 #include "Actor.h"
 #include "Npc.h"
+#include "../utility.h"
 
 namespace CppRed{
 
@@ -10,20 +11,32 @@ struct InventorySpace{
 	int quantity;
 };
 
+class Inventory{
+	std::vector<InventorySpace> inventory;
+	size_t max_size;
+	int max_item_quantity;
+public:
+	Inventory(size_t max_size, int max_item_quantity);
+	bool receive(ItemId, int);
+	void remove(ItemId, int quantity = -1);
+	bool contains(ItemId) const;
+	iterator_range<std::vector<InventorySpace>::iterator> iterate_items();
+	InventorySpace get(size_t i){
+		return this->inventory[i];
+	}
+};
+
 class Trainer{
 public:
 	static const size_t max_inventory_size;
 	static const int max_inventory_item_quantity;
 protected:
 	Party party;
-	std::vector<InventorySpace> inventory;
+	Inventory inventory;
 	std::uint16_t trainer_id;
 public:
 	Trainer(XorShift128 &);
 	virtual ~Trainer() = 0;
-	bool has_item_in_inventory(ItemId) const;
-	void receive(ItemId, int);
-	void remove_all(ItemId);
 	Party &get_party(){
 		return this->party;
 	}
@@ -31,6 +44,7 @@ public:
 		return this->party;
 	}
 	DEFINE_GETTER(trainer_id)
+	DEFINE_NON_CONST_GETTER(inventory)
 };
 
 class NpcTrainer : public Npc, public Trainer{

@@ -14,6 +14,7 @@
 
 namespace CppRed{
 
+const size_t PlayerCharacter::max_pc_size = 50;
 const Point PlayerCharacter::screen_block_offset(4, 4);
 const PlayerCharacter::warp_check_f PlayerCharacter::warp_check_functions[2] = {
 	&PlayerCharacter::facing_edge_of_map,
@@ -22,7 +23,8 @@ const PlayerCharacter::warp_check_f PlayerCharacter::warp_check_functions[2] = {
 
 PlayerCharacter::PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &renderer):
 		Actor(game, parent_coroutine, name, renderer, RedSprite),
-		Trainer(game.get_engine().get_prng()){
+		Trainer(game.get_engine().get_prng()),
+		pc_inventory(max_pc_size, max_inventory_item_quantity){
 }
 
 PlayerCharacter::~PlayerCharacter(){}
@@ -293,39 +295,91 @@ static std::array<char, 12> generate_inventory_quantity(int q){
 		digits++;
 	}
 	if (digits < 2)
-		i++;
+		i--;
 	ret[i] = '*';
 	return ret;
 }
 
 void PlayerCharacter::display_inventory_menu(){
-	StandardMenuOptions options;
-	std::vector<std::string> items;
-	std::vector<std::string> quantities;
-	for (auto &item : this->inventory){
-		auto &data = item_data[(int)item.item];
-		items.push_back(data.display_name);
-		if (data.is_key)
-			quantities.emplace_back();
-		else
-			quantities.emplace_back(generate_inventory_quantity(item.quantity).data());
+	this->display_inventory_menu(this->inventory, [this](const InventorySpace &is, int y){
+		UseTossResult use_toss;
+		auto pusher = this->display_use_toss_dialog(use_toss, y);
+		switch (use_toss){
+			case UseTossResult::Use:
+				return this->run_item_use_logic(is);
+			case UseTossResult::Toss:
+				return this->run_item_toss_logic(is, y);
+			case UseTossResult::Cancel:
+				return InventoryChanges::NoChange;
+		}
+		assert(false);
+		return InventoryChanges::NoChange;
+	});
+}
+
+PlayerCharacter::InventoryChanges PlayerCharacter::run_item_use_logic(const InventorySpace &is){
+	auto &data = item_data[(int)is.item];
+	data.use_function(is.item, *this->game, *this);
+	//TODO
+	return InventoryChanges::NoChange;
+}
+
+PlayerCharacter::InventoryChanges PlayerCharacter::run_item_toss_logic(const InventorySpace& is, int y){
+	auto &data = item_data[(int)is.item];
+	auto &game = *this->game;
+	auto &renderer = game.get_engine().get_renderer();
+	if (data.is_key){
+		AutoRendererWindowPusher pusher2(renderer);
+		game.run_dialogue(TextResourceId::TooImportantToTossText, false, true);
+		return InventoryChanges::NoChange;
 	}
-	items.push_back("CANCEL");
-	quantities.emplace_back();
-	options.items = &items;
-	options.extra_data = &quantities;
+	int quantity;
+	auto pusher2 = this->display_toss_quantity_dialog(quantity, is, y - 1);
+	if (quantity < 1)
+		return InventoryChanges::NoChange;
+	auto &vs = game.get_variable_store();
+	vs.set(StringVariableId::wcf4b_ThrowingAwayItemName, data.display_name);
+	AutoRendererWindowPusher pusher3(renderer);
+	game.run_dialogue(TextResourceId::IsItOKToTossItemText, false, false);
+	bool ret = game.run_yes_no_menu(standard_dialogue_yes_no_position);
+	if (!ret)
+		game.reset_dialogue_state();
+	else
+		this->inventory.remove(is.item, quantity);
+	game.reset_dialogue_state();
+	return !ret ? InventoryChanges::NoChange : InventoryChanges::Update;
+}
+
+void PlayerCharacter::display_inventory_menu(Inventory &inventory, const std::function<InventoryChanges(const InventorySpace &, int)> &on_selection){
+	StandardMenuOptions options;
 	options.position = {4, 2};
 	options.minimum_size = options.maximum_size = {16 - 2, 11 - 2};
 	options.window_size = 4;
 	options.push_window = false;
-	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
 	while (true){
-		int selection = this->game->handle_standard_menu(options);
-		if (selection < 0 || selection == items.size() - 1)
-			break;
-		auto item = this->inventory[selection].item;
-		auto &data = item_data[(int)item];
-		data.use_function(item, *this->game, *this);
+		std::vector<std::string> items;
+		std::vector<std::string> quantities;
+		for (auto &item : inventory.iterate_items()){
+			auto &data = item_data[(int)item.item];
+			items.push_back(data.display_name);
+			if (data.is_key)
+				quantities.emplace_back();
+			else
+				quantities.emplace_back(generate_inventory_quantity(item.quantity).data());
+		}
+		items.push_back("CANCEL");
+		quantities.emplace_back();
+		options.items = &items;
+		options.extra_data = &quantities;
+		AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
+		int selection;
+		int passed_y;
+		do{
+			selection = this->game->handle_standard_menu(options);
+			if (selection < 0 || selection == items.size() - 1)
+				return;
+			passed_y = options.position.y + 2 * (2 + options.initial_item - options.initial_window_position);
+		}while (on_selection(inventory.get(selection), passed_y) == InventoryChanges::NoChange);
 	}
 }
 
@@ -352,19 +406,113 @@ bool Pokedex::get(const FixedBitmap<pokemon_by_pokedex_id_size> &v, SpeciesId s)
 	return v.get(index);
 }
 
-bool PlayerCharacter::give_item(ItemId item, int quantity){
-	for (auto &i : this->inventory){
-		if (i.item == item){
-			if (max_inventory_item_quantity - quantity < i.quantity)
-				return false;
-			i.quantity += quantity;
-			return true;
+void PlayerCharacter::open_pc(bool opened_at_home){
+	this->game->run_dialogue(TextResourceId::WhatDoYouWantText, false, false);
+	StandardMenuOptions options;
+	std::vector<std::string> items;
+	items.push_back("WITHDRAW ITEM");
+	items.push_back("DEPOSIT ITEM");
+	items.push_back("TOSS ITEM");
+	items.push_back("LOG OFF");
+	options.items = &items;
+	options.push_window = false;
+	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
+	while (true){
+		auto selection = this->game->handle_standard_menu(options);
+		if (selection < 0)
+			break;
+		switch (selection){
+			case 0:
+				this->display_pc_withdraw_menu();
+				break;
+			case 1:
+				this->display_pc_deposit_menu();
+				break;
+			case 2:
+				this->display_pc_toss_menu();
+				break;
+			case 3:
+				return;
 		}
 	}
-	if (this->inventory.size() >= max_inventory_size)
-		return false;
-	this->inventory.emplace_back(InventorySpace{ item, quantity });
-	return true;
+}
+
+AutoRendererWindowPusher PlayerCharacter::display_use_toss_dialog(UseTossResult &result, int y){
+	StandardMenuOptions options;
+	std::vector<std::string> items;
+	items.push_back("USE");
+	items.push_back("TOSS");
+	options.items = &items;
+	options.position = {13, y};
+	options.push_window = false;
+	options.initial_padding = false;
+	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
+	auto selection = this->game->handle_standard_menu(options);
+	if (selection < 0)
+		result = UseTossResult::Cancel;
+	else if (!selection)
+		result = UseTossResult::Use;
+	else
+		result = UseTossResult::Toss;
+	return pusher;
+}
+
+void PlayerCharacter::display_pc_withdraw_menu(){
+	auto &game = *this->game;
+	auto &renderer = game.get_engine().get_renderer();
+	AutoRendererWindowPusher pusher1(renderer);
+	game.reset_dialogue_state(false);
+	game.run_dialogue(TextResourceId::WhatToWithdrawText, false, false);
+	this->display_inventory_menu(this->pc_inventory, [this, &game, &renderer](const InventorySpace &is, int y){
+		AutoRendererWindowPusher pusher2(renderer);
+		game.reset_dialogue_state(false);
+		game.run_dialogue(TextResourceId::WithdrawHowManyText, false, false);
+		int quantity;
+		{
+			GetQuantityFromUserOptions options;
+			options.position = standard_dialogue_quantity_position;
+			options.min = 1;
+			options.max = is.quantity;
+			options.minimum_digits = 2;
+			options.push_window = true;
+			quantity = game.get_quantity_from_user(options);
+		}
+		if (quantity < 1)
+			return InventoryChanges::NoChange;
+		if (!this->inventory.receive(is.item, quantity)){
+			game.reset_dialogue_state(false);
+			game.run_dialogue(TextResourceId::CantCarryMoreText, false, false);
+			return InventoryChanges::NoChange;
+		}
+		this->pc_inventory.remove(is.item, quantity);
+		game.get_audio_interface().play_sound(AudioResourceId::SFX_Withdraw_Deposit);
+		game.reset_dialogue_state(false);
+		auto &vs = game.get_variable_store();
+		auto &data = item_data[(int)is.item];
+		vs.set(StringVariableId::wcd6d_ActionTargetMonName, data.display_name);
+		game.run_dialogue(TextResourceId::WithdrewItemText, false, false);
+		return InventoryChanges::Update;
+	});
+}
+
+void PlayerCharacter::display_pc_deposit_menu(){
+	
+}
+
+void PlayerCharacter::display_pc_toss_menu(){
+	
+}
+
+AutoRendererWindowPusher PlayerCharacter::display_toss_quantity_dialog(int &result, const InventorySpace &is, int y){
+	GetQuantityFromUserOptions options;
+	options.min = 1;
+	options.max = is.quantity;
+	options.position = {Renderer::logical_screen_tile_width, y};
+	options.minimum_digits = 2;
+	options.push_window = false;
+	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
+	result = this->game->get_quantity_from_user(options);
+	return pusher;
 }
 
 }

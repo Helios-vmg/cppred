@@ -11,7 +11,8 @@ namespace CppRed{
 const size_t Trainer::max_inventory_size = 20;
 const int Trainer::max_inventory_item_quantity = 99;
 
-Trainer::Trainer(XorShift128 &rng){
+Trainer::Trainer(XorShift128 &rng):
+		inventory(max_inventory_size, max_inventory_item_quantity){
 	typedef decltype(this->trainer_id) T;
 	this->trainer_id = (T)rng((std::uint32_t)std::numeric_limits<T>::max() + 1);
 }
@@ -41,34 +42,48 @@ const BaseTrainerParty &NpcTrainer::get_party(int index){
 	return *this->parties[index];
 }
 
-bool Trainer::has_item_in_inventory(ItemId item) const{
+Inventory::Inventory(size_t max_size, int max_item_quantity){
+	this->max_size = max_size;
+	this->max_item_quantity = max_item_quantity;
+	this->inventory.reserve(max_size);
+}
+
+bool Inventory::contains(ItemId item) const{
 	for (auto &i : this->inventory)
 		if (i.item == item)
 			return true;
 	return false;
 }
 
-void  Trainer::receive(ItemId item, int quantity){
-	const auto max = std::numeric_limits<int>::max();
+bool Inventory::receive(ItemId item, int quantity){
 	for (auto &i : this->inventory){
 		if (i.item == item){
-			if (max - quantity < i.quantity)
-				i.quantity = max;
-			else
-				i.quantity += quantity;
-			return;
+			if (this->max_item_quantity - quantity < i.quantity)
+				return false;
+			i.quantity += quantity;
+			return true;
 		}
 	}
-	this->inventory.push_back({item, quantity});
+	if (this->inventory.size() >= this->max_size)
+		return false;
+	this->inventory.emplace_back(InventorySpace{ item, quantity });
+	return true;
 }
 
-void Trainer::remove_all(ItemId item){
+void Inventory::remove(ItemId item, int quantity){
 	for (auto i = this->inventory.begin(), e = this->inventory.end(); i != e; ++i){
 		if (i->item != item)
 			continue;
-		this->inventory.erase(i);
-		return;
+		if (quantity < 0 || quantity >= i->quantity)
+			this->inventory.erase(i);
+		else
+			i->quantity -= quantity;
+		break;
 	}
+}
+
+iterator_range<std::vector<InventorySpace>::iterator> Inventory::iterate_items(){
+	return iterator_range<std::vector<InventorySpace>::iterator>(this->inventory.begin(), this->inventory.end());
 }
 
 }

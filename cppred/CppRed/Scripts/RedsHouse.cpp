@@ -25,5 +25,20 @@ DECLARE_SCRIPT(RedsHouse1FText2){
 	parameters.game->run_dialogue(id, true, true);
 }
 
+DECLARE_SCRIPT(OpenRedsPC){
+	auto &game = *parameters.game;
+	auto old = game.get_no_text_delay();
+	game.set_no_text_delay(true);
+	auto &audio = game.get_audio_interface();
+	audio.play_sound(AudioResourceId::SFX_Turn_On_PC);
+	game.run_dialogue(TextResourceId::TurnedOnPC1Text, false, false);
+	game.reset_dialogue_state(false);
+	parameters.game->get_world().get_pc().open_pc(true);
+	game.reset_dialogue_state();
+	audio.stop_sfx();
+	audio.play_sound(AudioResourceId::SFX_Turn_Off_PC);
+	game.set_no_text_delay(old);
+}
+
 }
 }
