@@ -11408,10 +11408,6 @@ Thank you!<prompt><end>
 You don't have
 enough money.<prompt><end>
 
-.PokemartItemBagFullText
-You can't carry
-any more items.<prompt><end>
-
 .PokemonSellingGreetingText
 What would you
 like to sell?<done>
