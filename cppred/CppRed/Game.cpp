@@ -19,6 +19,7 @@
 #include <sstream>
 #include <cassert>
 #include <cmath>
+#include <array>
 #endif
 
 namespace CppRed{
@@ -785,6 +786,26 @@ bool Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId
 	return true;
 }
 
+static std::array<char, 64> generate_quantity_string(int q, int digits){
+	std::array<char, 64> ret;
+	int size = 0;
+	const int n = 64 - 1;
+	ret[n - size] = 0;
+	if (q){
+		int temp = q;
+		while (temp){
+			ret[n - ++size] = '0' + temp % 10;
+			temp /= 10;
+		}
+	}
+	for (int i = size; i < digits; i++)
+		ret[n - ++size] = '0';
+	ret[n - ++size] = '*';
+	for (int i = 0; i < size + 1; i++)
+		ret[i] = ret[n - size + i];
+	return ret;
+}
+
 int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
 	auto position = options.position;
 	Point size(0, 1);
@@ -815,10 +836,7 @@ int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
 
 	this->reset_joypad_state();
 	while (true){
-
-		std::stringstream stream;
-		stream << '*' << std::setw(text_region_size.x - 1) << std::setfill('0') << ret;
-		this->put_string(text_region_position, TileRegion::Window, stream.str().c_str());
+		this->put_string(text_region_position, TileRegion::Window, generate_quantity_string(ret, text_region_size.x - 1).data());
 
 		while (true){
 			Coroutine::get_current_coroutine().yield();
