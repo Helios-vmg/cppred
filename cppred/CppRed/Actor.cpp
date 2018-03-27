@@ -258,31 +258,54 @@ void Actor::pause(){
 	this->coroutine->get_clock().pause();
 }
 
+struct PathNode{
+	int length = -1;
+	Point location;
+	PathNode *previous = nullptr;
+	FacingDirection came_from = FacingDirection::Up;
+};
+
 std::vector<PathStep> Actor::find_path(const Point &destination){
-	std::set<Point> seen;
-	std::deque<std::pair<Point, std::vector<PathStep>>> queue;
-	queue.emplace_back(this->position.position, std::vector<PathStep>());
-	seen.insert(this->position.position);
-	while (queue.size()){
-		auto point = std::move(queue.front());
+	auto &map_data = this->game->get_world().get_map_store().get_map_data(this->position.map);
+	std::vector<PathNode> nodes(map_data.width * map_data.height);
+	for (int y = map_data.height; y--;)
+		for (int x = map_data.width; x--;)
+			nodes[x + y * map_data.width].location = {x, y};
+	std::deque<PathNode *> queue;
+	queue.emplace_back(&nodes[this->position.position.x + this->position.position.y * map_data.width]);
+	queue.back()->length = 0;
+	PathNode *solution = nullptr;
+	while (queue.size() && !solution){
+		auto node = queue.front();
 		queue.pop_front();
 		for (int i = 0; i < 4; i++){
 			auto dir = (FacingDirection)i;
 			auto delta = direction_to_vector(dir);
-			auto new_position = point.first + delta;
-			if (seen.find(new_position) != seen.end())
+			auto new_position = node->location + delta;
+			if (new_position.x < 0 || new_position.x >= map_data.width || new_position.y < 0 || new_position.y >= map_data.height)
 				continue;
-			if (!this->can_move_to({this->position.map, point.first}, {this->position.map, new_position}, dir))
+			auto next_node = &nodes[new_position.x + new_position.y * map_data.width];
+			if (next_node->length >= 0)
 				continue;
-			seen.insert(new_position);
-			auto copy = point.second;
-			copy.push_back({dir, new_position});
-			if (new_position == destination)
-				return copy;
-			queue.emplace_back(new_position, std::move(copy));
+			if (!this->can_move_to({this->position.map, node->location}, {this->position.map, new_position}, dir))
+				continue;
+			next_node->length = node->length + 1;
+			next_node->previous = node;
+			next_node->came_from = dir;
+			if (new_position == destination){
+				solution = next_node;
+				break;
+			}
+			queue.push_back(next_node);
 		}
 	}
-	throw std::runtime_error("Could not find path.");
+	if (!solution)
+		throw std::runtime_error("Could not find path.");
+	std::vector<PathStep> ret(solution->length);
+	size_t i = ret.size();
+	for (auto current = solution; current->previous; current = current->previous)
+		ret[--i] = {current->came_from, current->location};
+	return ret;
 }
 
 void Actor::follow_path(const std::vector<PathStep> &steps){
