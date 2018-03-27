@@ -5,7 +5,7 @@ Club,Club_Block,Club_GFX,Club_Coll,7 23,,Indoor,,,1,
 Facility,Facility_Block,Facility_GFX,Facility_Coll,18,,Cave,,,1,67 88 32 27 19
 Forest,Forest_Block,Forest_GFX,Forest_Coll,,32,Cave,48 46 82 46 85 46 86 46 32 46 94 46 95 46,20 46 72 46,1,90 92 58
 Gate,Gate_Block,Gate_GFX,Gate_Coll,23 50,,Indoor,,,1,59 26 28
-Gym,Gym_Block,Gym_GFX,Gym_Coll,58,,Outdoor,,,1,74
+Gym,Gym_Block,Gym_GFX,Gym_Coll,58,,Indoor,,,1,74
 House,House_Block,House_GFX,House_Coll,,,Indoor,,,1,84 92 50
 Interior,Interior_Block,Interior_GFX,Interior_Coll,,,Indoor,,,1,21 85 4
 Lab,Lab_Block,Lab_GFX,Lab_Coll,,,Indoor,,,1,52
