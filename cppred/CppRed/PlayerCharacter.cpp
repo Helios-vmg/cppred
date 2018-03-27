@@ -39,12 +39,12 @@ void PlayerCharacter::initialize_sprites(const GraphicsAsset &graphics, Renderer
 
 void PlayerCharacter::teleport(const WorldCoordinates &destination){
 	auto old_position = this->position;
-	this->position = destination;
 	auto &map_instance = this->game->get_world().get_map_instance(destination.map);
 	if (old_position.map != destination.map)
 		this->entered_new_map(old_position.map, destination.map, true);
 	else
 		map_instance.set_cell_occupation(old_position.position, false);
+	this->position = destination;
 	map_instance.set_cell_occupation(destination.position, true);
 }
 

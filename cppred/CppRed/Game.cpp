@@ -32,14 +32,14 @@ struct FadePaletteData{
 //Note: Palettes 3 and 4 are identical and equal to the default palette. Palettes >= 4 are used for fade-outs
 //      to white, while palettes <= 3 are used for fade-outs to black.
 const FadePaletteData fade_palettes[8] = {
-	{ BITMAP(11111111), BITMAP(11111111), BITMAP(11111111) },
-	{ BITMAP(11111110), BITMAP(11111110), BITMAP(11111000) },
-	{ BITMAP(11111001), BITMAP(11100100), BITMAP(11100100) },
-	{ BITMAP(11100100), BITMAP(11010000), BITMAP(11100000) },
-	{ BITMAP(11100100), BITMAP(11010000), BITMAP(11100000) },
-	{ BITMAP(10010000), BITMAP(10000000), BITMAP(10010000) },
-	{ BITMAP(01000000), BITMAP(01000000), BITMAP(01000000) },
-	{ BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
+	/* 0 */ { BITMAP(11111111), BITMAP(11111111), BITMAP(11111111) },
+	/* 1 */ { BITMAP(11111110), BITMAP(11111110), BITMAP(11111000) },
+	/* 2 */ { BITMAP(11111001), BITMAP(11100100), BITMAP(11100100) },
+	/* 3 */ { BITMAP(11100100), BITMAP(11010000), BITMAP(11100000) },
+	/* 4 */ { BITMAP(11100100), BITMAP(11010000), BITMAP(11100000) },
+	/* 5 */ { BITMAP(10010000), BITMAP(10000000), BITMAP(10010000) },
+	/* 6 */ { BITMAP(01000000), BITMAP(01000000), BITMAP(01000000) },
+	/* 7 */ { BITMAP(00000000), BITMAP(00000000), BITMAP(00000000) },
 };
 
 Game::Game(Engine &engine, PokemonVersion version, CppRed::AudioProgramInterface &program):
@@ -68,12 +68,26 @@ void Game::clear_screen(){
 void Game::fade_out_to_white(){
 	auto &engine = *this->engine;
 	auto &renderer = engine.get_renderer();
+	auto &coroutine = Coroutine::get_current_coroutine();
 	for (int i = 0; i < 3; i++){
 		auto &palette = fade_palettes[5 + i];
 		renderer.set_palette(PaletteRegion::Background, palette.background_palette);
 		renderer.set_palette(PaletteRegion::Sprites0, palette.obp0_palette);
 		renderer.set_palette(PaletteRegion::Sprites1, palette.obp1_palette);
-		Coroutine::get_current_coroutine().wait_frames(8);
+		coroutine.wait_frames(8);
+	}
+}
+
+void Game::fade_out_to_black(){
+	auto &engine = *this->engine;
+	auto &renderer = engine.get_renderer();
+	auto &coroutine = Coroutine::get_current_coroutine();
+	for (int i = 0; i < 3; i++){
+		auto &palette = fade_palettes[2 - i];
+		renderer.set_palette(PaletteRegion::Background, palette.background_palette);
+		renderer.set_palette(PaletteRegion::Sprites0, palette.obp0_palette);
+		renderer.set_palette(PaletteRegion::Sprites1, palette.obp1_palette);
+		coroutine.wait_frames(8);
 	}
 }
 
@@ -83,6 +97,16 @@ void Game::palette_whiteout(){
 	renderer.set_palette(PaletteRegion::Background, zero_palette);
 	renderer.set_palette(PaletteRegion::Sprites0, zero_palette);
 	renderer.set_palette(PaletteRegion::Sprites1, zero_palette);
+}
+
+void Game::palette_blackout(){
+	static const Palette black_palette = { 3, 3, 3, 3 };
+	
+	auto &renderer = this->engine->get_renderer();
+	renderer.clear_subpalettes(SubPaletteRegion::All);
+	renderer.set_palette(PaletteRegion::Background, black_palette);
+	renderer.set_palette(PaletteRegion::Sprites0, black_palette);
+	renderer.set_palette(PaletteRegion::Sprites1, black_palette);
 }
 
 bool Game::check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *input_state){
@@ -664,7 +688,25 @@ bool Game::update_internal(){
 }
 
 void Game::entered_map(Map old_map, Map new_map, bool warped){
+	auto &ms = this->world->get_map_store();
+	bool reset = false;
+	if (warped && (old_map != Map::Nowhere && new_map != Map::Nowhere)){
+		auto &old_md = ms.get_map_data(old_map);
+		auto &new_md = ms.get_map_data(new_map);
+		bool go_inside = old_md.tileset->type == TilesetType::Outdoor && new_md.tileset->type == TilesetType::Indoor;
+		this->audio_interface.play_sound(go_inside ? AudioResourceId::SFX_Go_Inside : AudioResourceId::SFX_Go_Outside);
+		this->fade_out_to_black();
+		reset = true;
+	}
 	this->world->entered_map(old_map, new_map, warped);
+	if (reset){
+		auto &c = Coroutine::get_current_coroutine();
+		//this->palette_whiteout();
+		//c.wait_frames(3);
+		//this->palette_blackout();
+		c.wait_frames(3);
+		this->world->set_default_palettes();
+	}
 }
 
 void Game::teleport_player(const WorldCoordinates &wc){

@@ -176,7 +176,9 @@ public:
 		return *this->engine;
 	}
 	void fade_out_to_white();
+	void fade_out_to_black();
 	void palette_whiteout();
+	void palette_blackout();
 	bool check_for_user_interruption(double timeout = 0, InputState * = nullptr);
 	bool check_for_user_interruption_no_auto_repeat(double timeout = 0, InputState * = nullptr);
 	bool check_for_user_interruption(InputState &is){

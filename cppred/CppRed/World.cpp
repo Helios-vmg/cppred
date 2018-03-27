@@ -299,8 +299,10 @@ std::unique_ptr<ScreenOwner> World::update(){
 }
 
 ScreenOwner::RunResult World::run(){
+	bool was_paused = this->paused;
+	this->paused = false;
 	this->update();
-	this->render(this->game->get_engine().get_renderer());
+	this->render(this->game->get_engine().get_renderer(), was_paused);
 	return RunResult::Continue;
 }
 
@@ -320,12 +322,18 @@ bool World::facing_edge_of_map(const WorldCoordinates &pos, FacingDirection dir)
 	return !point_in_map(pos2, map);
 }
 
-void World::render(Renderer &renderer){
-	renderer.set_enable_bg(true);
-	renderer.set_enable_sprites(true);
+void World::set_default_palettes(){
+	auto &renderer = this->game->get_engine().get_renderer();
 	renderer.set_palette(PaletteRegion::Background, default_palette);
 	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
-	
+}
+
+void World::render(Renderer &renderer, bool was_paused){
+	renderer.set_enable_bg(true);
+	renderer.set_enable_sprites(true);
+	if (was_paused)
+		this->set_default_palettes();
+
 	auto &bg = renderer.get_tilemap(TileRegion::Background);
 	renderer.set_bg_global_offset(Point(Renderer::tile_size * 2, Renderer::tile_size * 2) + this->pixel_offset);
 	auto current_map = this->player_character->get_current_map();
@@ -360,6 +368,9 @@ void World::render(Renderer &renderer){
 }
 
 void World::pause(){
+	if (this->paused)
+		return;
+	this->paused = true;
 	for (auto &actor : this->actors)
 		actor->pause();
 	if (this->current_map)

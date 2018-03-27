@@ -21,6 +21,7 @@ class World : public ScreenOwner{
 	std::pair<TilesetData *, int> visible_border_block = {nullptr, -1};
 	MapInstance *current_map = nullptr;
 	bool automatic_music_transition = true;
+	bool paused = true;
 
 	bool is_passable(const WorldCoordinates &);
 	typedef decltype(&TilesetData::impassability_pairs) pairs_t;
@@ -32,7 +33,7 @@ class World : public ScreenOwner{
 	std::pair<TilesetData *, int> compute_virtual_block(const WorldCoordinates &position, bool &border_visible);
 	void set_camera_position();
 	std::unique_ptr<ScreenOwner> update();
-	void render(Renderer &);
+	void render(Renderer &, bool was_paused);
 public:
 	World(Game &game);
 	~World();
@@ -61,6 +62,7 @@ public:
 	Actor &get_actor(ActorId);
 	void play_current_map_music();
 	void transition_to_current_map_music();
+	void set_default_palettes();
 
 	DEFINE_GETTER(camera_position)
 	DEFINE_GETTER(pixel_offset)
