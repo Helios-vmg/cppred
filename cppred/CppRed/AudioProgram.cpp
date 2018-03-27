@@ -286,7 +286,7 @@ void AudioProgram::compute_fade_out(){
 	}
 	auto nr50 = this->renderer->get_NR50();
 	if (!nr50){
-		this->play_sound_internal(this->sound_id_after_fade_out);
+		this->play_sound(this->sound_id_after_fade_out);
 		this->sound_id_after_fade_out = AudioResourceId::Stop;
 		this->fade_out_control = 0;
 		return;
@@ -928,13 +928,14 @@ void AudioProgram::play_sound(AudioResourceId id){
 	if (this->for_music && this->sound_id == id)
 		return;
 	this->sound_id = id;
+	this->fade_out_control = 0;
 	this->play_sound_internal(id);
 }
 
 void AudioProgram::play_sound_internal(AudioResourceId id){
 	if (id == AudioResourceId::None)
 		return;
-	this->fade_out_control = 0;
+
 	if (id == AudioResourceId::Stop){
 		//Turn on sound hardware.
 		this->renderer->set_NR52(0x80);
@@ -1257,6 +1258,11 @@ void AudioProgramInterface::fade_out_music_to_silence(double duration){
 
 void AudioProgramInterface::fade_out_music_then_change_tracks(AudioResourceId id, double duration){
 	auto lock = this->music.acquire_lock();
+	if (!this->music.get_fade_out_control()){
+		if(this->music.get_sound_id() == id)
+			return;
+	}else if(this->music.get_sound_id_after_fade_out() == id)
+		return;
 	this->music.set_fade_out_control(1);
 	auto c = (int)(duration * 60) / 7;
 	this->music.set_fade_out_counter_reload_value(c);

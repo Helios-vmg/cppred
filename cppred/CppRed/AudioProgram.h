@@ -205,6 +205,7 @@ public:
 	DEFINE_GETTER_SETTER(fade_out_counter_reload_value)
 	DEFINE_GETTER_SETTER(fade_out_counter)
 	DEFINE_GETTER_SETTER(sound_id_after_fade_out)
+	DEFINE_GETTER_SETTER(sound_id)
 	void copy_fade_control();
 	void wait_for_sfx_to_end();
 	void set_frequency_modifier(int value){

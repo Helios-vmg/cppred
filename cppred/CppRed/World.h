@@ -63,6 +63,7 @@ public:
 	void play_current_map_music();
 	void transition_to_current_map_music();
 	void set_default_palettes();
+	AudioResourceId get_current_map_music();
 
 	DEFINE_GETTER(camera_position)
 	DEFINE_GETTER(pixel_offset)

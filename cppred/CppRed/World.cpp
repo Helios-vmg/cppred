@@ -262,14 +262,17 @@ void World::entered_map(Map old_map, Map new_map, bool warped){
 	instance.loaded(*this->game);
 }
 
-void World::play_current_map_music(){
+AudioResourceId World::get_current_map_music(){
 	auto &map_data = this->current_map->get_map_data();
-	this->game->get_audio_interface().play_sound(map_data.music == AudioResourceId::None ? AudioResourceId::Stop : map_data.music);
+	return map_data.music == AudioResourceId::None ? AudioResourceId::Stop : map_data.music;
+}
+
+void World::play_current_map_music(){
+	this->game->get_audio_interface().play_sound(this->get_current_map_music());
 }
 
 void World::transition_to_current_map_music(){
-	//TODO: implement fade-out.
-	this->play_current_map_music();
+	this->game->get_audio_interface().fade_out_music_then_change_tracks(this->get_current_map_music(), 1);
 }
 
 bool World::get_objects_at_location(MapObjectInstance *(&dst)[8], const WorldCoordinates &location){
