@@ -282,8 +282,8 @@ int Game::handle_standard_menu(StandardMenuOptions &options){
 	}
 
 	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
+	this->reset_joypad_state();
 	while (true){
-		this->reset_joypad_state();
 		if (redraw_options){
 			renderer.fill_rectangle(TileRegion::Window, text_region_position, text_region_size, Tile());
 			write_menu_strings(*this, options, position, window_position, window_size);
@@ -771,9 +771,8 @@ int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
 
 	int ret = options.min;
 
-	auto tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
+	this->reset_joypad_state();
 	while (true){
-		this->reset_joypad_state();
 
 		std::stringstream stream;
 		stream << '*' << std::setw(text_region_size.x - 1) << std::setfill('0') << ret;
