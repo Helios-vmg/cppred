@@ -94,6 +94,7 @@ DECLARE_SCRIPT(PalletTownScript0){
 		});
 		Coroutine oak_co("oak temp coroutine", coroutine.get_clock(), [&](Coroutine &){
 			oak.follow_path(oak_path);
+			oak.set_visible(false);
 			oak_done = true;
 		});
 		while (!oak_done || !player_done){
@@ -104,8 +105,7 @@ DECLARE_SCRIPT(PalletTownScript0){
 			if (!oak_done){
 				oak_co.get_clock().step();
 				oak_co.resume();
-			}else
-				oak.set_visible(false);
+			}
 			coroutine.yield();
 		}
 		static_cast<Npc &>(oak).set_special_movement_duration(old);
