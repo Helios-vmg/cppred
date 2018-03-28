@@ -230,23 +230,23 @@ void Renderer::render_sprite(Sprite &sprite, const Palette **sprite_palettes){
 	auto &sprite_palette_region = sprite.get_palette_region();
 
 	for (int y = y0, sprite_offset_y = sprite_offset_y0; y < y1; y++, sprite_offset_y++){
+		auto points = this->intermediate_render_surface + y * logical_screen_width;
+		auto sprite_tile_y = sprite_offset_y / tile_size;
 		for (int x = x0, sprite_offset_x = sprite_offset_x0; x < x1; x++, sprite_offset_x++){
-			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
+			auto &point = points[x];
 			auto &color_index = point.value;
 			auto &palette = point.palette;
 			if (point.complete)
 				continue;
 
 			auto sprite_tile_x = sprite_offset_x / tile_size;
-			auto sprite_tile_y = sprite_offset_y / tile_size;
 
 			auto &tile = sprite.get_tile(sprite_tile_x, sprite_tile_y);
 			auto sprite_is_not_covered_here = tile.has_priority | !color_index;
 			if (!sprite_is_not_covered_here)
 				continue;
 
-			auto tile_no = tile.tile_no;
-			tile_no = tile_mapping[tile_no];
+			auto tile_no = tile_mapping[tile.tile_no];
 			int tile_offset_x = sprite_offset_x % tile_size;
 			int tile_offset_y = sprite_offset_y % tile_size;
 			if (tile.flipped_x)
@@ -274,34 +274,39 @@ void Renderer::render_windows(){
 		this->render_window(*i);
 }
 
+Point euclidean_modulo(const Point &p, int n, int m){
+	return {euclidean_modulo(p.x, n), euclidean_modulo(p.y, m)};
+}
+
 void Renderer::render_window(const WindowLayer &window){
 	if (!this->enable_window())
 		return;
 	auto &window_region_start = window.window_region_start;
 	auto &window_tilemap = window.window_tilemap;
-	auto &window_origin = window.window_origin;
+	auto window_origin = euclidean_modulo(-window.window_origin, Tilemap::w * tile_size, Tilemap::h * tile_size);
 	auto &bg_palette = this->bg_palette();
 	auto end = window_region_start + window.window_region_size;
-	auto x0 = window_region_start.x;
 	for (int y = window_region_start.y; y < end.y; y++){
-		for (int x = x0; x < end.x; x++){
-			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
-			auto &color_index = point.value;
-			auto &palette = point.palette;
+		auto y0 = (y + window_origin.y) % (Tilemap::h * tile_size);
+		auto tiles = window_tilemap.tiles + y0 / tile_size * Tilemap::w;
+		auto tile_offset_y = y0 % tile_size;
+		auto points = this->intermediate_render_surface + y * logical_screen_width;
+		for (int x = window_region_start.x; x < end.x; x++){
+			auto &point = points[x];
 			if (point.complete)
 				continue;
+
+			auto &color_index = point.value;
+			auto &palette = point.palette;
 
 			color_index = -1;
 			palette = nullptr;
 
-			auto src = Point(x, y) - window_origin;
-			src.x = euclidean_modulo(src.x, Tilemap::w * tile_size);
-			src.y = euclidean_modulo(src.y, Tilemap::h * tile_size);
-			auto &tile = window_tilemap.tiles[src.x / tile_size + src.y / tile_size * Tilemap::w];
+			auto x0 = euclidean_modulo(x + window_origin.x, Tilemap::w * tile_size);
+			auto &tile = tiles[x0 / tile_size];
 			auto tile_no = tile.tile_no;
 			tile_no = tile_mapping[tile_no];
-			auto tile_offset_x = src.x % tile_size;
-			auto tile_offset_y = src.y % tile_size;
+			auto tile_offset_x = x0 % tile_size;
 			color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
 			palette = &tile.palette;
 			if (!*palette){
