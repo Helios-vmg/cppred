@@ -136,13 +136,17 @@ void Renderer::do_software_rendering(){
 }
 
 void Renderer::render_background(){
+	if (!this->enable_bg())
+		return;
 	auto &bg_global_offset = this->bg_global_offset();
 	auto &bg_offsets = this->bg_offsets();
 	auto &bg_tilemap = this->bg_tilemap();
 	auto &bg_palette = this->bg_palette();
-	auto enable_bg = this->enable_bg();
 	for (int y = 0; y < logical_screen_height; y++){
 		auto bg_offset = bg_global_offset + bg_offsets[y];
+
+		auto y0 = euclidean_modulo(bg_offset.y + y, Tilemap::h * tile_size);
+		auto tiles = bg_tilemap.tiles + y0 / tile_size * Tilemap::w;
 
 		for (int x = 0; x < logical_screen_width; x++){
 			auto &point = this->intermediate_render_surface[x + y * logical_screen_width];
@@ -154,25 +158,24 @@ void Renderer::render_background(){
 			color_index = -1;
 			palette = nullptr;
 
-			if (enable_bg & !palette){
-				auto p = bg_offset + Point{ x, y };
-				p.x = euclidean_modulo(p.x, Tilemap::w * tile_size);
-				p.y = euclidean_modulo(p.y, Tilemap::h * tile_size);
-				auto &tile = bg_tilemap.tiles[p.x / tile_size + p.y / tile_size * Tilemap::w];
-				auto tile_no = tile.tile_no;
-				tile_no = tile_mapping[tile_no];
-				int tile_offset_x = p.x % tile_size;
-				int tile_offset_y = p.y % tile_size;
-				if (tile.flipped_x)
-					tile_offset_x = (tile_size - 1) - tile_offset_x;
-				if (tile.flipped_y)
-					tile_offset_y = (tile_size - 1) - tile_offset_y;
-				color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
-				palette = &tile.palette;
-				if (!*palette){
-					palette = &bg_palette;
-					//point.complete = true;
-				}
+			if (palette)
+				continue;
+
+			auto x0 = euclidean_modulo(bg_offset.x + x, Tilemap::w * tile_size);
+			auto &tile = tiles[x0 / tile_size];
+			int tile_offset_x = x0 % tile_size;
+			auto tile_no = tile.tile_no;
+			tile_no = tile_mapping[tile_no];
+			int tile_offset_y = y0 % tile_size;
+			if (tile.flipped_x)
+				tile_offset_x = (tile_size - 1) - tile_offset_x;
+			if (tile.flipped_y)
+				tile_offset_y = (tile_size - 1) - tile_offset_y;
+			color_index = this->tile_data[tile_no].data[tile_offset_x + tile_offset_y * tile_size];
+			palette = &tile.palette;
+			if (!*palette){
+				palette = &bg_palette;
+				//point.complete = true;
 			}
 		}
 	}
