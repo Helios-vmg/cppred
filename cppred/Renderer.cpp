@@ -145,7 +145,7 @@ void Renderer::render_background(){
 	for (int y = 0; y < logical_screen_height; y++){
 		auto bg_offset = bg_global_offset + bg_offsets[y];
 
-		auto y0 = euclidean_modulo(bg_offset.y + y, Tilemap::h * tile_size);
+		auto y0 = (bg_offset.y + y) % (Tilemap::h * tile_size);
 		auto tiles = bg_tilemap.tiles + y0 / tile_size * Tilemap::w;
 
 		for (int x = 0; x < logical_screen_width; x++){
@@ -161,7 +161,7 @@ void Renderer::render_background(){
 			if (palette)
 				continue;
 
-			auto x0 = euclidean_modulo(bg_offset.x + x, Tilemap::w * tile_size);
+			auto x0 = (bg_offset.x + x) % (Tilemap::w * tile_size);
 			auto &tile = tiles[x0 / tile_size];
 			int tile_offset_x = x0 % tile_size;
 			auto tile_no = tile.tile_no;
@@ -321,11 +321,21 @@ void Renderer::final_render(TextureSurface &surf){
 	}
 }
 
+void Renderer::set_bg_global_offset(const Point &p){
+	auto temp = p;
+	temp.x = euclidean_modulo(temp.x, Tilemap::w * tile_size);
+	temp.y = euclidean_modulo(temp.y, Tilemap::h * tile_size);
+	this->bg_global_offset() = temp;
+}
+
 void Renderer::set_y_offset(Point (&array)[logical_screen_height], int y0, int y1, const Point &p){
 	y0 = std::max(y0, 0);
 	y1 = std::min(y1, (int)logical_screen_height);
+	auto temp = p;
+	temp.x = euclidean_modulo(temp.x, Tilemap::w * tile_size);
+	temp.y = euclidean_modulo(temp.y, Tilemap::h * tile_size);
 	for (int y = y0; y < y1; y++)
-		array[y] = p;
+		array[y] = temp;
 }
 
 std::vector<Point> Renderer::draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &asset, TileRegion region, Palette palette, bool flipped){

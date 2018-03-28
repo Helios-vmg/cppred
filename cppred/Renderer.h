@@ -154,9 +154,7 @@ public:
 	const Point &get_bg_global_offset() const{
 		return this->bg_global_offset();
 	}
-	void set_bg_global_offset(const Point &p){
-		this->bg_global_offset() = p;
-	}
+	void set_bg_global_offset(const Point &p);
 	const Point &get_window_origin() const{
 		return this->window_origin();
 	}
