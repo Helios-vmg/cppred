@@ -54,6 +54,9 @@
     <Filter Include="CppRed\Other\Sources">
       <UniqueIdentifier>{b2f52764-42bf-4c55-a683-182bf04f4cdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDL-gpu">
+      <UniqueIdentifier>{bf2adffc-6f6e-4f45-908d-e1d10148848a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -233,6 +236,21 @@
     <ClInclude Include="CppRed\actor_ptr.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="sdl-gpu\src\externals\stb_image\stb_image.h">
+      <Filter>SDL-gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="sdl-gpu\src\externals\stb_image_write\stb_image_write.h">
+      <Filter>SDL-gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="sdl-gpu\src\externals\glew\GL\glew.h">
+      <Filter>SDL-gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="sdl-gpu\src\externals\glew\GL\glxew.h">
+      <Filter>SDL-gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="sdl-gpu\src\externals\glew\GL\wglew.h">
+      <Filter>SDL-gpu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -375,6 +393,30 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>CppRed\Other\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\renderer_OpenGL_4.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu_matrix.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu_renderer.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu_shapes.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\externals\glew\glew.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\externals\stb_image\stb_image.c">
+      <Filter>SDL-gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\externals\stb_image_write\stb_image_write.c">
+      <Filter>SDL-gpu</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

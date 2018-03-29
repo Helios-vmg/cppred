@@ -26,28 +26,36 @@ static int log_text_scale = 1;
 Console::Console(Engine &engine):
 		engine(&engine),
 		device(&engine.get_renderer().get_device()),
-		console(this->device->get_screen_size() * (1.0 / 8.0 / console_text_scale), console_text_scale),
-		log(this->device->get_screen_size() * (1.0 / 8.0 / log_text_scale) + Point(0, 1), log_text_scale),
+		console(*this->device, this->device->get_screen_size() * (1.0 / 8.0 / console_text_scale), this->device->get_screen_size(), console_text_scale),
+		log(*this->device, this->device->get_screen_size() * (1.0 / 8.0 / log_text_scale) + Point(0, 1), this->device->get_screen_size(), log_text_scale),
 		visible(false){
 	auto &dev = *this->device;
 	auto size = dev.get_screen_size();
-	this->background = dev.allocate_texture(size);
-	this->text_layer = dev.allocate_texture(size);
-	this->log_layer = dev.allocate_texture(size);
+	this->screen_dimensions = size;
 
+	this->background = dev.allocate_texture(size);
 	this->initialize_background(0x80);
-	this->initialize_text_layer(this->text_layer);
-	this->initialize_text_layer(this->log_layer);
 	this->coroutine.reset(new Coroutine("Console coroutine", engine.get_stepping_clock(), [this](Coroutine &){
 		this->coroutine_entry_point();
 	}));
 }
 
-CharacterMatrix::CharacterMatrix(const Point &size, int scale){
+CharacterMatrix::CharacterMatrix(VideoDevice &dev, const Point &size, const Point &texture_size, int scale){
 	this->text_scale = scale;
 	this->matrix_size = size;
 	this->character_matrix.resize(this->matrix_size.x * this->matrix_size.y);
 	this->last_character_matrix.resize(this->character_matrix.size());
+	this->texture = dev.allocate_texture(texture_size);
+	this->initialize();
+}
+
+void CharacterMatrix::initialize(){
+	auto size = this->texture.get_size();
+	auto n = size.multiply_components();
+	this->intermediate.reset(new RGB[n]);
+	n *= sizeof(RGB);
+	memset(this->intermediate.get(), 0, n);
+	this->texture.replace_data(this->intermediate.get());
 }
 
 void CharacterMatrix::set_shift(const Point &shift){
@@ -57,22 +65,21 @@ void CharacterMatrix::set_shift(const Point &shift){
 }
 
 void Console::initialize_background(byte_t background_alpha){
-	auto surf = this->background.lock();
+	auto size = this->background.get_size();
+	std::unique_ptr<RGB[]> temp(new RGB[size.x * size.y]);
 
-	auto pixels = surf.get_row(0);
-	auto w = surf.get_size().x;
-	auto h = surf.get_size().y;
-	for (int y = 0; y < h; y++){
-		auto row = pixels + y * w;
-		//byte_t c = 0xFF - 0xFF * y / (h - 1);
+	for (int y = 0; y < size.y; y++){
+		auto row = temp.get() + y * size.x;
 		byte_t c = 0;
-		for (int x = 0; x < w; x++){
+		for (int x = 0; x < size.x; x++){
 			row[x].r = c;
 			row[x].g = c;
 			row[x].b = c;
 			row[x].a = background_alpha;
 		}
 	}
+
+	this->background.replace_data(temp.get());
 }
 
 void Console::blank_texture(SDL_Texture *texture, int width, int height){
@@ -85,11 +92,6 @@ void Console::blank_texture(SDL_Texture *texture, int width, int height){
 	assert(pitch == width * sizeof(RGB));
 	memset(void_pixels, 0, height * pitch);
 	SDL_UnlockTexture(texture);
-}
-
-void Console::initialize_text_layer(Texture &texture){
-	auto surf = texture.lock();
-	memset(surf.get_row(0), 0, surf.get_size().multiply_components() * sizeof(RGB));
 }
 
 bool Console::handle_event(const SDL_Event &event){
@@ -152,13 +154,10 @@ void Console::render(){
 		return;
 
 	this->device->render_copy(this->background);
-	if (this->visible){
+	if (this->visible)
 		this->draw_console_menu();
-		this->device->render_copy(this->text_layer);
-	}else{
+	else
 		this->draw_console_log();
-		this->device->render_copy(this->log_layer);
-	}
 
 }
 
@@ -172,7 +171,10 @@ bool CharacterMatrix::needs_redraw(){
 	return true;
 }
 
-void CharacterMatrix::draw(RGB *pixels, int w, int h){
+void CharacterMatrix::render(VideoDevice &device){
+	RGB *pixels = this->intermediate.get();
+	int w = this->texture.get_size().x;
+	int h = this->texture.get_size().y;
 	const RGB white = {255, 255, 255, 255},
 		black = {0, 0, 0, 255},
 		off = {0, 0, 0, 0};
@@ -213,28 +215,27 @@ void CharacterMatrix::draw(RGB *pixels, int w, int h){
 	memcpy(&this->last_character_matrix[0], &this->character_matrix[0], this->character_matrix.size());
 	this->last_shift = shift;
 	this->matrix_modified = false;
+	this->texture.replace_data(this->intermediate.get());
+	device.render_copy(this->texture);
 }
 
-void Console::draw(Texture &dst, CharacterMatrix &src){
-	if (!src.needs_redraw())
-		return;
-
-	auto w = dst.get_size().x;
-	auto h = dst.get_size().y;
-	TextureSurface surf;
-	if (dst.try_lock(surf)){
-		auto pixels = (RGB *)surf.get_row(0);
-		src.draw(pixels, w, h);
-	}
-}
+//void Console::draw(Texture &dst, CharacterMatrix &src){
+//	if (!src.needs_redraw())
+//		return;
+//
+//	auto w = dst.get_size().x;
+//	auto h = dst.get_size().y;
+//	src.draw(this->intermediate_text.get(), w, h);
+//	dst.replace_data(this->intermediate_text.get(), w * h * sizeof(RGB));
+//}
 
 void Console::draw_console_menu(){
-	this->draw(this->text_layer, this->console);
+	this->console.render(*this->device);
 }
 
 void Console::draw_console_log(){
 	LOCK_MUTEX(this->log_mutex);
-	this->draw(this->log_layer, this->log);
+	this->log.render(*this->device);
 }
 
 void CharacterMatrix::write_character(int x, int y, byte_t character){
@@ -300,7 +301,7 @@ void CharacterMatrix::clear(){
 }
 
 void Console::draw_long_menu(const std::vector<std::string> &strings, int item_separation){
-	auto h = this->text_layer.get_size().y;
+	auto h = this->screen_dimensions.y;
 	const auto max_visible = h / (8 * item_separation * this->console.get_text_scale()) - 2;
 	auto first_visible_item = std::max(this->current_menu_position - max_visible / 2, 0);
 	if (strings.size() - first_visible_item < max_visible)
@@ -319,7 +320,7 @@ int Console::handle_menu(const std::vector<std::string> &strings, int default_it
 
 	auto previous_menu_position = default_item;
 	int i = 1;
-	auto h = this->text_layer.get_size().y;
+	auto h = this->screen_dimensions.y;
 	const auto max_visible = h / (8 * item_separation * this->console.get_text_scale()) - 2;
 	this->current_menu_position = default_item;
 	this->current_menu_size = (int)strings.size();

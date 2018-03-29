@@ -36,10 +36,13 @@ class CharacterMatrix{
 	Point matrix_size;
 	bool matrix_modified = false;
 	int text_scale;
+	Texture texture;
+	std::unique_ptr<RGB[]> intermediate;
+	void initialize();
 public:
-	CharacterMatrix(const Point &size, int scale);
+	CharacterMatrix(VideoDevice &dev, const Point &size, const Point &texture_size, int scale);
 	bool needs_redraw();
-	void draw(RGB *dst, int w, int h);
+	void render(VideoDevice &);
 	void write_character(int x, int y, byte_t character);
 	void write_string(int x, int y, const char *string);
 	void write_string2(const char *string);
@@ -55,11 +58,10 @@ class Console{
 	VideoDevice *device;
 	bool visible;
 	Texture background;
-	Texture text_layer;
-	Texture log_layer;
 	CharacterMatrix console, log;
 	bool log_enabled = false;
 	std::mutex log_mutex;
+	Point screen_dimensions;
 
 	std::unique_ptr<Coroutine> coroutine;
 	ConsoleCommunicationChannel *ccc = nullptr;
@@ -84,7 +86,7 @@ class Console{
 	void restart_game();
 	void flip_version();
 	PokemonVersion get_version();
-	static void draw(Texture &dst, CharacterMatrix &src);
+	//void draw(Texture &dst, CharacterMatrix &src);
 	void draw_console_menu();
 	void draw_console_log();
 public:

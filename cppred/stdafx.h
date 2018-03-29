@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <list>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -25,6 +26,7 @@
 #include <SDL.h>
 #include <SDL_hints.h>
 #include <SDL_main.h>
+#include <SDL_gpu.h>
 #include <set>
 #include <sstream>
 #include <stdexcept>

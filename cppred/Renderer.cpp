@@ -20,9 +20,10 @@ Renderer::Renderer(VideoDevice &device): device(&device){
 	if (!this->main_texture)
 		throw std::runtime_error("Failed to create main texture.");
 
-	TextureSurface surf;
-	if (this->main_texture.try_lock(surf))
-		memset(surf.get_row(0), 0xFF, logical_screen_height * logical_screen_width * sizeof(RGB));
+	const size_t n = logical_screen_height * logical_screen_width * sizeof(RGB);
+	std::unique_ptr<byte_t[]> temp(new byte_t[n]);
+	memset(temp.get(), 0xFF, n);
+	this->main_texture.replace_data(temp.get());
 	this->initialize_assets();
 	this->initialize_data();
 }
@@ -117,17 +118,13 @@ void Renderer::do_software_rendering(){
 	auto t0 = clock.get();
 #endif
 
-	TextureSurface surf;
-	if (!this->main_texture.try_lock(surf))
-		return;
-
 	fill(this->intermediate_render_surface, {-1, nullptr, false});
 
 	this->render_windows();
 	this->render_sprites(true);
 	this->render_background();
 	this->render_sprites(false);
-	this->final_render(surf);
+	this->final_render(this->main_texture);
 	
 #ifdef MEASURE_RENDERING_TIMES
 	auto t1 = clock.get();
@@ -317,13 +314,14 @@ void Renderer::render_window(const WindowLayer &window){
 	}
 }
 
-void Renderer::final_render(TextureSurface &surf){
-	auto pixels = surf.get_row(0);
+void Renderer::final_render(Texture &tex){
+	auto pixels = this->final_surface;
 	for (auto &point : this->intermediate_render_surface){
 		auto color_index = point.value;
 		auto palette = point.palette;
 		*(pixels++) = this->final_palette[!palette ? 0 : palette->data[color_index]];
 	}
+	tex.replace_data(this->final_surface);
 }
 
 void Renderer::set_bg_global_offset(const Point &p){

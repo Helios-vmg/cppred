@@ -65,6 +65,11 @@
     <ClInclude Include="CppRed/EntryPoint.h" />
     <ClInclude Include="RendererStructs.h" />
     <ClInclude Include="ScriptStore.h" />
+    <ClInclude Include="sdl-gpu\src\externals\glew\GL\glew.h" />
+    <ClInclude Include="sdl-gpu\src\externals\glew\GL\glxew.h" />
+    <ClInclude Include="sdl-gpu\src\externals\glew\GL\wglew.h" />
+    <ClInclude Include="sdl-gpu\src\externals\stb_image\stb_image.h" />
+    <ClInclude Include="sdl-gpu\src\externals\stb_image_write\stb_image_write.h" />
     <ClInclude Include="SoundGenerators.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="StaticSet.h" />
@@ -121,6 +126,46 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="CppRed/EntryPoint.cpp" />
     <ClCompile Include="ScriptStore.cpp" />
+    <ClCompile Include="sdl-gpu\src\externals\glew\glew.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\externals\stb_image\stb_image.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\externals\stb_image_write\stb_image_write.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\renderer_OpenGL_4.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu_matrix.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu_renderer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="sdl-gpu\src\SDL_gpu_shapes.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseTesting|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="SoundGenerators.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -191,8 +236,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING;NOMINMAX;HAVE_PCH</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING;NOMINMAX;HAVE_PCH;SDL_GPU_DISABLE_GLES;SDL_GPU_DISABLE_OPENGL_1_BASE;SDL_GPU_DISABLE_OPENGL_1;SDL_GPU_DISABLE_OPENGL_2;SDL_GPU_DISABLE_OPENGL_3;GLEW_STATIC</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include;$(ProjectDir)\sdl-gpu\include;$(ProjectDir)\sdl-gpu\src\externals\glew\GL;$(ProjectDir)\sdl-gpu\src\externals\stb_image;$(ProjectDir)\sdl-gpu\src\externals\stb_image_write</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <StringPooling>true</StringPooling>
       <ShowIncludes>false</ShowIncludes>
@@ -201,7 +246,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>set a=$(SolutionDir)CodeGeneration\
@@ -217,8 +262,8 @@ cd %a%
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;NOMINMAX;HAVE_PCH</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;NOMINMAX;HAVE_PCH;SDL_GPU_DISABLE_GLES;SDL_GPU_DISABLE_OPENGL_1_BASE;SDL_GPU_DISABLE_OPENGL_1;SDL_GPU_DISABLE_OPENGL_2;SDL_GPU_DISABLE_OPENGL_3;GLEW_STATIC</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include;$(ProjectDir)\sdl-gpu\include;$(ProjectDir)\sdl-gpu\src\externals\glew\GL;$(ProjectDir)\sdl-gpu\src\externals\stb_image;$(ProjectDir)\sdl-gpu\src\externals\stb_image_write</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -235,7 +280,7 @@ cd %a%
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>set a=$(SolutionDir)CodeGeneration\
@@ -251,8 +296,8 @@ cd %a%
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING;NOMINMAX;HAVE_PCH</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;CPPRED_TESTING;NOMINMAX;HAVE_PCH;SDL_GPU_DISABLE_GLES;SDL_GPU_DISABLE_OPENGL_1_BASE;SDL_GPU_DISABLE_OPENGL_1;SDL_GPU_DISABLE_OPENGL_2;SDL_GPU_DISABLE_OPENGL_3;GLEW_STATIC</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\include;$(ProjectDir)\sdl-gpu\include;$(ProjectDir)\sdl-gpu\src\externals\glew\GL;$(ProjectDir)\sdl-gpu\src\externals\stb_image;$(ProjectDir)\sdl-gpu\src\externals\stb_image_write</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -269,7 +314,7 @@ cd %a%
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>set a=$(SolutionDir)CodeGeneration\

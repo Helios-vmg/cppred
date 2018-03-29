@@ -69,6 +69,7 @@ private:
 		bool complete;
 	};
 	RenderPoint intermediate_render_surface[logical_screen_width * logical_screen_height];
+	RGB final_surface[logical_screen_width * logical_screen_height];
 	std::deque<RendererContext> stack;
 	RendererContext *current_context;
 	std::vector<Sprite *> sprite_list;
@@ -113,7 +114,7 @@ private:
 	void render_sprite(Sprite &, const Palette **);
 	void render_window(const WindowLayer &);
 	void render_windows();
-	void final_render(TextureSurface &);
+	void final_render(Texture &);
 	void set_y_offset(Point (&)[logical_screen_height], int y0, int y1, const Point &);
 	std::vector<Point> draw_image_to_tilemap_internal(const Point &corner, const GraphicsAsset &, TileRegion, Palette, bool);
 public:

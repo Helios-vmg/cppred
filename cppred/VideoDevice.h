@@ -2,67 +2,79 @@
 #include "RendererStructs.h"
 #ifndef HAVE_PCH
 #include <memory>
+#include <list>
 #endif
 
-struct SDL_Texture;
-typedef struct SDL_Texture SDL_Texture;
-struct SDL_Window;
-typedef struct SDL_Window SDL_Window;
-struct SDL_Renderer;
-typedef struct SDL_Renderer SDL_Renderer;
+#define DECLARE_C_STRUCT(name) struct name; typedef struct name name;
 
-class TextureSurface{
-	friend class Texture;
-	SDL_Texture *texture = nullptr;
-	RGB *pixels;
-	Point size;
-
-	TextureSurface(SDL_Texture *, const Point &size);
-	const char *try_lock(SDL_Texture *, const Point &size);
-public:
-	TextureSurface();
-	TextureSurface(const TextureSurface &) = delete;
-	TextureSurface(TextureSurface &&);
-	~TextureSurface();
-	void operator=(const TextureSurface &) = delete;
-	const TextureSurface &operator=(TextureSurface &&);
-	RGB &get_pixel(int x, int y){
-		return this->pixels[x + y * this->size.x];
-	}
-	RGB *get_row(int y){
-		return this->pixels + y * this->size.x;
-	}
-	const Point &get_size() const{
-		return this->size;
-	}
-};
+DECLARE_C_STRUCT(SDL_Texture);
+DECLARE_C_STRUCT(SDL_Window);
+DECLARE_C_STRUCT(SDL_Renderer);
+DECLARE_C_STRUCT(GPU_Target);
+DECLARE_C_STRUCT(GPU_Image);
 
 class Texture{
 	friend class VideoDevice;
-	std::unique_ptr<SDL_Texture, void(*)(SDL_Texture *)> texture;
+	std::unique_ptr<void, void (*)(void *)> texture;
 	Point size;
 	
 	Texture(SDL_Texture *, const Point &size);
+	Texture(GPU_Image *, const Point &size);
 public:
 	Texture();
 	Texture(const Texture &) = delete;
 	Texture(Texture &&);
 	void operator=(const Texture &) = delete;
 	const Texture &operator=(Texture &&);
-	TextureSurface lock();
-	bool try_lock(TextureSurface &dst);
 	bool operator!() const{
 		return !this->texture;
 	}
 	const Point &get_size() const{
 		return this->size;
 	}
+	void replace_data(const void *);
+};
+
+class Shader{
+	friend class ShaderProgram;
+	Uint32 shader;
+public:
+	Shader(): shader(0){}
+	Shader(const char *source, bool fragment_shader = true);
+	Shader(Shader &&other): shader(0){
+		*this = std::move(other);
+	}
+	Shader(const Shader &) = delete;
+	const Shader &operator=(const Shader &) = delete;
+	const Shader &operator=(Shader &&);
+	~Shader();
+};
+
+class ShaderProgram{
+	Uint32 program;
+	std::vector<Shader> shaders;
+	void initialize();
+public:
+	ShaderProgram(): program(0) {}
+	ShaderProgram(ShaderProgram &&other): program(0){
+		*this = std::move(other);
+	}
+	ShaderProgram(const ShaderProgram &) = delete;
+	const ShaderProgram &operator=(const ShaderProgram &) = delete;
+	const ShaderProgram &operator=(ShaderProgram &&);
+	~ShaderProgram();
+	void add(Shader &&shader);
+	void activate();
 };
 
 class VideoDevice{
 	std::unique_ptr<SDL_Window, void (*)(SDL_Window *)> window;
 	std::unique_ptr<SDL_Renderer, void (*)(SDL_Renderer *)> renderer;
+	GPU_Target *gpu_target;
 	Point screen_size;
+	ShaderProgram sp;
+
+	void init_shaders();
 public:
 	VideoDevice(const Point &size);
 	void set_window_title(const char *);
