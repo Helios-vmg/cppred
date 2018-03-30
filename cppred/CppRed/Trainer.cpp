@@ -26,20 +26,20 @@ NpcTrainer::NpcTrainer(
 	Renderer &renderer,
 	const GraphicsAsset &sprite,
 	MapObjectInstance &instance,
-	const std::map<int, std::shared_ptr<BaseTrainerParty>> &parties,
+	const std::shared_ptr<TrainerClassData> &trainer_class,
 	int default_party):
 		Npc(game, parent_coroutine, name, renderer, sprite, instance),
 		Trainer(game.get_engine().get_prng()),
-		parties(parties),
+		trainer_class(trainer_class),
 		default_party(default_party){
 }
 
 NpcTrainer::~NpcTrainer(){}
 
-const BaseTrainerParty &NpcTrainer::get_party(int index){
+FullTrainerClass NpcTrainer::get_party(int index){
 	if (index < 0)
 		index = this->default_party;
-	return *this->parties[index];
+	return this->trainer_class->get_trainer(index);
 }
 
 Inventory::Inventory(size_t max_size, int max_item_quantity){

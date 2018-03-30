@@ -168,30 +168,9 @@ void check_max_party(size_t member_count, const std::string &class_name, size_t 
 	throw std::runtime_error(stream.str());
 }
 
-MapStore::trainer_parties_t MapStore::load_trainer_parties(){
-	trainer_parties_t ret;
-	size_t offset = 0;
-	auto buffer = trainer_parties_data;
-	auto size = trainer_parties_data_size;
-	constexpr auto max = CppRed::Party::max_party_size;
-	while (offset < size){
-		auto class_name = read_string(buffer, offset, size);
-		auto party_count = read_varint(buffer, offset, size);
-		for (decltype(party_count) i = 0; i < party_count; i++){
-			auto party_index = read_varint(buffer, offset, size);
-			auto member_count = read_varint(buffer, offset, size);
-			check_max_party<max>(member_count, class_name, party_index);
-			auto party = allocate_TrainerParty<0, max + 1>(member_count);
-			assert(party->get_length() == member_count);
-			for (decltype(member_count) j = 0; j < member_count; j++){
-				auto &member = party->get_member(j);
-				member.species = (SpeciesId)read_varint(buffer, offset, size);
-				member.level = (int)read_varint(buffer, offset, size);
-			}
-			ret[class_name][party_index] = party;
-		}
-	}
-	return ret;
+TrainerClassesStore MapStore::load_trainer_parties(){
+	BufferReader buffer(trainer_parties_data, trainer_parties_data_size);
+	return TrainerClassesStore(buffer);
 }
 
 MapStore::map_objects_t MapStore::load_objects(const graphics_map_t &graphics_map){

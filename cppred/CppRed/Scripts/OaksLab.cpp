@@ -8,7 +8,6 @@
 #include "../../../CodeGeneration/output/audio.h"
 #include "../../../CodeGeneration/output/variables.h"
 #include "../../../CodeGeneration/output/actors.h"
-#include "../../../CodeGeneration/output/trainer_parties.h"
 #include "../../Coroutine.h"
 #include "CppRed/Npc.h"
 #ifndef HAVE_PCH

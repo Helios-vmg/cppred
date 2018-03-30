@@ -2,12 +2,12 @@
 #include <iostream>
 #include <algorithm>
 
-static const char * const map_objects_file = "input/items.csv";
+static const char * const items_file = "input/items.csv";
 static const char * const hash_key = "generate_items";
 static const char * const date_string = __DATE__ __TIME__;
 
 static void generate_items_internal(known_hashes_t &known_hashes){
-	auto current_hash = hash_file(map_objects_file, date_string);
+	auto current_hash = hash_file(items_file, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating items.\n";
 		return;
@@ -41,7 +41,7 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 		"\n"
 		"extern const CppRed::ItemData item_data[] = {\n";
 
-	CsvParser csv(map_objects_file);
+	CsvParser csv(items_file);
 	auto rows = csv.row_count();
 	for (size_t i = 0; i < rows; i++){
 		try{

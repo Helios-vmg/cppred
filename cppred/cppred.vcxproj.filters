@@ -376,5 +376,8 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>CppRed\Other\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="TrainerData.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <algorithm>
 
-static const char * const map_objects_file = graphics_csv_path;
 static const char * const hash_key = "generate_graphics";
 static const char * const date_string = __DATE__ __TIME__;
 
@@ -105,7 +104,7 @@ std::vector<byte_t> byte_pack(const std::vector<ExtendedTile> &tiles){
 }
 
 static void generate_graphics_internal(known_hashes_t &known_hashes, GraphicsStore &gs){
-	auto current_hash = hash_file(map_objects_file, date_string);
+	auto current_hash = hash_file(graphics_csv_path, date_string);
 	if (check_for_known_hash(known_hashes, hash_key, current_hash)){
 		std::cout << "Skipping generating graphics.\n";
 		return;

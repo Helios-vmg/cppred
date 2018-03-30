@@ -224,13 +224,12 @@ class MapStore{
 	typedef std::map<std::string, std::shared_ptr<TilesetData>> tilesets_t;
 	typedef std::map<std::string, std::shared_ptr<BinaryMapData>> map_data_t;
 	typedef std::map<std::string, std::shared_ptr<std::vector<std::unique_ptr<MapObject>>>> map_objects_t;
-	typedef std::map<std::string, std::map<int, std::shared_ptr<BaseTrainerParty>>> trainer_parties_t;
 	static blocksets_t load_blocksets();
 	static collisions_t load_collisions();
 	static graphics_map_t load_graphics_map();
 	static tilesets_t load_tilesets(const blocksets_t &, const collisions_t &, const graphics_map_t &);
 	static map_data_t load_map_data();
-	static trainer_parties_t load_trainer_parties();
+	static TrainerClassesStore load_trainer_parties();
 	map_objects_t load_objects(const graphics_map_t &graphics_map);
 	void load_maps(const tilesets_t &, const map_data_t &, const graphics_map_t &);
 	//void load_map_objects();

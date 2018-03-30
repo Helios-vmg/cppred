@@ -1,5 +1,6 @@
 #pragma once
 #include "utility.h"
+#include "TrainerData.h"
 #include "GraphicsAsset.h"
 #include "CppRed/Actor.h"
 #include "CppRed/actor_ptr.h"
@@ -239,13 +240,13 @@ public:
 
 class TrainerMapObject : public NpcMapObject{
 protected:
-	std::map<int, std::shared_ptr<BaseTrainerParty>> parties;
+	std::shared_ptr<TrainerClassData> trainer_class;
 	int default_party;
 
 public:
 	TrainerMapObject(BufferReader &,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, std::map<int, std::shared_ptr<BaseTrainerParty>>> &parties_map);
+		const TrainerClassesStore &);
 	const char *get_type_string() const override{
 		return "trainer";
 	}

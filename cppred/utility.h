@@ -137,6 +137,24 @@ It find_first_true(It begin, It end, const F &f){
 	return end;
 }
 
+template<class It, class F>
+It find_first_true_unsorted(It begin, It end, const F &f){
+	if (begin >= end)
+		return end;
+	for (; begin != end; ++begin)
+		if (f(*begin))
+			return begin;
+	return end;
+}
+
+template<class T, size_t N, class F>
+T *find_first_true_unsorted(T (&array)[N], const F &f){
+	auto it = find_first_true_unsorted(array, array + N, f);
+	if (it == array + N)
+		return nullptr;
+	return it;
+}
+
 xorshift128_state get_seed();
 int euclidean_modulo_u(int n, int mod);
 int euclidean_modulo(int n, int mod);

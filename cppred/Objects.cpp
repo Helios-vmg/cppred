@@ -96,10 +96,10 @@ ItemMapObject::ItemMapObject(BufferReader &buffer,
 
 TrainerMapObject::TrainerMapObject(BufferReader &buffer,
 		const std::map<std::string, const GraphicsAsset *> &graphics_map,
-		const std::map<std::string, std::map<int, std::shared_ptr<BaseTrainerParty>>> &parties_map): NpcMapObject(buffer, graphics_map){
+		const TrainerClassesStore &tcs): NpcMapObject(buffer, graphics_map){
 	auto class_name = buffer.read_string();
 	this->default_party = (int)buffer.read_varint();
-	this->parties = find_in_constant_map(parties_map, class_name);
+	this->trainer_class = tcs.get_trainer_by_name(class_name.c_str());
 }
 
 PokemonMapObject::PokemonMapObject(BufferReader &buffer, const std::map<std::string, const GraphicsAsset *> &graphics_map):
@@ -192,7 +192,7 @@ CppRed::actor_ptr<CppRed::Actor> TrainerMapObject::create_actor(CppRed::Game &ga
 		renderer,
 		*this->sprite,
 		instance,
-		this->parties,
+		this->trainer_class,
 		this->default_party
 	);
 	auto npc = (CppRed::Npc *)ret.get();

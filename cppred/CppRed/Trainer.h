@@ -49,7 +49,7 @@ public:
 };
 
 class NpcTrainer : public Npc, public Trainer{
-	std::map<int, std::shared_ptr<BaseTrainerParty>> parties;
+	std::shared_ptr<TrainerClassData> trainer_class;
 	int default_party;
 public:
 	NpcTrainer(
@@ -59,10 +59,10 @@ public:
 		Renderer &renderer,
 		const GraphicsAsset &sprite,
 		MapObjectInstance &instance,
-		const std::map<int, std::shared_ptr<BaseTrainerParty>> &,
+		const std::shared_ptr<TrainerClassData> &trainer_class,
 		int default_party);
 	~NpcTrainer();
-	const BaseTrainerParty &get_party(int index = -1);
+	FullTrainerClass get_party(int index = -1);
 };
 
 }
