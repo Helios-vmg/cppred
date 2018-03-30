@@ -1,48 +1,48 @@
-id,name,display_name,battle_image,base_reward,ai_move_choice_mods,ai_class,ai_param
-1,OppYoungster,YOUNGSTER,YoungsterPic,1500,,GenericAI,3
-2,OppBugCatcher,BUG CATCHER,BugCatcherPic,1000,1,GenericAI,3
-3,OppLass,LASS,LassPic,1500,1,GenericAI,3
-4,OppSailor,SAILOR,SailorPic,3000,1 3,GenericAI,3
-5,OppJrTrainerM,JR.TRAINER<MALE>,JrTrainerMPic,2000,1,GenericAI,3
-6,OppJrTrainerF,JR.TRAINER<FEMALE>,JrTrainerFPic,2000,1,GenericAI,3
-7,OppPokemaniac,POKéMANIAC,PokemaniacPic,5000,1 2 3,GenericAI,3
-8,OppSuperNerd,SUPER NERD,SuperNerdPic,2500,1 2,GenericAI,3
-9,OppHiker,HIKER,HikerPic,3500,1,GenericAI,3
-10,OppBiker,BIKER,BikerPic,2000,1,GenericAI,3
-11,OppBurglar,BURGLAR,BurglarPic,9000,1 3,GenericAI,3
-12,OppEngineer,ENGINEER,EngineerPic,5000,1,GenericAI,3
-13,OppJugglerUnused,JUGGLER,JugglerPic,3500,1 2,JugglerAI,3
-14,OppFisher,FISHERMAN,FisherPic,3500,1 3,GenericAI,3
-15,OppSwimmer,SWIMMER,SwimmerPic,500,1 3,GenericAI,3
-16,OppCueBall,CUE BALL,CueBallPic,2500,,GenericAI,3
-17,OppGambler,GAMBLER,GamblerPic,7000,1,GenericAI,3
-18,OppBeauty,BEAUTY,BeautyPic,7000,1 3,GenericAI,3
-19,OppPsychicTr,PSYCHIC,PsychicPic,1000,1 2,GenericAI,3
-20,OppRocker,ROCKER,RockerPic,2500,1 3,GenericAI,3
-21,OppJuggler,JUGGLER,JugglerPic,3500,1,JugglerAI,3
-22,OppTamer,TAMER,TamerPic,4000,1,GenericAI,3
-23,OppBirdKeeper,BIRD KEEPER,BirdKeeperPic,2500,1,GenericAI,3
-24,OppBlackbelt,BLACKBELT,BlackbeltPic,2500,1,BlackbeltAI,2
-25,OppSony1,RIVAL1,Rival1Pic,3500,1,GenericAI,3
-26,OppProfOak,PROF.OAK,ProfOakPic,9900,1 3,GenericAI,3
-27,OppChiefUnused,CHIEF,ScientistPic,3000,1 2,GenericAI,1
-28,OppScientist,SCIENTIST,ScientistPic,5000,1 2,GenericAI,3
-29,OppGiovanni,GIOVANNI,GiovanniPic,9900,1 3,GiovanniAI,1
-30,OppRocket,ROCKET,RocketPic,3000,1,GenericAI,3
-31,OppCooltrainerM,COOLTRAINER<MALE>,CooltrainerMPic,3500,1 3,CooltrainerMAI,2
-32,OppCooltrainerF,COOLTRAINER<FEMALE>,CooltrainerFPic,3500,1 3,CooltrainerFAI,1
-33,OppBruno,BRUNO,BrunoPic,9900,1,BrunoAI,2
-34,OppBrock,BROCK,BrockPic,9900,1,BrockAI,5
-35,OppMisty,MISTY,MistyPic,9900,1 3,MistyAI,1
-36,OppLtSurge,LT.SURGE,LtSurgePic,9900,1 3,LtSurgeAI,1
-37,OppErika,ERIKA,ErikaPic,9900,1 3,ErikaAI,1
-38,OppKoga,KOGA,KogaPic,9900,1 3,KogaAI,2
-39,OppBlaine,BLAINE,BlainePic,9900,1 3,BlaineAI,2
-40,OppSabrina,SABRINA,SabrinaPic,9900,1 3,SabrinaAI,1
-41,OppGentleman,GENTLEMAN,GentlemanPic,7000,1 2,GenericAI,3
-42,OppSony2,RIVAL2,Rival2Pic,6500,1 3,Sony2AI,1
-43,OppSony3,RIVAL3,Rival3Pic,9900,1 3,Sony3AI,1
-44,OppLorelei,LORELEI,LoreleiPic,9900,1 2 3,LoreleiAI,2
-45,OppChanneler,CHANNELER,ChannelerPic,3000,1,GenericAI,3
-46,OppAgatha,AGATHA,AgathaPic,9900,1,AgathaAI,2
-47,OppLance,LANCE,LancePic,9900,1 3,LanceAI,1
+id,name,display_name,battle_image,base_reward,type,ai_move_choice_mods,ai_class,ai_param
+1,OppYoungster,YOUNGSTER,YoungsterPic,1500,default,,GenericAI,3
+2,OppBugCatcher,BUG CATCHER,BugCatcherPic,1000,default,1,GenericAI,3
+3,OppLass,LASS,LassPic,1500,female,1,GenericAI,3
+4,OppSailor,SAILOR,SailorPic,3000,default,1 3,GenericAI,3
+5,OppJrTrainerM,JR.TRAINER<MALE>,JrTrainerMPic,2000,default,1,GenericAI,3
+6,OppJrTrainerF,JR.TRAINER<FEMALE>,JrTrainerFPic,2000,female,1,GenericAI,3
+7,OppPokemaniac,POKéMANIAC,PokemaniacPic,5000,default,1 2 3,GenericAI,3
+8,OppSuperNerd,SUPER NERD,SuperNerdPic,2500,default,1 2,GenericAI,3
+9,OppHiker,HIKER,HikerPic,3500,default,1,GenericAI,3
+10,OppBiker,BIKER,BikerPic,2000,default,1,GenericAI,3
+11,OppBurglar,BURGLAR,BurglarPic,9000,default,1 3,GenericAI,3
+12,OppEngineer,ENGINEER,EngineerPic,5000,default,1,GenericAI,3
+13,OppJugglerUnused,JUGGLER,JugglerPic,3500,evil,1 2,JugglerAI,3
+14,OppFisher,FISHERMAN,FisherPic,3500,default,1 3,GenericAI,3
+15,OppSwimmer,SWIMMER,SwimmerPic,500,default,1 3,GenericAI,3
+16,OppCueBall,CUE BALL,CueBallPic,2500,default,,GenericAI,3
+17,OppGambler,GAMBLER,GamblerPic,7000,evil,1,GenericAI,3
+18,OppBeauty,BEAUTY,BeautyPic,7000,female,1 3,GenericAI,3
+19,OppPsychicTr,PSYCHIC,PsychicPic,1000,default,1 2,GenericAI,3
+20,OppRocker,ROCKER,RockerPic,2500,evil,1 3,GenericAI,3
+21,OppJuggler,JUGGLER,JugglerPic,3500,evil,1,JugglerAI,3
+22,OppTamer,TAMER,TamerPic,4000,default,1,GenericAI,3
+23,OppBirdKeeper,BIRD KEEPER,BirdKeeperPic,2500,default,1,GenericAI,3
+24,OppBlackbelt,BLACKBELT,BlackbeltPic,2500,default,1,BlackbeltAI,2
+25,OppSony1,RIVAL1,Rival1Pic,3500,default,1,GenericAI,3
+26,OppProfOak,PROF.OAK,ProfOakPic,9900,default,1 3,GenericAI,3
+27,OppChiefUnused,CHIEF,ScientistPic,3000,evil,1 2,GenericAI,1
+28,OppScientist,SCIENTIST,ScientistPic,5000,evil,1 2,GenericAI,3
+29,OppGiovanni,GIOVANNI,GiovanniPic,9900,evil,1 3,GiovanniAI,1
+30,OppRocket,ROCKET,RocketPic,3000,evil,1,GenericAI,3
+31,OppCooltrainerM,COOLTRAINER<MALE>,CooltrainerMPic,3500,default,1 3,CooltrainerMAI,2
+32,OppCooltrainerF,COOLTRAINER<FEMALE>,CooltrainerFPic,3500,female,1 3,CooltrainerFAI,1
+33,OppBruno,BRUNO,BrunoPic,9900,default,1,BrunoAI,2
+34,OppBrock,BROCK,BrockPic,9900,default,1,BrockAI,5
+35,OppMisty,MISTY,MistyPic,9900,default,1 3,MistyAI,1
+36,OppLtSurge,LT.SURGE,LtSurgePic,9900,default,1 3,LtSurgeAI,1
+37,OppErika,ERIKA,ErikaPic,9900,default,1 3,ErikaAI,1
+38,OppKoga,KOGA,KogaPic,9900,default,1 3,KogaAI,2
+39,OppBlaine,BLAINE,BlainePic,9900,default,1 3,BlaineAI,2
+40,OppSabrina,SABRINA,SabrinaPic,9900,default,1 3,SabrinaAI,1
+41,OppGentleman,GENTLEMAN,GentlemanPic,7000,default,1 2,GenericAI,3
+42,OppSony2,RIVAL2,Rival2Pic,6500,default,1 3,Sony2AI,1
+43,OppSony3,RIVAL3,Rival3Pic,9900,default,1 3,Sony3AI,1
+44,OppLorelei,LORELEI,LoreleiPic,9900,default,1 2 3,LoreleiAI,2
+45,OppChanneler,CHANNELER,ChannelerPic,3000,default,1,GenericAI,3
+46,OppAgatha,AGATHA,AgathaPic,9900,default,1,AgathaAI,2
+47,OppLance,LANCE,LancePic,9900,default,1 3,LanceAI,1
