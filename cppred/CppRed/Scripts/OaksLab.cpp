@@ -234,7 +234,7 @@ DECLARE_SCRIPT(OaksLabScript10){
 	blue.follow_path(path);
 	blue.set_facing_direction(FacingDirection::Down);
 
-	auto blue_party = (red_ball_data.starter_index + 2) % 3 + 1;
+	auto blue_party = (red_ball_data.starter_index + 2) % 3;
 	game.run_trainer_battle(
 		TextResourceId::FirstBlueBattlePlayerWon,
 		TextResourceId::FirstBlueBattlePlayerLost,
@@ -332,6 +332,7 @@ static void ball_script(const script_parameters &parameters, int index, bool run
 	standard_add_pokemon(game, player, new_pokemon);
 	vs.set(IntegerVariableId::event_received_starter, 1);
 	game.reset_dialogue_state();
+	vs.set(IntegerVariableId::red_ball_index, index);
 	vs.set(IntegerVariableId::OaksLabScriptIndex, 8);
 }
 
