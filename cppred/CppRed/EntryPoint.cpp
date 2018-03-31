@@ -53,8 +53,9 @@ void entry_point(Game &game){
 		game.get_variable_store().load_initial_visibility_flags();
 		auto &player = game.get_world().get_pc();
 		player.set_facing_direction(FacingDirection::Up);
-		player.get_pc_inventory().receive(ItemId::Potion, 79);
-		game.teleport_player({Map::RedsHouse2F, Point(3, 6)});
+		player.get_pc_inventory().receive(ItemId::Potion, 1);
+		//game.teleport_player({Map::RedsHouse2F, Point(3, 6)});
+		game.teleport_player({Map::OaksLab, Point(6, 4)});
 		game.game_loop();
 		assert(false);
 	}

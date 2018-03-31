@@ -2,6 +2,7 @@
 #include "Data.h"
 #include "Status.h"
 #include "utility.h"
+#include "../PokemonInfo.h"
 #ifndef HAVE_PCH
 #include <cstdint>
 #endif
@@ -23,6 +24,7 @@ class Pokemon{
 	int pp[4];
 	
 	int get_iv(PokemonStats::StatId) const;
+	int get_stat(PokemonStats::StatId, bool ignore_xp);
 public:
 	Pokemon():
 		species(SpeciesId::None),
@@ -36,15 +38,25 @@ public:
 	Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &, const PokemonStats &input_stats = PokemonStats());
 	Pokemon(const Pokemon &) = default;
 	Pokemon(Pokemon &&) = default;
-	int get_stat(PokemonStats::StatId, bool ignore_xp = false);
+	int get_stat(PokemonStats::StatId stat){
+		return this->get_stat(stat, false);
+	}
 	static int calculate_min_xp_to_reach_level(SpeciesId species, int level);
 	static int calculate_level_at_xp(SpeciesId species, int xp);
 	bool null() const{
 		return this->species == SpeciesId::None;
 	}
 	DEFINE_GETTER(species)
+	DEFINE_GETTER(level)
+	DEFINE_GETTER(current_hp)
 	DEFINE_GETTER_SETTER(nickname)
+	int get_max_hp(){
+		return this->get_stat(PokemonStats::StatId::Hp);
+	}
+	const char *get_display_name() const;
+	StatusCondition2 get_status() const;
 	void heal();
+	const BasePokemonInfo &get_data() const;
 };
 
 class Party{
@@ -60,6 +72,10 @@ public:
 	void heal();
 	size_t size() const{
 		return this->members.size();
+	}
+	Pokemon *get_first_usable_pokemon();
+	iterator_range<std::vector<Pokemon>::iterator> iterate(){
+		return {this->members.begin(), this->members.end()};
 	}
 };
 

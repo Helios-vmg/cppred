@@ -39,7 +39,9 @@ public:
 	DEFINE_GETTER(id)
 	DEFINE_GETTER(name)
 	DEFINE_GETTER(display_name)
-	DEFINE_GETTER(graphics)
+	const GraphicsAsset &get_graphics() const{
+		return *this->graphics;
+	}
 	DEFINE_GETTER(base_reward)
 	DEFINE_GETTER(ai_move_choice_modifiers)
 	DEFINE_GETTER(ai_class)
@@ -53,7 +55,7 @@ public:
 		PartialTrainerClass(ptc),
 		party(party){}
 	FullTrainerClass(FullTrainerClass &&other):
-			PartialTrainerClass(){
+			PartialTrainerClass(std::move(other)){
 		this->party = std::move(other.party);
 	}
 	const FullTrainerClass &operator=(FullTrainerClass &&);

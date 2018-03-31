@@ -68,6 +68,11 @@ constexpr size_t array_length(T (&)[N]){
 	return N;
 }
 
+template <typename T, size_t N>
+constexpr size_t array_length(const std::array<T, N> &){
+	return N;
+}
+
 template <std::uint32_t N, int M>
 struct bits_from_u32_helper{
 	static const byte_t value = bits_from_u32_helper<N, M + 1>::value |
@@ -89,14 +94,19 @@ void deleter(void *p){
 	delete (T *)p;
 }
 
-template <typename T, size_t N>
-void fill(T (&array)[N], const T &value){
-	std::fill(array, array + N, value);
+template <typename T, typename T2, size_t N>
+void fill(T (&array)[N], const T2 &value){
+	std::fill(array, array + N, (T)value);
 }
 
-template <typename T>
-void fill(std::vector<T> &vector, const T &value){
-	std::fill(vector.begin(), vector.end(), value);
+template <typename T, typename T2, size_t N>
+void fill(std::array<T, N> &array, const T2 &value){
+	std::fill(array.data(), array.data() + N, (T)value);
+}
+
+template <typename T, typename T2>
+void fill(std::vector<T> &vector, const T2 &value){
+	std::fill(vector.begin(), vector.end(), (T)value);
 }
 
 //Returns true if all the bits that are set in the mask are also set in the value.
@@ -165,6 +175,36 @@ std::uint32_t read_varint(const byte_t *buffer, size_t &offset, size_t size);
 std::int32_t read_signed_varint(const byte_t *buffer, size_t &offset, size_t size);
 std::string read_string(const byte_t *buffer, size_t &offset, size_t size);
 std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size);
+template <typename T>
+std::array<char, sizeof(T) * CHAR_BIT> number_to_decimal_string(T value, int right_padding = 0){
+	//Note: sizeof(T) * CHAR_BIT is about three times larger than the optimal size.
+	//In reality we only need approximately sizeof(T) * CHAR_BIT * log10(2).
+	const size_t n = sizeof(T) * CHAR_BIT;
+	if (right_padding >= n)
+		throw std::runtime_error("number_to_decimal_string(): incorrect usage.");
+	std::array<char, n> ret;
+	fill(ret, 0);
+	auto i = sizeof(T) * CHAR_BIT;
+	if (!value)
+		ret[--i] = '0';
+	else{
+		bool negative = value < 0;
+		if (negative)
+			value = -value;
+		while (value){
+			ret[--i] = '0' + value % 10;
+			value /= 10;
+		}
+		if (negative)
+			ret[--i] = '-';
+	}
+	while (n - i < right_padding)
+		ret[--i] = ' ';
+	for (int j = 0; j < n - i; j++)
+		ret[j] = ret[i + j];
+	ret[n - i] = 0;
+	return ret;
+}
 
 template <typename T>
 typename std::enable_if<std::is_unsigned<T>::value, int>::type

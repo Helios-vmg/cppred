@@ -25,7 +25,7 @@ class AudioProgramInterface;
 class Game;
 }
 
-#define Engine_USE_FIXED_CLOCK
+//#define Engine_USE_FIXED_CLOCK
 
 class Engine{
 #ifndef Engine_USE_FIXED_CLOCK

@@ -121,7 +121,7 @@ void Renderer::do_software_rendering(){
 	if (!this->main_texture.try_lock(surf))
 		return;
 
-	fill(this->intermediate_render_surface, {-1, nullptr, false});
+	fill(this->intermediate_render_surface, RenderPoint{-1, nullptr, false});
 
 	this->render_windows();
 	this->render_sprites(true);

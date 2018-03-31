@@ -18,6 +18,9 @@ class Coroutine;
 
 namespace CppRed{
 
+const int max_pokemon_name_size = 10;
+const int max_character_name_size = 7;
+
 class Trainer;
 class NpcTrainer;
 class PlayerCharacter;
@@ -26,6 +29,7 @@ enum class EventId;
 enum class VisibilityFlagId;
 enum class IntegerVariableId;
 enum class StringVariableId;
+enum class BattleResult;
 
 class VariableStore{
 	std::vector<std::string> strings;
@@ -82,6 +86,8 @@ enum class GameState{
 
 const Point standard_dialogue_yes_no_position(14, 7);
 const Point standard_dialogue_quantity_position(Renderer::logical_screen_tile_width, 9);
+const Point standard_dialogue_box_position(0, Renderer::logical_screen_tile_height - 6);
+const Point standard_dialogue_box_size(Renderer::logical_screen_tile_width - 2, 4);
 
 enum class MenuAnchor{
 	TopLeft,
@@ -139,15 +145,17 @@ class Game{
 	bool reset_dialogue_was_delayed = false;
 	bool no_text_delay = false;
 	std::unique_ptr<Coroutine> coroutine;
-	std::vector<std::unique_ptr<ScreenOwner>> owners_stack;
+	std::vector<std::shared_ptr<ScreenOwner>> owners_stack;
 	int locks_acquired = 0;
 
 	void update_joypad_state();
 	bool check_for_user_interruption_internal(bool autorepeat, double timeout, InputState *);
 	std::string get_name_from_user(NameEntryType, SpeciesId, int max_length);
 	template <typename T, typename ...Params>
-	void switch_screen_owner(Params &&...params){
-		this->owners_stack.emplace_back(new T(*this, std::forward<Params>(params)...));
+	std::shared_ptr<T> switch_screen_owner(Params &&...params){
+		auto ret = std::make_shared<T>(*this, std::forward<Params>(params)...);
+		this->owners_stack.push_back(ret);
+		return ret;
 		//Coroutine::get_current_coroutine().yield();
 	}
 	template <typename T, typename ...Params>
@@ -193,6 +201,7 @@ public:
 	void draw_box(const Point &corner, const Point &size, TileRegion);
 	int handle_standard_menu(StandardMenuOptions &);
 	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
+	void draw_bar(const Point &position, TileRegion region, int width, int max, int value);
 	void run_dex_entry(TextResourceId);
 	void run_dialogue(TextResourceId, bool wait_at_end, bool hide_dialogue_at_end);
 	void reset_dialogue_state(bool also_hide_window = true);
@@ -237,7 +246,7 @@ public:
 		this->locks_acquired--;
 	}
 	void dialogue_wait();
-	bool run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &, int party_index = -1);
+	BattleResult run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &, int party_index = -1);
 	int get_quantity_from_user(const GetQuantityFromUserOptions &);
 	void reset_joypad_state();
 };

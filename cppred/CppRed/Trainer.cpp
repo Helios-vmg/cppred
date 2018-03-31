@@ -29,14 +29,13 @@ NpcTrainer::NpcTrainer(
 	const std::shared_ptr<TrainerClassData> &trainer_class,
 	int default_party):
 		Npc(game, parent_coroutine, name, renderer, sprite, instance),
-		Trainer(game.get_engine().get_prng()),
 		trainer_class(trainer_class),
 		default_party(default_party){
 }
 
 NpcTrainer::~NpcTrainer(){}
 
-FullTrainerClass NpcTrainer::get_party(int index){
+FullTrainerClass NpcTrainer::get_party(int index) const{
 	if (index < 0)
 		index = this->default_party;
 	return this->trainer_class->get_trainer(index);
@@ -88,6 +87,12 @@ iterator_range<std::vector<InventorySpace>::iterator> Inventory::iterate_items()
 
 bool Inventory::empty() const{
 	return !this->inventory.size();
+}
+
+ComputerTrainer::ComputerTrainer(FullTrainerClass &ftc, XorShift128 &prng):
+		Trainer(prng){
+	for (auto &member : ftc.get_party())
+		this->party.add_pokemon(member.species, member.level, this->trainer_id, prng);
 }
 
 }

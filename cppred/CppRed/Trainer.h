@@ -48,7 +48,12 @@ public:
 	DEFINE_NON_CONST_GETTER(inventory)
 };
 
-class NpcTrainer : public Npc, public Trainer{
+class ComputerTrainer : public Trainer{
+public:
+	ComputerTrainer(FullTrainerClass &, XorShift128 &);
+};
+
+class NpcTrainer : public Npc{
 	std::shared_ptr<TrainerClassData> trainer_class;
 	int default_party;
 public:
@@ -62,7 +67,7 @@ public:
 		const std::shared_ptr<TrainerClassData> &trainer_class,
 		int default_party);
 	~NpcTrainer();
-	FullTrainerClass get_party(int index = -1);
+	FullTrainerClass get_party(int index = -1) const;
 };
 
 }

@@ -34,6 +34,7 @@ void Party::heal(){
 
 int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp){
 	auto &stat = this->computed_stats.get_stat(which);
+	int ret;
 	if (stat < 0){
 		auto &pokemon = *pokemon_by_species_id[(int)this->species];
 		int base_stat = pokemon.base_stats.get_stat(which);
@@ -43,14 +44,16 @@ int Pokemon::get_stat(PokemonStats::StatId which, bool ignore_xp){
 			bonus = (int)ceil(sqrt(stat_xp));
 		}
 		int iv = this->get_iv(which);
-		int ret = ((base_stat + iv) * 2 + bonus / 4) * this->level / 100;
+		ret = ((base_stat + iv) * 2 + bonus / 4) * this->level / 100;
 		if (which == PokemonStats::StatId::Hp)
 			ret += this->level + 10;
 		else
 			ret += 5;
-		stat = ret;
-	}
-	return stat;
+		if (!ignore_xp)
+			stat = ret;
+	}else
+		ret = stat;
+	return ret;
 }
 
 /*
@@ -91,7 +94,8 @@ int Pokemon::get_iv(PokemonStats::StatId which) const{
 }
 
 
-Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &rng, const PokemonStats &input_stats){
+Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &rng, const PokemonStats &input_stats):
+		computed_stats(-1, -1, -1, -1, -1){
 	this->species = species;
 	this->level = level;
 	auto &pokemon = *pokemon_by_species_id[(int)species];
@@ -180,6 +184,27 @@ int Pokemon::calculate_level_at_xp(SpeciesId species, int xp){
 void Pokemon::heal(){
 	this->current_hp = this->get_stat(PokemonStats::StatId::Hp);
 	this->status = StatusCondition::Normal;
+}
+
+const BasePokemonInfo &Pokemon::get_data() const{
+	return *pokemon_by_species_id[(int)this->species];
+}
+
+StatusCondition2 Pokemon::get_status() const{
+	return !this->current_hp ? StatusCondition2::Fainted : (StatusCondition2)(int)this->status;
+}
+
+const char *Pokemon::get_display_name() const{
+	if (this->nickname.size())
+		return this->nickname.c_str();
+	return this->get_data().display_name;
+}
+
+Pokemon *Party::get_first_usable_pokemon(){
+	for (auto &p : this->members)
+		if (p.get_status() != StatusCondition2::Fainted)
+			return &p;
+	return nullptr;
 }
 
 }

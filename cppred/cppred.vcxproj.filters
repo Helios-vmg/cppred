@@ -233,6 +233,9 @@
     <ClInclude Include="CppRed\actor_ptr.h">
       <Filter>CppRed\Game code\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="CppRed\BattleOwner.h">
+      <Filter>CppRed\Game code\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -377,6 +380,9 @@
       <Filter>CppRed\Other\Sources</Filter>
     </ClCompile>
     <ClCompile Include="TrainerData.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="CppRed\BattleOwner.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
   </ItemGroup>

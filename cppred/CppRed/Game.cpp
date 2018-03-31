@@ -14,6 +14,7 @@
 #include "../Console.h"
 #include "PokedexPageDisplay.h"
 #include "CoroutineExecuter.h"
+#include "BattleOwner.h"
 #ifndef HAVE_PCH
 #include <iostream>
 #include <sstream>
@@ -189,8 +190,8 @@ Game::load_save_t Game::load_save(){
 void Game::draw_box(const Point &corner, const Point &size, TileRegion region){
 	if (corner.x < 0 || corner.y < 0)
 		throw std::runtime_error("CppRedEngine::draw_box(): invalid position.");
-	if (size.x > Renderer::logical_screen_tile_width - 2 || size.y > Renderer::logical_screen_tile_height - 2)
-		throw std::runtime_error("CppRedEngine::draw_box(): invalid dimensions.");
+	//if (size.x > Renderer::logical_screen_tile_width - 2 || size.y > Renderer::logical_screen_tile_height - 2)
+	//	throw std::runtime_error("CppRedEngine::draw_box(): invalid dimensions.");
 	const std::uint16_t w = TextBoxGraphics.width;
 	const std::uint16_t f = TextBoxGraphics.first_tile + 1 + 6 * w;
 	const std::uint16_t tiles[] = {
@@ -405,8 +406,8 @@ TextState Game::get_default_dialogue_state(){
 	ret.first_position =
 		ret.position =
 		ret.start_of_line = { 1, Renderer::logical_screen_tile_height - 4 };
-	ret.box_corner = { 1, Renderer::logical_screen_tile_height - 5 };
-	ret.box_size = { Renderer::logical_screen_tile_width - 2, 4 };
+	ret.box_corner = standard_dialogue_box_position + Point(1, 1);
+	ret.box_size = standard_dialogue_box_size;
 	ret.continue_location = { 18, 16 };
 	return ret;
 }
@@ -475,7 +476,7 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 
 	if (!max_length_)
 		return "";
-	size_t max_display_length = type == NameEntryType::Pokemon ? 10 : 7;
+	size_t max_display_length = type == NameEntryType::Pokemon ? max_pokemon_name_size : max_character_name_size;
 	size_t max_length;
 	if (max_length_ < 0)
 		max_length = max_display_length;
@@ -781,9 +782,10 @@ std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species)
 	return ret;
 }
 
-bool Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &trainer, int party_index){
-	//TODO
-	return true;
+BattleResult Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &trainer, int party_index){
+	auto battle = this->switch_screen_owner<BattleOwner>(trainer.get_party(party_index));
+	Coroutine::get_current_coroutine().yield();
+	return battle->get_result();
 }
 
 static std::array<char, 64> generate_quantity_string(int q, int digits){
@@ -873,6 +875,26 @@ int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
 	assert(false);
 	this->reset_joypad_state();
 	return -1;
+}
+
+void Game::draw_bar(const Point &position, TileRegion region, int width, int max, int value){
+	auto total_pixels = width * Renderer::tile_size;
+	auto on_pixels = total_pixels * max / value;
+	auto off_pixels = total_pixels - on_pixels;
+	auto fully_on_tiles = on_pixels / Renderer::tile_size;
+	auto fully_off_tiles = off_pixels / Renderer::tile_size;
+	auto partial_on = on_pixels - fully_on_tiles * Renderer::tile_size;
+	
+	auto &renderer = this->engine->get_renderer();
+	auto tiles = renderer.get_tilemap(region).tiles + position.x + position.y * Tilemap::w;
+	auto original = tiles;
+	for (auto i = fully_on_tiles; i--;)
+		*(tiles++) = Tile(HpBarAndStatusGraphics.first_tile + 9);
+	if (partial_on)
+		*(tiles++) = Tile(HpBarAndStatusGraphics.first_tile + 1 + partial_on);
+	for (auto i = fully_off_tiles; i--;)
+		*(tiles++) = Tile(HpBarAndStatusGraphics.first_tile + 1);
+	assert(tiles - original == width);
 }
 
 }
