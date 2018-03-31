@@ -509,3 +509,7 @@ RedBlueVersion,graphics/gfx/redblueversion.png,0
 CopyrightTitleScreen,graphics/gfx/copyright_title_screen.png,0
 PokedexPageLayout,graphics/gfx/pokedex_page_layout.png,0
 MonPartySprites2,graphics/gfx/sprites/mon_party_sprites.png,0
+OpponentBallsBattleLayout,graphics/gfx/opponent_balls_layout.png,0
+PlayerBallsBattleLayout,graphics/gfx/player_balls_layout.png,0
+OpponentPokemonBattleLayout,graphics/gfx/opponent_pokemon_layout.png,0
+PlayerPokemonBattleLayout,graphics/gfx/player_pokemon_layout.png,0
