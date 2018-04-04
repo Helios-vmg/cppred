@@ -49,6 +49,7 @@ class Engine{
 	ScriptStore script_store;
 	bool gamepad_disabled = false;
 	TwoWayMixer *two_way_mixer = nullptr;
+	double direction_press_times[8];
 
 	void initialize_video();
 	void initialize_audio();

@@ -91,6 +91,7 @@ void Engine::run(){
 		this->audio_scheduler->start();
 		this->gamepad_disabled = false;
 		this->game.reset(new CppRed::Game(*this, version, interface));
+		fill(this->direction_press_times, -1);
 
 		//Main loop.
 		while (true){
@@ -171,25 +172,48 @@ bool Engine::update_console(PokemonVersion &version, CppRed::AudioProgramInterfa
 	return true;
 }
 
+template <bool DOWN, int OFFSET>
+static void process_times(InputState &state, double clock, double (&press_times)[8]){
+	auto val = state.get_value() & ~InputState::any_direction_mask;
+	if (DOWN){
+		state.set_value(val | (1 << OFFSET));
+		press_times[OFFSET] = clock;
+		return;
+	}
+	press_times[OFFSET] = -1;
+	int index = -1;
+	double max = -1;
+	for (int i = 0; i < array_length(press_times); i++){
+		if (press_times[i] > max){
+			max = press_times[i];
+			index = i;
+		}
+	}
+	if (index < 0){
+		state.set_value(val);
+		return;
+	}
+	state.set_value(val | (1 << index));
+}
 
 template <bool DOWN>
-static void handle_event(InputState &state, SDL_Event &event, bool &flag){
+static void handle_event(InputState &state, SDL_Event &event, bool &flag, double clock, double (&press_times)[8]){
 	switch (event.key.keysym.sym){
 		case SDLK_UP:
 			flag = true;
-			state.set_up(DOWN);
+			process_times<DOWN, InputState::offset_up>(state, clock, press_times);
 			break;
 		case SDLK_DOWN:
 			flag = true;
-			state.set_down(DOWN);
+			process_times<DOWN, InputState::offset_down>(state, clock, press_times);
 			break;
 		case SDLK_LEFT:
 			flag = true;
-			state.set_left(DOWN);
+			process_times<DOWN, InputState::offset_left>(state, clock, press_times);
 			break;
 		case SDLK_RIGHT:
 			flag = true;
-			state.set_right(DOWN);
+			process_times<DOWN, InputState::offset_right>(state, clock, press_times);
 			break;
 		case SDLK_z:
 			flag = true;
@@ -215,6 +239,7 @@ bool Engine::handle_events(){
 	auto &state = this->input_state;
 	bool button_down = false;
 	bool button_up = false;
+	auto clock = this->clock.get();
 	while (SDL_PollEvent(&event)){
 		if (this->console->handle_event(event))
 			continue;
@@ -251,13 +276,13 @@ bool Engine::handle_events(){
 							this->console->toggle_visible();
 							break;
 						default:
-							handle_event<true>(state, event, button_down);
+							handle_event<true>(state, event, button_down, clock, this->direction_press_times);
 					}
 				}
 				break;
 			case SDL_KEYUP:
 				if (!event.key.repeat)
-					handle_event<false>(state, event, button_up);
+					handle_event<false>(state, event, button_up, clock, this->direction_press_times);
 				break;
 			default:
 				break;

@@ -31,7 +31,7 @@ public:
 		return ~this->value;
 	}
 	bool any_direction() const{
-		return !!(this->value & (mask_up | mask_right | mask_down | mask_left));
+		return !!(this->value & any_direction_mask);
 	}
 	bool any_main_button() const{
 		return !!(this->value & (mask_a | mask_b));
@@ -41,14 +41,23 @@ public:
 	}
 	DEFINE_GETTER_SETTER(value);
 
-	static const byte_t mask_a = 1 << 0;
-	static const byte_t mask_b = 1 << 1;
-	static const byte_t mask_start = 1 << 2;
-	static const byte_t mask_select = 1 << 3;
-	static const byte_t mask_up = 1 << 4;
-	static const byte_t mask_down = 1 << 5;
-	static const byte_t mask_left = 1 << 6;
-	static const byte_t mask_right = 1 << 7;
+	static const int offset_a = 0;
+	static const int offset_b = 1;
+	static const int offset_start = 2;
+	static const int offset_select = 3;
+	static const int offset_up = 4;
+	static const int offset_down = 5;
+	static const int offset_left = 6;
+	static const int offset_right = 7;
+	static const byte_t mask_a = 1 << offset_a;
+	static const byte_t mask_b = 1 << offset_b;
+	static const byte_t mask_start = 1 << offset_start;
+	static const byte_t mask_select = 1 << offset_select;
+	static const byte_t mask_up = 1 << offset_up;
+	static const byte_t mask_down = 1 << offset_down;
+	static const byte_t mask_left = 1 << offset_left;
+	static const byte_t mask_right = 1 << offset_right;
+	static const byte_t any_direction_mask = mask_up | mask_down | mask_left | mask_right;
 
 #define DEFINE_InputState_GETTER_SETTER(x) \
 	bool get_##x() const{ \
