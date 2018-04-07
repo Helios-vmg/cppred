@@ -136,6 +136,7 @@ public:
 	void render();
 	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	std::vector<Point> draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
+	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
 	void mass_set_tiles(const std::vector<Point> &tiles, const Tile &);
 	void clear_subpalettes(SubPaletteRegion);
@@ -244,5 +245,6 @@ static const std::uint16_t female_symbol = (std::uint16_t)'+';
 static const std::uint16_t poke_symbol = (std::uint16_t)'{';
 static const std::uint16_t mon_symbol = (std::uint16_t)'}';
 static const std::uint16_t decimal_symbol = (std::uint16_t)('d' + 128);
+extern const char * const pkmn_string;
 
 #include "../CodeGeneration/output/graphics_public.h"

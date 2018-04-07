@@ -3483,17 +3483,17 @@ Darn! The GHOST
 can't be ID'd!<prompt><end>
 
 .GoText
-Go! <end>
+Go! <mem,wBattleMonNick>!<end>
 
 .DoItText
-Do it! <end>
+Do it! <mem,wBattleMonNick>!<end>
 
 .GetmText
-Get'm! <end>
+Get'm! <mem,wBattleMonNick>!<end>
 
 .EnemysWeakText
 The enemy's weak!
-Get'm! <end>
+Get'm! <mem,wBattleMonNick>!<end>
 
 .PlayerMon1Text
 <mem,wBattleMonNick>!<done>

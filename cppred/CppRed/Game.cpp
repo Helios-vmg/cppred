@@ -225,35 +225,20 @@ void Game::draw_box(const Point &corner, const Point &size, TileRegion region){
 	dst[1 + size.x].tile_no = tiles[8];
 }
 
-void Game::put_string(const Point &position, TileRegion region, const char *string, int pad_to){
-	int i = position.x + position.y * Tilemap::w;
-	auto tilemap = this->engine->get_renderer().get_tilemap(region).tiles;
-	int characters = 0;
-	for (; string[characters]; characters++){
-		tilemap[i].tile_no = (byte_t)string[characters];
-		tilemap[i].flipped_x = false;
-		tilemap[i].flipped_y = false;
-		i = (i + 1) % Tilemap::size;
-	}
-	for (; characters < pad_to; characters++){
-		tilemap[i].tile_no = ' ';
-		i = (i + 1) % Tilemap::size;
-	}
-}
-
 static void write_menu_strings(Game &game, StandardMenuOptions &options, const Point &position, int window_position, int window_size){
 	auto string_position = position;
 	string_position.x += 2;
 	string_position.y += options.initial_padding ? 2 : 1;
 	auto &items = *options.items;
 	int limit = std::min(window_size, (int)items.size() - window_position);
+	auto &renderer = game.get_engine().get_renderer();
 	for (int i = 0; i < limit; i++){
 		auto index = i + window_position;
 		auto &s = items[index];
-		game.put_string(string_position, TileRegion::Window, s.c_str());
+		renderer.put_string(string_position, TileRegion::Window, s.c_str());
 		string_position.y++;
 		if (options.extra_data)
-			game.put_string(string_position, TileRegion::Window, (*options.extra_data)[index].c_str());
+			renderer.put_string(string_position, TileRegion::Window, (*options.extra_data)[index].c_str());
 		string_position.y++;
 	}
 }
@@ -294,7 +279,7 @@ int Game::handle_standard_menu(StandardMenuOptions &options){
 
 	if (options.title){
 		auto l = (int)strlen(options.title);
-		this->put_string(position + Point((width - l) / 2 + 1, 0), TileRegion::Window, options.title);
+		renderer.put_string(position + Point((width - l) / 2 + 1, 0), TileRegion::Window, options.title);
 	}
 
 	bool redraw_options = true;
@@ -505,9 +490,9 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 		default:
 			throw std::runtime_error("CppRedEngine::get_name_from_user(): Invalid switch.");
 	}
-	this->put_string({ 0, 1 }, TileRegion::Background, query_string.c_str());
+	renderer.put_string({ 0, 1 }, TileRegion::Background, query_string.c_str());
 	if (type == NameEntryType::Pokemon)
-		this->put_string({ 1, 3 }, TileRegion::Background, "NICKNAME?");
+		renderer.put_string({ 1, 3 }, TileRegion::Background, "NICKNAME?");
 
 	Point box_location = { 0, 4 };
 	const Point box_size = { 18, 9 };
@@ -547,7 +532,7 @@ std::string Game::get_name_from_user(NameEntryType type, SpeciesId species, int 
 					tilemap[dst_x + dst_y * Tilemap::w].tile_no = src;
 				}
 			}
-			this->put_string(mode_select_location, TileRegion::Background, lower_case ? mode_select_upper : mode_select_lower);
+			renderer.put_string(mode_select_location, TileRegion::Background, lower_case ? mode_select_upper : mode_select_lower);
 			redraw_alphabet = false;
 		}
 
@@ -782,8 +767,8 @@ std::array<std::shared_ptr<Sprite>, 2> Game::load_mon_sprites(SpeciesId species)
 	return ret;
 }
 
-BattleResult Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &trainer, int party_index){
-	auto battle = this->switch_screen_owner<BattleOwner>(trainer.get_party(party_index));
+BattleResult Game::run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, FullTrainerClass &&ftc){
+	auto battle = this->switch_screen_owner<BattleOwner>(std::move(ftc));
 	Coroutine::get_current_coroutine().yield();
 	return battle->get_result();
 }
@@ -838,7 +823,7 @@ int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
 
 	this->reset_joypad_state();
 	while (true){
-		this->put_string(text_region_position, TileRegion::Window, generate_quantity_string(ret, text_region_size.x - 1).data());
+		renderer.put_string(text_region_position, TileRegion::Window, generate_quantity_string(ret, text_region_size.x - 1).data());
 
 		while (true){
 			Coroutine::get_current_coroutine().yield();
@@ -879,7 +864,7 @@ int Game::get_quantity_from_user(const GetQuantityFromUserOptions &options){
 
 void Game::draw_bar(const Point &position, TileRegion region, int width, int max, int value){
 	auto total_pixels = width * Renderer::tile_size;
-	auto on_pixels = total_pixels * max / value;
+	auto on_pixels = total_pixels * value / max;
 	auto off_pixels = total_pixels - on_pixels;
 	auto fully_on_tiles = on_pixels / Renderer::tile_size;
 	auto fully_off_tiles = off_pixels / Renderer::tile_size;

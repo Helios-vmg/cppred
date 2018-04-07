@@ -200,7 +200,6 @@ public:
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
 	int handle_standard_menu(StandardMenuOptions &);
-	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
 	void draw_bar(const Point &position, TileRegion region, int width, int max, int value);
 	void run_dex_entry(TextResourceId);
 	void run_dialogue(TextResourceId, bool wait_at_end, bool hide_dialogue_at_end);
@@ -246,7 +245,7 @@ public:
 		this->locks_acquired--;
 	}
 	void dialogue_wait();
-	BattleResult run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, const NpcTrainer &, int party_index = -1);
+	BattleResult run_trainer_battle(TextResourceId player_victory_text, TextResourceId player_defeat_text, FullTrainerClass &&);
 	int get_quantity_from_user(const GetQuantityFromUserOptions &);
 	void reset_joypad_state();
 };

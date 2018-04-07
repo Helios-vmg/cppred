@@ -80,6 +80,8 @@ void BattleOwner::coroutine_entry_point(){
 
 		auto &opponent_pokemon = *ct.get_party().get_first_usable_pokemon();
 		auto &opponent_pokemon_data = opponent_pokemon.get_data();
+		vs.set(StringVariableId::wEnemyMonNick, opponent_pokemon.get_display_name());
+		this->game->run_dialogue(TextResourceId::TrainerSentOutText, false, false);
 		this->game->draw_portrait(*opponent_pokemon_data.front, TileRegion::Background, opponent_position);
 		audio.play_cry(opponent_pokemon_data.species_id);
 		audio.wait_for_sfx_to_end();
@@ -95,10 +97,24 @@ void BattleOwner::coroutine_entry_point(){
 		auto &reds_pokemon = *player.get_party().get_first_usable_pokemon();
 		auto &reds_pokemon_data = reds_pokemon.get_data();
 		this->display_player_pokemon_status(reds_pokemon);
+		vs.set(StringVariableId::wBattleMonNick, reds_pokemon.get_display_name());
+		auto enemy_percentage_health = opponent_pokemon.get_current_hp() * 25 / (opponent_pokemon.get_max_hp() / 4);
+		TextResourceId go_text;
+		if (enemy_percentage_health >= 70)
+			go_text = TextResourceId::GoText;
+		else if (enemy_percentage_health >= 40)
+			go_text = TextResourceId::DoItText;
+		else if (enemy_percentage_health >= 10)
+			go_text = TextResourceId::GetmText;
+		else
+			go_text = TextResourceId::EnemysWeakText;
+		this->game->reset_dialogue_state(false);
+		this->game->run_dialogue(go_text, false, false);
 		this->game->draw_portrait(*reds_pokemon_data.back, TileRegion::Background, red_position);
 		this->game->draw_box(standard_dialogue_box_position, standard_dialogue_box_size, TileRegion::Background);
 		audio.play_cry(reds_pokemon_data.species_id);
 		audio.wait_for_sfx_to_end();
+		this->game->reset_dialogue_state(true);
 		
 		while (this->run_one_round(reds_pokemon, opponent_pokemon));
 	}
@@ -157,9 +173,9 @@ void BattleOwner::display_opponent_pokemon_status(Pokemon &pokemon){
 	auto &game = *this->game;
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	game.put_string({1, 0}, TileRegion::Background, pokemon.get_display_name(), max_pokemon_name_size);
+	renderer.put_string({1, 0}, TileRegion::Background, pokemon.get_display_name(), max_pokemon_name_size);
 	renderer.draw_image_to_tilemap({1, 1}, OpponentPokemonBattleLayout);
-	game.put_string({5, 1}, TileRegion::Background, number_to_decimal_string(pokemon.get_level()).data(), 3);
+	renderer.put_string({5, 1}, TileRegion::Background, number_to_decimal_string(pokemon.get_level()).data(), 3);
 	game.draw_bar({4, 2}, TileRegion::Background, 6, pokemon.get_max_hp(), pokemon.get_current_hp());
 }
 
@@ -167,17 +183,93 @@ void BattleOwner::display_player_pokemon_status(Pokemon &pokemon){
 	auto &game = *this->game;
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
-	game.put_string({10, 7}, TileRegion::Background, pokemon.get_display_name(), max_pokemon_name_size);
+	renderer.put_string({10, 7}, TileRegion::Background, pokemon.get_display_name(), max_pokemon_name_size);
 	renderer.draw_image_to_tilemap({9, 8}, PlayerPokemonBattleLayout);
-	game.put_string({15, 8}, TileRegion::Background, number_to_decimal_string(pokemon.get_level()).data(), 3);
+	renderer.put_string({15, 8}, TileRegion::Background, number_to_decimal_string(pokemon.get_level()).data(), 3);
 	game.draw_bar({12, 9}, TileRegion::Background, 6, pokemon.get_max_hp(), pokemon.get_current_hp());
-	game.put_string({11, 10}, TileRegion::Background, number_to_decimal_string(pokemon.get_current_hp(), 3).data());
-	game.put_string({15, 10}, TileRegion::Background, number_to_decimal_string(pokemon.get_max_hp(), 3).data());
+	renderer.put_string({11, 10}, TileRegion::Background, number_to_decimal_string(pokemon.get_current_hp(), 3).data());
+	renderer.put_string({15, 10}, TileRegion::Background, number_to_decimal_string(pokemon.get_max_hp(), 3).data());
 }
 	
 bool BattleOwner::run_one_round(Pokemon &own, Pokemon &opponent){
-	Coroutine::get_current_coroutine().yield();
+	this->display_battle_menu();
 	return true;
+}
+
+void BattleOwner::display_battle_menu(){
+	auto &game = *this->game;
+	auto &engine = game.get_engine();
+	auto &renderer = engine.get_renderer();
+	auto &audio = game.get_audio_interface();
+	AutoRendererWindowPusher pusher(renderer);
+	
+	auto &tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
+	fill(tilemap, Tile());
+
+	static const Point dialog_corner(8, 12);
+	static const Point dialog_size(10, 4);
+
+	this->game->draw_box(dialog_corner, dialog_size, TileRegion::Window);
+	renderer.set_window_origin({0, 0});
+	renderer.set_window_region_start(dialog_corner * renderer.tile_size);
+	renderer.set_window_region_size((dialog_size + Point(2, 2)) * renderer.tile_size);
+	renderer.set_enable_window(true);
+
+	renderer.put_string({10, 14}, TileRegion::Window, "FIGHT");
+	renderer.put_string({16, 14}, TileRegion::Window, pkmn_string);
+	renderer.put_string({10, 16}, TileRegion::Window, "ITEM");
+	renderer.put_string({16, 16}, TileRegion::Window, "RUN");
+
+	static const Point arrow_location_lo(9, 14);
+	static const Point arrow_location_hi(15, 16);
+
+	int selection = 0;
+	auto &coroutine = Coroutine::get_current_coroutine();
+	
+	game.reset_joypad_state();
+	while (true){
+		Point arrow_position = arrow_location_lo;
+		if (selection % 2)
+			arrow_position.x = arrow_location_hi.x;
+		if (selection / 2)
+			arrow_position.y = arrow_location_hi.y;
+		
+		auto &tile = tilemap[arrow_position.x + arrow_position.y * Tilemap::w];
+		tile.tile_no = black_arrow;
+
+		while (true){
+			coroutine.yield();
+			auto state = game.joypad_auto_repeat();
+			if (state.get_a()){
+				audio.play_sound(AudioResourceId::SFX_Press_AB);
+				game.reset_joypad_state();
+				switch (selection){
+					case 0:
+						//Show move selection.
+					case 1:
+						//Show pokemon selection menu.
+					case 2:
+						//Show inventory.
+					case 3:
+						//Try to run away.
+						break;
+				}
+				continue;
+			}
+			if (state.get_right() || state.get_left()){
+				selection += selection % 2 * 2 + 1;
+				break;
+			}
+			if (state.get_up() || state.get_down()){
+				selection += 2;
+				break;
+			}
+		}
+
+		tile.tile_no = ' ';
+		selection = euclidean_modulo_u(selection, 4);
+	}
+
 }
 
 }

@@ -22,13 +22,13 @@ void show_options(CppRed::Game &game){
 	for (int i = 0; i < 3; i++)
 		game.draw_box({ 0, i * 5 }, { Renderer::logical_screen_tile_width - 2, 3 }, TileRegion::Background);
 
-	game.put_string({ 1,  1 }, TileRegion::Background, "TEXT SPEED");
-	game.put_string({ 1,  6 }, TileRegion::Background, "BATTLE ANIMATION");
-	game.put_string({ 1, 11 }, TileRegion::Background, "BATTLE STYLE");
-	game.put_string({ 2,  3 }, TileRegion::Background, "FAST  MEDIUM SLOW");
-	game.put_string({ 2,  8 }, TileRegion::Background, "ON       OFF");
-	game.put_string({ 2, 13 }, TileRegion::Background, "SHIFT    SET");
-	game.put_string({ 2, 16 }, TileRegion::Background, "CANCEL");
+	renderer.put_string({ 1,  1 }, TileRegion::Background, "TEXT SPEED");
+	renderer.put_string({ 1,  6 }, TileRegion::Background, "BATTLE ANIMATION");
+	renderer.put_string({ 1, 11 }, TileRegion::Background, "BATTLE STYLE");
+	renderer.put_string({ 2,  3 }, TileRegion::Background, "FAST  MEDIUM SLOW");
+	renderer.put_string({ 2,  8 }, TileRegion::Background, "ON       OFF");
+	renderer.put_string({ 2, 13 }, TileRegion::Background, "SHIFT    SET");
+	renderer.put_string({ 2, 16 }, TileRegion::Background, "CANCEL");
 
 	const int speed_positions[] = { 1, 7, 14, -1 };
 	const int animation_positions[] = { 1, 10, -1 };

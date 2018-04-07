@@ -46,15 +46,15 @@ void PokedexPageDisplay::coroutine_entry_point(){
 	renderer.clear_sprites();
 	renderer.draw_image_to_tilemap({0, 0}, PokedexPageLayout);
 	renderer.fill_rectangle(TileRegion::Background, {1, 1}, {7, 7}, Tile());
-	this->game->put_string({9, 2}, TileRegion::Background, pokemon.display_name, 10);
-	this->game->put_string({9, 4}, TileRegion::Background, pokemon.brief, 10);
-	this->game->put_string({4, 8}, TileRegion::Background, int_to_char_array<3, 999>((int)pokemon.pokedex_id).data());
+	renderer.put_string({9, 2}, TileRegion::Background, pokemon.display_name, 10);
+	renderer.put_string({9, 4}, TileRegion::Background, pokemon.brief, 10);
+	renderer.put_string({4, 8}, TileRegion::Background, int_to_char_array<3, 999>((int)pokemon.pokedex_id).data());
 	renderer.fill_rectangle(TileRegion::Background, {1, 11}, {Renderer::logical_screen_tile_width - 2, 6}, Tile());
 	auto &tilemap = renderer.get_tilemap(TileRegion::Background);
 	auto copy = tilemap;
-	this->game->put_string({13, 6}, TileRegion::Background, "?");
-	this->game->put_string({15, 6}, TileRegion::Background, "??");
-	this->game->put_string({13, 8}, TileRegion::Background, " ???");
+	renderer.put_string({13, 6}, TileRegion::Background, "?");
+	renderer.put_string({15, 6}, TileRegion::Background, "??");
+	renderer.put_string({13, 8}, TileRegion::Background, " ???");
 
 	auto &coroutine = Coroutine::get_current_coroutine();
 	auto &audio_interface = this->game->get_audio_interface();
@@ -69,10 +69,10 @@ void PokedexPageDisplay::coroutine_entry_point(){
 
 	tilemap = copy;
 	this->game->draw_portrait(*pokemon.front, TileRegion::Background, {1, 1}, true);
-	this->game->put_string({11, 6}, TileRegion::Background, int_to_char_array<3, 999>(pokemon.height_feet, ' ').data());
-	this->game->put_string({15, 6}, TileRegion::Background, int_to_char_array<2, 99>(pokemon.height_inches, '0').data());
-	this->game->put_string({11, 8}, TileRegion::Background, int_to_char_array<4, 9999>(pokemon.weight_tenths_of_pounds / 10, ' ').data());
-	this->game->put_string({16, 8}, TileRegion::Background, int_to_char_array<1, 9>(pokemon.weight_tenths_of_pounds % 10, ' ').data());
+	renderer.put_string({11, 6}, TileRegion::Background, int_to_char_array<3, 999>(pokemon.height_feet, ' ').data());
+	renderer.put_string({15, 6}, TileRegion::Background, int_to_char_array<2, 99>(pokemon.height_inches, '0').data());
+	renderer.put_string({11, 8}, TileRegion::Background, int_to_char_array<4, 9999>(pokemon.weight_tenths_of_pounds / 10, ' ').data());
+	renderer.put_string({16, 8}, TileRegion::Background, int_to_char_array<1, 9>(pokemon.weight_tenths_of_pounds % 10, ' ').data());
 
 	this->game->run_dex_entry(pokemon.pokedex_entry);
 	

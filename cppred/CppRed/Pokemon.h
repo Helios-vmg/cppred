@@ -70,13 +70,15 @@ public:
 	bool add_pokemon(const Pokemon &);
 	Pokemon &get_last_added_pokemon();
 	void heal();
-	size_t size() const{
-		return this->members.size();
+	int size() const{
+		return (int)this->members.size();
 	}
 	Pokemon *get_first_usable_pokemon();
 	iterator_range<std::vector<Pokemon>::iterator> iterate(){
 		return {this->members.begin(), this->members.end()};
 	}
+	Pokemon &get(size_t i);
+	const Pokemon &get(size_t i) const;
 };
 
 }

@@ -6,10 +6,12 @@
 #include <stdexcept>
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 #endif
 
 #include "../CodeGeneration/output/graphics_private.h"
-#include <algorithm>
+
+extern const char * const pkmn_string = "{}";
 
 //#define MEASURE_RENDERING_TIMES
 #define ALWAYS_RENDER
@@ -557,4 +559,20 @@ Renderer::RendererContext::RendererContext(const RendererContext &other){
 	this->enable_bg = other.enable_bg;
 	this->enable_window = other.enable_window;
 	this->enable_sprites = other.enable_sprites;
+}
+
+void Renderer::put_string(const Point &position, TileRegion region, const char *string, int pad_to){
+	int i = position.x + position.y * Tilemap::w;
+	auto tilemap = this->get_tilemap(region).tiles;
+	int characters = 0;
+	for (; string[characters]; characters++){
+		tilemap[i].tile_no = (byte_t)string[characters];
+		tilemap[i].flipped_x = false;
+		tilemap[i].flipped_y = false;
+		i = (i + 1) % Tilemap::size;
+	}
+	for (; characters < pad_to; characters++){
+		tilemap[i].tile_no = ' ';
+		i = (i + 1) % Tilemap::size;
+	}
 }

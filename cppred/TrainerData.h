@@ -38,7 +38,7 @@ public:
 	
 	DEFINE_GETTER(id)
 	DEFINE_GETTER(name)
-	DEFINE_GETTER(display_name)
+	DEFINE_GETTER_SETTER(display_name)
 	const GraphicsAsset &get_graphics() const{
 		return *this->graphics;
 	}

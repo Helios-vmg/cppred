@@ -225,7 +225,6 @@ void PlayerCharacter::display_menu(){
 	if (this->party.size()){
 		items.push_back("POK""\xE5""MON");
 		callbacks.push_back([this](){
-			return;
 			this->display_party_menu();
 		});
 	}
@@ -272,7 +271,9 @@ void PlayerCharacter::display_menu(){
 	}
 }
 
-void PlayerCharacter::display_party_menu(){}
+void PlayerCharacter::display_party_menu(){
+	this->display_party_menu([](const Pokemon &, int){ return InventoryChanges::NoChange; });
+}
 
 static std::array<char, 12> generate_inventory_quantity(int q){
 	std::array<char, 12> ret;
@@ -561,6 +562,138 @@ AutoRendererWindowPusher PlayerCharacter::display_toss_quantity_dialog(int &resu
 	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
 	result = this->game->get_quantity_from_user(options);
 	return pusher;
+}
+
+template <size_t N>
+static void draw_party(Game &game, Renderer &renderer, Party &party, std::vector<std::shared_ptr<Sprite>> &sprites, Tile (&tilemap)[N]){
+	fill(tilemap, Tile());
+	sprites.clear();
+	int member_index = 0;
+	for (Pokemon &p : party.iterate()){
+		auto &data = p.get_data();
+		auto sprite = renderer.create_sprite(2, 2);
+		int i = 0,
+			base_tile = MonPartySprites2.first_tile + (int)data.overworld_sprite * 2;
+		for (SpriteTile &tile : sprite->iterate_tiles()){
+			tile.tile_no = base_tile + i;
+			i++;
+			if (!(i % 2))
+				i = i - 2 + MonPartySprites2.width;
+			
+		}
+		sprite->set_position(Point(1, member_index * 2) * Renderer::tile_size);
+		sprites.push_back(std::move(sprite));
+
+		sprite = renderer.create_sprite(2, 2);
+		i = MonPartySprites2.width * 2;
+		for (SpriteTile &tile : sprite->iterate_tiles()){
+			tile.tile_no = base_tile + i;
+			i++;
+			if (!(i % 2))
+				i = i - 2 + MonPartySprites2.width;
+		}
+		sprite->set_position(Point(1, member_index * 2) * Renderer::tile_size);
+		sprites.push_back(sprite);
+
+		auto hp = p.get_current_hp();
+		auto max_hp = p.get_max_hp();
+
+		Point point(3, member_index * 2);
+		renderer.draw_image_to_tilemap(point, PartyListHpBar);
+		renderer.put_string(point, TileRegion::Background, p.get_display_name(), max_pokemon_name_size);
+		game.draw_bar(point + Point(3, 1), TileRegion::Background, 6, max_hp, hp);
+		renderer.put_string({14, member_index * 2}, TileRegion::Background, number_to_decimal_string(p.get_level()).data(), 3);
+		renderer.put_string({13, member_index * 2 + 1}, TileRegion::Background, number_to_decimal_string(hp, 3).data());
+		renderer.put_string({16, member_index * 2 + 1}, TileRegion::Background, "/");
+		renderer.put_string({17, member_index * 2 + 1}, TileRegion::Background, number_to_decimal_string(max_hp, 3).data());
+
+		member_index++;
+	}
+}
+
+void PlayerCharacter::display_party_menu(const std::function<InventoryChanges(Pokemon &, int)> &callback){
+	auto &game = *this->game;
+	auto &renderer = game.get_engine().get_renderer();
+	auto &party = this->party;
+	auto &coroutine = Coroutine::get_current_coroutine();
+	auto &audio = game.get_audio_interface();
+	AutoRendererPusher pusher(renderer);
+	renderer.clear_screen();
+	renderer.clear_sprites();
+
+	std::vector<std::shared_ptr<Sprite>> sprites;
+	sprites.reserve(Party::max_party_size * 2);
+
+	int selection = 0;
+
+	auto &tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
+	{
+		auto old = game.get_no_text_delay();
+		game.set_no_text_delay(true);
+		game.run_dialogue(TextResourceId::PartyMenuNormalText, false, false);
+		game.set_no_text_delay(old);
+	}
+	game.reset_dialogue_state(false);
+
+	bool redraw = true;
+	bool sprite_visibility = false;
+
+	game.reset_joypad_state();
+	while (true){
+		if (redraw){
+			draw_party(game, renderer, party, sprites, tilemap);
+			redraw = false;
+			sprite_visibility = false;
+		}
+		for (int i = 0; i < party.size(); i++){
+			auto &A = sprites[i * 2 + 0];
+			auto &B = sprites[i * 2 + 1];
+			bool active = i == selection;
+			A->set_visible(!active | !sprite_visibility);
+			B->set_visible(active & sprite_visibility);
+
+			tilemap[(i * 2 + 1) * Tilemap::w].tile_no = !active ? ' ' : black_arrow;
+		}
+		auto t0 = coroutine.get_clock().get();
+		bool break_at_end = false;
+		do{
+			coroutine.yield();
+			auto t1 = coroutine.get_clock().get();
+			if (t1 - t0 >= 0.1){
+				sprite_visibility = !sprite_visibility;
+				break_at_end = true;
+			}
+			auto input = game.joypad_auto_repeat();
+			if (input.get_b()){
+				audio.play_sound(AudioResourceId::SFX_Press_AB);
+				return;
+			}
+			if (input.get_down()){
+				selection++;
+				sprite_visibility = false;
+				break;
+			}
+			if (input.get_up()){
+				selection--;
+				sprite_visibility = false;
+				break;
+			}
+			if (input.get_a()){
+				audio.play_sound(AudioResourceId::SFX_Press_AB);
+				auto result = callback(party.get(selection), (selection + 1) * 2);
+				switch (result){
+					case InventoryChanges::Update:
+						redraw = true;
+					case InventoryChanges::NoChange:
+						break;
+					default:
+						throw std::runtime_error("Bad switch.");
+				}
+				break;
+			}
+		}while (!break_at_end);
+		selection = euclidean_modulo_u(selection, party.size());
+	}
 }
 
 }

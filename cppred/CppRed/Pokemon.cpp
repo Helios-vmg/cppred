@@ -207,4 +207,16 @@ Pokemon *Party::get_first_usable_pokemon(){
 	return nullptr;
 }
 
+Pokemon &Party::get(size_t i){
+	if (i >= this->members.size())
+		throw std::runtime_error("Party::get(): Bad member index.");
+	return this->members[i];
+}
+
+const Pokemon &Party::get(size_t i) const{
+	if (i >= this->members.size())
+		throw std::runtime_error("Party::get(): Bad member index.");
+	return this->members[i];
+}
+
 }

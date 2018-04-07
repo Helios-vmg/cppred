@@ -96,6 +96,7 @@ private:
 	AutoRendererWindowPusher display_toss_quantity_dialog(int &result, const InventorySpace &, int);
 	InventoryChanges run_item_use_logic(const InventorySpace &is);
 	InventoryChanges run_item_toss_logic(const InventorySpace &is, int y);
+	void display_party_menu(const std::function<InventoryChanges(Pokemon &, int)> &);
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	~PlayerCharacter();
