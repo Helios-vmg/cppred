@@ -243,6 +243,20 @@ static void write_menu_strings(Game &game, StandardMenuOptions &options, const P
 	}
 }
 
+bool Game::handle_standard_menu(StandardMenuOptions &options, const std::vector<std::function<void()>> &callbacks){
+	if (options.items->size() != callbacks.size()){
+		std::stringstream stream;
+		stream << "Game::handle_standard_menu(): Internal error. Incorrect usage. items.size() = "
+			<< options.items->size() << ", callbacks.size() = " << callbacks.size();
+		throw std::runtime_error(stream.str());
+	}
+	auto input = this->handle_standard_menu(options);
+	if (input < 0)
+		return false;
+	callbacks[input]();
+	return true;
+}
+
 int Game::handle_standard_menu(StandardMenuOptions &options){
 	auto position = options.position;
 	auto width = options.minimum_size.x;

@@ -262,17 +262,8 @@ void PlayerCharacter::display_menu(){
 	options.cancel_mask |= InputState::mask_start;
 	options.push_window = false;
 	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
-	while (!done){
-		auto input = this->game->handle_standard_menu(options);
-		if (input < 0)
-			break;
-		callbacks[input]();
+	while (!done && this->game->handle_standard_menu(options, callbacks))
 		options.before_item_display = decltype(options.before_item_display)();
-	}
-}
-
-void PlayerCharacter::display_party_menu(){
-	this->display_party_menu([](const Pokemon &, int){ return InventoryChanges::NoChange; });
 }
 
 static std::array<char, 12> generate_inventory_quantity(int q){
@@ -565,11 +556,14 @@ AutoRendererWindowPusher PlayerCharacter::display_toss_quantity_dialog(int &resu
 }
 
 template <size_t N>
-static void draw_party(Game &game, Renderer &renderer, Party &party, std::vector<std::shared_ptr<Sprite>> &sprites, Tile (&tilemap)[N]){
+static void draw_party(Game &game, Renderer &renderer, Party &party, std::vector<std::shared_ptr<Sprite>> &sprites, Tile (&tilemap)[N], int hidden_start = -1, int hidden_end = -1){
 	fill(tilemap, Tile());
 	sprites.clear();
-	int member_index = 0;
+	int next_member_index = 0;
 	for (Pokemon &p : party.iterate()){
+		auto member_index = next_member_index++;
+		if (member_index >= hidden_start && member_index <= hidden_end)
+			continue;
 		auto &data = p.get_data();
 		auto sprite = renderer.create_sprite(2, 2);
 		int i = 0,
@@ -606,37 +600,38 @@ static void draw_party(Game &game, Renderer &renderer, Party &party, std::vector
 		renderer.put_string({13, member_index * 2 + 1}, TileRegion::Background, number_to_decimal_string(hp, 3).data());
 		renderer.put_string({16, member_index * 2 + 1}, TileRegion::Background, "/");
 		renderer.put_string({17, member_index * 2 + 1}, TileRegion::Background, number_to_decimal_string(max_hp, 3).data());
-
-		member_index++;
 	}
 }
 
-void PlayerCharacter::display_party_menu(const std::function<InventoryChanges(Pokemon &, int)> &callback){
+bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 	auto &game = *this->game;
 	auto &renderer = game.get_engine().get_renderer();
 	auto &party = this->party;
 	auto &coroutine = Coroutine::get_current_coroutine();
 	auto &audio = game.get_audio_interface();
-	AutoRendererPusher pusher(renderer);
+	AutoRendererPusher pusher;
+	if (options.push_renderer)
+		pusher = AutoRendererPusher(renderer);
 	renderer.clear_screen();
 	renderer.clear_sprites();
 
 	std::vector<std::shared_ptr<Sprite>> sprites;
 	sprites.reserve(Party::max_party_size * 2);
 
-	int selection = 0;
+	int &selection = options.initial_item;
 
 	auto &tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
 	{
 		auto old = game.get_no_text_delay();
 		game.set_no_text_delay(true);
-		game.run_dialogue(TextResourceId::PartyMenuNormalText, false, false);
+		game.run_dialogue(options.prompt, false, false);
 		game.set_no_text_delay(old);
 	}
 	game.reset_dialogue_state(false);
 
 	bool redraw = true;
 	bool sprite_visibility = false;
+	auto first_switch_selection = options.first_switch_selection;
 
 	game.reset_joypad_state();
 	while (true){
@@ -652,7 +647,13 @@ void PlayerCharacter::display_party_menu(const std::function<InventoryChanges(Po
 			A->set_visible(!active | !sprite_visibility);
 			B->set_visible(active & sprite_visibility);
 
-			tilemap[(i * 2 + 1) * Tilemap::w].tile_no = !active ? ' ' : black_arrow;
+			auto &tile = tilemap[(i * 2 + 1) * Tilemap::w];
+			if (active)
+				tile.tile_no = black_arrow;
+			else if (i == first_switch_selection)
+				tile.tile_no = white_arrow;
+			else
+				tile.tile_no = ' ';
 		}
 		auto t0 = coroutine.get_clock().get();
 		bool break_at_end = false;
@@ -666,7 +667,7 @@ void PlayerCharacter::display_party_menu(const std::function<InventoryChanges(Po
 			auto input = game.joypad_auto_repeat();
 			if (input.get_b()){
 				audio.play_sound(AudioResourceId::SFX_Press_AB);
-				return;
+				return false;
 			}
 			if (input.get_down()){
 				selection++;
@@ -680,11 +681,15 @@ void PlayerCharacter::display_party_menu(const std::function<InventoryChanges(Po
 			}
 			if (input.get_a()){
 				audio.play_sound(AudioResourceId::SFX_Press_AB);
-				auto result = callback(party.get(selection), (selection + 1) * 2);
+				if (!options.callback)
+					return true;
+				auto result = options.callback(party.get(selection), selection);
 				switch (result){
-					case InventoryChanges::Update:
+					case PartyChanges::Exit:
+						return true;
+					case PartyChanges::Update:
 						redraw = true;
-					case InventoryChanges::NoChange:
+					case PartyChanges::NoChange:
 						break;
 					default:
 						throw std::runtime_error("Bad switch.");
@@ -694,6 +699,104 @@ void PlayerCharacter::display_party_menu(const std::function<InventoryChanges(Po
 		}while (!break_at_end);
 		selection = euclidean_modulo_u(selection, party.size());
 	}
+}
+
+void PlayerCharacter::display_party_menu(){
+	PartyMenuOptions options;
+	options.callback = [this, &options](Pokemon &pokemon, int selection){
+		return this->display_pokemon_actions_menu(pokemon, selection, options);
+	};
+	this->display_party_menu(options);
+}
+
+PlayerCharacter::PartyChanges PlayerCharacter::display_pokemon_actions_menu(Pokemon &pokemon, int selection, PartyMenuOptions &options){
+	auto &game = *this->game;
+	auto &engine = game.get_engine();
+	auto &renderer = engine.get_renderer();
+
+	AutoRendererWindowPusher pusher(renderer);
+
+	bool done = false;
+	auto ret = PartyChanges::NoChange;
+
+	std::vector<std::string> items;
+	std::vector<std::function<void()>> callbacks;
+
+	//Populate with HM moves.
+
+	items.push_back("STATS");
+	callbacks.push_back([](){});
+	items.push_back("SWITCH");
+	callbacks.push_back([&](){
+		auto result = this->do_party_switch(selection);
+		ret = result >= 0 ? PartyChanges::Update : PartyChanges::NoChange;
+		if (result >= 0)
+			options.initial_item = result;
+		done = true;
+	});
+	items.push_back("CANCEL");
+	callbacks.push_back([&](){ done = true; });
+
+	StandardMenuOptions options2;
+	options2.position.x = Renderer::logical_screen_width - 1;
+	options2.position.y = Renderer::logical_screen_height - 1;
+	options2.items = &items;
+	options2.push_window = false;
+
+	while (!done && game.handle_standard_menu(options2, callbacks));
+
+	return ret;
+}
+
+int PlayerCharacter::do_party_switch(int first_selection){
+	int ret = -1;
+	auto &party = this->party;
+	
+	PartyMenuOptions options;
+	options.first_switch_selection = first_selection;
+	options.callback = [&party, first_selection, &ret](Pokemon &pokemon, int selection){
+		if (selection == first_selection)
+			return PartyChanges::Exit;
+		int increment = selection > first_selection ? 1 : -1;
+		for (int i = first_selection; i != selection; i += increment)
+			std::swap(party.get(i), party.get(i + increment));
+		ret = selection;
+
+		return PartyChanges::Exit;
+	};
+	options.prompt = TextResourceId::PartyMenuSwapMonText;
+	options.initial_item = first_selection;
+	options.push_renderer = false;
+
+	auto &game = *this->game;
+	auto &renderer = game.get_engine().get_renderer();
+	AutoRendererPusher pusher(renderer);
+
+	this->display_party_menu(options);
+
+	if (ret >= 0){
+		auto &audio = this->game->get_audio_interface();
+		audio.stop_sfx();
+		audio.play_sound(AudioResourceId::SFX_Swap);
+		auto &coroutine = Coroutine::get_current_coroutine();
+		std::vector<std::shared_ptr<Sprite>> sprites;
+		auto &tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
+		draw_party(
+			game,
+			renderer,
+			this->party,
+			sprites,
+			tilemap,
+			std::min(first_selection, ret),
+			std::max(first_selection, ret)
+		);
+		for (size_t i = 0; i < sprites.size(); i += 2)
+			sprites[i]->set_visible(true);
+		coroutine.wait(0.185);
+		audio.stop_sfx();
+		audio.play_sound(AudioResourceId::SFX_Swap);
+	}
+	return ret;
 }
 
 }

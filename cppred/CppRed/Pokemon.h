@@ -38,6 +38,7 @@ public:
 	Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &, const PokemonStats &input_stats = PokemonStats());
 	Pokemon(const Pokemon &) = default;
 	Pokemon(Pokemon &&) = default;
+	Pokemon &operator=(const Pokemon &) = default;
 	int get_stat(PokemonStats::StatId stat){
 		return this->get_stat(stat, false);
 	}

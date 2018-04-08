@@ -96,7 +96,21 @@ private:
 	AutoRendererWindowPusher display_toss_quantity_dialog(int &result, const InventorySpace &, int);
 	InventoryChanges run_item_use_logic(const InventorySpace &is);
 	InventoryChanges run_item_toss_logic(const InventorySpace &is, int y);
-	void display_party_menu(const std::function<InventoryChanges(Pokemon &, int)> &);
+	enum class PartyChanges{
+		NoChange,
+		Update,
+		Exit,
+	};
+	struct PartyMenuOptions{
+		std::function<PartyChanges(Pokemon &, int)> callback;
+		int first_switch_selection = -1;
+		TextResourceId prompt = TextResourceId::PartyMenuNormalText;
+		int initial_item = 0;
+		bool push_renderer = true;
+	};
+	bool display_party_menu(PartyMenuOptions &);
+	PartyChanges display_pokemon_actions_menu(Pokemon &, int, PartyMenuOptions &options);
+	int do_party_switch(int first_selection);
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
 	~PlayerCharacter();

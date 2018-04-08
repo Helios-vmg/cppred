@@ -200,6 +200,7 @@ public:
 	load_save_t load_save();
 	void draw_box(const Point &corner, const Point &size, TileRegion);
 	int handle_standard_menu(StandardMenuOptions &);
+	bool handle_standard_menu(StandardMenuOptions &, const std::vector<std::function<void()>> &callbacks);
 	void draw_bar(const Point &position, TileRegion region, int width, int max, int value);
 	void run_dex_entry(TextResourceId);
 	void run_dialogue(TextResourceId, bool wait_at_end, bool hide_dialogue_at_end);

@@ -186,6 +186,7 @@ public:
 class AutoRendererPusher{
 	Renderer *renderer;
 public:
+	AutoRendererPusher(): renderer(nullptr){}
 	AutoRendererPusher(Renderer &renderer): renderer(&renderer){
 		this->renderer->push();
 	}
