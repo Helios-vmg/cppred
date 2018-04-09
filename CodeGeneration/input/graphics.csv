@@ -816,3 +816,5 @@ PartyListHpBar,graphics/gfx/party_list_hp_bar.png,0
 #ModernWigglytuffPicBack,graphics/pic/modern/back/Wigglytuff.png,0
 #ModernZapdosPicBack,graphics/pic/modern/back/Zapdos.png,0
 #ModernZubatPicBack,graphics/pic/modern/back/Zubat.png,0
+StatsPage1,graphics/gfx/stats_page1.png,0
+StatsPage2,graphics/gfx/stats_page2.png,0
