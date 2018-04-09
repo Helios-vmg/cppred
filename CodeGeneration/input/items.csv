@@ -1,257 +1,257 @@
-id,name,display_name,price,use_function,is_key
-0,None,?????,0,,false
-1,MasterBall,MASTER BALL,0,ItemUseBall,false
-2,UltraBall,ULTRA BALL,1200,ItemUseBall,false
-3,GreatBall,GREAT BALL,600,ItemUseBall,false
-4,PokeBall,POKÈ BALL,200,ItemUseBall,false
-5,TownMap,TOWN MAP,0,ItemUseTownMap,true
-6,Bicycle,BICYCLE,0,ItemUseBicycle,true
-7,Surfboard,?????,0,ItemUseSurfboard,true
-8,SafariBall,SAFARI BALL,1000,ItemUseBall,true
-9,Pokedex,POKÈDEX,0,ItemUsePokedex,true
-10,MoonStone,MOON STONE,0,ItemUseEvoStone,false
-11,Antidote,ANTIDOTE,100,ItemUseMedicine,false
-12,BurnHeal,BURN HEAL,250,ItemUseMedicine,false
-13,IceHeal,ICE HEAL,250,ItemUseMedicine,false
-14,Awakening,AWAKENING,200,ItemUseMedicine,false
-15,ParlyzHeal,PARLYZ HEAL,200,ItemUseMedicine,false
-16,FullRestore,FULL RESTORE,3000,ItemUseMedicine,false
-17,MaxPotion,MAX POTION,2500,ItemUseMedicine,false
-18,HyperPotion,HYPER POTION,1500,ItemUseMedicine,false
-19,SuperPotion,SUPER POTION,700,ItemUseMedicine,false
-20,Potion,POTION,300,ItemUseMedicine,false
-21,Boulderbadge,BOULDERBADGE,0,ItemUseBait,true
-22,Cascadebadge,CASCADEBADGE,0,ItemUseRock,true
-23,Thunderbadge,THUNDERBADGE,0,UnusableItem,true
-24,Rainbowbadge,RAINBOWBADGE,0,UnusableItem,true
-25,Soulbadge,SOULBADGE,0,UnusableItem,true
-26,Marshbadge,MARSHBADGE,0,UnusableItem,true
-27,Volcanobadge,VOLCANOBADGE,0,UnusableItem,true
-28,Earthbadge,EARTHBADGE,0,UnusableItem,true
-29,EscapeRope,ESCAPE ROPE,550,ItemUseEscapeRope,false
-30,Repel,REPEL,350,ItemUseRepel,false
-31,OldAmber,OLD AMBER,0,UnusableItem,true
-32,FireStone,FIRE STONE,2100,ItemUseEvoStone,false
-33,ThunderStone,THUNDERSTONE,2100,ItemUseEvoStone,false
-34,WaterStone,WATER STONE,2100,ItemUseEvoStone,false
-35,HpUp,HP UP,9800,ItemUseVitamin,false
-36,Protein,PROTEIN,9800,ItemUseVitamin,false
-37,Iron,IRON,9800,ItemUseVitamin,false
-38,Carbos,CARBOS,9800,ItemUseVitamin,false
-39,Calcium,CALCIUM,9800,ItemUseVitamin,false
-40,RareCandy,RARE CANDY,4800,ItemUseVitamin,false
-41,DomeFossil,DOME FOSSIL,0,UnusableItem,true
-42,HelixFossil,HELIX FOSSIL,0,UnusableItem,true
-43,SecretKey,SECRET KEY,0,UnusableItem,true
-44,UnusedItem,?????,0,UnusableItem,true
-45,BikeVoucher,BIKE VOUCHER,0,UnusableItem,true
-46,XAccuracy,X ACCURACY,950,ItemUseXAccuracy,false
-47,LeafStone,LEAF STONE,2100,ItemUseEvoStone,false
-48,CardKey,CARD KEY,0,ItemUseCardKey,true
-49,Nugget,NUGGET,10000,UnusableItem,false
-50,PpUp2,PP UP,9800,UnusableItem,false
-51,PokeDoll,POKÈ DOLL,1000,ItemUsePokedoll,false
-52,FullHeal,FULL HEAL,600,ItemUseMedicine,false
-53,Revive,REVIVE,1500,ItemUseMedicine,false
-54,MaxRevive,MAX REVIVE,4000,ItemUseMedicine,false
-55,GuardSpec,GUARD SPEC.,700,ItemUseGuardSpec,false
-56,SuperRepel,SUPER REPEL,500,ItemUseSuperRepel,false
-57,MaxRepel,MAX REPEL,700,ItemUseMaxRepel,false
-58,DireHit,DIRE HIT,650,ItemUseDireHit,false
-59,Coin,COIN,10,UnusableItem,false
-60,FreshWater,FRESH WATER,200,ItemUseMedicine,false
-61,SodaPop,SODA POP,300,ItemUseMedicine,false
-62,Lemonade,LEMONADE,350,ItemUseMedicine,false
-63,SSTicket,S.S.TICKET,0,UnusableItem,true
-64,GoldTeeth,GOLD TEETH,0,UnusableItem,true
-65,XAttack,X ATTACK,500,ItemUseXStat,false
-66,XDefend,X DEFEND,550,ItemUseXStat,false
-67,XSpeed,X SPEED,350,ItemUseXStat,false
-68,XSpecial,X SPECIAL,350,ItemUseXStat,false
-69,CoinCase,COIN CASE,0,ItemUseCoinCase,true
-70,OaksParcel,OAK's PARCEL,0,ItemUseOaksParcel,true
-71,Itemfinder,ITEMFINDER,0,ItemUseItemfinder,true
-72,SilphScope,SILPH SCOPE,0,UnusableItem,true
-73,PokeFlute,POKÈ FLUTE,0,ItemUsePokeflute,true
-74,LiftKey,LIFT KEY,0,UnusableItem,true
-75,ExpAll,EXP.ALL,0,UnusableItem,false
-76,OldRod,OLD ROD,0,ItemUseOldRod,true
-77,GoodRod,GOOD ROD,0,ItemUseGoodRod,true
-78,SuperRod,SUPER ROD,0,ItemUseSuperRod,true
-79,PpUp,PP UP,0,ItemUsePPUp,false
-80,Ether,ETHER,0,ItemUsePPRestore,false
-81,MaxEther,MAX ETHER,0,ItemUsePPRestore,false
-82,Elixer,ELIXER,0,ItemUsePPRestore,false
-83,MaxElixer,MAX ELIXER,0,ItemUsePPRestore,false
-84,FloorB2f,B2F,0,,false
-85,FloorB1f,B1F,0,,false
-86,Floor1f,1F,0,,false
-87,Floor2f,2F,0,,false
-88,Floor3f,3F,0,,false
-89,Floor4f,4F,0,,false
-90,Floor5f,5F,0,,false
-91,Floor6f,6F,0,,false
-92,Floor7f,7F,0,,false
-93,Floor8f,8F,0,,false
-94,Floor9f,9F,0,,false
-95,Floor10f,10F,0,,false
-96,Floor11f,11F,0,,false
-97,FloorB4f,B4F,0,,false
-98,Unknown0x62,,0,,false
-99,Unknown0x63,,0,,false
-100,Unknown0x64,,0,,false
-101,Unknown0x65,,0,,false
-102,Unknown0x66,,0,,false
-103,Unknown0x67,,0,,false
-104,Unknown0x68,,0,,false
-105,Unknown0x69,,0,,false
-106,Unknown0x6A,,0,,false
-107,Unknown0x6B,,0,,false
-108,Unknown0x6C,,0,,false
-109,Unknown0x6D,,0,,false
-110,Unknown0x6E,,0,,false
-111,Unknown0x6F,,0,,false
-112,Unknown0x70,,0,,false
-113,Unknown0x71,,0,,false
-114,Unknown0x72,,0,,false
-115,Unknown0x73,,0,,false
-116,Unknown0x74,,0,,false
-117,Unknown0x75,,0,,false
-118,Unknown0x76,,0,,false
-119,Unknown0x77,,0,,false
-120,Unknown0x78,,0,,false
-121,Unknown0x79,,0,,false
-122,Unknown0x7A,,0,,false
-123,Unknown0x7B,,0,,false
-124,Unknown0x7C,,0,,false
-125,Unknown0x7D,,0,,false
-126,Unknown0x7E,,0,,false
-127,Unknown0x7F,,0,,false
-128,Unknown0x80,,0,,false
-129,Unknown0x81,,0,,false
-130,Unknown0x82,,0,,false
-131,Unknown0x83,,0,,false
-132,Unknown0x84,,0,,false
-133,Unknown0x85,,0,,false
-134,Unknown0x86,,0,,false
-135,Unknown0x87,,0,,false
-136,Unknown0x88,,0,,false
-137,Unknown0x89,,0,,false
-138,Unknown0x8A,,0,,false
-139,Unknown0x8B,,0,,false
-140,Unknown0x8C,,0,,false
-141,Unknown0x8D,,0,,false
-142,Unknown0x8E,,0,,false
-143,Unknown0x8F,,0,,false
-144,Unknown0x90,,0,,false
-145,Unknown0x91,,0,,false
-146,Unknown0x92,,0,,false
-147,Unknown0x93,,0,,false
-148,Unknown0x94,,0,,false
-149,Unknown0x95,,0,,false
-150,Unknown0x96,,0,,false
-151,Unknown0x97,,0,,false
-152,Unknown0x98,,0,,false
-153,Unknown0x99,,0,,false
-154,Unknown0x9A,,0,,false
-155,Unknown0x9B,,0,,false
-156,Unknown0x9C,,0,,false
-157,Unknown0x9D,,0,,false
-158,Unknown0x9E,,0,,false
-159,Unknown0x9F,,0,,false
-160,Unknown0xA0,,0,,false
-161,Unknown0xA1,,0,,false
-162,Unknown0xA2,,0,,false
-163,Unknown0xA3,,0,,false
-164,Unknown0xA4,,0,,false
-165,Unknown0xA5,,0,,false
-166,Unknown0xA6,,0,,false
-167,Unknown0xA7,,0,,false
-168,Unknown0xA8,,0,,false
-169,Unknown0xA9,,0,,false
-170,Unknown0xAA,,0,,false
-171,Unknown0xAB,,0,,false
-172,Unknown0xAC,,0,,false
-173,Unknown0xAD,,0,,false
-174,Unknown0xAE,,0,,false
-175,Unknown0xAF,,0,,false
-176,Unknown0xB0,,0,,false
-177,Unknown0xB1,,0,,false
-178,Unknown0xB2,,0,,false
-179,Unknown0xB3,,0,,false
-180,Unknown0xB4,,0,,false
-181,Unknown0xB5,,0,,false
-182,Unknown0xB6,,0,,false
-183,Unknown0xB7,,0,,false
-184,Unknown0xB8,,0,,false
-185,Unknown0xB9,,0,,false
-186,Unknown0xBA,,0,,false
-187,Unknown0xBB,,0,,false
-188,Unknown0xBC,,0,,false
-189,Unknown0xBD,,0,,false
-190,Unknown0xBE,,0,,false
-191,Unknown0xBF,,0,,false
-192,Unknown0xC0,,0,,false
-193,Unknown0xC1,,0,,false
-194,Unknown0xC2,,0,,false
-195,Unknown0xC3,,0,,false
-196,Hm01,HM01,0,ItemUseHm,true
-197,Hm02,HM02,0,ItemUseHm,true
-198,Hm03,HM03,0,ItemUseHm,true
-199,Hm04,HM04,0,ItemUseHm,true
-200,Hm05,HM05,0,ItemUseHm,true
-201,Tm01,TM01,1500,ItemUseTm,false
-202,Tm02,TM02,1000,ItemUseTm,false
-203,Tm03,TM03,1000,ItemUseTm,false
-204,Tm04,TM04,500,ItemUseTm,false
-205,Tm05,TM05,1500,ItemUseTm,false
-206,Tm06,TM06,2000,ItemUseTm,false
-207,Tm07,TM07,1000,ItemUseTm,false
-208,Tm08,TM08,2000,ItemUseTm,false
-209,Tm09,TM09,1500,ItemUseTm,false
-210,Tm10,TM10,2000,ItemUseTm,false
-211,Tm11,TM11,1000,ItemUseTm,false
-212,Tm12,TM12,500,ItemUseTm,false
-213,Tm13,TM13,2000,ItemUseTm,false
-214,Tm14,TM14,2500,ItemUseTm,false
-215,Tm15,TM15,2500,ItemUseTm,false
-216,Tm16,TM16,2500,ItemUseTm,false
-217,Tm17,TM17,1500,ItemUseTm,false
-218,Tm18,TM18,1000,ItemUseTm,false
-219,Tm19,TM19,1500,ItemUseTm,false
-220,Tm20,TM20,1000,ItemUseTm,false
-221,Tm21,TM21,2500,ItemUseTm,false
-222,Tm22,TM22,2500,ItemUseTm,false
-223,Tm23,TM23,2500,ItemUseTm,false
-224,Tm24,TM24,1000,ItemUseTm,false
-225,Tm25,TM25,2500,ItemUseTm,false
-226,Tm26,TM26,2000,ItemUseTm,false
-227,Tm27,TM27,2500,ItemUseTm,false
-228,Tm28,TM28,1000,ItemUseTm,false
-229,Tm29,TM29,2000,ItemUseTm,false
-230,Tm30,TM30,500,ItemUseTm,false
-231,Tm31,TM31,1000,ItemUseTm,false
-232,Tm32,TM32,500,ItemUseTm,false
-233,Tm33,TM33,500,ItemUseTm,false
-234,Tm34,TM34,1000,ItemUseTm,false
-235,Tm35,TM35,2000,ItemUseTm,false
-236,Tm36,TM36,1000,ItemUseTm,false
-237,Tm37,TM37,1000,ItemUseTm,false
-238,Tm38,TM38,2500,ItemUseTm,false
-239,Tm39,TM39,1000,ItemUseTm,false
-240,Tm40,TM40,2000,ItemUseTm,false
-241,Tm41,TM41,1000,ItemUseTm,false
-242,Tm42,TM42,1000,ItemUseTm,false
-243,Tm43,TM43,2500,ItemUseTm,false
-244,Tm44,TM44,1000,ItemUseTm,false
-245,Tm45,TM45,1000,ItemUseTm,false
-246,Tm46,TM46,2000,ItemUseTm,false
-247,Tm47,TM47,1500,ItemUseTm,false
-248,Tm48,TM48,2000,ItemUseTm,false
-249,Tm49,TM49,2000,ItemUseTm,false
-250,Tm50,TM50,1000,ItemUseTm,false
-251,Unknown0xFB,,0,,false
-252,Unknown0xFC,,0,,false
-253,Unknown0xFD,,0,,false
-254,Unknown0xFE,,0,,false
-255,Unknown0xFF,,0,,false
+id,name,display_name,price,use_function,parameter,is_key
+0,None,?????,0,,,false
+1,MasterBall,MASTER BALL,0,ItemUseBall,,false
+2,UltraBall,ULTRA BALL,1200,ItemUseBall,,false
+3,GreatBall,GREAT BALL,600,ItemUseBall,,false
+4,PokeBall,POKÈ BALL,200,ItemUseBall,,false
+5,TownMap,TOWN MAP,0,ItemUseTownMap,,true
+6,Bicycle,BICYCLE,0,ItemUseBicycle,,true
+7,Surfboard,?????,0,ItemUseSurfboard,,true
+8,SafariBall,SAFARI BALL,1000,ItemUseBall,,true
+9,Pokedex,POKÈDEX,0,ItemUsePokedex,,true
+10,MoonStone,MOON STONE,0,ItemUseEvoStone,,false
+11,Antidote,ANTIDOTE,100,ItemUseMedicine,,false
+12,BurnHeal,BURN HEAL,250,ItemUseMedicine,,false
+13,IceHeal,ICE HEAL,250,ItemUseMedicine,,false
+14,Awakening,AWAKENING,200,ItemUseMedicine,,false
+15,ParlyzHeal,PARLYZ HEAL,200,ItemUseMedicine,,false
+16,FullRestore,FULL RESTORE,3000,ItemUseMedicine,,false
+17,MaxPotion,MAX POTION,2500,ItemUsePotion,-1,false
+18,HyperPotion,HYPER POTION,1500,ItemUsePotion,200,false
+19,SuperPotion,SUPER POTION,700,ItemUsePotion,50,false
+20,Potion,POTION,300,ItemUsePotion,20,false
+21,Boulderbadge,BOULDERBADGE,0,ItemUseBait,,true
+22,Cascadebadge,CASCADEBADGE,0,ItemUseRock,,true
+23,Thunderbadge,THUNDERBADGE,0,UnusableItem,,true
+24,Rainbowbadge,RAINBOWBADGE,0,UnusableItem,,true
+25,Soulbadge,SOULBADGE,0,UnusableItem,,true
+26,Marshbadge,MARSHBADGE,0,UnusableItem,,true
+27,Volcanobadge,VOLCANOBADGE,0,UnusableItem,,true
+28,Earthbadge,EARTHBADGE,0,UnusableItem,,true
+29,EscapeRope,ESCAPE ROPE,550,ItemUseEscapeRope,,false
+30,Repel,REPEL,350,ItemUseRepel,,false
+31,OldAmber,OLD AMBER,0,UnusableItem,,true
+32,FireStone,FIRE STONE,2100,ItemUseEvoStone,,false
+33,ThunderStone,THUNDERSTONE,2100,ItemUseEvoStone,,false
+34,WaterStone,WATER STONE,2100,ItemUseEvoStone,,false
+35,HpUp,HP UP,9800,ItemUseVitamin,,false
+36,Protein,PROTEIN,9800,ItemUseVitamin,,false
+37,Iron,IRON,9800,ItemUseVitamin,,false
+38,Carbos,CARBOS,9800,ItemUseVitamin,,false
+39,Calcium,CALCIUM,9800,ItemUseVitamin,,false
+40,RareCandy,RARE CANDY,4800,ItemUseVitamin,,false
+41,DomeFossil,DOME FOSSIL,0,UnusableItem,,true
+42,HelixFossil,HELIX FOSSIL,0,UnusableItem,,true
+43,SecretKey,SECRET KEY,0,UnusableItem,,true
+44,UnusedItem,?????,0,UnusableItem,,true
+45,BikeVoucher,BIKE VOUCHER,0,UnusableItem,,true
+46,XAccuracy,X ACCURACY,950,ItemUseXAccuracy,,false
+47,LeafStone,LEAF STONE,2100,ItemUseEvoStone,,false
+48,CardKey,CARD KEY,0,ItemUseCardKey,,true
+49,Nugget,NUGGET,10000,UnusableItem,,false
+50,PpUp2,PP UP,9800,UnusableItem,,false
+51,PokeDoll,POKÈ DOLL,1000,ItemUsePokedoll,,false
+52,FullHeal,FULL HEAL,600,ItemUseMedicine,,false
+53,Revive,REVIVE,1500,ItemUseMedicine,,false
+54,MaxRevive,MAX REVIVE,4000,ItemUseMedicine,,false
+55,GuardSpec,GUARD SPEC.,700,ItemUseGuardSpec,,false
+56,SuperRepel,SUPER REPEL,500,ItemUseSuperRepel,,false
+57,MaxRepel,MAX REPEL,700,ItemUseMaxRepel,,false
+58,DireHit,DIRE HIT,650,ItemUseDireHit,,false
+59,Coin,COIN,10,UnusableItem,,false
+60,FreshWater,FRESH WATER,200,ItemUsePotion,50,false
+61,SodaPop,SODA POP,300,ItemUsePotion,60,false
+62,Lemonade,LEMONADE,350,ItemUsePotion,80,false
+63,SSTicket,S.S.TICKET,0,UnusableItem,,true
+64,GoldTeeth,GOLD TEETH,0,UnusableItem,,true
+65,XAttack,X ATTACK,500,ItemUseXStat,,false
+66,XDefend,X DEFEND,550,ItemUseXStat,,false
+67,XSpeed,X SPEED,350,ItemUseXStat,,false
+68,XSpecial,X SPECIAL,350,ItemUseXStat,,false
+69,CoinCase,COIN CASE,0,ItemUseCoinCase,,true
+70,OaksParcel,OAK's PARCEL,0,ItemUseOaksParcel,,true
+71,Itemfinder,ITEMFINDER,0,ItemUseItemfinder,,true
+72,SilphScope,SILPH SCOPE,0,UnusableItem,,true
+73,PokeFlute,POKÈ FLUTE,0,ItemUsePokeflute,,true
+74,LiftKey,LIFT KEY,0,UnusableItem,,true
+75,ExpAll,EXP.ALL,0,UnusableItem,,false
+76,OldRod,OLD ROD,0,ItemUseOldRod,,true
+77,GoodRod,GOOD ROD,0,ItemUseGoodRod,,true
+78,SuperRod,SUPER ROD,0,ItemUseSuperRod,,true
+79,PpUp,PP UP,0,ItemUsePPUp,,false
+80,Ether,ETHER,0,ItemUsePPRestore,,false
+81,MaxEther,MAX ETHER,0,ItemUsePPRestore,,false
+82,Elixer,ELIXER,0,ItemUsePPRestore,,false
+83,MaxElixer,MAX ELIXER,0,ItemUsePPRestore,,false
+84,FloorB2f,B2F,0,,,false
+85,FloorB1f,B1F,0,,,false
+86,Floor1f,1F,0,,,false
+87,Floor2f,2F,0,,,false
+88,Floor3f,3F,0,,,false
+89,Floor4f,4F,0,,,false
+90,Floor5f,5F,0,,,false
+91,Floor6f,6F,0,,,false
+92,Floor7f,7F,0,,,false
+93,Floor8f,8F,0,,,false
+94,Floor9f,9F,0,,,false
+95,Floor10f,10F,0,,,false
+96,Floor11f,11F,0,,,false
+97,FloorB4f,B4F,0,,,false
+98,Unknown0x62,,0,,,false
+99,Unknown0x63,,0,,,false
+100,Unknown0x64,,0,,,false
+101,Unknown0x65,,0,,,false
+102,Unknown0x66,,0,,,false
+103,Unknown0x67,,0,,,false
+104,Unknown0x68,,0,,,false
+105,Unknown0x69,,0,,,false
+106,Unknown0x6A,,0,,,false
+107,Unknown0x6B,,0,,,false
+108,Unknown0x6C,,0,,,false
+109,Unknown0x6D,,0,,,false
+110,Unknown0x6E,,0,,,false
+111,Unknown0x6F,,0,,,false
+112,Unknown0x70,,0,,,false
+113,Unknown0x71,,0,,,false
+114,Unknown0x72,,0,,,false
+115,Unknown0x73,,0,,,false
+116,Unknown0x74,,0,,,false
+117,Unknown0x75,,0,,,false
+118,Unknown0x76,,0,,,false
+119,Unknown0x77,,0,,,false
+120,Unknown0x78,,0,,,false
+121,Unknown0x79,,0,,,false
+122,Unknown0x7A,,0,,,false
+123,Unknown0x7B,,0,,,false
+124,Unknown0x7C,,0,,,false
+125,Unknown0x7D,,0,,,false
+126,Unknown0x7E,,0,,,false
+127,Unknown0x7F,,0,,,false
+128,Unknown0x80,,0,,,false
+129,Unknown0x81,,0,,,false
+130,Unknown0x82,,0,,,false
+131,Unknown0x83,,0,,,false
+132,Unknown0x84,,0,,,false
+133,Unknown0x85,,0,,,false
+134,Unknown0x86,,0,,,false
+135,Unknown0x87,,0,,,false
+136,Unknown0x88,,0,,,false
+137,Unknown0x89,,0,,,false
+138,Unknown0x8A,,0,,,false
+139,Unknown0x8B,,0,,,false
+140,Unknown0x8C,,0,,,false
+141,Unknown0x8D,,0,,,false
+142,Unknown0x8E,,0,,,false
+143,Unknown0x8F,,0,,,false
+144,Unknown0x90,,0,,,false
+145,Unknown0x91,,0,,,false
+146,Unknown0x92,,0,,,false
+147,Unknown0x93,,0,,,false
+148,Unknown0x94,,0,,,false
+149,Unknown0x95,,0,,,false
+150,Unknown0x96,,0,,,false
+151,Unknown0x97,,0,,,false
+152,Unknown0x98,,0,,,false
+153,Unknown0x99,,0,,,false
+154,Unknown0x9A,,0,,,false
+155,Unknown0x9B,,0,,,false
+156,Unknown0x9C,,0,,,false
+157,Unknown0x9D,,0,,,false
+158,Unknown0x9E,,0,,,false
+159,Unknown0x9F,,0,,,false
+160,Unknown0xA0,,0,,,false
+161,Unknown0xA1,,0,,,false
+162,Unknown0xA2,,0,,,false
+163,Unknown0xA3,,0,,,false
+164,Unknown0xA4,,0,,,false
+165,Unknown0xA5,,0,,,false
+166,Unknown0xA6,,0,,,false
+167,Unknown0xA7,,0,,,false
+168,Unknown0xA8,,0,,,false
+169,Unknown0xA9,,0,,,false
+170,Unknown0xAA,,0,,,false
+171,Unknown0xAB,,0,,,false
+172,Unknown0xAC,,0,,,false
+173,Unknown0xAD,,0,,,false
+174,Unknown0xAE,,0,,,false
+175,Unknown0xAF,,0,,,false
+176,Unknown0xB0,,0,,,false
+177,Unknown0xB1,,0,,,false
+178,Unknown0xB2,,0,,,false
+179,Unknown0xB3,,0,,,false
+180,Unknown0xB4,,0,,,false
+181,Unknown0xB5,,0,,,false
+182,Unknown0xB6,,0,,,false
+183,Unknown0xB7,,0,,,false
+184,Unknown0xB8,,0,,,false
+185,Unknown0xB9,,0,,,false
+186,Unknown0xBA,,0,,,false
+187,Unknown0xBB,,0,,,false
+188,Unknown0xBC,,0,,,false
+189,Unknown0xBD,,0,,,false
+190,Unknown0xBE,,0,,,false
+191,Unknown0xBF,,0,,,false
+192,Unknown0xC0,,0,,,false
+193,Unknown0xC1,,0,,,false
+194,Unknown0xC2,,0,,,false
+195,Unknown0xC3,,0,,,false
+196,Hm01,HM01,0,ItemUseHm,,true
+197,Hm02,HM02,0,ItemUseHm,,true
+198,Hm03,HM03,0,ItemUseHm,,true
+199,Hm04,HM04,0,ItemUseHm,,true
+200,Hm05,HM05,0,ItemUseHm,,true
+201,Tm01,TM01,1500,ItemUseTm,,false
+202,Tm02,TM02,1000,ItemUseTm,,false
+203,Tm03,TM03,1000,ItemUseTm,,false
+204,Tm04,TM04,500,ItemUseTm,,false
+205,Tm05,TM05,1500,ItemUseTm,,false
+206,Tm06,TM06,2000,ItemUseTm,,false
+207,Tm07,TM07,1000,ItemUseTm,,false
+208,Tm08,TM08,2000,ItemUseTm,,false
+209,Tm09,TM09,1500,ItemUseTm,,false
+210,Tm10,TM10,2000,ItemUseTm,,false
+211,Tm11,TM11,1000,ItemUseTm,,false
+212,Tm12,TM12,500,ItemUseTm,,false
+213,Tm13,TM13,2000,ItemUseTm,,false
+214,Tm14,TM14,2500,ItemUseTm,,false
+215,Tm15,TM15,2500,ItemUseTm,,false
+216,Tm16,TM16,2500,ItemUseTm,,false
+217,Tm17,TM17,1500,ItemUseTm,,false
+218,Tm18,TM18,1000,ItemUseTm,,false
+219,Tm19,TM19,1500,ItemUseTm,,false
+220,Tm20,TM20,1000,ItemUseTm,,false
+221,Tm21,TM21,2500,ItemUseTm,,false
+222,Tm22,TM22,2500,ItemUseTm,,false
+223,Tm23,TM23,2500,ItemUseTm,,false
+224,Tm24,TM24,1000,ItemUseTm,,false
+225,Tm25,TM25,2500,ItemUseTm,,false
+226,Tm26,TM26,2000,ItemUseTm,,false
+227,Tm27,TM27,2500,ItemUseTm,,false
+228,Tm28,TM28,1000,ItemUseTm,,false
+229,Tm29,TM29,2000,ItemUseTm,,false
+230,Tm30,TM30,500,ItemUseTm,,false
+231,Tm31,TM31,1000,ItemUseTm,,false
+232,Tm32,TM32,500,ItemUseTm,,false
+233,Tm33,TM33,500,ItemUseTm,,false
+234,Tm34,TM34,1000,ItemUseTm,,false
+235,Tm35,TM35,2000,ItemUseTm,,false
+236,Tm36,TM36,1000,ItemUseTm,,false
+237,Tm37,TM37,1000,ItemUseTm,,false
+238,Tm38,TM38,2500,ItemUseTm,,false
+239,Tm39,TM39,1000,ItemUseTm,,false
+240,Tm40,TM40,2000,ItemUseTm,,false
+241,Tm41,TM41,1000,ItemUseTm,,false
+242,Tm42,TM42,1000,ItemUseTm,,false
+243,Tm43,TM43,2500,ItemUseTm,,false
+244,Tm44,TM44,1000,ItemUseTm,,false
+245,Tm45,TM45,1000,ItemUseTm,,false
+246,Tm46,TM46,2000,ItemUseTm,,false
+247,Tm47,TM47,1500,ItemUseTm,,false
+248,Tm48,TM48,2000,ItemUseTm,,false
+249,Tm49,TM49,2000,ItemUseTm,,false
+250,Tm50,TM50,1000,ItemUseTm,,false
+251,Unknown0xFB,,0,,,false
+252,Unknown0xFC,,0,,,false
+253,Unknown0xFD,,0,,,false
+254,Unknown0xFE,,0,,,false
+255,Unknown0xFF,,0,,,false

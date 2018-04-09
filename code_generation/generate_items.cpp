@@ -21,6 +21,7 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 		"price",
 		"is_key",
 		"use_function",
+		"parameter",
 	};
 
 	std::ofstream header("output/items.h");
@@ -52,6 +53,9 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 			auto price = to_unsigned(row[3]);
 			auto is_key = to_bool(row[4]);
 			auto use_function = row[5];
+			int parameter = 0;
+			if (row[6].size())
+				parameter = to_int(row[6]);
 
 			header << "    " << name << " = " << id << ",\n";
 			source <<
@@ -71,7 +75,7 @@ static void generate_items_internal(known_hashes_t &known_hashes){
 				source << "CppRed::" << use_function;
 			else
 				source << "nullptr";
-			source << ", },\n";
+			source << ", " << parameter << ", },\n";
 		}catch (std::exception &e){
 			std::stringstream stream;
 			stream << "Error while parsing CSV row " << i + 1 << ": " << e.what();

@@ -5,6 +5,7 @@
 #include "../Maps.h"
 #include "World.h"
 #include "MainMenu.h"
+#include "ItemFunctions.h"
 #include "../../CodeGeneration/output/variables.h"
 #ifndef HAVE_PCH
 #include <cassert>
@@ -310,10 +311,13 @@ void PlayerCharacter::display_inventory_menu(){
 }
 
 PlayerCharacter::InventoryChanges PlayerCharacter::run_item_use_logic(const InventorySpace &is){
+	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
 	auto &data = item_data[(int)is.item];
-	data.use_function(is.item, *this->game, *this);
-	//TODO
-	return InventoryChanges::NoChange;
+	auto result = data.use_function(data, *this->game, *this);
+	if (!result.was_used())
+		return InventoryChanges::NoChange;
+	this->inventory.remove(is.item, 1);
+	return InventoryChanges::Update;
 }
 
 PlayerCharacter::InventoryChanges PlayerCharacter::run_item_toss_logic(const InventorySpace& is, int y){
@@ -555,39 +559,46 @@ AutoRendererWindowPusher PlayerCharacter::display_toss_quantity_dialog(int &resu
 	return pusher;
 }
 
-template <size_t N>
-static void draw_party(Game &game, Renderer &renderer, Party &party, std::vector<std::shared_ptr<Sprite>> &sprites, Tile (&tilemap)[N], int hidden_start = -1, int hidden_end = -1){
-	fill(tilemap, Tile());
-	sprites.clear();
+void draw_party(Renderer &renderer, Party &party, Tilemap &tilemap, std::vector<std::shared_ptr<Sprite>> &sprites, int hidden_start, int hidden_end){
+	draw_party(renderer, party, tilemap, &sprites, hidden_start, hidden_end);
+}
+
+void draw_party(Renderer &renderer, Party &party, Tilemap &tilemap, std::vector<std::shared_ptr<Sprite>> *sprites, int hidden_start, int hidden_end){
+	fill(tilemap.tiles, Tile());
+	if (sprites)
+		sprites->clear();
 	int next_member_index = 0;
 	for (Pokemon &p : party.iterate()){
 		auto member_index = next_member_index++;
 		if (member_index >= hidden_start && member_index <= hidden_end)
 			continue;
-		auto &data = p.get_data();
-		auto sprite = renderer.create_sprite(2, 2);
-		int i = 0,
-			base_tile = MonPartySprites2.first_tile + (int)data.overworld_sprite * 2;
-		for (SpriteTile &tile : sprite->iterate_tiles()){
-			tile.tile_no = base_tile + i;
-			i++;
-			if (!(i % 2))
-				i = i - 2 + MonPartySprites2.width;
-			
-		}
-		sprite->set_position(Point(1, member_index * 2) * Renderer::tile_size);
-		sprites.push_back(std::move(sprite));
+		if (sprites){
+			auto &data = p.get_data();
+			auto sprite = renderer.create_sprite(2, 2);
+			int i = 0,
+				base_tile = MonPartySprites2.first_tile + (int)data.overworld_sprite * 2;
+			for (SpriteTile &tile : sprite->iterate_tiles()){
+				tile.tile_no = base_tile + i;
+				i++;
+				if (!(i % 2))
+					i = i - 2 + MonPartySprites2.width;
 
-		sprite = renderer.create_sprite(2, 2);
-		i = MonPartySprites2.width * 2;
-		for (SpriteTile &tile : sprite->iterate_tiles()){
-			tile.tile_no = base_tile + i;
-			i++;
-			if (!(i % 2))
-				i = i - 2 + MonPartySprites2.width;
+			}
+			sprite->set_position(Point(1, member_index * 2) * Renderer::tile_size);
+			sprite->set_visible(true);
+			sprites->push_back(std::move(sprite));
+
+			sprite = renderer.create_sprite(2, 2);
+			i = MonPartySprites2.width * 2;
+			for (SpriteTile &tile : sprite->iterate_tiles()){
+				tile.tile_no = base_tile + i;
+				i++;
+				if (!(i % 2))
+					i = i - 2 + MonPartySprites2.width;
+			}
+			sprite->set_position(Point(1, member_index * 2) * Renderer::tile_size);
+			sprites->push_back(sprite);
 		}
-		sprite->set_position(Point(1, member_index * 2) * Renderer::tile_size);
-		sprites.push_back(sprite);
 
 		auto hp = p.get_current_hp();
 		auto max_hp = p.get_max_hp();
@@ -621,7 +632,8 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 
 	int &selection = options.initial_item;
 
-	auto &tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
+	auto &tilemap = renderer.get_tilemap(TileRegion::Background);
+	auto &tiles = tilemap.tiles;
 	{
 		auto old = game.get_no_text_delay();
 		game.set_no_text_delay(true);
@@ -637,7 +649,7 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 	game.reset_joypad_state();
 	while (true){
 		if (redraw){
-			draw_party(game, renderer, party, sprites, tilemap);
+			draw_party(renderer, party, tilemap, sprites);
 			redraw = false;
 			sprite_visibility = false;
 		}
@@ -648,7 +660,7 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 			A->set_visible(!active | !sprite_visibility);
 			B->set_visible(active & sprite_visibility);
 
-			auto &tile = tilemap[(i * 2 + 1) * Tilemap::w];
+			auto &tile = tiles[(i * 2 + 1) * Tilemap::w];
 			if (active)
 				tile.tile_no = black_arrow;
 			else if (i == first_switch_selection)
@@ -802,18 +814,15 @@ int PlayerCharacter::do_party_switch(int first_selection){
 		audio.play_sound(AudioResourceId::SFX_Swap);
 		auto &coroutine = Coroutine::get_current_coroutine();
 		std::vector<std::shared_ptr<Sprite>> sprites;
-		auto &tilemap = renderer.get_tilemap(TileRegion::Background).tiles;
+		auto &tilemap = renderer.get_tilemap(TileRegion::Background);
 		draw_party(
-			game,
 			renderer,
 			this->party,
-			sprites,
 			tilemap,
+			sprites,
 			std::min(first_selection, ret),
 			std::max(first_selection, ret)
 		);
-		for (size_t i = 0; i < sprites.size(); i += 2)
-			sprites[i]->set_visible(true);
 		coroutine.wait(0.185);
 		audio.stop_sfx();
 		audio.play_sound(AudioResourceId::SFX_Swap);

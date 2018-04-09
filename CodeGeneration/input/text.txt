@@ -14170,3 +14170,6 @@ STATS
 SWITCH
 CANCEL<end>
 
+.EmptyPartyText
+You don't have
+any POKÈMON!<prompt><done>

@@ -142,6 +142,7 @@ public:
 	void mass_set_tiles(const std::vector<Point> &tiles, const Tile &);
 	void clear_subpalettes(SubPaletteRegion);
 	void clear_screen();
+	void clear_windows();
 	void set_enable_bg(bool value);
 	void set_enable_window(bool value);
 	bool get_enable_window();

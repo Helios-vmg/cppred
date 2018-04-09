@@ -94,4 +94,10 @@ struct Tilemap{
 		for (int i = size; i--;)
 			std::swap(this->tiles[i], other.tiles[i]);
 	}
+	Tile &operator[](const Point &p){
+		return this->tiles[p.x + p.y * w];
+	}
+	const Tile &operator[](const Point &p) const{
+		return this->tiles[p.x + p.y * w];
+	}
 };

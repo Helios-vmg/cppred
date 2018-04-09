@@ -45,6 +45,18 @@ class PlayerCharacter : public Actor, public Trainer{
 public:
 	static const Point screen_block_offset;
 	static const size_t max_pc_size;
+	enum class PartyChanges{
+		NoChange,
+		Update,
+		Exit,
+	};
+	struct PartyMenuOptions{
+		std::function<PartyChanges(Pokemon &, int)> callback;
+		int first_switch_selection = -1;
+		TextResourceId prompt = TextResourceId::PartyMenuNormalText;
+		int initial_item = 0;
+		bool push_renderer = true;
+	};
 private:
 	typedef bool (PlayerCharacter::*warp_check_f)(const World &) const;
 	static const warp_check_f warp_check_functions[2];
@@ -96,19 +108,6 @@ private:
 	AutoRendererWindowPusher display_toss_quantity_dialog(int &result, const InventorySpace &, int);
 	InventoryChanges run_item_use_logic(const InventorySpace &is);
 	InventoryChanges run_item_toss_logic(const InventorySpace &is, int y);
-	enum class PartyChanges{
-		NoChange,
-		Update,
-		Exit,
-	};
-	struct PartyMenuOptions{
-		std::function<PartyChanges(Pokemon &, int)> callback;
-		int first_switch_selection = -1;
-		TextResourceId prompt = TextResourceId::PartyMenuNormalText;
-		int initial_item = 0;
-		bool push_renderer = true;
-	};
-	bool display_party_menu(PartyMenuOptions &);
 	PartyChanges display_pokemon_actions_menu(Pokemon &, int, PartyMenuOptions &options);
 	int do_party_switch(int first_selection);
 public:
@@ -124,6 +123,7 @@ public:
 	const std::string &get_name() const override{
 		return Actor::get_name();
 	}
+	bool display_party_menu(PartyMenuOptions &);
 };
 
 class AutoIgnoreInput{
@@ -149,5 +149,8 @@ public:
 		return *this;
 	}
 };
+
+void draw_party(Renderer &renderer, Party &party, Tilemap &tilemap, std::vector<std::shared_ptr<Sprite>> &sprites, int hidden_start = -1, int hidden_end = -1);
+void draw_party(Renderer &renderer, Party &party, Tilemap &tilemap, std::vector<std::shared_ptr<Sprite>> *sprites = nullptr, int hidden_start = -1, int hidden_end = -1);
 
 }

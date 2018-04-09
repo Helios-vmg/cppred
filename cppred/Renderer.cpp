@@ -469,6 +469,11 @@ void Renderer::clear_screen(){
 	this->set_default_palettes();
 }
 
+void Renderer::clear_windows(){
+	while (this->current_context->windows.size() > 1)
+		this->pop_window();
+}
+
 void Renderer::set_enable_bg(bool value){
 	this->enable_bg() = value;
 }

@@ -71,7 +71,7 @@ public:
 	}
 	DEFINE_GETTER(species)
 	DEFINE_GETTER(level)
-	DEFINE_GETTER(current_hp)
+	DEFINE_GETTER_SETTER(current_hp)
 	DEFINE_GETTER_SETTER(nickname)
 	int get_max_hp(){
 		return this->get_stat(PokemonStats::StatId::Hp);

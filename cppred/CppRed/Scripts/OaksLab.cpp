@@ -235,12 +235,15 @@ DECLARE_SCRIPT(OaksLabScript10){
 	blue.set_facing_direction(FacingDirection::Down);
 
 	auto blue_party = (red_ball_data.starter_index + 2) % 3;
-	game.run_trainer_battle(
-		TextResourceId::FirstBlueBattlePlayerWon,
-		TextResourceId::FirstBlueBattlePlayerLost,
-		blue,
-		blue_party
-	);
+	{
+		auto trainer_class = blue.get_party(blue_party);
+		trainer_class.set_display_name(vs.get(StringVariableId::rival_name));
+		game.run_trainer_battle(
+			TextResourceId::FirstBlueBattlePlayerWon,
+			TextResourceId::FirstBlueBattlePlayerLost,
+			std::move(trainer_class)
+		);
+	}
 	world.play_current_map_music();
 	player.get_party().heal();
 	vs.set(EventId::event_battled_rival_in_oaks_lab, true);
@@ -327,7 +330,7 @@ static void ball_script(const script_parameters &parameters, int index, bool run
 	auto &audio = game.get_audio_interface();
 	audio.play_sound(AudioResourceId::SFX_Get_Key_Item);
 	audio.wait_for_sfx_to_end();
-	Pokemon new_pokemon(reds_pokemon.species_id, 5, player.get_trainer_id(), game.get_engine().get_prng());
+	Pokemon new_pokemon(reds_pokemon.species_id, 5, player, game.get_engine().get_prng());
 	game.reset_dialogue_state(false);
 	standard_add_pokemon(game, player, new_pokemon);
 	vs.set(IntegerVariableId::event_received_starter, 1);
