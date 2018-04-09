@@ -469,7 +469,10 @@ TypeStore::TypeStore(const char *path){
 		this->types_by_name[move->get_name()] = move;
 		this->types_by_id[move->get_id()] = move;
 		unsigned id = this->normalized_strings.size();
-		this->normalized_strings[move->get_display_name()] = id;
+		auto name = move->get_display_name();
+		if (this->normalized_strings.find(name) != this->normalized_strings.end())
+			continue;
+		this->normalized_strings[name] = id;
 	}
 }
 
