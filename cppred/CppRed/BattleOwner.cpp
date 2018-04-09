@@ -176,7 +176,7 @@ void BattleOwner::display_opponent_pokemon_status(Pokemon &pokemon){
 	renderer.put_string({1, 0}, TileRegion::Background, pokemon.get_display_name(), max_pokemon_name_size);
 	renderer.draw_image_to_tilemap({1, 1}, OpponentPokemonBattleLayout);
 	renderer.put_string({5, 1}, TileRegion::Background, number_to_decimal_string(pokemon.get_level()).data(), 3);
-	game.draw_bar({4, 2}, TileRegion::Background, 6, pokemon.get_max_hp(), pokemon.get_current_hp());
+	renderer.draw_bar({4, 2}, TileRegion::Background, 6, pokemon.get_max_hp(), pokemon.get_current_hp());
 }
 
 void BattleOwner::display_player_pokemon_status(Pokemon &pokemon){
@@ -186,7 +186,7 @@ void BattleOwner::display_player_pokemon_status(Pokemon &pokemon){
 	renderer.put_string({10, 7}, TileRegion::Background, pokemon.get_display_name(), max_pokemon_name_size);
 	renderer.draw_image_to_tilemap({9, 8}, PlayerPokemonBattleLayout);
 	renderer.put_string({15, 8}, TileRegion::Background, number_to_decimal_string(pokemon.get_level()).data(), 3);
-	game.draw_bar({12, 9}, TileRegion::Background, 6, pokemon.get_max_hp(), pokemon.get_current_hp());
+	renderer.draw_bar({12, 9}, TileRegion::Background, 6, pokemon.get_max_hp(), pokemon.get_current_hp());
 	renderer.put_string({11, 10}, TileRegion::Background, number_to_decimal_string(pokemon.get_current_hp(), 3).data());
 	renderer.put_string({15, 10}, TileRegion::Background, number_to_decimal_string(pokemon.get_max_hp(), 3).data());
 }

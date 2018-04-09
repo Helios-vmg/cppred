@@ -595,7 +595,7 @@ static void draw_party(Game &game, Renderer &renderer, Party &party, std::vector
 		Point point(3, member_index * 2);
 		renderer.draw_image_to_tilemap(point, PartyListHpBar);
 		renderer.put_string(point, TileRegion::Background, p.get_display_name(), max_pokemon_name_size);
-		game.draw_bar(point + Point(3, 1), TileRegion::Background, 6, max_hp, hp);
+		renderer.draw_bar(point + Point(3, 1), TileRegion::Background, 6, max_hp, hp);
 		renderer.put_string({14, member_index * 2}, TileRegion::Background, number_to_decimal_string(p.get_level()).data(), 3);
 		renderer.put_string({13, member_index * 2 + 1}, TileRegion::Background, number_to_decimal_string(hp, 3).data());
 		renderer.put_string({16, member_index * 2 + 1}, TileRegion::Background, "/");
@@ -614,6 +614,7 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 		pusher = AutoRendererPusher(renderer);
 	renderer.clear_screen();
 	renderer.clear_sprites();
+	renderer.set_palette(PaletteRegion::Sprites0, default_world_sprite_palette);
 
 	std::vector<std::shared_ptr<Sprite>> sprites;
 	sprites.reserve(Party::max_party_size * 2);
@@ -667,6 +668,7 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 			auto input = game.joypad_auto_repeat();
 			if (input.get_b()){
 				audio.play_sound(AudioResourceId::SFX_Press_AB);
+				game.reset_joypad_state();
 				return false;
 			}
 			if (input.get_down()){
@@ -681,11 +683,14 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 			}
 			if (input.get_a()){
 				audio.play_sound(AudioResourceId::SFX_Press_AB);
-				if (!options.callback)
+				if (!options.callback){
+					game.reset_joypad_state();
 					return true;
+				}
 				auto result = options.callback(party.get(selection), selection);
 				switch (result){
 					case PartyChanges::Exit:
+						game.reset_joypad_state();
 						return true;
 					case PartyChanges::Update:
 						redraw = true;
@@ -725,9 +730,26 @@ PlayerCharacter::PartyChanges PlayerCharacter::display_pokemon_actions_menu(Poke
 	//Populate with HM moves.
 
 	items.push_back("STATS");
-	callbacks.push_back([](){});
+	callbacks.push_back([this, selection](){
+		auto current = selection;
+		while (true){
+			switch (this->party.get(current).display_stats_screen(*this->game)){
+				case StatsScreenResult::Close:
+					break;
+				case StatsScreenResult::GoToNext:
+					current = (current + 1) % this->party.size();
+					continue;
+				case StatsScreenResult::GoToPrevious:
+					current = euclidean_modulo_u(current - 1, this->party.size());
+					continue;
+				default:
+					throw std::runtime_error("Bad switch.");
+			}
+			break;
+		}
+	});
 	items.push_back("SWITCH");
-	callbacks.push_back([&](){
+	callbacks.push_back([this, selection, &ret, &options, &done](){
 		auto result = this->do_party_switch(selection);
 		ret = result >= 0 ? PartyChanges::Update : PartyChanges::NoChange;
 		if (result >= 0)

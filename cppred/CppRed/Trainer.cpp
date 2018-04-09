@@ -10,6 +10,7 @@ namespace CppRed{
 
 const size_t Trainer::max_inventory_size = 20;
 const int Trainer::max_inventory_item_quantity = 99;
+const std::string Trainer::empty_string;
 
 Trainer::Trainer(XorShift128 &rng):
 		inventory(max_inventory_size, max_inventory_item_quantity){
@@ -92,7 +93,7 @@ bool Inventory::empty() const{
 ComputerTrainer::ComputerTrainer(FullTrainerClass &ftc, XorShift128 &prng):
 		Trainer(prng){
 	for (auto &member : ftc.get_party())
-		this->party.add_pokemon(member.species, member.level, this->trainer_id, prng);
+		this->party.add_pokemon(member.species, member.level, *this, prng);
 }
 
 }

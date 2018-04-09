@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "Pokemon.h"
+#include "Game.h"
+#include "Trainer.h"
+#include "../Renderer.h"
 #ifndef HAVE_PCH
 #include <sstream>
 #include <cmath>
@@ -7,10 +10,10 @@
 
 namespace CppRed{
 
-bool Party::add_pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &rng){
+bool Party::add_pokemon(SpeciesId species, int level, Trainer &ot, XorShift128 &rng){
 	if (this->members.size() >= this->max_party_size)
 		return false;
-	this->members.emplace_back(species, level, original_trainer_id, rng);
+	this->members.emplace_back(species, level, ot, rng);
 	return true;
 }
 
@@ -94,7 +97,7 @@ int Pokemon::get_iv(PokemonStats::StatId which) const{
 }
 
 
-Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id, XorShift128 &rng, const PokemonStats &input_stats):
+Pokemon::Pokemon(SpeciesId species, int level, const Trainer &ot, XorShift128 &rng, const PokemonStats &input_stats):
 		computed_stats(-1, -1, -1, -1, -1){
 	this->species = species;
 	this->level = level;
@@ -107,10 +110,11 @@ Pokemon::Pokemon(SpeciesId species, int level, std::uint16_t original_trainer_id
 		this->pp[i] = move_data ? move_data->pp : 0;
 		i++;
 	}
-	this->original_trainer_id = original_trainer_id;
+	this->original_trainer_id = ot.get_trainer_id();
+	this->original_trainer_name = ot.get_name();
 	this->status = StatusCondition::Normal;
 	rng.generate(this->individual_values);
-	this->current_hp = this->get_stat(PokemonStats::StatId::Hp, true);
+	this->current_hp = this->get_max_hp();
 	this->experience = this->calculate_min_xp_to_reach_level(this->species, this->level);
 	if (!input_stats.null())
 		this->computed_stats = input_stats;
@@ -182,7 +186,7 @@ int Pokemon::calculate_level_at_xp(SpeciesId species, int xp){
 }
 
 void Pokemon::heal(){
-	this->current_hp = this->get_stat(PokemonStats::StatId::Hp);
+	this->current_hp = this->get_max_hp();
 	this->status = StatusCondition::Normal;
 }
 
@@ -217,6 +221,134 @@ const Pokemon &Party::get(size_t i) const{
 	if (i >= this->members.size())
 		throw std::runtime_error("Party::get(): Bad member index.");
 	return this->members[i];
+}
+
+StatsScreenResult Pokemon::display_stats_screen(Game &game){
+	auto &renderer = game.get_engine().get_renderer();
+	auto &audio = game.get_audio_interface();
+	AutoRendererPusher pusher(renderer);
+	renderer.clear_screen();
+	renderer.clear_sprites();
+	renderer.set_enable_window(false);
+
+	this->render_page2(renderer);
+	auto &tilemap = renderer.get_tilemap(TileRegion::Background);
+	auto tilemap_copy = tilemap;
+	this->render_page1(renderer);
+
+	audio.play_cry(this->species);
+	audio.wait_for_sfx_to_end();
+
+	StatsScreenResult ret = StatsScreenResult::Close;
+	int current_page = 0;
+
+	auto &coroutine = Coroutine::get_current_coroutine();
+	game.reset_joypad_state();
+	while (true){
+		coroutine.yield();
+		auto input = game.joypad_auto_repeat();
+		if (input.get_b())
+			break;
+		if (input.get_a() || input.get_right() && current_page == 0){
+			if (current_page == 1)
+				break;
+			current_page = 1;
+			tilemap.swap(tilemap_copy);
+			continue;
+		}
+		if (input.get_left() && current_page == 1){
+			current_page = 0;
+			tilemap.swap(tilemap_copy);
+			continue;
+		}
+		if (input.get_down()){
+			ret = StatsScreenResult::GoToNext;
+			break;
+		}
+		if (input.get_up()){
+			ret = StatsScreenResult::GoToPrevious;
+			break;
+		}
+	}
+	game.reset_joypad_state();
+	return ret;
+}
+
+void Pokemon::render_common_data(Renderer &renderer, const GraphicsAsset &layout){
+	auto &data = this->get_data();
+
+	//Prepare layout.
+	renderer.draw_image_to_tilemap({0, 0}, layout);
+	
+	//Display image with Pokedex ID.
+	renderer.draw_image_to_tilemap_flipped({1, 0}, *data.front);
+	renderer.put_string({3, 7}, TileRegion::Background, number_to_decimal_string((int)data.pokedex_id, 3, '0').data());
+	
+	//Display name.
+	renderer.put_string({9, 1}, TileRegion::Background, this->get_display_name(), max_pokemon_name_size);
+}
+
+void Pokemon::render_page1(Renderer &renderer){
+	auto &data = this->get_data();
+
+	this->render_common_data(renderer, StatsPage1);
+
+	//Display status.
+	renderer.put_string({15, 2}, TileRegion::Background, number_to_decimal_string(this->level).data());
+	auto hp = this->get_current_hp();
+	auto max_hp = this->get_max_hp();
+	renderer.draw_bar({13, 3}, TileRegion::Background, 6, max_hp, hp);
+	renderer.put_string({12, 4}, TileRegion::Background, number_to_decimal_string(hp, 3).data());
+	renderer.put_string({16, 4}, TileRegion::Background, number_to_decimal_string(max_hp, 3).data());
+	renderer.put_string({16, 6}, TileRegion::Background, to_string(this->get_status()), 3);
+
+	//Display stats.
+	renderer.put_string({6, 10}, TileRegion::Background, number_to_decimal_string(this->get_stat(PokemonStats::StatId::Attack), 3, ' ').data());
+	renderer.put_string({6, 12}, TileRegion::Background, number_to_decimal_string(this->get_stat(PokemonStats::StatId::Defense), 3, ' ').data());
+	renderer.put_string({6, 14}, TileRegion::Background, number_to_decimal_string(this->get_stat(PokemonStats::StatId::Speed), 3, ' ').data());
+	renderer.put_string({6, 16}, TileRegion::Background, number_to_decimal_string(this->get_stat(PokemonStats::StatId::Special), 3, ' ').data());
+
+	//Display misc. info.
+	renderer.put_string({11, 10}, TileRegion::Background, pokemon_type_strings[(int)data.type[0]], 8);
+	if (data.type[1] == data.type[0])
+		renderer.fill_rectangle(TileRegion::Background, {10, 11}, {9, 1}, Tile());
+	else
+		renderer.put_string({11, 12}, TileRegion::Background, pokemon_type_strings[(int)data.type[1]], 8);
+	renderer.put_string({12, 14}, TileRegion::Background, number_to_decimal_string(this->original_trainer_id, 5, '0').data());
+	renderer.put_string({12, 16}, TileRegion::Background, this->original_trainer_name.c_str(), max_character_name_size);
+}
+
+void Pokemon::render_page2(Renderer &renderer){
+	auto &data = this->get_data();
+
+	this->render_common_data(renderer, StatsPage2);
+
+	//Display experience.
+	renderer.put_string({9, 4}, TileRegion::Background, number_to_decimal_string(this->experience, 10, ' ').data());
+	if (this->level < 100){
+		renderer.put_string({8, 6}, TileRegion::Background, number_to_decimal_string(this->calculate_min_xp_to_reach_level(this->level + 1) - this->experience, 6, ' ').data());
+		if (this->level < 99)
+			renderer.put_string({17, 6}, TileRegion::Background, number_to_decimal_string(this->level + 1).data(), 2);
+		else
+			renderer.put_string({16, 6}, TileRegion::Background, "100");
+	}else
+		renderer.fill_rectangle(TileRegion::Background, {9, 6}, {10, 2}, Tile());
+
+	//Display moves.
+	for (int i = 0; i < max_moves; i++){
+		Point first_line(2, 9 + i * 2);
+		Point second_line1(11, 10 + i * 2);
+		if (this->moves[i] == MoveId::None){
+			renderer.put_string(first_line, TileRegion::Background, "-");
+			renderer.put_string(second_line1, TileRegion::Background, "--", 8);
+		}else{
+			Point second_line2 = second_line1 + Point(3, 0);
+			auto &move_data = *pokemon_moves_by_id[(int)this->moves[i]];
+			renderer.put_string(first_line, TileRegion::Background, move_data.display_name, 13 - first_line.x);
+			renderer.put_string(second_line2, TileRegion::Background, number_to_decimal_string(this->pp[i], 2).data());
+			renderer.put_string(second_line2 + Point(3, 0), TileRegion::Background, number_to_decimal_string(move_data.pp, 2).data());
+		}
+	}
 }
 
 }

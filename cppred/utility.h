@@ -176,7 +176,7 @@ std::int32_t read_signed_varint(const byte_t *buffer, size_t &offset, size_t siz
 std::string read_string(const byte_t *buffer, size_t &offset, size_t size);
 std::vector<byte_t> read_buffer(const byte_t *buffer, size_t &offset, size_t size);
 template <typename T>
-std::array<char, sizeof(T) * CHAR_BIT> number_to_decimal_string(T value, int right_padding = 0){
+std::array<char, sizeof(T) * CHAR_BIT> number_to_decimal_string(T value, int right_padding = 0, char padding_character = ' '){
 	//Note: sizeof(T) * CHAR_BIT is about three times larger than the optimal size.
 	//In reality we only need approximately sizeof(T) * CHAR_BIT * log10(2).
 	const size_t n = sizeof(T) * CHAR_BIT;
@@ -199,7 +199,7 @@ std::array<char, sizeof(T) * CHAR_BIT> number_to_decimal_string(T value, int rig
 			ret[--i] = '-';
 	}
 	while (n - i < right_padding)
-		ret[--i] = ' ';
+		ret[--i] = padding_character;
 	for (int j = 0; j < n - i; j++)
 		ret[j] = ret[i + j];
 	ret[n - i] = 0;

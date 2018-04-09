@@ -35,6 +35,7 @@ protected:
 	Party party;
 	Inventory inventory;
 	std::uint16_t trainer_id;
+	static const std::string empty_string;
 public:
 	Trainer(XorShift128 &);
 	virtual ~Trainer() = 0;
@@ -46,6 +47,9 @@ public:
 	}
 	DEFINE_GETTER(trainer_id)
 	DEFINE_NON_CONST_GETTER(inventory)
+	virtual const std::string &get_name() const{
+		return empty_string;
+	}
 };
 
 class ComputerTrainer : public Trainer{

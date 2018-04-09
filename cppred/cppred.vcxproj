@@ -97,6 +97,7 @@
     <ClCompile Include="CppRed\Scripts\OaksLab.cpp" />
     <ClCompile Include="CppRed\Scripts\PalletTown.cpp" />
     <ClCompile Include="CppRed\scripts\RedsHouse.cpp" />
+    <ClCompile Include="CppRed\Status.cpp" />
     <ClCompile Include="CppRed\TextDisplay.cpp" />
     <ClCompile Include="CppRed\Trainer.cpp" />
     <ClCompile Include="CppRed\World.cpp" />

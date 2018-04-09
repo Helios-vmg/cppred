@@ -90,4 +90,8 @@ struct Tilemap{
 	static const int h = 32;
 	static const int size = w * h;
 	Tile tiles[size];
+	void swap(Tilemap &other){
+		for (int i = size; i--;)
+			std::swap(this->tiles[i], other.tiles[i]);
+	}
 };

@@ -137,6 +137,7 @@ public:
 	std::vector<Point> draw_image_to_tilemap(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	std::vector<Point> draw_image_to_tilemap_flipped(const Point &corner, const GraphicsAsset &, TileRegion = TileRegion::Background, Palette = null_palette);
 	void put_string(const Point &position, TileRegion region, const char *string, int pad_to = 0);
+	void draw_bar(const Point &position, TileRegion region, int width, int max, int value);
 	void mass_set_palettes(const std::vector<Point> &tiles, Palette palette);
 	void mass_set_tiles(const std::vector<Point> &tiles, const Tile &);
 	void clear_subpalettes(SubPaletteRegion);

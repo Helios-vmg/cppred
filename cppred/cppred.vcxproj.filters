@@ -385,5 +385,8 @@
     <ClCompile Include="CppRed\BattleOwner.cpp">
       <Filter>CppRed\Game code\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="CppRed\Status.cpp">
+      <Filter>CppRed\Game code\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

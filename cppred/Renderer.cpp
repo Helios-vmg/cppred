@@ -576,3 +576,22 @@ void Renderer::put_string(const Point &position, TileRegion region, const char *
 		i = (i + 1) % Tilemap::size;
 	}
 }
+
+void Renderer::draw_bar(const Point &position, TileRegion region, int width, int max, int value){
+	auto total_pixels = width * Renderer::tile_size;
+	auto on_pixels = total_pixels * value / max;
+	auto off_pixels = total_pixels - on_pixels;
+	auto fully_on_tiles = on_pixels / Renderer::tile_size;
+	auto fully_off_tiles = off_pixels / Renderer::tile_size;
+	auto partial_on = on_pixels - fully_on_tiles * Renderer::tile_size;
+	
+	auto tiles = this->get_tilemap(region).tiles + position.x + position.y * Tilemap::w;
+	auto original = tiles;
+	for (auto i = fully_on_tiles; i--;)
+		*(tiles++) = Tile(HpBarAndStatusGraphics.first_tile + 9);
+	if (partial_on)
+		*(tiles++) = Tile(HpBarAndStatusGraphics.first_tile + 1 + partial_on);
+	for (auto i = fully_off_tiles; i--;)
+		*(tiles++) = Tile(HpBarAndStatusGraphics.first_tile + 1);
+	assert(tiles - original == width);
+}

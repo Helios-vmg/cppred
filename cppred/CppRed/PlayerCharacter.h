@@ -121,6 +121,9 @@ public:
 		return this->pokedex;
 	}
 	void open_pc(bool opened_at_home);
+	const std::string &get_name() const override{
+		return Actor::get_name();
+	}
 };
 
 class AutoIgnoreInput{

@@ -19,4 +19,7 @@ enum class StatusCondition2{
 	Fainted = 16,
 };
 
+const char *to_string(StatusCondition);
+const char *to_string(StatusCondition2);
+
 }
