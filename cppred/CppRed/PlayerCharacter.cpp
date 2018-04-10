@@ -293,13 +293,22 @@ static std::array<char, 12> generate_inventory_quantity(int q){
 	return ret;
 }
 
-void PlayerCharacter::display_inventory_menu(){
-	this->display_inventory_menu(this->inventory, [this](const InventorySpace &is, int y){
+bool PlayerCharacter::display_inventory_menu(bool from_battle){
+	bool ret = false;
+	this->display_inventory_menu(this->inventory, [this, from_battle, &ret](const InventorySpace &is, int y){
+		if (from_battle){
+			ret = this->run_item_use_logic(is, from_battle) == InventoryChanges::Update;
+			return ret ? InventoryChanges::Exit : InventoryChanges::Update;
+		}
 		UseTossResult use_toss;
 		auto pusher = this->display_use_toss_dialog(use_toss, y);
 		switch (use_toss){
 			case UseTossResult::Use:
-				return this->run_item_use_logic(is);
+				{
+					auto changes = this->run_item_use_logic(is, from_battle);
+					ret = changes == InventoryChanges::Update;
+					return changes;
+				}
 			case UseTossResult::Toss:
 				return this->run_item_toss_logic(is, y);
 			case UseTossResult::Cancel:
@@ -308,12 +317,13 @@ void PlayerCharacter::display_inventory_menu(){
 		assert(false);
 		return InventoryChanges::NoChange;
 	});
+	return ret;
 }
 
-PlayerCharacter::InventoryChanges PlayerCharacter::run_item_use_logic(const InventorySpace &is){
+PlayerCharacter::InventoryChanges PlayerCharacter::run_item_use_logic(const InventorySpace &is, bool from_battle){
 	AutoRendererWindowPusher pusher(this->game->get_engine().get_renderer());
 	auto &data = item_data[(int)is.item];
-	auto result = data.use_function(data, *this->game, *this);
+	auto result = data.use_function(data, *this->game, *this, from_battle);
 	if (!result.was_used())
 		return InventoryChanges::NoChange;
 	this->inventory.remove(is.item, 1);
@@ -701,12 +711,12 @@ bool PlayerCharacter::display_party_menu(PartyMenuOptions &options){
 				}
 				auto result = options.callback(party.get(selection), selection);
 				switch (result){
-					case PartyChanges::Exit:
+					case InventoryChanges::Exit:
 						game.reset_joypad_state();
 						return true;
-					case PartyChanges::Update:
+					case InventoryChanges::Update:
 						redraw = true;
-					case PartyChanges::NoChange:
+					case InventoryChanges::NoChange:
 						break;
 					default:
 						throw std::runtime_error("Bad switch.");
@@ -726,7 +736,7 @@ void PlayerCharacter::display_party_menu(){
 	this->display_party_menu(options);
 }
 
-PlayerCharacter::PartyChanges PlayerCharacter::display_pokemon_actions_menu(Pokemon &pokemon, int selection, PartyMenuOptions &options){
+PlayerCharacter::InventoryChanges PlayerCharacter::display_pokemon_actions_menu(Pokemon &pokemon, int selection, PartyMenuOptions &options){
 	auto &game = *this->game;
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
@@ -734,7 +744,7 @@ PlayerCharacter::PartyChanges PlayerCharacter::display_pokemon_actions_menu(Poke
 	AutoRendererWindowPusher pusher(renderer);
 
 	bool done = false;
-	auto ret = PartyChanges::NoChange;
+	auto ret = InventoryChanges::NoChange;
 
 	std::vector<std::string> items;
 	std::vector<std::function<void()>> callbacks;
@@ -763,7 +773,7 @@ PlayerCharacter::PartyChanges PlayerCharacter::display_pokemon_actions_menu(Poke
 	items.push_back("SWITCH");
 	callbacks.push_back([this, selection, &ret, &options, &done](){
 		auto result = this->do_party_switch(selection);
-		ret = result >= 0 ? PartyChanges::Update : PartyChanges::NoChange;
+		ret = result >= 0 ? InventoryChanges::Update : InventoryChanges::NoChange;
 		if (result >= 0)
 			options.initial_item = result;
 		done = true;
@@ -790,13 +800,13 @@ int PlayerCharacter::do_party_switch(int first_selection){
 	options.first_switch_selection = first_selection;
 	options.callback = [&party, first_selection, &ret](Pokemon &pokemon, int selection){
 		if (selection == first_selection)
-			return PartyChanges::Exit;
+			return InventoryChanges::Exit;
 		int increment = selection > first_selection ? 1 : -1;
 		for (int i = first_selection; i != selection; i += increment)
 			std::swap(party.get(i), party.get(i + increment));
 		ret = selection;
 
-		return PartyChanges::Exit;
+		return InventoryChanges::Exit;
 	};
 	options.prompt = TextResourceId::PartyMenuSwapMonText;
 	options.initial_item = first_selection;

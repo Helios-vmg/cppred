@@ -7,7 +7,7 @@
 
 namespace CppRed{
 
-#define DEFINE_ITEM_FUNCTION(name) ItemUseResult name(const ItemData &item_used, Game &game, PlayerCharacter &user)
+#define DEFINE_ITEM_FUNCTION(name) ItemUseResult name(const ItemData &item_used, Game &game, PlayerCharacter &user, bool from_battle)
 #define DEFINE_UNIMPLEMENTED_ITEM_FUNCTION(name) DEFINE_ITEM_FUNCTION(name){ return ItemUseResult(ItemUseError::NotImplemented); }
 
 DEFINE_UNIMPLEMENTED_ITEM_FUNCTION(ItemUseBait)
@@ -44,7 +44,7 @@ DEFINE_ITEM_FUNCTION(ItemUsePotion){
 	options.callback = [&target, &target_index](Pokemon &p, int idx){
 		target = &p;
 		target_index = idx;
-		return PlayerCharacter::PartyChanges::Exit;
+		return PlayerCharacter::InventoryChanges::Exit;
 	};
 	if (!user.display_party_menu(options))
 		return ItemUseResult(ItemUseError::UseCancelled);

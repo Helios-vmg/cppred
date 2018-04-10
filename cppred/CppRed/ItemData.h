@@ -44,7 +44,7 @@ public:
 	}
 };
 
-typedef ItemUseResult (*item_use_function)(const ItemData &item_used, Game &game, PlayerCharacter &user);
+typedef ItemUseResult (*item_use_function)(const ItemData &item_used, Game &game, PlayerCharacter &user, bool from_battle);
 
 struct ItemData{
 	ItemId id;

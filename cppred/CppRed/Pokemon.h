@@ -71,6 +71,7 @@ public:
 	}
 	DEFINE_GETTER(species)
 	DEFINE_GETTER(level)
+	DEFINE_GETTER(moves)
 	DEFINE_GETTER_SETTER(current_hp)
 	DEFINE_GETTER_SETTER(nickname)
 	int get_max_hp(){
@@ -81,6 +82,8 @@ public:
 	void heal();
 	const BasePokemonInfo &get_data() const;
 	StatsScreenResult display_stats_screen(Game &);
+	int get_pp(int move_index);
+	int get_max_pp(int move_index);
 };
 
 class Party{

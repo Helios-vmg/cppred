@@ -45,13 +45,13 @@ class PlayerCharacter : public Actor, public Trainer{
 public:
 	static const Point screen_block_offset;
 	static const size_t max_pc_size;
-	enum class PartyChanges{
+	enum class InventoryChanges{
 		NoChange,
 		Update,
 		Exit,
 	};
 	struct PartyMenuOptions{
-		std::function<PartyChanges(Pokemon &, int)> callback;
+		std::function<InventoryChanges(Pokemon &, int)> callback;
 		int first_switch_selection = -1;
 		TextResourceId prompt = TextResourceId::PartyMenuNormalText;
 		int initial_item = 0;
@@ -78,11 +78,8 @@ private:
 	void check_for_bookshelf_or_card_key_door();
 	void display_menu();
 	void display_party_menu();
-	void display_inventory_menu();
-	enum class InventoryChanges{
-		NoChange,
-		Update,
-	};
+	//Returns true if any item was used. Tossing an item doesn't count as using.
+	//If from_battle, only a single item is allowed to be used.
 	void display_inventory_menu(Inventory &, const std::function<InventoryChanges(const InventorySpace &, int)> &);
 	void display_player_menu();
 	void display_save_dialog();
@@ -106,9 +103,9 @@ private:
 	void display_inventory_transfer_menu(const InventoryTransferOptions &options);
 	void display_pc_toss_menu();
 	AutoRendererWindowPusher display_toss_quantity_dialog(int &result, const InventorySpace &, int);
-	InventoryChanges run_item_use_logic(const InventorySpace &is);
+	InventoryChanges run_item_use_logic(const InventorySpace &is, bool from_battle);
 	InventoryChanges run_item_toss_logic(const InventorySpace &is, int y);
-	PartyChanges display_pokemon_actions_menu(Pokemon &, int, PartyMenuOptions &options);
+	InventoryChanges display_pokemon_actions_menu(Pokemon &, int, PartyMenuOptions &options);
 	int do_party_switch(int first_selection);
 public:
 	PlayerCharacter(Game &game, Coroutine &parent_coroutine, const std::string &name, Renderer &);
@@ -124,6 +121,7 @@ public:
 		return Actor::get_name();
 	}
 	bool display_party_menu(PartyMenuOptions &);
+	bool display_inventory_menu(bool from_battle = false);
 };
 
 class AutoIgnoreInput{

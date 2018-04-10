@@ -345,10 +345,18 @@ void Pokemon::render_page2(Renderer &renderer){
 			Point second_line2 = second_line1 + Point(3, 0);
 			auto &move_data = *pokemon_moves_by_id[(int)this->moves[i]];
 			renderer.put_string(first_line, TileRegion::Background, move_data.display_name, 13 - first_line.x);
-			renderer.put_string(second_line2, TileRegion::Background, number_to_decimal_string(this->pp[i], 2).data());
-			renderer.put_string(second_line2 + Point(3, 0), TileRegion::Background, number_to_decimal_string(move_data.pp, 2).data());
+			renderer.put_string(second_line2, TileRegion::Background, number_to_decimal_string(this->get_pp(i), 2).data());
+			renderer.put_string(second_line2 + Point(3, 0), TileRegion::Background, number_to_decimal_string(this->get_max_pp(i), 2).data());
 		}
 	}
 }
 
+int Pokemon::get_pp(int move_index){
+	return this->pp[move_index];
+}
+
+int Pokemon::get_max_pp(int move_index){
+	//TODO: PP can be upgraded by items.
+	return pokemon_moves_by_id[(int)this->moves[move_index]]->pp;
+}
 }

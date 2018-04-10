@@ -31,7 +31,8 @@ class BattleOwner : public ScreenOwner{
 	void display_opponent_pokemon_status(Pokemon &);
 	void display_player_pokemon_status(Pokemon &);
 	bool run_one_round(Pokemon &own, Pokemon &opponent);
-	void display_battle_menu();
+	void display_battle_menu(Pokemon &);
+	bool display_move_selection(Pokemon &);
 public:
 	BattleOwner(Game &game, FullTrainerClass &&);
 	void pause() override{}

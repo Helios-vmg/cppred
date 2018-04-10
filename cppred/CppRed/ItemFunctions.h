@@ -4,7 +4,7 @@
 
 namespace CppRed{
 
-#define DECLARE_ITEM_FUNCTION(name) ItemUseResult name(const ItemData &item_used, Game &game, PlayerCharacter &user)
+#define DECLARE_ITEM_FUNCTION(name) ItemUseResult name(const ItemData &item_used, Game &game, PlayerCharacter &user, bool from_battle)
 
 DECLARE_ITEM_FUNCTION(ItemUseBait);
 DECLARE_ITEM_FUNCTION(ItemUseBall);

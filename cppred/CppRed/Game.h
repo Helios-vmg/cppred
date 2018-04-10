@@ -114,6 +114,8 @@ struct StandardMenuOptions{
 	byte_t cancel_mask = InputState::mask_b;
 	int window_size = int_max;
 	bool push_window = true;
+	int item_spacing = 2;
+	std::function<void(int)> on_item_hover;
 };
 
 struct GetQuantityFromUserOptions{

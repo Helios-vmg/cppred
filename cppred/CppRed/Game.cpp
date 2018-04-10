@@ -237,9 +237,11 @@ static void write_menu_strings(Game &game, StandardMenuOptions &options, const P
 		auto &s = items[index];
 		renderer.put_string(string_position, TileRegion::Window, s.c_str());
 		string_position.y++;
-		if (options.extra_data)
-			renderer.put_string(string_position, TileRegion::Window, (*options.extra_data)[index].c_str());
-		string_position.y++;
+		if (options.item_spacing > 1){
+			if (options.extra_data)
+				renderer.put_string(string_position, TileRegion::Window, (*options.extra_data)[index].c_str());
+			string_position.y += options.item_spacing - 1;
+		}
 	}
 }
 
@@ -317,6 +319,8 @@ int Game::handle_standard_menu(StandardMenuOptions &options){
 		
 		auto index = position.x + 1 + (position.y + (current_item + 1 - window_position) * 2 - !options.initial_padding) * Tilemap::w;
 		tilemap[index].tile_no = black_arrow;
+		if (options.on_item_hover)
+			options.on_item_hover(current_item);
 		int addend = 0;
 		do{
 			Coroutine::get_current_coroutine().yield();

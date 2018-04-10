@@ -192,15 +192,16 @@ void BattleOwner::display_player_pokemon_status(Pokemon &pokemon){
 }
 	
 bool BattleOwner::run_one_round(Pokemon &own, Pokemon &opponent){
-	this->display_battle_menu();
+	this->display_battle_menu(own);
 	return true;
 }
 
-void BattleOwner::display_battle_menu(){
+void BattleOwner::display_battle_menu(Pokemon &pokemon){
 	auto &game = *this->game;
 	auto &engine = game.get_engine();
 	auto &renderer = engine.get_renderer();
 	auto &audio = game.get_audio_interface();
+	auto &player = this->game->get_world().get_pc();
 	AutoRendererWindowPusher pusher(renderer);
 	
 	auto &tilemap = renderer.get_tilemap(TileRegion::Window).tiles;
@@ -245,13 +246,23 @@ void BattleOwner::display_battle_menu(){
 				game.reset_joypad_state();
 				switch (selection){
 					case 0:
-						//Show move selection.
+						if (this->display_move_selection(pokemon))
+							return;
+						break;
 					case 1:
 						//Show pokemon selection menu.
+						break;
 					case 2:
-						//Show inventory.
+						if (player.display_inventory_menu())
+							return;
+						break;
 					case 3:
 						//Try to run away.
+						{
+							//TODO: Check if this is a random encounter.
+							AutoRendererWindowPusher pusher2(renderer);
+							game.run_dialogue(TextResourceId::NoRunningText, false, true);
+						}
 						break;
 				}
 				continue;
@@ -270,6 +281,42 @@ void BattleOwner::display_battle_menu(){
 		selection = euclidean_modulo_u(selection, 4);
 	}
 
+}
+
+bool BattleOwner::display_move_selection(Pokemon &pokemon){
+	auto &game = *this->game;
+	auto &renderer = game.get_engine().get_renderer();
+	std::vector<std::string> moves;
+	for (auto &move : pokemon.get_moves()){
+		if (move != MoveId::None){
+			auto &data = *pokemon_moves_by_id[(int)move];
+			moves.push_back(data.display_name);
+		}else
+			moves.push_back("-");
+	}
+	bool initialized = false;
+	AutoRendererWindowPusher pusher;
+	StandardMenuOptions options;
+	options.items = &moves;
+	options.item_spacing = 1;
+	options.initial_padding = false;
+	options.on_item_hover = [&](int move_hovered){
+		if (!initialized){
+			pusher = AutoRendererWindowPusher(renderer);
+			renderer.set_window_origin({0, 8 * Renderer::tile_size});
+			Point size(13, 7);
+			renderer.set_window_region_start(Point());
+			renderer.set_window_region_size(size * Renderer::tile_size);
+			game.draw_box(Point(), size - Point(2, 2), TileRegion::Window);
+			renderer.put_string({1, 1}, TileRegion::Window, "TYPE/");
+			renderer.put_string({7, 3}, TileRegion::Window, "/");
+			initialized = false;
+		}
+		auto &move_data = *pokemon_moves_by_id[(int)pokemon.get_moves()[move_hovered]];
+		renderer.put_string({5, 3}, TileRegion::Window, number_to_decimal_string(pokemon.get_pp(move_hovered), 2).data());
+		renderer.put_string({8, 3}, TileRegion::Window, number_to_decimal_string(pokemon.get_max_pp(move_hovered), 2).data());
+	};
+	this->game->handle_standard_menu(options);
 }
 
 }
